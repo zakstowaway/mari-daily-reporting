@@ -1,0 +1,36 @@
+{
+  "date": "2026-07-03",
+  "generated_at": "2026-07-09T12:47:36.989486Z",
+  "venue": "Marilynas",
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok"
+  },
+  "sales": {
+    "revenue_inc_gst": 3656.47,
+    "revenue_ex_gst": 3324.06,
+    "cogs_dollars": 653.58,
+    "cogs_pct": 19.7,
+    "gp_dollars": 2670.48,
+    "gp_pct": 80.3,
+    "uber_eats_revenue": 1096.94
+  },
+  "wages": {
+    "kitchen_dollars": 560.65,
+    "driver_dollars": 31.5,
+    "total_dollars": 592.14,
+    "wages_pct": 17.8
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 299.17,
+    "own_driver_dollars": 31.5,
+    "total_dollars": 330.66,
+    "delivery_pct": 9.9
+  },
+  "alerts": {
+    "cogs": "yellow",
+    "wages": "green",
+    "delivery": "amber"
+  },
+  "targets": {}
+}
