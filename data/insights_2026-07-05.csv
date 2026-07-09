@@ -1,0 +1,4 @@
+Date,Category,Revenue_inc_gst,Discounts,Revenue_net,COGS,GP_dollars,GP_pct,Qty,PaymentType
+2026-07-05,Pizza,814.62,0,740.56,125.42,615.14,83.1,50.0,Card
+2026-07-05,Pizza,444.34,0,403.94,68.41,335.53,83.1,27.0,Uber Eats
+2026-07-05,Sides+Drinks,222.17,0,201.97,34.21,167.76,83.1,14.0,Card
