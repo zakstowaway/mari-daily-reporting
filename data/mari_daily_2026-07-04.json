@@ -1,0 +1,15 @@
+{
+  "date": "2026-07-04",
+  "generated_at": "2026-07-09T12:47:37.019819Z",
+  "venue": "Marilynas",
+  "sales": {
+    "revenue_inc_gst": 2385.57,
+    "revenue_ex_gst": 2168.7,
+    "cogs_dollars": 451.87,
+    "cogs_pct": 20.8,
+    "gp_pct": 79.2
+  },
+  "wages": {"total_dollars": 592.14,"wages_pct": 27.3},
+  "delivery": {total_dollars: 226.68,"delivery_pct": 10.5},
+  "alerts": {"cogs": "amber","wages":"green","delivery":"red"}
+}
