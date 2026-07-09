@@ -1,0 +1,16 @@
+[
+  {
+    "timesheet_id": 1,
+    "employee_name": "Test Kitchen",
+    "dept": "Kitchen",
+    "hours": 8,
+    "cost": 560.6457142857142
+  },
+  {
+    "timesheet_id": 2,
+    "employee_name": "Test Driver",
+    "dept": "Driver",
+    "hours": 4,
+    "cost": 31.49857142857143
+  }
+]
