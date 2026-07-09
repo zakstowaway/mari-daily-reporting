@@ -1,0 +1,49 @@
+{
+  "venue": "Marilynas",
+  "computed_on": "2026-07-09",
+  "window": {
+    "start": "2026-05-14",
+    "end": "2026-07-08",
+    "days": 56
+  },
+  "sales_8w": {
+    "revenue_inc_gst": 93671.26,
+    "revenue_ex_gst": 85155.69,
+    "cogs_dollars": 17584.09,
+    "cogs_pct_of_ex_gst": 20.65
+  },
+  "wages_8w": {
+    "venue_total": 36986.13,
+    "kitchen": 32661.08,
+    "driver": 4325.02,
+    "wages_pct_venue": 42.18,
+    "wages_pct_kitchen": 37.25,
+    "wages_pct_driver": 4.93
+  },
+  "targets_and_alerts": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  }
+}
