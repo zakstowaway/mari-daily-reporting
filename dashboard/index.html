@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Marilyna's — Daily Reporting</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 24px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f7f6f2; color: #0b0b0b; max-width: 1200px; margin: 0 auto;
+}
+h1 { font-size: 24px; font-weight: 500; margin: 0 0 4px; }
+.subtitle { font-size: 13px; color: #52514e; margin: 0 0 24px; }
+.status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+.status-badge.ok { background: #dcedd9; color: #0f6e56; }
+.status-badge.warn { background: #fdf3d0; color: #8c6d1f; }
+.status-badge.err { background: #f7cbca; color: #a32d2d; }
+
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 24px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+
+.card { background: #fff; border-radius: 10px; padding: 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #898781; margin: 0 0 6px; }
+.card .value { font-size: 32px; font-weight: 500; margin: 0 0 4px; letter-spacing: -0.5px; }
+.card .sub { font-size: 12px; color: #52514e; }
+.card.green { border-left: 4px solid #0f6e56; }
+.card.yellow { border-left: 4px solid #e6b31e; }
+.card.amber { border-left: 4px solid #d97706; }
+.card.red { border-left: 4px solid #a32d2d; }
+.card.unknown { border-left: 4px solid #d8d6ce; }
+
+.section { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.section h2 { font-size: 16px; font-weight: 500; margin: 0 0 12px; }
+.chart-wrap { position: relative; width: 100%; height: 240px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eeece5; }
+th { font-weight: 500; color: #52514e; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.footer { margin-top: 32px; padding-top: 16px; border-top: 0.5px solid #e1e0d9; font-size: 12px; color: #898781; }
+.stale { color: #a32d2d; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<h1>Marilyna's — Daily Reporting</h1>
+<p class="subtitle">
+  Yesterday's snapshot · <span id="latest-date"></span>
+  <span id="stale-badge"></span>
+</p>
+
+<div class="grid" id="snapshot"></div>
+
+<div class="section">
+  <h2>30-day trailing</h2>
+  <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+</div>
+
+<div class="section">
+  <h2>Daily history</h2>
+  <table id="history-table">
+    <thead><tr>
+      <th>Date</th>
+      <th class="num">Rev (ex-GST)</th>
+      <th class="num">COGS %</th>
+      <th class="num">Wages %</th>
+      <th class="num">Delivery %</th>
+      <th class="num">GP %</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Data source: Lightspeed Insights + Deputy API · Refreshed daily at 6am AEST by GitHub Actions ·
+  Last successful update: <span id="last-update"></span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+async function loadData() {
+  const historyRes = await fetch('data/mari_daily_history.csv?t=' + Date.now());
+  const historyText = await historyRes.text();
+  const history = parseCsv(historyText);
+
+  const latest = history[history.length - 1];
+  const latestDate = new Date(latest.date);
+  document.getElementById('latest-date').textContent = latestDate.toLocaleDateString('en-AU', {weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'});
+
+  const now = new Date();
+  const daysBehind = Math.floor((now - latestDate) / 86400000);
+  if (daysBehind > 1) {
+    document.getElementById('stale-badge').innerHTML = `<span class="stale">⚠ Data is ${daysBehind} days behind</span>`;
+  }
+
+  renderSnapshot(latest);
+  renderChart(history);
+  renderHistoryTable(history);
+
+  const lastRes = await fetch(`data/mari_daily_${latest.date}.json?t=` + Date.now());
+  const lastData = await lastRes.json();
+  document.getElementById('last-update').textContent = new Date(lastData.generated_at).toLocaleString('en-AU');
+}
+
+function parseCsv(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
+  });
+}
+
+function renderSnapshot(day) {
+  const cards = [
+    { label: 'Revenue (ex-GST)', value: '$' + Math.round(parseFloat(day.revenue_ex_gst) || 0).toLocaleString(), sub: day.date, status: 'unknown' },
+    { label: 'COGS', value: (day.cogs_pct || '?') + '%', sub: '$' + Math.round(parseFloat(day.cogs_dollars) || 0).toLocaleString(), status: day.cogs_alert },
+    { label: 'Wages', value: (day.wages_pct || '?') + '%', sub: '$' + Math.round(parseFloat(day.wages_dollars) || 0).toLocaleString(), status: day.wages_alert },
+    { label: 'Delivery', value: (day.delivery_pct || '?') + '%', sub: '$' + Math.round(parseFloat(day.delivery_dollars) || 0).toLocaleString(), status: day.delivery_alert },
+  ];
+  document.getElementById('snapshot').innerHTML = cards.map(c => `
+    <div class="card ${c.status}">
+      <p class="label">${c.label}</p>
+      <p class="value">${c.value}</p>
+      <p class="sub">${c.sub}</p>
+    </div>
+  `).join('');
+}
+
+function renderChart(history) {
+  const ctx = document.getElementById('trend-chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: history.map(r => r.date.slice(5)),
+      datasets: [
+        { label: 'COGS %', data: history.map(r => parseFloat(r.cogs_pct)), borderColor: '#1baf7a', tension: 0.25, borderWidth: 2 },
+        { label: 'Wages %', data: history.map(r => parseFloat(r.wages_pct)), borderColor: '#2a78d6', tension: 0.25, borderWidth: 2 },
+        { label: 'Delivery %', data: history.map(r => parseFloat(r.delivery_pct)), borderColor: '#eda100', tension: 0.25, borderWidth: 2 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { ticks: { callback: v => v + '%' } } },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } }
+    }
+  });
+}
+
+function renderHistoryTable(history) {
+  const tbody = document.querySelector('#history-table tbody');
+  tbody.innerHTML = history.slice().reverse().slice(0, 30).map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td class="num">$${Math.round(parseFloat(r.revenue_ex_gst) || 0).toLocaleString()}</td>
+      <td class="num">${r.cogs_pct}%</td>
+      <td class="num">${r.wages_pct}%</td>
+      <td class="num">${r.delivery_pct}%</td>
+      <td class="num">${r.gp_pct}%</td>
+    </tr>
+  `).join('');
+}
+
+loadData().catch(e => {
+  document.body.insertAdjacentHTML('afterbegin', `<div style="background:#f7cbca;padding:12px;border-radius:6px;margin-bottom:16px">
+    <strong>Dashboard couldn't load data:</strong> ${e.message}. Data files may not exist yet.
+  </div>`);
+});
+</script>
+
+</body>
+</html>
