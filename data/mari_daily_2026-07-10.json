@@ -1,6 +1,6 @@
 {
   "date": "2026-07-10",
-  "generated_at": "2026-07-11T07:26:07.795192Z",
+  "generated_at": "2026-07-11T08:33:57.893342Z",
   "venue": "Marilynas",
   "data_status": {
     "lightspeed": "missing",
@@ -16,7 +16,7 @@
     "uber_eats_revenue": 0
   },
   "wages": {
-    "kitchen_dollars": 0,
+    "kitchen_dollars": 496.2,
     "driver_dollars": 0,
     "total_dollars": null,
     "wages_pct": null
