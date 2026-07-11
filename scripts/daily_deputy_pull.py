@@ -10,7 +10,8 @@ import os, sys, json, urllib.request, urllib.parse
 from datetime import date, timedelta
 from pathlib import Path
 
-REPO_ROOT = Path(os.environ.get("REPO_ROOT", "/sessions/sweet-adoring-albattani/mnt/Sales Reports/Daily Reporting"))
+# On GitHub Actions runner, CWD is the repo checkout root.
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -63,7 +64,7 @@ else:
     target = date.today() - timedelta(days=1)
 
 if not TOKEN:
-    print("⚠️  DEPUTY_TOKEN env var not set — cannot pull.")
+    print("DEPUTY_TOKEN env var not set — cannot pull.")
     sys.exit(2)
 
 day_start = int(__import__("time").mktime(target.timetuple()))
@@ -113,6 +114,6 @@ with out_file.open("w") as f:
 
 kitchen_cost = sum(r["cost"] for r in records if r["dept"] == "Kitchen")
 driver_cost = sum(r["cost"] for r in records if r["dept"] == "Driver")
-print(f"✓ Saved {len(records)} timesheets to {out_file}")
+print(f"Saved {len(records)} timesheets to {out_file}")
 print(f"  Kitchen: ${kitchen_cost:,.2f}")
 print(f"  Driver:  ${driver_cost:,.2f}")
