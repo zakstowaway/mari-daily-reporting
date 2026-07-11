@@ -1,0 +1,61 @@
+{
+  "date": "2026-07-11",
+  "generated_at": "2026-07-11T21:35:40.853755Z",
+  "venue": "Marilynas",
+  "data_status": {
+    "lightspeed": "missing",
+    "deputy": "ok"
+  },
+  "sales": {
+    "revenue_inc_gst": null,
+    "revenue_ex_gst": null,
+    "cogs_dollars": null,
+    "cogs_pct": null,
+    "gp_dollars": null,
+    "gp_pct": null,
+    "uber_eats_revenue": 0
+  },
+  "wages": {
+    "kitchen_dollars": 0,
+    "driver_dollars": 0,
+    "total_dollars": null,
+    "wages_pct": null
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 0,
+    "own_driver_dollars": 0,
+    "total_dollars": null,
+    "delivery_pct": null
+  },
+  "alerts": {
+    "cogs": "unknown",
+    "wages": "unknown",
+    "delivery": "unknown"
+  },
+  "targets": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  }
+}
