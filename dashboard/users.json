@@ -6,6 +6,11 @@
       "role": "admin",
       "display": "Admin (all-access)"
     },
+    "bigchef": {
+      "hash": "93f710575ee74b8db13752a1ebee0121a8fc4af516a3b6ef1e764be4b6669e75",
+      "role": "bigchef",
+      "display": "Big Chef (all kitchens)"
+    },
     "stowfood": {
       "hash": "df8c394088e03a9c379edac159edd9ffec35c62d558ed4349161f129520f4afa",
       "role": "stowfood",
