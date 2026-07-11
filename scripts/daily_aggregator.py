@@ -79,6 +79,9 @@ if lightspeed_data and lightspeed_data.get("uber_eats_rev"):
 else:
     uber_commission = 0
 
+# Initialise all downstream variables so both branches (Insights present/absent) are safe.
+driver_dollars = deputy_data["driver_wages"] if deputy_data else 0
+
 if lightspeed_data:
     rev_ex = lightspeed_data["revenue_ex"]
     cogs_dollars = lightspeed_data["cogs"]
@@ -86,11 +89,9 @@ if lightspeed_data:
     if deputy_data:
         wages_dollars = deputy_data["total_wages"]
         wages_pct = wages_dollars / rev_ex * 100 if rev_ex else 0
-        driver_dollars = deputy_data["driver_wages"]
     else:
         wages_dollars = wages_pct = None
-        driver_dollars = 0
-    delivery_dollars = (driver_dollars or 0) + uber_commission
+    delivery_dollars = driver_dollars + uber_commission
     delivery_pct = delivery_dollars / rev_ex * 100 if rev_ex else 0
 else:
     rev_ex = cogs_dollars = cogs_pct = None
@@ -112,7 +113,7 @@ cogs_status = status(cogs_pct, targets["cogs"])
 wages_status = status(wages_pct, targets["wages"])
 delivery_status = status(delivery_pct, targets["delivery"])
 
-record = {"date": target.isoformat(),"generated_at": datetime.utcnow().isoformat() + "Z","venue": "Marilynas","data_status": {"lightspeed": "ok" if lightspeed_data else "missing","deputy": "ok" if deputy_data else "missing"},"sales": {"revenue_inc_gst": round(lightspeed_data["revenue_inc"], 2) if lightspeed_data else None,"revenue_ex_gst": round(rev_ex, 2) if rev_ex else None,"cogs_dollars": round(cogs_dollars, 2) if cogs_dollars is not None else None,"cogs_pct": round(cogs_pct, 1) if cogs_pct is not None else None,"gp_dollars": round(lightspeed_data["gp"],2) if lightspeed_data else None,"gp_pct": round(lightspeed_data["gp_pct"], 1) if lightspeed_data else None,"uber_eats_revenue": round(lightspeed_data.get("uber_eats_rev", 0), 2) if lightspeed_data else 0},"wages": {"kitchen_dollars": round(deputy_data["kitchen_wages"], 2) if deputy_data else None,"driver_dollars": round(deputy_data["driver_wages"], 2) if deputy_data else None,"total_dollars": round(wages_dollars, 2) if wages_dollars is not None else None,"wages_pct": round(wages_pct, 1) if wages_pct is not None else None},"delivery": {"uber_eats_commission_dollars": round(uber_commission, 2),"own_driver_dollars": round(driver_dollars, 2) if deputy_data else 0,"total_dollars": round(delivery_dollars,2) if delivery_dollars is not None else None,"delivery_pct": round(delivery_pct,1) if delivery_pct is not None else None},"alerts": {"cogs": cogs_status,"wages": wages_status,"delivery": delivery_status},"targets": targets}
+record = {"date": target.isoformat(),"generated_at": datetime.utcnow().isoformat() + "Z","venue": "Marilynas","data_status": {"lightspeed": "ok" if lightspeed_data else "missing","deputy": "ok" if deputy_data else "missing"},"sales": {"revenue_inc_gst": round(lightspeed_data["revenue_inc"], 2) if lightspeed_data else None,"revenue_ex_gst": round(rev_ex, 2) if rev_ex else None,"cogs_dollars": round(cogs_dollars, 2) if cogs_dollars is not None else None,"cogs_pct": round(cogs_pct, 1) if cogs_pct is not None else None,"gp_dollars": round(lightspeed_data["gp"],2) if lightspeed_data else None,"gp_pct": round(lightspeed_data["gp_pct"], 1) if lightspeed_data else None,"uber_eats_revenue": round(lightspeed_data.get("uber_eats_rev", 0), 2) if lightspeed_data else 0},"wages": {"kitchen_dollars": round(deputy_data["kitchen_wages"], 2) if deputy_data else None,"driver_dollars": round(deputy_data["driver_wages"], 2) if deputy_data else None,"total_dollars": round(wages_dollars, 2) if wages_dollars is not None else None,"wages_pct": round(wages_pct, 1) if wages_pct is not None else None},"delivery": {"uber_eats_commission_dollars": round(uber_commission, 2),"own_driver_dollars": round(driver_dollars, 2),"total_dollars": round(delivery_dollars,2) if delivery_dollars is not None else None,"delivery_pct": round(delivery_pct,1) if delivery_pct is not None else None},"alerts": {"cogs": cogs_status,"wages": wages_status,"delivery": delivery_status},"targets": targets}
 
 out_file = DATA_DIR / f"mari_daily_{target.isoformat()}.json"
 with out_file.open("w") as f:
