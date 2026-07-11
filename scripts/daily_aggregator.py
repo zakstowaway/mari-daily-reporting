@@ -15,7 +15,8 @@ import csv, json, os, sys
 from pathlib import Path
 from datetime import date, timedelta, datetime
 
-REPO_ROOT = Path(os.environ.get("REPO_ROOT", "/sessions/sweet-adoring-albattani/mnt/Sales Reports/Daily Reporting"))
+# On GitHub Actions runner, CWD is the repo checkout root.
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
 BASELINE = REPO_ROOT / "baselines" / "mari_baseline.json"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -35,8 +36,8 @@ print(f"Aggregating for: {target.isoformat()}")
 # ==============================================================
 insights_file = DATA_DIR / f"insights_{target.isoformat()}.csv"
 if not insights_file.exists():
-    print(f"⚠️  Insights CSV not found: {insights_file}")
-    print("    Will emit alert-only record with 'data_missing' flag")
+    print(f"Insights CSV not found: {insights_file}")
+    print("Will emit alert-only record with 'data_missing' flag")
     lightspeed_data = None
 else:
     rows = []
