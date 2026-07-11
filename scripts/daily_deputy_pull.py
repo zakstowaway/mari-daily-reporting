@@ -69,11 +69,7 @@ if not TOKEN:
     print("DEPUTY_TOKEN env var not set — cannot pull.")
     sys.exit(2)
 
-# Deputy StartTime is a Unix epoch integer (seconds).
-# Build Sydney-day boundaries → convert to UTC epoch.
-# Sydney is UTC+10 (AEST winter) or UTC+11 (AEDT summer). We approximate with +10
-# (July = winter). For robust cron, use zoneinfo — but this is close enough for
-# a wage day boundary that Deputy pads with a ±1hr fudge.
+# Sydney-day boundaries → UTC epoch. July = winter = UTC+10 (AEST).
 day_start_dt = datetime(target.year, target.month, target.day, 0, 0, 0, tzinfo=timezone(timedelta(hours=10)))
 day_end_dt = day_start_dt + timedelta(days=1)
 day_start = int(day_start_dt.timestamp())
@@ -90,11 +86,16 @@ except Exception as e:
     print(f"Auth test failed: {e}", file=sys.stderr)
     raise
 
+# Deputy Timesheet fields (canonical): Id, Employee, StartTime, EndTime, TotalTime,
+# Cost, IsInProgress (0 = clock-off done), IsLeave, Discarded, PayRuleApproval
+# (0 = draft, 1 = approved by supervisor, etc.). We want completed + non-discarded
+# timesheets in the target date range; then compute Marilynas-only from OU name.
 query_body = {
     "search": {
-        "s1": {"field": "Approved", "type": "eq", "data": 1},
-        "s2": {"field": "StartTime", "type": "ge", "data": day_start},
-        "s3": {"field": "StartTime", "type": "lt", "data": day_end},
+        "s1": {"field": "StartTime", "type": "ge", "data": day_start},
+        "s2": {"field": "StartTime", "type": "lt", "data": day_end},
+        "s3": {"field": "IsInProgress", "type": "eq", "data": 0},
+        "s4": {"field": "Discarded", "type": "eq", "data": 0},
     },
     "join": ["EmployeeObject", "OperationalUnitObject"],
     "max": 500,
@@ -103,19 +104,23 @@ query_body = {
 print(f"Query body: {json.dumps(query_body)}")
 
 results = api_post("/api/v1/resource/Timesheet/QUERY", query_body)
+print(f"Deputy returned {len(results)} timesheets total")
 
 records = []
 for ts in results:
-    ou_name = (ts.get("_DPMetaData", {}).get("OperationalUnitInfo", {}).get("OperationalUnitName")
-               or ts.get("OperationalUnit", ""))
-    if not ("mari" in str(ou_name).lower() or "marilyna" in str(ou_name).lower()):
+    ou_info = ts.get("_DPMetaData", {}).get("OperationalUnitInfo", {})
+    ou_name = ou_info.get("OperationalUnitName", "")
+    company = ou_info.get("CompanyName", "") or ""
+
+    # Marilyna's timesheet — match on OU or Company name
+    if not any("mari" in str(x).lower() or "marilyna" in str(x).lower()
+               for x in (ou_name, company)):
         continue
 
     dept = "Kitchen"
-    if "driver" in str(ou_name).lower() or "delivery" in str(ou_name).lower():
+    haystack = f"{ou_name} {company}".lower()
+    if "driver" in haystack or "delivery" in haystack:
         dept = "Driver"
-    elif "kitchen" in str(ou_name).lower() or "boh" in str(ou_name).lower():
-        dept = "Kitchen"
 
     emp_info = ts.get("_DPMetaData", {}).get("EmployeeInfo", {})
     records.append({
@@ -123,6 +128,7 @@ for ts in results:
         "employee_id": ts.get("Employee"),
         "employee_name": emp_info.get("DisplayName", ""),
         "ou_name": ou_name,
+        "company": company,
         "dept": dept,
         "start_time": ts.get("StartTime"),
         "end_time": ts.get("EndTime"),
@@ -136,6 +142,6 @@ with out_file.open("w") as f:
 
 kitchen_cost = sum(r["cost"] for r in records if r["dept"] == "Kitchen")
 driver_cost = sum(r["cost"] for r in records if r["dept"] == "Driver")
-print(f"Saved {len(records)} timesheets to {out_file}")
+print(f"Saved {len(records)} Marilynas timesheets to {out_file}")
 print(f"  Kitchen: ${kitchen_cost:,.2f}")
 print(f"  Driver:  ${driver_cost:,.2f}")
