@@ -6,8 +6,8 @@ Endpoint: https://831d4015123255.au.deputy.com/api/v1/resource/Timesheet
 
 Output: data/deputy_<yyyy-mm-dd>.json
 """
-import os, sys, json, urllib.request, urllib.parse
-from datetime import date, timedelta
+import os, sys, json, urllib.request, urllib.parse, urllib.error
+from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
 # On GitHub Actions runner, CWD is the repo checkout root.
@@ -18,11 +18,15 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 DEPUTY_HOST = "https://831d4015123255.au.deputy.com"
 TOKEN = os.environ.get("DEPUTY_TOKEN")
 
-# Marilyna's Operating Unit IDs — populated after first pull (see OU discovery below)
-MARI_OU_IDS = {
-    "Kitchen": None,
-    "Driver": None,
-}
+def _do_request(req):
+    try:
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", errors="replace")
+        print(f"HTTP {e.code} from {req.full_url}", file=sys.stderr)
+        print(f"Response body: {body[:2000]}", file=sys.stderr)
+        raise
 
 def api_get(path, params=None):
     url = DEPUTY_HOST + path
@@ -32,8 +36,7 @@ def api_get(path, params=None):
         "Authorization": f"OAuth {TOKEN}",
         "Content-Type": "application/json",
     })
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+    return _do_request(req)
 
 def api_post(path, body):
     url = DEPUTY_HOST + path
@@ -42,8 +45,7 @@ def api_post(path, body):
         "Authorization": f"OAuth {TOKEN}",
         "Content-Type": "application/json",
     })
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+    return _do_request(req)
 
 def discover_ous():
     """First-time setup — find Marilyna's Kitchen + Driver OU IDs."""
@@ -67,8 +69,26 @@ if not TOKEN:
     print("DEPUTY_TOKEN env var not set — cannot pull.")
     sys.exit(2)
 
-day_start = int(__import__("time").mktime(target.timetuple()))
-day_end = day_start + 86400
+# Deputy StartTime is a Unix epoch integer (seconds).
+# Build Sydney-day boundaries → convert to UTC epoch.
+# Sydney is UTC+10 (AEST winter) or UTC+11 (AEDT summer). We approximate with +10
+# (July = winter). For robust cron, use zoneinfo — but this is close enough for
+# a wage day boundary that Deputy pads with a ±1hr fudge.
+day_start_dt = datetime(target.year, target.month, target.day, 0, 0, 0, tzinfo=timezone(timedelta(hours=10)))
+day_end_dt = day_start_dt + timedelta(days=1)
+day_start = int(day_start_dt.timestamp())
+day_end = int(day_end_dt.timestamp())
+
+print(f"Target date: {target.isoformat()} (Sydney)")
+print(f"Epoch range: {day_start} to {day_end}")
+
+# Sanity test: hit the /me endpoint first to confirm auth works
+try:
+    me = api_get("/api/v1/me")
+    print(f"Auth OK — signed in as {me.get('DisplayName') or me.get('Employee') or 'unknown'}")
+except Exception as e:
+    print(f"Auth test failed: {e}", file=sys.stderr)
+    raise
 
 query_body = {
     "search": {
@@ -79,6 +99,8 @@ query_body = {
     "join": ["EmployeeObject", "OperationalUnitObject"],
     "max": 500,
 }
+
+print(f"Query body: {json.dumps(query_body)}")
 
 results = api_post("/api/v1/resource/Timesheet/QUERY", query_body)
 
