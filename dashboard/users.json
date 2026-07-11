@@ -1,25 +1,30 @@
 {
   "salt": "mari-2026-northern-beaches",
   "users": {
-    "zak": {
-      "hash": "9ef4bd00fa320688f7c94dab39df950bdcd4e6ace88771e5b8ce894a64c96845",
-      "role": "owner",
-      "display": "Zak (Owner)"
+    "admin": {
+      "hash": "eff748b542309a740997d89a29d5ff6671b718ba77c8cecd9e6c4ffa6fe632c7",
+      "role": "admin",
+      "display": "Admin (all-access)"
     },
-    "steph": {
-      "hash": "cf0653b6798e2cf8b1bc3f9a58c40c001736326dcffa1016fdd862cdf88132de",
-      "role": "owner",
-      "display": "Steph (Owner)"
+    "stowfood": {
+      "hash": "df8c394088e03a9c379edac159edd9ffec35c62d558ed4349161f129520f4afa",
+      "role": "stowfood",
+      "display": "Stowaway Kitchen"
     },
-    "kitchen": {
-      "hash": "100dbf75942cb61671f58fbd89897a068c273fa0f53ee37c07efb964e8c59091",
-      "role": "kitchen",
-      "display": "Kitchen Head"
+    "hgfood": {
+      "hash": "dd3bbda886eafb3a95364a9edaff15107352e493841989abf5507e9deb60c340",
+      "role": "hgfood",
+      "display": "Harry Gatos Kitchen"
     },
-    "delivery": {
-      "hash": "93b3973c457e1b9239e9b8f9cd8198209f7c5c9baead8c7632c6016ca9931b41",
-      "role": "delivery",
-      "display": "Delivery Head"
+    "bar": {
+      "hash": "a9ade7751cf0066aa24b237a8333da9dac9bbdf121881a1504ecad0ea9f6a501",
+      "role": "bar",
+      "display": "Bar / FOH (Stow + HG)"
+    },
+    "pizza": {
+      "hash": "5fda0ed978c183ec4ddabe84ed8094726e49220de7cdfa7973f5e9c1dbc496c1",
+      "role": "pizza",
+      "display": "Marilyna's"
     }
   }
 }
