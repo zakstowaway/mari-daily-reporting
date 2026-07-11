@@ -1,5 +1,8 @@
 """
-Daily Deputy pull — pulls yesterday's timesheets for Marilyna's (a sub-OU of Stowaway Bar).
+Daily Deputy pull — pulls yesterday's timesheets for Marilyna's.
+
+In Deputy, Mari is called "Pizza Shop" under Company "Stowaway".
+(Confirmed 2026-07-11 via OU discovery.)
 
 Auth: Deputy permanent API token (stored in env DEPUTY_TOKEN).
 Endpoint: https://831d4015123255.au.deputy.com/api/v1/resource/Timesheet
@@ -25,10 +28,10 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 DEPUTY_HOST = "https://831d4015123255.au.deputy.com"
 TOKEN = os.environ.get("DEPUTY_TOKEN")
 
-# Marilyna's OU-name keywords (case-insensitive). Zak said Mari is a sub-OU of
-# Stowaway Bar in Deputy — the actual OU name might be one of these variants.
-# Add more if the discovery log reveals a different name.
-MARI_KEYWORDS = ["mari", "marilyna", "pizza", "freshie", "freshy"]
+# Marilyna's OUs. Exact names as they appear in Deputy for account 831d4015123255.
+# Extend this list if new OUs are added (e.g. dedicated Mari driver roster).
+MARI_KITCHEN_OUS = {"Pizza Shop"}
+MARI_DRIVER_OUS  = set()  # Add here once own-driver OU exists in Deputy
 
 def _do_request(req):
     try:
@@ -122,13 +125,10 @@ query_body = {
     "max": 500,
 }
 
-print(f"Query body: {json.dumps(query_body)}")
-
 results = api_post("/api/v1/resource/Timesheet/QUERY", query_body)
 print(f"Deputy returned {len(results)} timesheets total for the day")
 
-# Always log the unique OU/Company distribution — critical for figuring out
-# what Mari is called on Zak's account.
+# Always log the unique OU/Company distribution — useful for spotting new OUs.
 ou_counter = Counter()
 for ts in results:
     ou_info = ts.get("_DPMetaData", {}).get("OperationalUnitInfo", {})
@@ -139,7 +139,10 @@ for ts in results:
 if ou_counter:
     print("Unique (OU, Company) distribution for this day:")
     for (ou, co), n in sorted(ou_counter.items(), key=lambda kv: -kv[1]):
-        print(f"  {n:3d}  OU='{ou}'  Company='{co}'")
+        marker = "  <- Mari" if ou in MARI_KITCHEN_OUS or ou in MARI_DRIVER_OUS else ""
+        print(f"  {n:3d}  OU='{ou}'  Company='{co}'{marker}")
+
+MARI_OUS = MARI_KITCHEN_OUS | MARI_DRIVER_OUS
 
 records = []
 for ts in results:
@@ -147,16 +150,10 @@ for ts in results:
     ou_name = ou_info.get("OperationalUnitName", "")
     company = ou_info.get("CompanyName", "") or ""
 
-    if not capture_all:
-        # Mari filter — OU name matches a Mari keyword. Company can be Stowaway.
-        haystack = f"{ou_name}".lower()
-        if not any(k in haystack for k in MARI_KEYWORDS):
-            continue
+    if not capture_all and ou_name not in MARI_OUS:
+        continue
 
-    dept = "Kitchen"
-    haystack = f"{ou_name} {company}".lower()
-    if "driver" in haystack or "delivery" in haystack or "dispatch" in haystack:
-        dept = "Driver"
+    dept = "Driver" if ou_name in MARI_DRIVER_OUS else "Kitchen"
 
     emp_info = ts.get("_DPMetaData", {}).get("EmployeeInfo", {})
     records.append({
@@ -178,6 +175,6 @@ with out_file.open("w") as f:
 
 kitchen_cost = sum(r["cost"] for r in records if r["dept"] == "Kitchen")
 driver_cost = sum(r["cost"] for r in records if r["dept"] == "Driver")
-print(f"Saved {len(records)} timesheets to {out_file}")
+print(f"Saved {len(records)} Mari timesheets to {out_file}")
 print(f"  Kitchen: ${kitchen_cost:,.2f}")
 print(f"  Driver:  ${driver_cost:,.2f}")
