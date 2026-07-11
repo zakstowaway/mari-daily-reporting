@@ -113,12 +113,8 @@ td.num { text-align: right; font-variant-numeric: tabular-nums; }
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
 // ============================================================================
-// AUTH
-// ============================================================================
-// Client-side auth is not real security — but combined with the obscure URL,
-// it stops anyone who casually finds the dashboard from seeing the data.
-// Passwords are hashed (SHA-256) with a salt so plaintext isn't recoverable
-// from users.json.
+// AUTH — client-side, not real security. Combined with the obscure URL and
+// SHA-256 hashed passwords, it stops casual visitors from seeing the data.
 // ============================================================================
 
 let USERS = null;
@@ -159,6 +155,8 @@ function logout() {
   CURRENT_USER = null; CURRENT_ROLE = null;
   document.getElementById('login').classList.remove('hidden');
   document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('trend-section').classList.remove('hidden');
+  document.getElementById('history-section').classList.remove('hidden');
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 }
@@ -166,6 +164,8 @@ function logout() {
 async function showDashboard() {
   document.getElementById('login').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('trend-section').classList.remove('hidden');
+  document.getElementById('history-section').classList.remove('hidden');
   document.getElementById('who-name').textContent = CURRENT_USER.display;
   await loadData();
 }
@@ -186,28 +186,28 @@ async function tryResume() {
 // ============================================================================
 // ROLE-BASED VIEW CONFIG
 // ============================================================================
-// Owner sees everything. Department heads see their own slice only.
-// ============================================================================
-
+// admin  → sees everything, all venues (currently only Mari data lives in this repo)
+// pizza  → sees Marilyna's full 4-lane view
+// stowfood, hgfood, bar → placeholder ("not yet wired up") until we add
+//                         Stowaway / Harry Gatos pipelines to this repo
 const VIEWS = {
-  owner: {
+  admin: {
+    scope: 'mari',
     cards: ['revenue', 'cogs', 'wages', 'delivery'],
     chart_lines: ['cogs', 'wages', 'delivery'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
     show_dollar_amounts: true,
   },
-  kitchen: {
-    cards: ['revenue', 'cogs'],
-    chart_lines: ['cogs'],
-    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct'],
+  pizza: {
+    scope: 'mari',
+    cards: ['revenue', 'cogs', 'wages', 'delivery'],
+    chart_lines: ['cogs', 'wages', 'delivery'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
     show_dollar_amounts: true,
   },
-  delivery: {
-    cards: ['revenue', 'delivery'],
-    chart_lines: ['delivery'],
-    history_cols: ['date', 'revenue_ex_gst', 'delivery_pct'],
-    show_dollar_amounts: true,
-  },
+  stowfood: { scope: 'placeholder', label: 'Stowaway Kitchen' },
+  hgfood:   { scope: 'placeholder', label: 'Harry Gatos Kitchen' },
+  bar:      { scope: 'placeholder', label: 'Bar / FOH (Stowaway + Harry Gatos)' },
 };
 
 const CARD_DEFS = {
@@ -236,6 +236,13 @@ const COL_DEFS = {
 // DATA LOADING & RENDERING
 // ============================================================================
 async function loadData() {
+  const cfg = VIEWS[CURRENT_ROLE] || VIEWS.admin;
+
+  if (cfg.scope === 'placeholder') {
+    renderPlaceholder(cfg);
+    return;
+  }
+
   const historyRes = await fetch('data/mari_daily_history.csv?t=' + Date.now());
   const historyText = await historyRes.text();
   const history = parseCsv(historyText);
@@ -253,7 +260,6 @@ async function loadData() {
     staleEl.innerHTML = '';
   }
 
-  const cfg = VIEWS[CURRENT_ROLE] || VIEWS.owner;
   renderSnapshot(latest, cfg);
   renderChart(history, cfg);
   renderHistoryTable(history, cfg);
@@ -265,6 +271,21 @@ async function loadData() {
   } catch (e) {
     document.getElementById('last-update').textContent = 'unknown';
   }
+}
+
+function renderPlaceholder(cfg) {
+  document.getElementById('latest-date').textContent = '';
+  document.getElementById('stale-badge').innerHTML = '';
+  document.getElementById('snapshot').innerHTML = `
+    <div class="card unknown" style="grid-column: 1 / -1; text-align: center; padding: 40px 20px;">
+      <p class="label">${cfg.label}</p>
+      <p class="value" style="font-size: 20px; margin: 12px 0 4px;">Not wired up yet</p>
+      <p class="sub">Data for this venue / department will appear here once the reporting pipeline is built.</p>
+    </div>
+  `;
+  document.getElementById('trend-section').classList.add('hidden');
+  document.getElementById('history-section').classList.add('hidden');
+  document.getElementById('last-update').textContent = 'n/a';
 }
 
 function parseCsv(text) {
