@@ -1,0 +1,25 @@
+{
+  "salt": "mari-2026-northern-beaches",
+  "users": {
+    "zak": {
+      "hash": "9ef4bd00fa320688f7c94dab39df950bdcd4e6ace88771e5b8ce894a64c96845",
+      "role": "owner",
+      "display": "Zak (Owner)"
+    },
+    "steph": {
+      "hash": "cf0653b6798e2cf8b1bc3f9a58c40c001736326dcffa1016fdd862cdf88132de",
+      "role": "owner",
+      "display": "Steph (Owner)"
+    },
+    "kitchen": {
+      "hash": "100dbf75942cb61671f58fbd89897a068c273fa0f53ee37c07efb964e8c59091",
+      "role": "kitchen",
+      "display": "Kitchen Head"
+    },
+    "delivery": {
+      "hash": "93b3973c457e1b9239e9b8f9cd8198209f7c5c9baead8c7632c6016ca9931b41",
+      "role": "delivery",
+      "display": "Delivery Head"
+    }
+  }
+}
