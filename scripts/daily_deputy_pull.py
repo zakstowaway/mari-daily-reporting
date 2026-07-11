@@ -1,14 +1,21 @@
 """
-Daily Deputy pull — pulls yesterday's approved timesheets for Marilynas.
+Daily Deputy pull — pulls yesterday's timesheets for Marilyna's (a sub-OU of Stowaway Bar).
 
 Auth: Deputy permanent API token (stored in env DEPUTY_TOKEN).
 Endpoint: https://831d4015123255.au.deputy.com/api/v1/resource/Timesheet
 
 Output: data/deputy_<yyyy-mm-dd>.json
+
+CLI:
+  python daily_deputy_pull.py                # yesterday, filter for Mari
+  python daily_deputy_pull.py 2026-07-10     # specific date
+  python daily_deputy_pull.py discover       # dump all OUs to stdout
+  python daily_deputy_pull.py 2026-07-10 all # dump all timesheets that day (no Mari filter)
 """
 import os, sys, json, urllib.request, urllib.parse, urllib.error
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
+from collections import Counter
 
 # On GitHub Actions runner, CWD is the repo checkout root.
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
@@ -17,6 +24,11 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 DEPUTY_HOST = "https://831d4015123255.au.deputy.com"
 TOKEN = os.environ.get("DEPUTY_TOKEN")
+
+# Marilyna's OU-name keywords (case-insensitive). Zak said Mari is a sub-OU of
+# Stowaway Bar in Deputy — the actual OU name might be one of these variants.
+# Add more if the discovery log reveals a different name.
+MARI_KEYWORDS = ["mari", "marilyna", "pizza", "freshie", "freshy"]
 
 def _do_request(req):
     try:
@@ -48,21 +60,33 @@ def api_post(path, body):
     return _do_request(req)
 
 def discover_ous():
-    """First-time setup — find Marilyna's Kitchen + Driver OU IDs."""
+    """Dump every OU in the account so we can find Mari's real name."""
     ous = api_get("/api/v1/resource/OperationalUnit")
+    print(f"Deputy has {len(ous)} operational units total:")
     for ou in ous:
-        name = ou.get("OperationalUnitName", "")
-        if "marilyna" in name.lower() or "mari" in name.lower():
-            print(f"OU {ou['Id']}: {name}")
+        print(f"  [{ou.get('Id')}] {ou.get('OperationalUnitName')} "
+              f"(Company={ou.get('Company')}, Active={ou.get('Active')})")
     return ous
 
 if len(sys.argv) > 1 and sys.argv[1] == "discover":
+    if not TOKEN:
+        print("DEPUTY_TOKEN not set")
+        sys.exit(2)
     discover_ous()
     sys.exit(0)
 
-if len(sys.argv) > 1:
-    target = date.fromisoformat(sys.argv[1])
-else:
+# Positional args: [date] [mode]
+target = None
+capture_all = False
+for a in sys.argv[1:]:
+    if a == "all":
+        capture_all = True
+    else:
+        try:
+            target = date.fromisoformat(a)
+        except ValueError:
+            pass
+if target is None:
     target = date.today() - timedelta(days=1)
 
 if not TOKEN:
@@ -77,6 +101,7 @@ day_end = int(day_end_dt.timestamp())
 
 print(f"Target date: {target.isoformat()} (Sydney)")
 print(f"Epoch range: {day_start} to {day_end}")
+print(f"Mode: {'ALL timesheets (Mari filter off)' if capture_all else 'Mari only'}")
 
 # Sanity test: hit the /me endpoint first to confirm auth works
 try:
@@ -86,10 +111,6 @@ except Exception as e:
     print(f"Auth test failed: {e}", file=sys.stderr)
     raise
 
-# Deputy Timesheet fields (canonical): Id, Employee, StartTime, EndTime, TotalTime,
-# Cost, IsInProgress (0 = clock-off done), IsLeave, Discarded, PayRuleApproval
-# (0 = draft, 1 = approved by supervisor, etc.). We want completed + non-discarded
-# timesheets in the target date range; then compute Marilynas-only from OU name.
 query_body = {
     "search": {
         "s1": {"field": "StartTime", "type": "ge", "data": day_start},
@@ -104,7 +125,21 @@ query_body = {
 print(f"Query body: {json.dumps(query_body)}")
 
 results = api_post("/api/v1/resource/Timesheet/QUERY", query_body)
-print(f"Deputy returned {len(results)} timesheets total")
+print(f"Deputy returned {len(results)} timesheets total for the day")
+
+# Always log the unique OU/Company distribution — critical for figuring out
+# what Mari is called on Zak's account.
+ou_counter = Counter()
+for ts in results:
+    ou_info = ts.get("_DPMetaData", {}).get("OperationalUnitInfo", {})
+    ou_name = ou_info.get("OperationalUnitName", "")
+    company = ou_info.get("CompanyName", "") or ""
+    ou_counter[(ou_name, company)] += 1
+
+if ou_counter:
+    print("Unique (OU, Company) distribution for this day:")
+    for (ou, co), n in sorted(ou_counter.items(), key=lambda kv: -kv[1]):
+        print(f"  {n:3d}  OU='{ou}'  Company='{co}'")
 
 records = []
 for ts in results:
@@ -112,14 +147,15 @@ for ts in results:
     ou_name = ou_info.get("OperationalUnitName", "")
     company = ou_info.get("CompanyName", "") or ""
 
-    # Marilyna's timesheet — match on OU or Company name
-    if not any("mari" in str(x).lower() or "marilyna" in str(x).lower()
-               for x in (ou_name, company)):
-        continue
+    if not capture_all:
+        # Mari filter — OU name matches a Mari keyword. Company can be Stowaway.
+        haystack = f"{ou_name}".lower()
+        if not any(k in haystack for k in MARI_KEYWORDS):
+            continue
 
     dept = "Kitchen"
     haystack = f"{ou_name} {company}".lower()
-    if "driver" in haystack or "delivery" in haystack:
+    if "driver" in haystack or "delivery" in haystack or "dispatch" in haystack:
         dept = "Driver"
 
     emp_info = ts.get("_DPMetaData", {}).get("EmployeeInfo", {})
@@ -142,6 +178,6 @@ with out_file.open("w") as f:
 
 kitchen_cost = sum(r["cost"] for r in records if r["dept"] == "Kitchen")
 driver_cost = sum(r["cost"] for r in records if r["dept"] == "Driver")
-print(f"Saved {len(records)} Marilynas timesheets to {out_file}")
+print(f"Saved {len(records)} timesheets to {out_file}")
 print(f"  Kitchen: ${kitchen_cost:,.2f}")
 print(f"  Driver:  ${driver_cost:,.2f}")
