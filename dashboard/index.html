@@ -2,23 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Marilyna's — Daily Reporting</title>
+<title>Stowaway Hospitality Group — Daily Reporting</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   color-scheme: light;
-  --brand:      #C8102E;   /* Mari tomato red */
-  --brand-dark: #8B0A1F;
-  --brand-tint: #FCE9EB;
-  --cream:      #FBF3E4;   /* warm cream background */
+  --group:      #0B0B0B;   /* Stowaway group ink */
+  --group-tint: #F2F0EA;
+  --stow:       #1B4D3E;   /* Stowaway deep green */
+  --hg:         #C8452B;   /* Harry Gatos burnt orange */
+  --mari:       #C8102E;   /* Mari tomato red */
+  --mari-dark:  #8B0A1F;
+  --mari-tint:  #FCE9EB;
   --paper:      #FFFFFF;
+  --parchment:  #FBF8F1;
   --ink:        #1A1A1A;
   --ink-soft:   #5A544C;
   --line:       #E8DFCF;
-  --accent:     #E8A82B;   /* mustard highlight */
+  --accent:     #E8A82B;
   --green:      #0F6E56;
   --amber:      #D97706;
   --red:        #A32D2D;
@@ -28,70 +32,75 @@
 body {
   margin: 0; padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--cream); color: var(--ink);
+  background: var(--parchment); color: var(--ink);
   -webkit-font-smoothing: antialiased;
 }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
 
 /* ===================================================================== */
-/* WORDMARK                                                              */
-/* ===================================================================== */
-.wordmark {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--brand);
-  text-transform: none;
-  line-height: 0.95;
-}
-.wordmark .apos { color: var(--accent); }
-
-/* ===================================================================== */
-/* LOGIN                                                                 */
+/* LOGIN — group-level branding                                          */
 /* ===================================================================== */
 .login-wrap {
-  max-width: 380px; margin: 80px auto; padding: 0 20px;
+  max-width: 420px; margin: 60px auto; padding: 0 20px;
 }
 .login-card {
   background: var(--paper);
   border-radius: 14px;
-  padding: 40px 32px 32px;
-  box-shadow: 0 10px 40px -12px rgba(200, 16, 46, 0.15), 0 2px 6px rgba(0,0,0,0.04);
-  border-top: 6px solid var(--brand);
+  padding: 44px 36px 36px;
+  box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0,0,0,0.04);
+  border-top: 6px solid var(--group);
 }
-.login-mark {
+.group-mark {
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
-.login-mark .brand {
+.group-mark .brand {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 38px;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--brand);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--group);
+  text-transform: uppercase;
 }
-.login-mark .brand .apos { color: var(--accent); }
-.login-mark .sub {
+.group-mark .brand-sub {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  font-size: 11px;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin-top: 10px;
+  margin-top: 12px;
   display: block;
 }
-.login-card form { margin-top: 28px; }
+.group-mark .venues {
+  display: flex; justify-content: center; gap: 8px;
+  margin-top: 18px;
+}
+.group-mark .venue-chip {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #fff;
+}
+.venue-chip.stow { background: var(--stow); }
+.venue-chip.hg   { background: var(--hg); }
+.venue-chip.mari { background: var(--mari); }
+
+.login-card form { margin-top: 32px; }
 .login-card label {
   display: block;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin: 16px 0 6px;
+  margin: 18px 0 6px;
 }
 .login-card input {
   width: 100%;
@@ -106,88 +115,108 @@ body {
 }
 .login-card input:focus {
   outline: none;
-  border-color: var(--brand);
+  border-color: var(--group);
 }
 .login-card button {
   width: 100%;
-  margin-top: 22px;
+  margin-top: 24px;
   padding: 14px;
-  background: var(--brand);
+  background: var(--group);
   color: #fff;
   border: none;
   border-radius: 8px;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.15s;
 }
-.login-card button:hover { background: var(--brand-dark); }
+.login-card button:hover { background: #2a2a2a; }
 .login-card .err {
-  color: var(--brand); font-size: 12px; text-align: center;
+  color: var(--mari); font-size: 12px; text-align: center;
   margin-top: 14px; height: 16px; font-weight: 500;
 }
 
 /* ===================================================================== */
-/* HEADER                                                                */
+/* HEADER (post-login)                                                   */
 /* ===================================================================== */
 .header {
   background: var(--paper);
-  border-bottom: 4px solid var(--brand);
-  padding: 20px 0;
-  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+  margin-bottom: 8px;
 }
 .header-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 24px;
   display: flex; justify-content: space-between; align-items: center;
   gap: 16px; flex-wrap: wrap;
 }
-.header .brand {
+.header .brand-row {
+  display: flex; align-items: center; gap: 14px;
+}
+.header .group-brand {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  font-size: 26px;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  color: var(--brand);
-}
-.header .brand .apos { color: var(--accent); }
-.header .brand .tag {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
+  font-size: 15px;
+  letter-spacing: -0.005em;
+  color: var(--group);
   text-transform: uppercase;
-  color: var(--ink-soft);
-  margin-left: 12px;
-  padding-left: 12px;
-  border-left: 1px solid var(--line);
-  vertical-align: middle;
+  line-height: 1;
 }
+.header .divider {
+  width: 1px; height: 28px; background: var(--line);
+}
+.header .venue-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.header .venue-title.mari { color: var(--mari); }
+.header .venue-title.stow { color: var(--stow); }
+.header .venue-title.hg   { color: var(--hg); }
+.header .venue-title.group{ color: var(--group); }
 .header .who {
   font-size: 13px; color: var(--ink-soft);
   font-family: 'Inter', sans-serif;
 }
 .header .who strong { color: var(--ink); font-weight: 600; }
 .header .who a {
-  color: var(--brand);
+  color: var(--ink);
   text-decoration: none; cursor: pointer;
   font-weight: 500;
   margin-left: 6px;
+  border-bottom: 1px solid var(--line);
 }
-.header .who a:hover { text-decoration: underline; }
+.header .who a:hover { border-bottom-color: var(--ink); }
+
+/* venue accent strip under header */
+.venue-strip {
+  height: 4px;
+  background: var(--grey);
+  margin-bottom: 24px;
+}
+.venue-strip.mari { background: var(--mari); }
+.venue-strip.stow { background: var(--stow); }
+.venue-strip.hg   { background: var(--hg); }
+.venue-strip.group {
+  background: linear-gradient(to right, var(--stow) 0%, var(--stow) 33.3%, var(--hg) 33.3%, var(--hg) 66.6%, var(--mari) 66.6%, var(--mari) 100%);
+}
 
 /* ===================================================================== */
 /* SUB-HEADER                                                            */
 /* ===================================================================== */
 .snapshot-title {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   color: var(--ink-soft);
-  margin: 0 0 4px;
+  margin: 0 0 6px;
 }
 .snapshot-date {
   font-family: 'Space Grotesk', sans-serif;
@@ -195,15 +224,15 @@ body {
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.01em;
-  margin: 0 0 20px;
+  margin: 0 0 22px;
 }
 .snapshot-date .stale {
   font-size: 12px;
-  color: var(--brand);
+  color: var(--mari);
   font-weight: 500;
   margin-left: 12px;
   padding: 3px 10px;
-  background: var(--brand-tint);
+  background: var(--mari-tint);
   border-radius: 12px;
   letter-spacing: 0;
   text-transform: none;
@@ -255,7 +284,7 @@ body {
 .card.green   { border-top-color: var(--green);  }
 .card.yellow  { border-top-color: var(--accent); }
 .card.amber   { border-top-color: var(--amber);  }
-.card.red     { border-top-color: var(--brand);  }
+.card.red     { border-top-color: var(--mari);   }
 .card.unknown { border-top-color: var(--grey);   }
 
 /* ===================================================================== */
@@ -270,10 +299,10 @@ body {
 }
 .section h2 {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   margin: 0 0 16px;
   color: var(--ink-soft);
 }
@@ -290,12 +319,12 @@ th {
   color: var(--ink-soft);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  background: rgba(232, 223, 207, 0.3);
+  letter-spacing: 0.14em;
+  background: var(--group-tint);
 }
 td { font-variant-numeric: tabular-nums; color: var(--ink); }
 td.num { text-align: right; }
-tbody tr:hover { background: var(--brand-tint); }
+tbody tr:hover { background: var(--group-tint); }
 
 /* ===================================================================== */
 /* FOOTER                                                                */
@@ -308,13 +337,13 @@ tbody tr:hover { background: var(--brand-tint); }
   color: var(--ink-soft);
   text-align: center;
 }
-.footer .brand-tiny {
+.footer .group-tiny {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  color: var(--brand);
-  letter-spacing: -0.01em;
+  color: var(--group);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
 }
-.footer .brand-tiny .apos { color: var(--accent); }
 
 .hidden { display: none !important; }
 </style>
@@ -324,9 +353,14 @@ tbody tr:hover { background: var(--brand-tint); }
 <!-- LOGIN SCREEN -->
 <div id="login" class="login-wrap">
   <div class="login-card">
-    <div class="login-mark">
-      <div class="brand">MARILYNA<span class="apos">'</span>S</div>
-      <span class="sub">Daily Reporting</span>
+    <div class="group-mark">
+      <div class="brand">Stowaway<br>Hospitality Group</div>
+      <span class="brand-sub">Daily Reporting</span>
+      <div class="venues">
+        <span class="venue-chip stow">Stowaway</span>
+        <span class="venue-chip hg">Harry Gatos</span>
+        <span class="venue-chip mari">Marilyna's</span>
+      </div>
     </div>
     <form id="login-form" onsubmit="return doLogin(event)">
       <label for="username">Username</label>
@@ -343,14 +377,17 @@ tbody tr:hover { background: var(--brand-tint); }
 <div id="dashboard" class="hidden">
   <div class="header">
     <div class="header-inner">
-      <div>
-        <span class="brand">MARILYNA<span class="apos">'</span>S<span class="tag">Daily Reporting</span></span>
+      <div class="brand-row">
+        <span class="group-brand">Stowaway Hospitality Group</span>
+        <span class="divider"></span>
+        <span class="venue-title group" id="venue-title">Daily Reporting</span>
       </div>
       <div class="who">
         <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
       </div>
     </div>
   </div>
+  <div class="venue-strip group" id="venue-strip"></div>
 
   <div class="wrap">
     <p class="snapshot-title" id="snapshot-title">Yesterday</p>
@@ -372,7 +409,7 @@ tbody tr:hover { background: var(--brand-tint); }
     </div>
 
     <div class="footer">
-      <span class="brand-tiny">MARILYNA<span class="apos">'</span>S</span> ·
+      <span class="group-tiny">Stowaway Hospitality Group</span> ·
       Data from Lightspeed Insights + Deputy · Refreshed daily 6am AEST ·
       Last update: <span id="last-update"></span>
     </div>
@@ -382,8 +419,7 @@ tbody tr:hover { background: var(--brand-tint); }
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
 // ============================================================================
-// AUTH — client-side, obscure-URL + SHA-256 hashed passwords. Not real
-// security. See users.json.
+// AUTH — client-side, obscure-URL + SHA-256 hashed passwords.
 // ============================================================================
 let USERS = null;
 let CURRENT_ROLE = null;
@@ -393,13 +429,11 @@ async function loadUsers() {
   const r = await fetch('users.json?t=' + Date.now());
   USERS = await r.json();
 }
-
 async function sha256Hex(s) {
   const buf = new TextEncoder().encode(s);
   const digest = await crypto.subtle.digest('SHA-256', buf);
   return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
 async function doLogin(evt) {
   evt.preventDefault();
   const u = document.getElementById('username').value.trim().toLowerCase();
@@ -417,7 +451,6 @@ async function doLogin(evt) {
   showDashboard();
   return false;
 }
-
 function logout() {
   sessionStorage.removeItem('mari_session');
   CURRENT_USER = null; CURRENT_ROLE = null;
@@ -428,16 +461,15 @@ function logout() {
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 }
-
 async function showDashboard() {
   document.getElementById('login').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('trend-section').classList.remove('hidden');
   document.getElementById('history-section').classList.remove('hidden');
   document.getElementById('who-name').textContent = CURRENT_USER.display;
+  applyVenueTheme();
   await loadData();
 }
-
 async function tryResume() {
   await loadUsers();
   const raw = sessionStorage.getItem('mari_session');
@@ -454,8 +486,11 @@ async function tryResume() {
 // ============================================================================
 // ROLE-BASED VIEW CONFIG
 // ============================================================================
+// venue: 'group' | 'stow' | 'hg' | 'mari'   — drives the header color/label
+// scope: 'mari' | 'placeholder'             — drives what data section renders
 const VIEWS = {
   admin: {
+    venue: 'group', venueLabel: 'All Venues',
     scope: 'mari',
     cards: ['revenue', 'cogs', 'wages', 'delivery'],
     chart_lines: ['cogs', 'wages', 'delivery'],
@@ -463,6 +498,7 @@ const VIEWS = {
     show_dollar_amounts: true,
   },
   pizza: {
+    venue: 'mari', venueLabel: "Marilyna's",
     scope: 'mari',
     cards: ['revenue', 'cogs', 'wages', 'delivery'],
     chart_lines: ['cogs', 'wages', 'delivery'],
@@ -470,16 +506,26 @@ const VIEWS = {
     show_dollar_amounts: true,
   },
   bigchef: {
+    venue: 'group', venueLabel: 'All Kitchens',
     scope: 'mari',
     cards: ['revenue', 'cogs', 'wages'],
     chart_lines: ['cogs', 'wages'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct'],
     show_dollar_amounts: true,
   },
-  stowfood: { scope: 'placeholder', label: 'Stowaway Kitchen' },
-  hgfood:   { scope: 'placeholder', label: 'Harry Gatos Kitchen' },
-  bar:      { scope: 'placeholder', label: 'Bar / FOH (Stowaway + Harry Gatos)' },
+  stowfood: { venue: 'stow', venueLabel: 'Stowaway · Kitchen',    scope: 'placeholder' },
+  hgfood:   { venue: 'hg',   venueLabel: 'Harry Gatos · Kitchen', scope: 'placeholder' },
+  bar:      { venue: 'group',venueLabel: 'Bar / FOH · Stow + HG', scope: 'placeholder' },
 };
+
+function applyVenueTheme() {
+  const cfg = VIEWS[CURRENT_ROLE] || VIEWS.admin;
+  const strip = document.getElementById('venue-strip');
+  const title = document.getElementById('venue-title');
+  strip.className = 'venue-strip ' + cfg.venue;
+  title.className = 'venue-title ' + cfg.venue;
+  title.textContent = cfg.venueLabel;
+}
 
 const CARD_DEFS = {
   revenue: (day, cfg) => ({ label: 'Revenue (ex-GST)', value: '$' + Math.round(parseFloat(day.revenue_ex_gst) || 0).toLocaleString(), sub: day.date, status: 'unknown' }),
@@ -545,7 +591,7 @@ async function loadData() {
 }
 
 function renderPlaceholder(cfg) {
-  document.getElementById('snapshot-title').textContent = cfg.label;
+  document.getElementById('snapshot-title').textContent = cfg.venueLabel;
   document.getElementById('latest-date').textContent = '';
   document.getElementById('stale-badge').innerHTML = '';
   document.getElementById('snapshot').innerHTML = `
@@ -616,13 +662,10 @@ function renderChart(history, cfg) {
         legend: {
           position: 'bottom',
           labels: {
-            boxWidth: 14,
-            boxHeight: 3,
-            usePointStyle: true,
-            pointStyle: 'line',
+            boxWidth: 14, boxHeight: 3,
+            usePointStyle: true, pointStyle: 'line',
             font: { family: 'Space Grotesk', size: 12, weight: '500' },
-            color: '#5A544C',
-            padding: 20,
+            color: '#5A544C', padding: 20,
           }
         }
       }
