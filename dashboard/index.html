@@ -186,10 +186,12 @@ async function tryResume() {
 // ============================================================================
 // ROLE-BASED VIEW CONFIG
 // ============================================================================
-// admin  → sees everything, all venues (currently only Mari data lives in this repo)
-// pizza  → sees Marilyna's full 4-lane view
-// stowfood, hgfood, bar → placeholder ("not yet wired up") until we add
-//                         Stowaway / Harry Gatos pipelines to this repo
+// admin    → sees everything, all venues
+// pizza    → sees Marilyna's full 4-lane view
+// bigchef  → sees kitchen slice (Revenue + COGS + Wages) across all venues.
+//            Currently only Mari data is wired up — when Stowaway + HG kitchen
+//            pipelines are added, bigchef will aggregate all three.
+// stowfood, hgfood, bar → placeholder until pipelines exist
 const VIEWS = {
   admin: {
     scope: 'mari',
@@ -203,6 +205,13 @@ const VIEWS = {
     cards: ['revenue', 'cogs', 'wages', 'delivery'],
     chart_lines: ['cogs', 'wages', 'delivery'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
+    show_dollar_amounts: true,
+  },
+  bigchef: {
+    scope: 'mari',
+    cards: ['revenue', 'cogs', 'wages'],
+    chart_lines: ['cogs', 'wages'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct'],
     show_dollar_amounts: true,
   },
   stowfood: { scope: 'placeholder', label: 'Stowaway Kitchen' },
