@@ -14,9 +14,12 @@ body {
 h1 { font-size: 24px; font-weight: 500; margin: 0 0 4px; }
 .subtitle { font-size: 13px; color: #52514e; margin: 0 0 24px; }
 .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-left: 8px; }
-.status-badge.ok { background: #dcedd9; color: #0f6e56; }
-.status-badge.warn { background: #fdf3d0; color: #8c6d1f; }
-.status-badge.err { background: #f7cbca; color: #a32d2d; }
+.stale { color: #a32d2d; font-weight: 500; }
+
+.top-bar { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.who { font-size: 12px; color: #52514e; }
+.who a { color: #a32d2d; text-decoration: none; cursor: pointer; }
+.who a:hover { text-decoration: underline; }
 
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 24px; }
 @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
@@ -42,46 +45,196 @@ th { font-weight: 500; color: #52514e; font-size: 12px; text-transform: uppercas
 td.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .footer { margin-top: 32px; padding-top: 16px; border-top: 0.5px solid #e1e0d9; font-size: 12px; color: #898781; }
-.stale { color: #a32d2d; font-weight: 500; }
+
+/* Login screen */
+.login-wrap { max-width: 320px; margin: 80px auto; background: #fff; border-radius: 10px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.login-wrap h1 { text-align: center; margin-bottom: 4px; }
+.login-wrap .subtitle { text-align: center; margin-bottom: 20px; }
+.login-wrap label { display: block; font-size: 12px; color: #52514e; margin: 12px 0 4px; }
+.login-wrap input { width: 100%; padding: 10px; border: 1px solid #d8d6ce; border-radius: 6px; font-size: 14px; background: #fff; }
+.login-wrap button { width: 100%; margin-top: 16px; padding: 12px; background: #0b0b0b; color: #fff; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+.login-wrap button:hover { background: #333; }
+.login-wrap .err { color: #a32d2d; font-size: 12px; text-align: center; margin-top: 12px; height: 16px; }
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<h1>Marilyna's — Daily Reporting</h1>
-<p class="subtitle">
-  Yesterday's snapshot · <span id="latest-date"></span>
-  <span id="stale-badge"></span>
-</p>
-
-<div class="grid" id="snapshot"></div>
-
-<div class="section">
-  <h2>30-day trailing</h2>
-  <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+<!-- LOGIN SCREEN -->
+<div id="login" class="login-wrap">
+  <h1>Marilyna's</h1>
+  <p class="subtitle">Daily Reporting · sign in</p>
+  <form id="login-form" onsubmit="return doLogin(event)">
+    <label for="username">Username</label>
+    <input id="username" name="username" autocomplete="username" autofocus>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password">
+    <button type="submit">Sign in</button>
+    <div class="err" id="login-err"></div>
+  </form>
 </div>
 
-<div class="section">
-  <h2>Daily history</h2>
-  <table id="history-table">
-    <thead><tr>
-      <th>Date</th>
-      <th class="num">Rev (ex-GST)</th>
-      <th class="num">COGS %</th>
-      <th class="num">Wages %</th>
-      <th class="num">Delivery %</th>
-      <th class="num">GP %</th>
-    </tr></thead>
-    <tbody></tbody>
-  </table>
-</div>
+<!-- DASHBOARD (hidden until login) -->
+<div id="dashboard" class="hidden">
+  <div class="top-bar">
+    <div>
+      <h1>Marilyna's — Daily Reporting</h1>
+      <p class="subtitle">
+        Yesterday's snapshot · <span id="latest-date"></span>
+        <span id="stale-badge"></span>
+      </p>
+    </div>
+    <div class="who">
+      Signed in as <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
+    </div>
+  </div>
 
-<div class="footer">
-  Data source: Lightspeed Insights + Deputy API · Refreshed daily at 6am AEST by GitHub Actions ·
-  Last successful update: <span id="last-update"></span>
+  <div class="grid" id="snapshot"></div>
+
+  <div class="section" id="trend-section">
+    <h2>30-day trailing</h2>
+    <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+  </div>
+
+  <div class="section" id="history-section">
+    <h2>Daily history</h2>
+    <table id="history-table">
+      <thead><tr id="history-thead"></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Data source: Lightspeed Insights + Deputy API · Refreshed daily at 6am AEST by GitHub Actions ·
+    Last successful update: <span id="last-update"></span>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
+// ============================================================================
+// AUTH
+// ============================================================================
+// Client-side auth is not real security — but combined with the obscure URL,
+// it stops anyone who casually finds the dashboard from seeing the data.
+// Passwords are hashed (SHA-256) with a salt so plaintext isn't recoverable
+// from users.json.
+// ============================================================================
+
+let USERS = null;
+let CURRENT_ROLE = null;
+let CURRENT_USER = null;
+
+async function loadUsers() {
+  const r = await fetch('users.json?t=' + Date.now());
+  USERS = await r.json();
+}
+
+async function sha256Hex(s) {
+  const buf = new TextEncoder().encode(s);
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function doLogin(evt) {
+  evt.preventDefault();
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  if (!USERS) await loadUsers();
+  const user = USERS.users[u];
+  if (!user) { errEl.textContent = 'Invalid credentials'; return false; }
+  const hash = await sha256Hex(USERS.salt + p);
+  if (hash !== user.hash) { errEl.textContent = 'Invalid credentials'; return false; }
+  CURRENT_USER = { username: u, ...user };
+  CURRENT_ROLE = user.role;
+  sessionStorage.setItem('mari_session', JSON.stringify(CURRENT_USER));
+  showDashboard();
+  return false;
+}
+
+function logout() {
+  sessionStorage.removeItem('mari_session');
+  CURRENT_USER = null; CURRENT_ROLE = null;
+  document.getElementById('login').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
+
+async function showDashboard() {
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('who-name').textContent = CURRENT_USER.display;
+  await loadData();
+}
+
+async function tryResume() {
+  await loadUsers();
+  const raw = sessionStorage.getItem('mari_session');
+  if (!raw) return;
+  try {
+    const s = JSON.parse(raw);
+    if (USERS.users[s.username] && USERS.users[s.username].hash === s.hash) {
+      CURRENT_USER = s; CURRENT_ROLE = s.role;
+      showDashboard();
+    }
+  } catch (e) {}
+}
+
+// ============================================================================
+// ROLE-BASED VIEW CONFIG
+// ============================================================================
+// Owner sees everything. Department heads see their own slice only.
+// ============================================================================
+
+const VIEWS = {
+  owner: {
+    cards: ['revenue', 'cogs', 'wages', 'delivery'],
+    chart_lines: ['cogs', 'wages', 'delivery'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
+    show_dollar_amounts: true,
+  },
+  kitchen: {
+    cards: ['revenue', 'cogs'],
+    chart_lines: ['cogs'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct'],
+    show_dollar_amounts: true,
+  },
+  delivery: {
+    cards: ['revenue', 'delivery'],
+    chart_lines: ['delivery'],
+    history_cols: ['date', 'revenue_ex_gst', 'delivery_pct'],
+    show_dollar_amounts: true,
+  },
+};
+
+const CARD_DEFS = {
+  revenue: (day, cfg) => ({ label: 'Revenue (ex-GST)', value: '$' + Math.round(parseFloat(day.revenue_ex_gst) || 0).toLocaleString(), sub: day.date, status: 'unknown' }),
+  cogs:    (day, cfg) => ({ label: 'COGS', value: (day.cogs_pct || '?') + '%', sub: cfg.show_dollar_amounts ? '$' + Math.round(parseFloat(day.cogs_dollars) || 0).toLocaleString() : '', status: day.cogs_alert }),
+  wages:   (day, cfg) => ({ label: 'Wages', value: (day.wages_pct || '?') + '%', sub: cfg.show_dollar_amounts ? '$' + Math.round(parseFloat(day.wages_dollars) || 0).toLocaleString() : '', status: day.wages_alert }),
+  delivery:(day, cfg) => ({ label: 'Delivery', value: (day.delivery_pct || '?') + '%', sub: cfg.show_dollar_amounts ? '$' + Math.round(parseFloat(day.delivery_dollars) || 0).toLocaleString() : '', status: day.delivery_alert }),
+};
+
+const CHART_LINE_DEFS = {
+  cogs:     { label: 'COGS %',     key: 'cogs_pct',     color: '#1baf7a' },
+  wages:    { label: 'Wages %',    key: 'wages_pct',    color: '#2a78d6' },
+  delivery: { label: 'Delivery %', key: 'delivery_pct', color: '#eda100' },
+};
+
+const COL_DEFS = {
+  date:            { label: 'Date',         num: false, render: r => r.date },
+  revenue_ex_gst:  { label: 'Rev (ex-GST)', num: true,  render: r => '$' + Math.round(parseFloat(r.revenue_ex_gst) || 0).toLocaleString() },
+  cogs_pct:        { label: 'COGS %',       num: true,  render: r => r.cogs_pct + '%' },
+  wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct + '%' },
+  delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct + '%' },
+  gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct + '%' },
+};
+
+// ============================================================================
+// DATA LOADING & RENDERING
+// ============================================================================
 async function loadData() {
   const historyRes = await fetch('data/mari_daily_history.csv?t=' + Date.now());
   const historyText = await historyRes.text();
@@ -93,17 +246,25 @@ async function loadData() {
 
   const now = new Date();
   const daysBehind = Math.floor((now - latestDate) / 86400000);
+  const staleEl = document.getElementById('stale-badge');
   if (daysBehind > 1) {
-    document.getElementById('stale-badge').innerHTML = `<span class="stale">⚠ Data is ${daysBehind} days behind</span>`;
+    staleEl.innerHTML = `<span class="stale">⚠ Data is ${daysBehind} days behind</span>`;
+  } else {
+    staleEl.innerHTML = '';
   }
 
-  renderSnapshot(latest);
-  renderChart(history);
-  renderHistoryTable(history);
+  const cfg = VIEWS[CURRENT_ROLE] || VIEWS.owner;
+  renderSnapshot(latest, cfg);
+  renderChart(history, cfg);
+  renderHistoryTable(history, cfg);
 
-  const lastRes = await fetch(`data/mari_daily_${latest.date}.json?t=` + Date.now());
-  const lastData = await lastRes.json();
-  document.getElementById('last-update').textContent = new Date(lastData.generated_at).toLocaleString('en-AU');
+  try {
+    const lastRes = await fetch(`data/mari_daily_${latest.date}.json?t=` + Date.now());
+    const lastData = await lastRes.json();
+    document.getElementById('last-update').textContent = new Date(lastData.generated_at).toLocaleString('en-AU');
+  } catch (e) {
+    document.getElementById('last-update').textContent = 'unknown';
+  }
 }
 
 function parseCsv(text) {
@@ -115,34 +276,28 @@ function parseCsv(text) {
   });
 }
 
-function renderSnapshot(day) {
-  const cards = [
-    { label: 'Revenue (ex-GST)', value: '$' + Math.round(parseFloat(day.revenue_ex_gst) || 0).toLocaleString(), sub: day.date, status: 'unknown' },
-    { label: 'COGS', value: (day.cogs_pct || '?') + '%', sub: '$' + Math.round(parseFloat(day.cogs_dollars) || 0).toLocaleString(), status: day.cogs_alert },
-    { label: 'Wages', value: (day.wages_pct || '?') + '%', sub: '$' + Math.round(parseFloat(day.wages_dollars) || 0).toLocaleString(), status: day.wages_alert },
-    { label: 'Delivery', value: (day.delivery_pct || '?') + '%', sub: '$' + Math.round(parseFloat(day.delivery_dollars) || 0).toLocaleString(), status: day.delivery_alert },
-  ];
+function renderSnapshot(day, cfg) {
+  const cards = cfg.cards.map(key => CARD_DEFS[key](day, cfg));
   document.getElementById('snapshot').innerHTML = cards.map(c => `
-    <div class="card ${c.status}">
+    <div class="card ${c.status || 'unknown'}">
       <p class="label">${c.label}</p>
       <p class="value">${c.value}</p>
-      <p class="sub">${c.sub}</p>
+      <p class="sub">${c.sub || ''}</p>
     </div>
   `).join('');
 }
 
-function renderChart(history) {
+let CHART_INSTANCE = null;
+function renderChart(history, cfg) {
   const ctx = document.getElementById('trend-chart').getContext('2d');
-  new Chart(ctx, {
+  if (CHART_INSTANCE) CHART_INSTANCE.destroy();
+  const datasets = cfg.chart_lines.map(line => {
+    const def = CHART_LINE_DEFS[line];
+    return { label: def.label, data: history.map(r => parseFloat(r[def.key])), borderColor: def.color, tension: 0.25, borderWidth: 2 };
+  });
+  CHART_INSTANCE = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: history.map(r => r.date.slice(5)),
-      datasets: [
-        { label: 'COGS %', data: history.map(r => parseFloat(r.cogs_pct)), borderColor: '#1baf7a', tension: 0.25, borderWidth: 2 },
-        { label: 'Wages %', data: history.map(r => parseFloat(r.wages_pct)), borderColor: '#2a78d6', tension: 0.25, borderWidth: 2 },
-        { label: 'Delivery %', data: history.map(r => parseFloat(r.delivery_pct)), borderColor: '#eda100', tension: 0.25, borderWidth: 2 },
-      ]
-    },
+    data: { labels: history.map(r => r.date.slice(5)), datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: { y: { ticks: { callback: v => v + '%' } } },
@@ -151,25 +306,23 @@ function renderChart(history) {
   });
 }
 
-function renderHistoryTable(history) {
+function renderHistoryTable(history, cfg) {
+  const thead = document.getElementById('history-thead');
+  thead.innerHTML = cfg.history_cols.map(k => {
+    const def = COL_DEFS[k];
+    return `<th class="${def.num ? 'num' : ''}">${def.label}</th>`;
+  }).join('');
   const tbody = document.querySelector('#history-table tbody');
-  tbody.innerHTML = history.slice().reverse().slice(0, 30).map(r => `
-    <tr>
-      <td>${r.date}</td>
-      <td class="num">$${Math.round(parseFloat(r.revenue_ex_gst) || 0).toLocaleString()}</td>
-      <td class="num">${r.cogs_pct}%</td>
-      <td class="num">${r.wages_pct}%</td>
-      <td class="num">${r.delivery_pct}%</td>
-      <td class="num">${r.gp_pct}%</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = history.slice().reverse().slice(0, 30).map(r =>
+    '<tr>' + cfg.history_cols.map(k => {
+      const def = COL_DEFS[k];
+      return `<td class="${def.num ? 'num' : ''}">${def.render(r)}</td>`;
+    }).join('') + '</tr>'
+  ).join('');
 }
 
-loadData().catch(e => {
-  document.body.insertAdjacentHTML('afterbegin', `<div style="background:#f7cbca;padding:12px;border-radius:6px;margin-bottom:16px">
-    <strong>Dashboard couldn't load data:</strong> ${e.message}. Data files may not exist yet.
-  </div>`);
-});
+// Boot
+tryResume().catch(e => console.error(e));
 </script>
 
 </body>
