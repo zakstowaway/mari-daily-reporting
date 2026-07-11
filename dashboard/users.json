@@ -2,7 +2,7 @@
   "salt": "mari-2026-northern-beaches",
   "users": {
     "admin": {
-      "hash": "eff748b542309a740997d89a29d5ff6671b718ba77c8cecd9e6c4ffa6fe632c7",
+      "hash": "e5f6a49e68f9963811618f484ff29def47df10b27304da9baf5f9bfe14845916",
       "role": "admin",
       "display": "Admin (all-access)"
     },
