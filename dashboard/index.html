@@ -4,12 +4,14 @@
 <meta charset="utf-8">
 <title>Stowaway Hospitality Group — Daily Reporting</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --group:      #0B0B0B;
   --group-tint: #F2F0EA;
   --stow:       #1B4D3E;
@@ -28,6 +30,34 @@
   --amber:      #D97706;
   --red:        #A32D2D;
   --grey:       #C9C2B3;
+  --wages-line: #1A1A1A;
+  --grid-line:  rgba(232, 223, 207, 0.4);
+  --logo-filter: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --group:      #F2F0EA;
+    --group-tint: #201E1A;
+    --stow:       #3A9578;
+    --stow-tint:  #12241E;
+    --hg:         #E86A47;
+    --hg-tint:    #2A140B;
+    --mari:       #E64663;
+    --mari-tint:  #2E1116;
+    --paper:      #1D1B17;
+    --parchment:  #12100D;
+    --ink:        #F2F0EA;
+    --ink-soft:   #B7B1A4;
+    --line:       #2F2C26;
+    --accent:     #F5C25A;
+    --green:      #4CB399;
+    --amber:      #F2A03F;
+    --red:        #E64663;
+    --grey:       #3F3C34;
+    --wages-line: #F2F0EA;
+    --grid-line:  rgba(120, 110, 90, 0.2);
+    --logo-filter: invert(1);
+  }
 }
 * { box-sizing: border-box; }
 body {
@@ -46,16 +76,20 @@ body {
   box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0,0,0,0.04);
   border-top: 6px solid var(--group);
 }
+@media (prefers-color-scheme: dark) {
+  .login-card { box-shadow: 0 14px 44px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4); }
+}
 .group-mark { text-align: center; margin-bottom: 8px; }
-.group-mark .brand {
-  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
-  font-size: 22px; letter-spacing: -0.01em; line-height: 1.1;
-  color: var(--group); text-transform: uppercase;
+.brand-logo {
+  width: 140px; height: 140px;
+  display: block; margin: 0 auto 14px;
+  object-fit: contain;
+  filter: var(--logo-filter);
 }
 .group-mark .brand-sub {
   font-family: 'Space Grotesk', sans-serif; font-weight: 500;
   font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
-  color: var(--ink-soft); margin-top: 12px; display: block;
+  color: var(--ink-soft); margin-top: 4px; display: block;
 }
 .group-mark .venues { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
 .group-mark .venue-chip {
@@ -77,15 +111,15 @@ body {
   border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif;
   background: var(--paper); color: var(--ink); transition: border-color 0.15s;
 }
-.login-card input:focus { outline: none; border-color: var(--group); }
+.login-card input:focus { outline: none; border-color: var(--ink); }
 .login-card button {
   width: 100%; margin-top: 24px; padding: 14px;
-  background: var(--group); color: #fff; border: none; border-radius: 8px;
+  background: var(--group); color: var(--paper); border: none; border-radius: 8px;
   font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
   letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
   transition: background 0.15s;
 }
-.login-card button:hover { background: #2a2a2a; }
+.login-card button:hover { opacity: 0.85; }
 .login-card .err {
   color: var(--mari); font-size: 12px; text-align: center;
   margin-top: 14px; height: 16px; font-weight: 500;
@@ -101,7 +135,12 @@ body {
   display: flex; justify-content: space-between; align-items: center;
   gap: 16px; flex-wrap: wrap;
 }
-.header .brand-row { display: flex; align-items: center; gap: 14px; }
+.header .brand-row { display: flex; align-items: center; gap: 10px; }
+.header .header-logo {
+  width: 34px; height: 34px; display: inline-block;
+  filter: var(--logo-filter);
+  object-fit: contain;
+}
 .header .group-brand {
   font-family: 'Space Grotesk', sans-serif; font-weight: 700;
   font-size: 15px; letter-spacing: -0.005em; color: var(--group);
@@ -167,7 +206,7 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 .timeframe-toggle button:hover { color: var(--ink); }
-.timeframe-toggle button.active { background: var(--ink); color: var(--paper); }
+.timeframe-toggle button.active { background: var(--group); color: var(--paper); }
 
 .day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
 .day-pill {
@@ -187,7 +226,7 @@ body {
 .day-pill:hover { border-color: var(--ink); }
 .day-pill.no-data { opacity: 0.5; }
 .day-pill.active {
-  background: var(--ink); color: var(--paper); border-color: var(--ink);
+  background: var(--group); color: var(--paper); border-color: var(--group);
 }
 .day-pill.active .weekday { color: rgba(255,255,255,0.75); }
 
@@ -219,7 +258,7 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-top: 4px solid var(--grey);
   transition: transform 0.15s, box-shadow 0.15s;
 }
-.card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+.card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 .card .label {
   font-family: 'Space Grotesk', sans-serif; font-size: 11px;
   text-transform: uppercase; letter-spacing: 0.15em; font-weight: 500;
@@ -267,8 +306,6 @@ tbody tr:hover { background: var(--group-tint); }
   color: var(--group); letter-spacing: -0.005em; text-transform: uppercase;
 }
 .hidden { display: none !important; }
-
-/* Coming-soon placeholder */
 .placeholder-card { grid-column: 1 / -1; text-align: center; padding: 60px 24px; }
 </style>
 </head>
@@ -278,8 +315,8 @@ tbody tr:hover { background: var(--group-tint); }
 <div id="login" class="login-wrap">
   <div class="login-card">
     <div class="group-mark">
-      <div class="brand">Stowaway<br>Hospitality Group</div>
-      <span class="brand-sub">Daily Reporting</span>
+      <img class="brand-logo" alt="Stowaway Hospitality Group" src="logo_180.png">
+      <span class="brand-sub">Hospitality Group · Daily Reporting</span>
       <div class="venues">
         <span class="venue-chip stow">Stowaway</span>
         <span class="venue-chip hg">Harry Gatos</span>
@@ -302,6 +339,7 @@ tbody tr:hover { background: var(--group-tint); }
   <div class="header">
     <div class="header-inner">
       <div class="brand-row">
+        <img class="header-logo" alt="" src="logo_180.png">
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
       <div class="who">
@@ -355,6 +393,10 @@ tbody tr:hover { background: var(--group-tint); }
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
+// Dark mode detection — swap chart line colors that would be invisible on dark bg
+const IS_DARK = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const CSS_VAR = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 // ============================================================================
 // AUTH
 // ============================================================================
@@ -422,38 +464,30 @@ const REAL_VENUES = ['mari', 'stow', 'hg'];
 
 const VENUE_CONFIG = {
   group: {
-    label: 'Group',
-    chipClass: 'group',
-    historyFile: null,        // synthesized from real venues
-    dayFilePrefix: null,
+    label: 'Group', chipClass: 'group',
+    historyFile: null, dayFilePrefix: null,
     cards: ['revenue', 'cogs', 'wages', 'gp'],
     chart_lines: ['cogs', 'wages', 'gp'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
     synthetic: true,
   },
   mari: {
-    label: "Marilyna's",
-    chipClass: 'mari',
-    historyFile: 'data/mari_daily_history.csv',
-    dayFilePrefix: 'data/mari_daily_',
+    label: "Marilyna's", chipClass: 'mari',
+    historyFile: 'data/mari_daily_history.csv', dayFilePrefix: 'data/mari_daily_',
     cards: ['revenue', 'cogs', 'wages', 'delivery'],
     chart_lines: ['cogs', 'wages', 'delivery'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
   },
   stow: {
-    label: 'Stowaway',
-    chipClass: 'stow',
-    historyFile: 'data/stow_daily_history.csv',
-    dayFilePrefix: 'data/stow_daily_',
+    label: 'Stowaway', chipClass: 'stow',
+    historyFile: 'data/stow_daily_history.csv', dayFilePrefix: 'data/stow_daily_',
     cards: ['revenue', 'cogs', 'wages', 'gp'],
     chart_lines: ['cogs', 'wages', 'gp'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
   },
   hg: {
-    label: 'Harry Gatos',
-    chipClass: 'hg',
-    historyFile: 'data/hg_daily_history.csv',
-    dayFilePrefix: 'data/hg_daily_',
+    label: 'Harry Gatos', chipClass: 'hg',
+    historyFile: 'data/hg_daily_history.csv', dayFilePrefix: 'data/hg_daily_',
     cards: ['revenue', 'cogs', 'wages', 'gp'],
     chart_lines: ['cogs', 'wages', 'gp'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
@@ -475,12 +509,7 @@ const ROLE_CONFIG = {
 // ============================================================================
 // STATE
 // ============================================================================
-const STATE = {
-  histories: {},
-  currentVenue: null,
-  currentTimeframe: 'day',
-  currentDay: null,
-};
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null };
 
 // ============================================================================
 // UTILS
@@ -494,36 +523,22 @@ function parseCsv(text) {
     return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
   });
 }
-function toNum(x) {
-  const n = parseFloat(x);
-  return isFinite(n) ? n : 0;
-}
+function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
 function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
 function isoDate(d) { return d.toISOString().slice(0, 10); }
-function sydneyToday() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
+function sydneyToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
 function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); return c; }
-function quarterStart(d) {
-  const q = Math.floor(d.getMonth() / 3);
-  return new Date(d.getFullYear(), q * 3, 1);
-}
+function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Date(d.getFullYear(), q * 3, 1); }
 function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
-function weekStart(d) {
-  const day = d.getDay();
-  const offset = day === 0 ? -6 : 1 - day;
-  return addDays(d, offset);
-}
+function weekStart(d) { const day = d.getDay(); const offset = day === 0 ? -6 : 1 - day; return addDays(d, offset); }
 
 // ============================================================================
 // DATA LOADING
 // ============================================================================
 async function loadHistory(venue) {
   const cfg = VENUE_CONFIG[venue];
-  if (!cfg.historyFile) return [];  // synthetic
+  if (!cfg.historyFile) return [];
   try {
     const res = await fetch(cfg.historyFile + '?t=' + Date.now());
     if (!res.ok) return [];
@@ -534,8 +549,6 @@ async function loadHistory(venue) {
 
 async function loadAllHistories(role) {
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
-  // Always load all real venues if role sees group (need them to synthesize),
-  // else only load what the role can see.
   const seesGroup = roleCfg.venues.includes('group');
   const realVenuesToLoad = seesGroup ? REAL_VENUES : roleCfg.venues.filter(v => VENUE_CONFIG[v] && !VENUE_CONFIG[v].synthetic);
   const results = await Promise.all(realVenuesToLoad.map(async v => [v, await loadHistory(v)]));
@@ -545,10 +558,6 @@ async function loadAllHistories(role) {
   return out;
 }
 
-/**
- * Sum per-day figures across mari + stow + hg. Blended percentages
- * recomputed from summed dollars (proper weighting).
- */
 function synthesizeGroupHistory(histories) {
   const allDates = new Set();
   for (const v of REAL_VENUES) {
@@ -673,9 +682,10 @@ const CARD_DEFS = {
   }),
 };
 
+// Chart line colors — wages line reads from CSS var so it flips in dark mode
 const CHART_LINE_DEFS = {
   cogs:     { label: 'COGS %',     key: 'cogs_pct',     color: '#C8102E' },
-  wages:    { label: 'Wages %',    key: 'wages_pct',    color: '#1A1A1A' },
+  wages:    { label: 'Wages %',    key: 'wages_pct',    color: IS_DARK ? '#F2F0EA' : '#1A1A1A' },
   delivery: { label: 'Delivery %', key: 'delivery_pct', color: '#E8A82B' },
   gp:       { label: 'GP %',       key: 'gp_pct',       color: '#0F6E56' },
 };
@@ -756,9 +766,7 @@ function renderSnapshot() {
   const dateEl  = document.getElementById('latest-date');
   const staleEl = document.getElementById('stale-badge');
 
-  const tfLabel = {
-    day: 'Selected day', week: 'This Week', month: 'This Month', quarter: 'This Quarter',
-  }[STATE.currentTimeframe];
+  const tfLabel = { day: 'Selected day', week: 'This Week', month: 'This Month', quarter: 'This Quarter' }[STATE.currentTimeframe];
   titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
 
   if (!day) {
@@ -815,20 +823,18 @@ function renderChart() {
   const rows = STATE.histories[STATE.currentVenue] || [];
   const trailing = rows.slice(-30);
 
+  const tickColor = IS_DARK ? '#B7B1A4' : '#5A544C';
+  const gridColor = IS_DARK ? 'rgba(120,110,90,0.2)' : 'rgba(232,223,207,0.4)';
+
   const ctx = document.getElementById('trend-chart').getContext('2d');
   if (CHART_INSTANCE) CHART_INSTANCE.destroy();
   const datasets = lines.map(line => {
     const def = CHART_LINE_DEFS[line];
     return {
-      label: def.label,
-      data: trailing.map(r => toNum(r[def.key])),
-      borderColor: def.color,
-      backgroundColor: def.color + '20',
-      tension: 0.3,
-      borderWidth: 2.5,
-      pointRadius: 3,
-      pointBackgroundColor: def.color,
-      spanGaps: true,
+      label: def.label, data: trailing.map(r => toNum(r[def.key])),
+      borderColor: def.color, backgroundColor: def.color + '20',
+      tension: 0.3, borderWidth: 2.5, pointRadius: 3,
+      pointBackgroundColor: def.color, spanGaps: true,
     };
   });
   CHART_INSTANCE = new Chart(ctx, {
@@ -837,16 +843,16 @@ function renderChart() {
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        y: { ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: '#5A544C' },
-             grid: { color: 'rgba(232, 223, 207, 0.4)' } },
-        x: { ticks: { font: { family: 'Inter', size: 11 }, color: '#5A544C' },
+        y: { ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: tickColor },
+             grid: { color: gridColor } },
+        x: { ticks: { font: { family: 'Inter', size: 11 }, color: tickColor },
              grid: { display: false } }
       },
       plugins: {
         legend: { position: 'bottom',
                   labels: { boxWidth: 14, boxHeight: 3, usePointStyle: true, pointStyle: 'line',
                             font: { family: 'Space Grotesk', size: 12, weight: '500' },
-                            color: '#5A544C', padding: 20 } }
+                            color: tickColor, padding: 20 } }
       }
     }
   });
@@ -878,7 +884,6 @@ async function fetchLastUpdate() {
   const latest = rows[rows.length - 1];
   const cfg = VENUE_CONFIG[STATE.currentVenue];
   if (!cfg.dayFilePrefix) {
-    // group / synthetic — pick the freshest generated_at across real venues
     const stamps = [];
     for (const v of REAL_VENUES) {
       const rrows = STATE.histories[v] || [];
@@ -916,9 +921,6 @@ function render() {
   fetchLastUpdate();
 }
 
-// ============================================================================
-// STATE MUTATIONS
-// ============================================================================
 function switchVenue(venue) {
   STATE.currentVenue = venue;
   const rows = STATE.histories[venue] || [];
@@ -927,7 +929,6 @@ function switchVenue(venue) {
 }
 function switchTimeframe(tf) {
   STATE.currentTimeframe = tf;
-  // When switching to a rollup timeframe, anchor to the freshest available day
   if (tf !== 'day') {
     const rows = STATE.histories[STATE.currentVenue] || [];
     if (rows.length) STATE.currentDay = rows[rows.length - 1].date;
@@ -939,30 +940,20 @@ function switchDay(iso) {
   render();
 }
 
-// ============================================================================
-// BOOTSTRAP
-// ============================================================================
 async function bootstrap() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
-
   STATE.histories = await loadAllHistories(CURRENT_ROLE);
-
-  // Initial venue: role default (must be in role.venues); if it has no data, pick first venue with data
   const defaultVenue = roleCfg.defaultVenue;
   const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
   STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
-
   const rows = STATE.histories[STATE.currentVenue] || [];
   STATE.currentDay = rows.length ? rows[rows.length - 1].date : isoDate(addDays(sydneyToday(), -1));
-
   document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
     btn.onclick = () => switchTimeframe(btn.dataset.tf);
   });
-
   render();
 }
 
-// Boot
 tryResume().catch(e => console.error(e));
 </script>
 
