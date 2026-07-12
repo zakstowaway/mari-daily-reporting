@@ -2,7 +2,7 @@
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "computed_at": "2026-07-12T00:00:00Z",
-  "computed_from": "Initial defaults from Zak weekly-report benchmarks; refine once 8+ weeks of daily data available.",
+  "computed_from": "Initial defaults from Zak weekly-report benchmarks; refine once 8+ weeks of daily data available. Split targets (cogs_food/cogs_bev/wages_kitchen/wages_foh) are DRAFT — Zak to confirm.",
   "targets_and_alerts": {
     "cogs": {
       "target": 28.0,
@@ -15,6 +15,30 @@
       "amber": 33.0,
       "red": 36.0,
       "note": "Zak-set 30% target — hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT — Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT — Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT — Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT — Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
     },
     "gp": {
       "note": "Higher is better — 70% target; status inversion not yet implemented so alerts left empty",
