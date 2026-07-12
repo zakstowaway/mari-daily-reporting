@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Stowaway Hospitality Group — Daily Reporting</title>
+<title>Stowaway Hospitality Group â Daily Reporting</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="logo_32.png">
@@ -56,7 +56,7 @@
     --grey:       #3F3C34;
     --wages-line: #F2F0EA;
     --grid-line:  rgba(120, 110, 90, 0.2);
-    --logo-filter: invert(1);
+    --logo-filter: none;
   }
 }
 * { box-sizing: border-box; }
@@ -84,7 +84,9 @@ body {
   display: block; margin: 0 auto 14px;
   object-fit: contain;
   filter: var(--logo-filter);
-  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 .group-mark .brand-sub {
   font-family: 'Space Grotesk', sans-serif; font-weight: 500;
@@ -296,7 +298,7 @@ tbody tr:hover { background: var(--group-tint); }
   <div class="login-card">
     <div class="group-mark">
       <img class="brand-logo" alt="Stowaway Hospitality Group" src="logo_32.png">
-      <span class="brand-sub">Hospitality Group · Daily Reporting</span>
+      <span class="brand-sub">Hospitality Group Â· Daily Reporting</span>
       <div class="venues">
         <span class="venue-chip stow">Stowaway</span>
         <span class="venue-chip hg">Harry Gatos</span>
@@ -322,7 +324,7 @@ tbody tr:hover { background: var(--group-tint); }
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
       <div class="who">
-        <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
+        <strong id="who-name"></strong> Â· <a onclick="logout()">Sign out</a>
       </div>
     </div>
   </div>
@@ -363,8 +365,8 @@ tbody tr:hover { background: var(--group-tint); }
     </div>
 
     <div class="footer">
-      <span class="group-tiny">Stowaway Hospitality Group</span> ·
-      Data from Lightspeed Insights + Deputy · Refreshed daily 6am AEST ·
+      <span class="group-tiny">Stowaway Hospitality Group</span> Â·
+      Data from Lightspeed Insights + Deputy Â· Refreshed daily 6am AEST Â·
       Last update: <span id="last-update"></span>
     </div>
   </div>
@@ -562,7 +564,7 @@ function rollup(rows) {
   if (n === 0) return null;
   const rev = sums.revenue_ex_gst;
   return {
-    date: rows[0].date + ' → ' + rows[rows.length - 1].date,
+    date: rows[0].date + ' â ' + rows[rows.length - 1].date,
     days_included: n,
     revenue_ex_gst: sums.revenue_ex_gst,
     cogs_dollars: sums.cogs_dollars, cogs_pct: rev ? sums.cogs_dollars / rev * 100 : 0,
@@ -582,25 +584,25 @@ const CARD_DEFS = {
   }),
   cogs: (day, cfg) => ({
     label: 'COGS',
-    value: day.cogs_pct != null && day.cogs_pct !== '' ? fmtPct(toNum(day.cogs_pct)) : '—',
+    value: day.cogs_pct != null && day.cogs_pct !== '' ? fmtPct(toNum(day.cogs_pct)) : 'â',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
     status: day.cogs_alert,
   }),
   wages: (day, cfg) => ({
     label: 'Wages',
-    value: day.wages_pct != null && day.wages_pct !== '' ? fmtPct(toNum(day.wages_pct)) : '—',
+    value: day.wages_pct != null && day.wages_pct !== '' ? fmtPct(toNum(day.wages_pct)) : 'â',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '',
     status: day.wages_alert,
   }),
   delivery: (day, cfg) => ({
     label: 'Delivery',
-    value: day.delivery_pct != null && day.delivery_pct !== '' ? fmtPct(toNum(day.delivery_pct)) : '—',
+    value: day.delivery_pct != null && day.delivery_pct !== '' ? fmtPct(toNum(day.delivery_pct)) : 'â',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.delivery_dollars)) : '',
     status: day.delivery_alert,
   }),
   gp: (day, cfg) => ({
     label: 'GP',
-    value: day.gp_pct != null && day.gp_pct !== '' ? fmtPct(toNum(day.gp_pct)) : '—',
+    value: day.gp_pct != null && day.gp_pct !== '' ? fmtPct(toNum(day.gp_pct)) : 'â',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.gp_dollars)) : '',
     status: day.gp_alert || 'unknown',
   }),
@@ -616,10 +618,10 @@ const CHART_LINE_DEFS = {
 const COL_DEFS = {
   date:            { label: 'Date',         num: false, render: r => r.date },
   revenue_ex_gst:  { label: 'Rev (ex-GST)', num: true,  render: r => fmtDollars(toNum(r.revenue_ex_gst)) },
-  cogs_pct:        { label: 'COGS %',       num: true,  render: r => r.cogs_pct ? fmtPct(toNum(r.cogs_pct)) : '—' },
-  wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct ? fmtPct(toNum(r.wages_pct)) : '—' },
-  delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct ? fmtPct(toNum(r.delivery_pct)) : '—' },
-  gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct ? fmtPct(toNum(r.gp_pct)) : '—' },
+  cogs_pct:        { label: 'COGS %',       num: true,  render: r => r.cogs_pct ? fmtPct(toNum(r.cogs_pct)) : 'â' },
+  wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct ? fmtPct(toNum(r.wages_pct)) : 'â' },
+  delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct ? fmtPct(toNum(r.delivery_pct)) : 'â' },
+  gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct ? fmtPct(toNum(r.gp_pct)) : 'â' },
 };
 
 function renderVenueTabs() {
@@ -677,11 +679,11 @@ function renderSnapshot() {
   const dateEl  = document.getElementById('latest-date');
   const staleEl = document.getElementById('stale-badge');
   const tfLabel = { day: 'Selected day', week: 'This Week', month: 'This Month', quarter: 'This Quarter' }[STATE.currentTimeframe];
-  titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
+  titleEl.textContent = `${venueCfg.label} Â· ${tfLabel}`;
   if (!day) {
     dateEl.textContent = 'No data';
     staleEl.innerHTML = '';
-    document.getElementById('snapshot').innerHTML = `<div class="card unknown placeholder-card"><p class="label">${tfLabel}</p><p class="value" style="font-size: 22px; margin: 12px 0 8px;">No data for this range yet</p><p class="sub">${STATE.currentTimeframe === 'day' ? 'This day has no aggregated report — venue was closed, or pipeline hasn\'t caught up.' : 'Pipeline hasn\'t populated enough days to roll up this timeframe.'}</p></div>`;
+    document.getElementById('snapshot').innerHTML = `<div class="card unknown placeholder-card"><p class="label">${tfLabel}</p><p class="value" style="font-size: 22px; margin: 12px 0 8px;">No data for this range yet</p><p class="sub">${STATE.currentTimeframe === 'day' ? 'This day has no aggregated report â venue was closed, or pipeline hasn\'t caught up.' : 'Pipeline hasn\'t populated enough days to roll up this timeframe.'}</p></div>`;
     document.getElementById('trend-section').classList.add('hidden');
     document.getElementById('history-section').classList.add('hidden');
     return;
@@ -691,9 +693,9 @@ function renderSnapshot() {
   if (STATE.currentTimeframe === 'day') {
     dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
   } else {
-    const [s, e] = day.date.split(' → ');
+    const [s, e] = day.date.split(' â ');
     const fmt = d => new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-    dateEl.textContent = `${fmt(s)} — ${fmt(e)} (${day.days_included} days)`;
+    dateEl.textContent = `${fmt(s)} â ${fmt(e)} (${day.days_included} days)`;
   }
   staleEl.innerHTML = '';
   if (STATE.currentTimeframe === 'day') {
