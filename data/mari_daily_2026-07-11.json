@@ -1,6 +1,6 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-12T10:30:58.915826Z",
+  "generated_at": "2026-07-12T12:24:46.380199Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,11 +15,11 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 4359.0,
-    "revenue_ex_gst": 3962.76,
-    "cogs_dollars": 913.75,
+    "revenue_inc_gst": 2179.5,
+    "revenue_ex_gst": 1981.38,
+    "cogs_dollars": 456.86,
     "cogs_pct": 23.1,
-    "gp_dollars": 3049.01,
+    "gp_dollars": 1524.52,
     "gp_pct": 76.9,
     "uber_eats_revenue": 0
   },
@@ -28,7 +28,7 @@
     "foh_dollars": 0,
     "driver_dollars": 0,
     "total_dollars": 251.66,
-    "wages_pct": 6.4,
+    "wages_pct": 12.7,
     "kitchen_hours": 0.0,
     "foh_hours": 0,
     "wages_kitchen_pct": null,
