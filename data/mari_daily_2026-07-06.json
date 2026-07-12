@@ -1,0 +1,101 @@
+{
+  "date": "2026-07-06",
+  "generated_at": "2026-07-12T22:38:18.295877Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 14.94,
+    "revenue_ex_gst": 13.58,
+    "cogs_dollars": 0.0,
+    "cogs_pct": 0.0,
+    "gp_dollars": 13.58,
+    "gp_pct": 100.0,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null
+  },
+  "wages": {
+    "kitchen_dollars": 0.0,
+    "foh_dollars": 0.0,
+    "driver_dollars": 0.0,
+    "admin_dollars": 0.0,
+    "total_dollars": 0.0,
+    "wages_pct": 0.0,
+    "net_wage_pct": null,
+    "kitchen_hours": 0,
+    "foh_hours": 0,
+    "wages_kitchen_pct": null,
+    "wages_foh_pct": null,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 0,
+    "own_driver_dollars": 0.0,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 0.0,
+    "delivery_pct": 0.0,
+    "fees_are_estimate": true
+  },
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "green",
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
+  },
+  "targets": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Chicken",
+      "qty": 3.0,
+      "rev": 8.8,
+      "cost": 0.0
+    },
+    {
+      "name": "Chicken.",
+      "qty": 3.0,
+      "rev": 6.14,
+      "cost": 0.0
+    }
+  ]
+}
