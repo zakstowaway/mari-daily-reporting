@@ -1,6 +1,6 @@
 {
   "date": "2026-07-12",
-  "generated_at": "2026-07-12T22:33:14.457179Z",
+  "generated_at": "2026-07-12T22:41:04.145738Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -10,17 +10,17 @@
     "delivery"
   ],
   "data_status": {
-    "lightspeed": "missing",
+    "lightspeed": "ok",
     "deputy": "ok",
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
+    "revenue_inc_gst": 1715.84,
+    "revenue_ex_gst": 1559.85,
+    "cogs_dollars": 275.99,
+    "cogs_pct": 17.7,
+    "gp_dollars": 1283.86,
+    "gp_pct": 82.3,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null
   },
@@ -29,8 +29,8 @@
     "foh_dollars": 0.0,
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
-    "total_dollars": null,
-    "wages_pct": null,
+    "total_dollars": 588.06,
+    "wages_pct": 37.7,
     "net_wage_pct": null,
     "kitchen_hours": 14.5,
     "foh_hours": 0,
@@ -43,15 +43,15 @@
     "uber_eats_commission_dollars": 0,
     "own_driver_dollars": 0.0,
     "uber_direct_dollars": 0.0,
-    "total_dollars": null,
-    "delivery_pct": null,
+    "total_dollars": 0.0,
+    "delivery_pct": 0.0,
     "fees_are_estimate": true
   },
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
-    "delivery": "unknown",
+    "cogs": "yellow",
+    "wages": "red",
+    "delivery": "green",
     "gp": "unknown",
     "cogs_food": "unknown",
     "cogs_bev": "unknown",
@@ -84,5 +84,126 @@
       "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
     }
   },
-  "top_products": []
+  "top_products": [
+    {
+      "name": "Large Hawaiian",
+      "qty": 6.0,
+      "rev": 156.0,
+      "cost": 19.58
+    },
+    {
+      "name": "Large Margherita",
+      "qty": 5.0,
+      "rev": 113.0,
+      "cost": 11.48
+    },
+    {
+      "name": "Large Roma Special",
+      "qty": 3.0,
+      "rev": 90.0,
+      "cost": 18.66
+    },
+    {
+      "name": "Regular Margherita",
+      "qty": 5.0,
+      "rev": 86.2,
+      "cost": 6.15
+    },
+    {
+      "name": "Regular Cosmopolitan",
+      "qty": 3.0,
+      "rev": 72.2,
+      "cost": 14.52
+    },
+    {
+      "name": "Large Super House Special",
+      "qty": 2.0,
+      "rev": 61.9,
+      "cost": 14.76
+    },
+    {
+      "name": "Large Meatlovers",
+      "qty": 2.0,
+      "rev": 61.8,
+      "cost": 14.5
+    },
+    {
+      "name": "Large Bubba Gump",
+      "qty": 2.0,
+      "rev": 59.5,
+      "cost": 11.6
+    },
+    {
+      "name": "Large Sorrento",
+      "qty": 2.0,
+      "rev": 59.4,
+      "cost": 14.34
+    },
+    {
+      "name": "Under the Bridge Pizza",
+      "qty": 2.0,
+      "rev": 59.09,
+      "cost": 8.51
+    },
+    {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 2.0,
+      "rev": 58.13,
+      "cost": 9.61
+    },
+    {
+      "name": "Large Pepperoni",
+      "qty": 2.0,
+      "rev": 50.0,
+      "cost": 9.13
+    },
+    {
+      "name": "Feast Deal Pizzas",
+      "qty": 1.0,
+      "rev": 49.5,
+      "cost": 0.0
+    },
+    {
+      "name": "Regular Jimmy Jury",
+      "qty": 2.0,
+      "rev": 48.0,
+      "cost": 6.67
+    },
+    {
+      "name": "Regular Hawaiian",
+      "qty": 2.0,
+      "rev": 44.0,
+      "cost": 2.49
+    },
+    {
+      "name": "Regular Uber Margherita",
+      "qty": 2.0,
+      "rev": 44.0,
+      "cost": 6.39
+    },
+    {
+      "name": "Garlic Bread",
+      "qty": 7.0,
+      "rev": 43.5,
+      "cost": 9.94
+    },
+    {
+      "name": "Cheesy Garlic Bread",
+      "qty": 4.0,
+      "rev": 32.0,
+      "cost": 7.09
+    },
+    {
+      "name": "Large Cosmopolitan",
+      "qty": 1.0,
+      "rev": 32.0,
+      "cost": 6.76
+    },
+    {
+      "name": "Gluten-free Meatlovers",
+      "qty": 1.0,
+      "rev": 31.0,
+      "cost": 9.29
+    }
+  ]
 }
