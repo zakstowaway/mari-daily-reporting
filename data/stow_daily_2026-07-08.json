@@ -1,0 +1,229 @@
+{
+  "date": "2026-07-08",
+  "generated_at": "2026-07-12T22:39:06.523514Z",
+  "venue": "stowaway",
+  "venue_display": "Stowaway Bar",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 4560.95,
+    "revenue_ex_gst": 4146.32,
+    "cogs_dollars": 940.97,
+    "cogs_pct": 22.7,
+    "gp_dollars": 3205.35,
+    "gp_pct": 77.3,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 1404.47,
+    "bev_ex_gst": 2741.85,
+    "food_cogs": 268.18,
+    "bev_cogs": 672.79,
+    "food_cogs_pct": 19.1,
+    "bev_cogs_pct": 24.5,
+    "food_gp_pct": 80.9,
+    "bev_gp_pct": 75.5,
+    "mari_rideon_ex_gst": 1443.49,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 0.0
+  },
+  "wages": {
+    "kitchen_dollars": 666.43,
+    "foh_dollars": 529.23,
+    "driver_dollars": 0.0,
+    "admin_dollars": 399.72,
+    "total_dollars": 1595.38,
+    "wages_pct": 38.5,
+    "net_wage_pct": null,
+    "kitchen_hours": 22.2,
+    "foh_hours": 13.5,
+    "wages_kitchen_pct": 47.5,
+    "wages_foh_pct": 19.3,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "red",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "yellow",
+    "wages_kitchen": "red",
+    "wages_foh": "yellow"
+  },
+  "targets": {
+    "cogs": {
+      "target": 28.0,
+      "amber": 32.0,
+      "red": 35.0,
+      "note": "Blended food+bev COGS; bar-heavy Stow typically lands ~28-30% \u2014 refine after 8 weeks of daily data"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 70% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 26.0,
+      "rev": 426.7,
+      "cost": 113.01
+    },
+    {
+      "name": "Fancy Pants Parmy - Classic",
+      "qty": 10.0,
+      "rev": 224.7,
+      "cost": 81.06
+    },
+    {
+      "name": "Stow Schnitty",
+      "qty": 10.0,
+      "rev": 212.07,
+      "cost": 53.26
+    },
+    {
+      "name": "Beef Burger D",
+      "qty": 10.0,
+      "rev": 206.69,
+      "cost": 0.0
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Regular",
+      "qty": 17.0,
+      "rev": 190.0,
+      "cost": 41.12
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 14.0,
+      "rev": 180.25,
+      "cost": 45.37
+    },
+    {
+      "name": "Geppetto Pinot Noir - Regular",
+      "qty": 13.0,
+      "rev": 164.48,
+      "cost": 45.95
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 9.0,
+      "rev": 150.5,
+      "cost": 42.32
+    },
+    {
+      "name": "Version Two Pinot Grigio - Regular",
+      "qty": 12.0,
+      "rev": 124.0,
+      "cost": 21.2
+    },
+    {
+      "name": "Fancy Pants Parmy - Mexicali",
+      "qty": 4.0,
+      "rev": 122.98,
+      "cost": 0.0
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 10.0,
+      "rev": 116.23,
+      "cost": 24.46
+    },
+    {
+      "name": "Chicken Burrito",
+      "qty": 4.0,
+      "rev": 98.26,
+      "cost": 27.19
+    },
+    {
+      "name": "Mulled Wine",
+      "qty": 6.0,
+      "rev": 89.48,
+      "cost": 12.34
+    },
+    {
+      "name": "Lychee Martini",
+      "qty": 4.0,
+      "rev": 82.62,
+      "cost": 14.49
+    },
+    {
+      "name": "Sigurd GSM Red Blend - Regular",
+      "qty": 4.0,
+      "rev": 72.0,
+      "cost": 18.48
+    },
+    {
+      "name": "Kuku Sauvignon Blanc - Regular",
+      "qty": 5.0,
+      "rev": 70.0,
+      "cost": 14.57
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 8.0,
+      "rev": 69.1,
+      "cost": 14.59
+    },
+    {
+      "name": "Grifter Pale - Schooner",
+      "qty": 6.0,
+      "rev": 69.0,
+      "cost": 14.94
+    },
+    {
+      "name": "Jameson Irish Whiskey",
+      "qty": 6.0,
+      "rev": 64.8,
+      "cost": 13.58
+    },
+    {
+      "name": "Cri De Couer Pinot Noir - Regular",
+      "qty": 2.0,
+      "rev": 62.02,
+      "cost": 24.86
+    }
+  ]
+}
