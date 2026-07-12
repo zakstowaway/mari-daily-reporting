@@ -456,6 +456,9 @@ else:
     foh_cost = dept_cost("FOH")
     driver_cost = dept_cost("Driver")
     admin_cost = dept_cost("Admin")
+    leave_cost = dept_cost("Leave")   # Group overhead — NOT in the venue total
+                                      # (weekly canon); the dashboard adds it to
+                                      # the synthesized Group wage figure.
     # Total = Kitchen + FOH + Admin + Driver. Driver stays inside the venue
     # total (Mari Venue Total = Kitchen + Driver in the weekly canon) AND
     # also surfaces in the delivery lane.
@@ -465,6 +468,7 @@ else:
         "foh_wages": foh_cost,
         "driver_wages": driver_cost,
         "admin_wages": admin_cost,
+        "leave_wages": leave_cost,
         "total_wages": total_wages,
         "kitchen_hours": sum(t.get("hours", 0) for t in d if t.get("dept") == "Kitchen"),
         "foh_hours":     sum(t.get("hours", 0) for t in d if t.get("dept") == "FOH"),
@@ -597,6 +601,7 @@ record = {
         "foh_dollars":     round(deputy_data.get("foh_wages", 0), 2) if deputy_data else None,
         "driver_dollars":  round(deputy_data["driver_wages"], 2) if deputy_data else None,
         "admin_dollars":   round(deputy_data.get("admin_wages", 0), 2) if deputy_data else None,
+        "leave_dollars":   round(deputy_data.get("leave_wages", 0), 2) if deputy_data else None,
         "total_dollars":   round(wages_dollars, 2) if wages_dollars is not None else None,
         "wages_pct":       round(wages_pct, 1) if wages_pct is not None else None,
         "net_wage_pct":    round(net_wage_pct, 1) if net_wage_pct is not None else None,
@@ -680,6 +685,7 @@ nr = {
     "wages_foh_alert":        wages_foh_status,
     "uber_eats_revenue":      record["sales"]["uber_eats_revenue"],
     "uber_direct_dollars":    round(uber_direct_dollars, 2) if "delivery" in lanes else "",
+    "leave_dollars":          (record["wages"]["leave_dollars"] if deputy_data and venue_key == "stowaway" else ""),
 }
 history_rows.append(nr)
 history_rows.sort(key=lambda r: r["date"])
