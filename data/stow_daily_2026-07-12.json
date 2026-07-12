@@ -1,6 +1,6 @@
 {
   "date": "2026-07-12",
-  "generated_at": "2026-07-12T21:35:29.830255Z",
+  "generated_at": "2026-07-12T22:33:16.035959Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -26,7 +26,7 @@
   },
   "wages": {
     "kitchen_dollars": 1008.94,
-    "foh_dollars": 545.93,
+    "foh_dollars": 1290.31,
     "driver_dollars": 0.0,
     "admin_dollars": 170.11,
     "total_dollars": null,
