@@ -1,10 +1,18 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-12T07:57:28.418873Z",
-  "venue": "Marilynas",
+  "generated_at": "2026-07-12T10:30:58.915826Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
   "data_status": {
     "lightspeed": "ok",
-    "deputy": "ok"
+    "deputy": "ok",
+    "payments": "missing"
   },
   "sales": {
     "revenue_inc_gst": 4359.0,
@@ -17,20 +25,32 @@
   },
   "wages": {
     "kitchen_dollars": 251.66,
+    "foh_dollars": 0,
     "driver_dollars": 0,
     "total_dollars": 251.66,
-    "wages_pct": 6.4
+    "wages_pct": 6.4,
+    "kitchen_hours": 0.0,
+    "foh_hours": 0,
+    "wages_kitchen_pct": null,
+    "wages_foh_pct": null
   },
   "delivery": {
     "uber_eats_commission_dollars": 0,
     "own_driver_dollars": 0,
-    "total_dollars": 0,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 0.0,
     "delivery_pct": 0.0
   },
+  "payments_breakdown": null,
   "alerts": {
     "cogs": "red",
     "wages": "green",
-    "delivery": "green"
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
   },
   "targets": {
     "cogs": {
