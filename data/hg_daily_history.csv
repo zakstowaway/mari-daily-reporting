@@ -1,2 +1,2 @@
 date,revenue_ex_gst,cogs_dollars,cogs_pct,wages_dollars,wages_pct,delivery_dollars,delivery_pct,gp_dollars,gp_pct,cogs_alert,wages_alert,delivery_alert,gp_alert,food_ex_gst,bev_ex_gst,food_cogs,bev_cogs,food_cogs_pct,bev_cogs_pct,food_gp_pct,bev_gp_pct,wages_kitchen_dollars,wages_foh_dollars,wages_kitchen_pct,wages_foh_pct,cogs_food_alert,cogs_bev_alert,wages_kitchen_alert,wages_foh_alert,uber_eats_revenue,uber_direct_dollars
-2026-07-11,8925.98,1361.14,15.2,252.52,2.8,,,7564.84,84.8,green,green,n/a,green,1900.0,1649.45,249.49,376.48,13.1,22.8,86.9,77.2,0,252.52,0.0,15.3,green,yellow,green,green,0,
+2026-07-11,4462.99,680.57,15.2,252.52,5.7,,,3782.42,84.8,green,green,n/a,green,1900.0,1649.45,249.49,376.48,13.1,22.8,86.9,77.2,0,252.52,0.0,15.3,green,yellow,green,green,0,
