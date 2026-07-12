@@ -1,36 +1,62 @@
 {
   "date": "2026-07-10",
-  "generated_at": "2026-07-11T08:33:57.893342Z",
-  "venue": "Marilynas",
+  "generated_at": "2026-07-12T22:40:27.568066Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
   "data_status": {
-    "lightspeed": "missing",
-    "deputy": "ok"
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
-    "uber_eats_revenue": 0
+    "revenue_inc_gst": 3531.73,
+    "revenue_ex_gst": 3210.66,
+    "cogs_dollars": 741.33,
+    "cogs_pct": 23.1,
+    "gp_dollars": 2469.33,
+    "gp_pct": 76.9,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null
   },
   "wages": {
-    "kitchen_dollars": 496.2,
-    "driver_dollars": 0,
-    "total_dollars": null,
-    "wages_pct": null
+    "kitchen_dollars": 929.29,
+    "foh_dollars": 0.0,
+    "driver_dollars": 0.0,
+    "admin_dollars": 0.0,
+    "total_dollars": 929.29,
+    "wages_pct": 28.9,
+    "net_wage_pct": null,
+    "kitchen_hours": 26.8,
+    "foh_hours": 0,
+    "wages_kitchen_pct": null,
+    "wages_foh_pct": null,
+    "includes_super": true,
+    "salaried_synthesized": true
   },
   "delivery": {
     "uber_eats_commission_dollars": 0,
-    "own_driver_dollars": 0,
-    "total_dollars": null,
-    "delivery_pct": null
+    "own_driver_dollars": 0.0,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 0.0,
+    "delivery_pct": 0.0,
+    "fees_are_estimate": true
   },
+  "payments_breakdown": null,
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
-    "delivery": "unknown"
+    "cogs": "red",
+    "wages": "green",
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
   },
   "targets": {
     "cogs": {
@@ -57,5 +83,127 @@
       "red": 30.0,
       "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
     }
-  }
+  },
+  "top_products": [
+    {
+      "name": "$90 PIZZA PARTY",
+      "qty": 2.0,
+      "rev": 180.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Large Super House Special",
+      "qty": 6.0,
+      "rev": 179.0,
+      "cost": 44.28
+    },
+    {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 6.0,
+      "rev": 160.29,
+      "cost": 28.83
+    },
+    {
+      "name": "Large Cosmopolitan",
+      "qty": 6.0,
+      "rev": 139.0,
+      "cost": 40.57
+    },
+    {
+      "name": "$45 FEAST",
+      "qty": 3.0,
+      "rev": 135.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Regular BBQ Chicken Pizza",
+      "qty": 5.0,
+      "rev": 118.5,
+      "cost": 15.55
+    },
+    {
+      "name": "Regular Super House Special",
+      "qty": 5.0,
+      "rev": 118.0,
+      "cost": 26.42
+    },
+    {
+      "name": "Large Meatlovers",
+      "qty": 4.0,
+      "rev": 115.0,
+      "cost": 29.0
+    },
+    {
+      "name": "Regular Sanchez [Dine-in]",
+      "qty": 4.0,
+      "rev": 107.42,
+      "cost": 13.57
+    },
+    {
+      "name": "Large Little Italy",
+      "qty": 5.0,
+      "rev": 89.0,
+      "cost": 42.91
+    },
+    {
+      "name": "Regular Pepperoni",
+      "qty": 4.0,
+      "rev": 88.0,
+      "cost": 8.51
+    },
+    {
+      "name": "Large Sorrento",
+      "qty": 3.0,
+      "rev": 84.0,
+      "cost": 21.52
+    },
+    {
+      "name": "Regular Hawaiian",
+      "qty": 4.0,
+      "rev": 82.0,
+      "cost": 4.99
+    },
+    {
+      "name": "Regular New Yorker [Dine-in]",
+      "qty": 3.0,
+      "rev": 73.57,
+      "cost": 10.76
+    },
+    {
+      "name": "Large Hawaiian",
+      "qty": 3.0,
+      "rev": 68.0,
+      "cost": 9.79
+    },
+    {
+      "name": "Regular Meatlovers",
+      "qty": 3.0,
+      "rev": 67.0,
+      "cost": 15.57
+    },
+    {
+      "name": "Large New Yorker",
+      "qty": 3.0,
+      "rev": 57.0,
+      "cost": 15.03
+    },
+    {
+      "name": "Regular Hail Africa [Dine-in]",
+      "qty": 2.0,
+      "rev": 55.8,
+      "cost": 5.82
+    },
+    {
+      "name": "Large Roma Special",
+      "qty": 2.0,
+      "rev": 55.0,
+      "cost": 12.44
+    },
+    {
+      "name": "Large Sanchez",
+      "qty": 5.0,
+      "rev": 54.89,
+      "cost": 27.45
+    }
+  ]
 }
