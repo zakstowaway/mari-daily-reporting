@@ -19,7 +19,30 @@ Add a new venue by appending to VENUES. Fields:
 The `venue` CLI arg to every venue-scoped script is a key in this dict
 (e.g. `marilynas`, `stowaway`, `harry`). Default is `marilynas` for
 backwards compat with the pre-refactor pipeline.
+
+2026-07-12 — aligned with the weekly-report pipeline (deputy_config.py):
+  - "Harry's Bar" added to HG FOH (was missing — HG bar shifts were dropped)
+  - "Driver" OU added to Marilynas (Uber-Direct / own-driver shifts)
+  - Admin OU split 90/10 Stowaway/HarryGatos (worked admin time only) —
+    matches deputy_config.ADMIN_*_SHARE in the weekly wages builder.
+  - Monday reallocation: Stow Kitchen shifts on Mondays belong to
+    HarryGatos/Kitchen (the Stow kitchen doesn't open Mondays; only HG works
+    through that POS). Mirrors _reallocate_monday_kitchen in
+    build_wages_from_deputy.py.
 """
+
+# Deputy Admin OU — worked admin time splits across the two bar/restaurant
+# venues. Marilynas gets no admin share (matches weekly-report canon).
+ADMIN_OU_NAME = "Admin"
+ADMIN_SHARES = {"stowaway": 0.9, "harry": 0.1}
+
+# Deputy Employer Superannuation Guarantee rate — the weekly report's wage
+# figures are ALWAYS inc-super (TotalWagesIncSuper). Deputy's Cost field is
+# ex-super, so the aggregator grosses up by this rate.
+SUPER_RATE = 0.12
+
+# OU that must flip venue on Mondays: Stow Kitchen -> HarryGatos Kitchen.
+MONDAY_REALLOCATED_OU = "Stow Kitchen"
 
 VENUES = {
     "marilynas": {
@@ -30,7 +53,7 @@ VENUES = {
         "event_type": "insights-csv-arrived",
         "deputy_ous": {
             "Kitchen": ["Pizza Shop"],
-            "Driver":  [],  # add own-driver OU here if Zak sets one up
+            "Driver":  ["Driver"],
         },
         "lane_config": ["revenue", "cogs", "wages", "delivery"],
     },
@@ -55,7 +78,7 @@ VENUES = {
         "event_type": "hg-csv-arrived",
         "deputy_ous": {
             "Kitchen": ["Harry's Kitchen"],
-            "FOH":     ["Harry's Floor"],
+            "FOH":     ["Harry's Bar", "Harry's Floor"],
             "Driver":  [],  # no delivery at HG
         },
         "lane_config": ["revenue", "cogs", "wages", "gp"],
