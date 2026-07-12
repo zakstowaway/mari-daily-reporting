@@ -1,0 +1,54 @@
+[
+  {
+    "timesheet_id": 35175,
+    "employee_id": 145,
+    "employee_name": "Rhys Taylor",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783393200,
+    "end_time": 1783430100,
+    "hours": 9.75,
+    "cost": 278.61,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35181,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783396800,
+    "end_time": 1783404900,
+    "hours": 2.025,
+    "cost": 70.88,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35187,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783404900,
+    "end_time": 1783430100,
+    "hours": 6.5,
+    "cost": 227.5,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35188,
+    "employee_id": 261,
+    "employee_name": "pedro f",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1783407600,
+    "end_time": 1783425600,
+    "hours": 5.0,
+    "cost": 125.0,
+    "salaried_synth": false
+  }
+]
