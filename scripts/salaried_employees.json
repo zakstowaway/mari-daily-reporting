@@ -1,0 +1,15 @@
+{
+  "_comment": "Salaried management roster. Annual figures are gross pay (excluding super). Deputy returns Cost=0 for all these employees because they're not on hourly rates in Deputy — this config lets the aggregator synthesize a cost per shift as hours × (annual/52/40).",
+  "_hours_per_week": 40,
+  "_weeks_per_year": 52,
+  "employees": {
+    "1":   { "name": "Kris Hegarty",           "annual": 93496 },
+    "3":   { "name": "Zak Britton",            "annual": 78000 },
+    "5":   { "name": "Nicola Bisato",          "annual": 70000 },
+    "15":  { "name": "Marssheel",              "annual": 88000 },
+    "16":  { "name": "Stephanie Kunde",        "annual": 72800 },
+    "133": { "name": "Devon Lukiana",          "annual": 70000 },
+    "142": { "name": "Renan Borba Bagesteiro", "annual": 75000 },
+    "287": { "name": "Herminder (Min) Khera",  "annual": 115000 }
+  }
+}
