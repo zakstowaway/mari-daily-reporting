@@ -1,6 +1,6 @@
 {
   "date": "2026-07-12",
-  "generated_at": "2026-07-12T22:33:16.035959Z",
+  "generated_at": "2026-07-12T22:40:47.678373Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -10,46 +10,57 @@
     "gp"
   ],
   "data_status": {
-    "lightspeed": "missing",
+    "lightspeed": "ok",
     "deputy": "ok",
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
+    "revenue_inc_gst": 9937.2,
+    "revenue_ex_gst": 9033.82,
+    "cogs_dollars": 1673.3,
+    "cogs_pct": 18.5,
+    "gp_dollars": 7360.52,
+    "gp_pct": 81.5,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 4228.68,
+    "bev_ex_gst": 4805.14,
+    "food_cogs": 691.82,
+    "bev_cogs": 981.48,
+    "food_cogs_pct": 16.4,
+    "bev_cogs_pct": 20.4,
+    "food_gp_pct": 83.6,
+    "bev_gp_pct": 79.6,
+    "mari_rideon_ex_gst": 1559.85,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 0.0
   },
   "wages": {
     "kitchen_dollars": 1008.94,
     "foh_dollars": 1290.31,
     "driver_dollars": 0.0,
     "admin_dollars": 170.11,
-    "total_dollars": null,
-    "wages_pct": null,
+    "total_dollars": 2469.35,
+    "wages_pct": 27.3,
     "net_wage_pct": null,
     "kitchen_hours": 24.5,
     "foh_hours": 28.0,
-    "wages_kitchen_pct": null,
-    "wages_foh_pct": null,
+    "wages_kitchen_pct": 23.9,
+    "wages_foh_pct": 26.9,
     "includes_super": true,
     "salaried_synthesized": true
   },
   "delivery": null,
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
+    "cogs": "green",
+    "wages": "green",
     "delivery": "n/a",
-    "gp": "unknown",
-    "cogs_food": "unknown",
-    "cogs_bev": "unknown",
-    "wages_kitchen": "unknown",
-    "wages_foh": "unknown"
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "green",
+    "wages_kitchen": "red",
+    "wages_foh": "red"
   },
   "targets": {
     "cogs": {
@@ -93,5 +104,126 @@
       "target_direction": "high_is_good"
     }
   },
-  "top_products": []
+  "top_products": [
+    {
+      "name": "Beef Roast",
+      "qty": 62.0,
+      "rev": 2004.9,
+      "cost": 353.21
+    },
+    {
+      "name": "Chicken Roast",
+      "qty": 20.0,
+      "rev": 670.8,
+      "cost": 91.77
+    },
+    {
+      "name": "Mulled Wine",
+      "qty": 35.0,
+      "rev": 547.2,
+      "cost": 72.45
+    },
+    {
+      "name": "Nut Roast",
+      "qty": 15.0,
+      "rev": 497.09,
+      "cost": 80.05
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 19.0,
+      "rev": 365.75,
+      "cost": 89.53
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 29.0,
+      "rev": 292.88,
+      "cost": 53.06
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 15.0,
+      "rev": 214.5,
+      "cost": 48.59
+    },
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 10.0,
+      "rev": 179.52,
+      "cost": 43.45
+    },
+    {
+      "name": "Ottelia Cab Sav - Bottle",
+      "qty": 2.0,
+      "rev": 154.0,
+      "cost": 46.08
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 11.0,
+      "rev": 151.23,
+      "cost": 26.99
+    },
+    {
+      "name": "Fresh is Best Summer Lager - Pint",
+      "qty": 11.0,
+      "rev": 140.32,
+      "cost": 23.43
+    },
+    {
+      "name": "Espresso Martini",
+      "qty": 6.0,
+      "rev": 132.0,
+      "cost": 19.41
+    },
+    {
+      "name": "Cauliflower Cheese",
+      "qty": 17.0,
+      "rev": 122.48,
+      "cost": 1.15
+    },
+    {
+      "name": "Veuve Clicquot Yellow Label - Glass",
+      "qty": 3.0,
+      "rev": 118.8,
+      "cost": 48.46
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Bottle",
+      "qty": 2.0,
+      "rev": 111.34,
+      "cost": 24.19
+    },
+    {
+      "name": "La Petite Mort Albarino 2025 - Bottle",
+      "qty": 1.0,
+      "rev": 107.8,
+      "cost": 22.89
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Regular",
+      "qty": 8.0,
+      "rev": 106.03,
+      "cost": 19.32
+    },
+    {
+      "name": "Ottelia Chardonnay - Regular",
+      "qty": 6.0,
+      "rev": 105.6,
+      "cost": 20.75
+    },
+    {
+      "name": "Chicken Shindig Burger",
+      "qty": 4.0,
+      "rev": 101.58,
+      "cost": 19.07
+    },
+    {
+      "name": "Jalape\u00f1o Marg",
+      "qty": 4.0,
+      "rev": 101.2,
+      "cost": 3.04
+    }
+  ]
 }
