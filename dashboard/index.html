@@ -38,9 +38,7 @@ body {
 }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
 
-/* ===================================================================== */
-/* LOGIN                                                                 */
-/* ===================================================================== */
+/* LOGIN */
 .login-wrap { max-width: 420px; margin: 60px auto; padding: 0 20px; }
 .login-card {
   background: var(--paper); border-radius: 14px;
@@ -93,9 +91,7 @@ body {
   margin-top: 14px; height: 16px; font-weight: 500;
 }
 
-/* ===================================================================== */
-/* HEADER                                                                */
-/* ===================================================================== */
+/* HEADER */
 .header {
   background: var(--paper); border-bottom: 1px solid var(--line);
   padding: 18px 0; margin-bottom: 0;
@@ -119,14 +115,14 @@ body {
 }
 .header .who a:hover { border-bottom-color: var(--ink); }
 
-/* venue tabs row */
+/* Venue tabs */
 .venue-tabs {
   background: var(--paper); border-bottom: 1px solid var(--line);
   padding: 0 24px;
 }
 .venue-tabs-inner {
   max-width: 1200px; margin: 0 auto;
-  display: flex; gap: 4px;
+  display: flex; gap: 4px; flex-wrap: wrap;
 }
 .venue-tab {
   font-family: 'Space Grotesk', sans-serif;
@@ -141,7 +137,7 @@ body {
 .venue-tab.active.stow { border-bottom-color: var(--stow); color: var(--stow); }
 .venue-tab.active.hg   { border-bottom-color: var(--hg);   color: var(--hg); }
 .venue-tab.active.mari { border-bottom-color: var(--mari); color: var(--mari); }
-.venue-tab.active.group{ border-bottom-color: var(--group); }
+.venue-tab.active.group{ border-bottom-color: var(--group); color: var(--group); }
 
 /* accent strip */
 .venue-strip { height: 4px; background: var(--grey); }
@@ -152,9 +148,7 @@ body {
   background: linear-gradient(to right, var(--stow) 0%, var(--stow) 33.3%, var(--hg) 33.3%, var(--hg) 66.6%, var(--mari) 66.6%, var(--mari) 100%);
 }
 
-/* ===================================================================== */
-/* TIMEFRAME TOGGLE + DAY PICKER                                         */
-/* ===================================================================== */
+/* Timeframe + Day picker */
 .control-row {
   display: flex; align-items: center; gap: 16px;
   margin-bottom: 20px; flex-wrap: wrap;
@@ -173,13 +167,9 @@ body {
   transition: background 0.15s, color 0.15s;
 }
 .timeframe-toggle button:hover { color: var(--ink); }
-.timeframe-toggle button.active {
-  background: var(--ink); color: var(--paper);
-}
+.timeframe-toggle button.active { background: var(--ink); color: var(--paper); }
 
-.day-picker {
-  display: flex; gap: 6px; flex-wrap: wrap;
-}
+.day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
 .day-pill {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 11px; font-weight: 500;
@@ -201,9 +191,7 @@ body {
 }
 .day-pill.active .weekday { color: rgba(255,255,255,0.75); }
 
-/* ===================================================================== */
-/* SNAPSHOT HEADING                                                      */
-/* ===================================================================== */
+/* Snapshot heading */
 .snapshot-title {
   font-family: 'Space Grotesk', sans-serif; font-size: 12px;
   font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em;
@@ -221,9 +209,7 @@ body {
   text-transform: none; vertical-align: middle;
 }
 
-/* ===================================================================== */
-/* CARDS                                                                 */
-/* ===================================================================== */
+/* Cards */
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 28px; }
 @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
@@ -250,9 +236,7 @@ body {
 .card.red     { border-top-color: var(--mari);   }
 .card.unknown { border-top-color: var(--grey);   }
 
-/* ===================================================================== */
-/* SECTIONS                                                              */
-/* ===================================================================== */
+/* Sections */
 .section {
   background: var(--paper); border-radius: 12px; padding: 24px;
   margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -285,14 +269,12 @@ tbody tr:hover { background: var(--group-tint); }
 .hidden { display: none !important; }
 
 /* Coming-soon placeholder */
-.placeholder-card {
-  grid-column: 1 / -1; text-align: center; padding: 60px 24px;
-}
+.placeholder-card { grid-column: 1 / -1; text-align: center; padding: 60px 24px; }
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login" class="login-wrap">
   <div class="login-card">
     <div class="group-mark">
@@ -328,7 +310,6 @@ tbody tr:hover { background: var(--group-tint); }
     </div>
   </div>
 
-  <!-- Venue tabs (only visible when the role has multi-venue access) -->
   <div id="venue-tabs" class="venue-tabs hidden">
     <div class="venue-tabs-inner" id="venue-tabs-inner"></div>
   </div>
@@ -336,8 +317,6 @@ tbody tr:hover { background: var(--group-tint); }
   <div class="venue-strip" id="venue-strip"></div>
 
   <div class="wrap">
-
-    <!-- Timeframe + Day picker -->
     <div class="control-row">
       <div class="timeframe-toggle" id="timeframe-toggle">
         <button data-tf="day" class="active">Yesterday</button>
@@ -377,7 +356,7 @@ tbody tr:hover { background: var(--group-tint); }
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
 // ============================================================================
-// AUTH — obscure URL + SHA-256 hashed passwords
+// AUTH
 // ============================================================================
 let USERS = null;
 let CURRENT_ROLE = null;
@@ -439,7 +418,19 @@ async function tryResume() {
 // ============================================================================
 // VENUE + ROLE CONFIG
 // ============================================================================
+const REAL_VENUES = ['mari', 'stow', 'hg'];
+
 const VENUE_CONFIG = {
+  group: {
+    label: 'Group',
+    chipClass: 'group',
+    historyFile: null,        // synthesized from real venues
+    dayFilePrefix: null,
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+    synthetic: true,
+  },
   mari: {
     label: "Marilyna's",
     chipClass: 'mari',
@@ -469,18 +460,15 @@ const VENUE_CONFIG = {
   },
 };
 
-// role.venues = which venue tabs the role can see (order = tab order)
-// role.defaultVenue = initial selection
-// role.cards / chart_lines / history_cols override VENUE_CONFIG when set
 const ROLE_CONFIG = {
-  admin:    { venues: ['stow', 'hg', 'mari'], defaultVenue: 'mari', show_dollar_amounts: true },
-  pizza:    { venues: ['mari'],               defaultVenue: 'mari', show_dollar_amounts: true },
-  stowfood: { venues: ['stow'],               defaultVenue: 'stow', show_dollar_amounts: true,
-              cards: ['revenue', 'cogs', 'wages', 'gp'] },  // kitchen focus
-  hgfood:   { venues: ['hg'],                 defaultVenue: 'hg',   show_dollar_amounts: true,
+  admin:    { venues: ['group', 'stow', 'hg', 'mari'], defaultVenue: 'group', show_dollar_amounts: true },
+  pizza:    { venues: ['mari'],                        defaultVenue: 'mari',  show_dollar_amounts: true },
+  stowfood: { venues: ['stow'],                        defaultVenue: 'stow',  show_dollar_amounts: true,
               cards: ['revenue', 'cogs', 'wages', 'gp'] },
-  bar:      { venues: ['stow', 'hg'],         defaultVenue: 'stow', show_dollar_amounts: true },
-  bigchef:  { venues: ['stow', 'hg', 'mari'], defaultVenue: 'mari', show_dollar_amounts: true,
+  hgfood:   { venues: ['hg'],                          defaultVenue: 'hg',    show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },
+  bar:      { venues: ['stow', 'hg'],                  defaultVenue: 'stow',  show_dollar_amounts: true },
+  bigchef:  { venues: ['group', 'stow', 'hg', 'mari'], defaultVenue: 'group', show_dollar_amounts: true,
               cards: ['revenue', 'cogs', 'wages'] },
 };
 
@@ -488,11 +476,10 @@ const ROLE_CONFIG = {
 // STATE
 // ============================================================================
 const STATE = {
-  histories: {},          // venue key -> [rows]
+  histories: {},
   currentVenue: null,
-  currentTimeframe: 'day', // 'day' | 'week' | 'month' | 'quarter'
-  currentDay: null,        // ISO date string
-  lastUpdate: null,
+  currentTimeframe: 'day',
+  currentDay: null,
 };
 
 // ============================================================================
@@ -515,20 +502,18 @@ function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
 function isoDate(d) { return d.toISOString().slice(0, 10); }
 function sydneyToday() {
-  // Zak's browser is in Sydney → Date already reflects Sydney date
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d;
 }
 function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); return c; }
-
 function quarterStart(d) {
   const q = Math.floor(d.getMonth() / 3);
   return new Date(d.getFullYear(), q * 3, 1);
 }
 function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
-function weekStart(d) { // Monday
-  const day = d.getDay(); // 0=Sun
+function weekStart(d) {
+  const day = d.getDay();
   const offset = day === 0 ? -6 : 1 - day;
   return addDays(d, offset);
 }
@@ -538,6 +523,7 @@ function weekStart(d) { // Monday
 // ============================================================================
 async function loadHistory(venue) {
   const cfg = VENUE_CONFIG[venue];
+  if (!cfg.historyFile) return [];  // synthetic
   try {
     const res = await fetch(cfg.historyFile + '?t=' + Date.now());
     if (!res.ok) return [];
@@ -548,17 +534,64 @@ async function loadHistory(venue) {
 
 async function loadAllHistories(role) {
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
-  const results = await Promise.all(roleCfg.venues.map(async v => [v, await loadHistory(v)]));
+  // Always load all real venues if role sees group (need them to synthesize),
+  // else only load what the role can see.
+  const seesGroup = roleCfg.venues.includes('group');
+  const realVenuesToLoad = seesGroup ? REAL_VENUES : roleCfg.venues.filter(v => VENUE_CONFIG[v] && !VENUE_CONFIG[v].synthetic);
+  const results = await Promise.all(realVenuesToLoad.map(async v => [v, await loadHistory(v)]));
   const out = {};
   for (const [v, rows] of results) out[v] = rows;
+  if (seesGroup) out.group = synthesizeGroupHistory(out);
   return out;
 }
 
+/**
+ * Sum per-day figures across mari + stow + hg. Blended percentages
+ * recomputed from summed dollars (proper weighting).
+ */
+function synthesizeGroupHistory(histories) {
+  const allDates = new Set();
+  for (const v of REAL_VENUES) {
+    for (const r of histories[v] || []) allDates.add(r.date);
+  }
+  const rows = [];
+  for (const date of Array.from(allDates).sort()) {
+    const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
+    let venueCount = 0;
+    for (const v of REAL_VENUES) {
+      const row = (histories[v] || []).find(r => r.date === date);
+      if (!row || !row.revenue_ex_gst) continue;
+      sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
+      sum.cogs_dollars     += toNum(row.cogs_dollars);
+      sum.wages_dollars    += toNum(row.wages_dollars);
+      sum.delivery_dollars += toNum(row.delivery_dollars);
+      sum.gp_dollars       += toNum(row.gp_dollars);
+      venueCount++;
+    }
+    if (venueCount === 0) continue;
+    const rev = sum.revenue_ex_gst;
+    rows.push({
+      date,
+      revenue_ex_gst:   sum.revenue_ex_gst,
+      cogs_dollars:     sum.cogs_dollars,
+      cogs_pct:         rev ? sum.cogs_dollars / rev * 100 : 0,
+      wages_dollars:    sum.wages_dollars,
+      wages_pct:        rev ? sum.wages_dollars / rev * 100 : 0,
+      delivery_dollars: sum.delivery_dollars,
+      delivery_pct:     rev ? sum.delivery_dollars / rev * 100 : 0,
+      gp_dollars:       sum.gp_dollars,
+      gp_pct:           rev ? sum.gp_dollars / rev * 100 : 0,
+      contributing_venues: venueCount,
+      cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
+    });
+  }
+  return rows;
+}
+
 // ============================================================================
-// AGGREGATION (client-side rollups)
+// AGGREGATION (rollups over a date range)
 // ============================================================================
 function rowsForTimeframe(rows, timeframe, anchorDay) {
-  // anchorDay: ISO string of the "yesterday" reference date
   const anchor = new Date(anchorDay);
   let start;
   if (timeframe === 'day') return rows.filter(r => r.date === anchorDay);
@@ -572,16 +605,16 @@ function rowsForTimeframe(rows, timeframe, anchorDay) {
 
 function rollup(rows) {
   if (!rows.length) return null;
-  if (rows.length === 1) return rows[0];   // single-day view: raw row wins
+  if (rows.length === 1) return rows[0];
   const sums = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
   let n = 0;
   for (const r of rows) {
-    if (!r.revenue_ex_gst) continue;  // skip empty (closed) days
-    sums.revenue_ex_gst += toNum(r.revenue_ex_gst);
-    sums.cogs_dollars   += toNum(r.cogs_dollars);
-    sums.wages_dollars  += toNum(r.wages_dollars);
+    if (!r.revenue_ex_gst) continue;
+    sums.revenue_ex_gst   += toNum(r.revenue_ex_gst);
+    sums.cogs_dollars     += toNum(r.cogs_dollars);
+    sums.wages_dollars    += toNum(r.wages_dollars);
     sums.delivery_dollars += toNum(r.delivery_dollars);
-    sums.gp_dollars     += toNum(r.gp_dollars);
+    sums.gp_dollars       += toNum(r.gp_dollars);
     n++;
   }
   if (n === 0) return null;
@@ -609,7 +642,9 @@ const CARD_DEFS = {
   revenue: (day, cfg) => ({
     label: 'Revenue (ex-GST)',
     value: fmtDollars(toNum(day.revenue_ex_gst)),
-    sub: day.days_included ? `${day.days_included} days` : day.date,
+    sub: day.days_included ? `${day.days_included} days`
+       : day.contributing_venues ? `${day.contributing_venues} of 3 venues`
+       : day.date,
     status: 'unknown',
   }),
   cogs: (day, cfg) => ({
@@ -661,10 +696,7 @@ function renderVenueTabs() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const tabsEl = document.getElementById('venue-tabs');
   const inner = document.getElementById('venue-tabs-inner');
-  if (roleCfg.venues.length <= 1) {
-    tabsEl.classList.add('hidden');
-    return;
-  }
+  if (roleCfg.venues.length <= 1) { tabsEl.classList.add('hidden'); return; }
   tabsEl.classList.remove('hidden');
   inner.innerHTML = roleCfg.venues.map(v => {
     const cfg = VENUE_CONFIG[v];
@@ -687,15 +719,11 @@ function renderTimeframeToggle() {
 
 function renderDayPicker() {
   const picker = document.getElementById('day-picker');
-  if (STATE.currentTimeframe !== 'day') {
-    picker.style.display = 'none';
-    return;
-  }
+  if (STATE.currentTimeframe !== 'day') { picker.style.display = 'none'; return; }
   picker.style.display = 'flex';
   const rows = STATE.histories[STATE.currentVenue] || [];
   const rowsByDate = Object.fromEntries(rows.map(r => [r.date, r]));
 
-  // Last 7 days ending yesterday
   const today = sydneyToday();
   const days = [];
   for (let i = 7; i >= 1; i--) days.push(addDays(today, -i));
@@ -718,14 +746,12 @@ function renderSnapshot() {
   const cfg = { show_dollar_amounts: roleCfg.show_dollar_amounts };
   const rows = STATE.histories[STATE.currentVenue] || [];
 
-  // Determine the range and get the (possibly rolled up) day view
   let anchorDay = STATE.currentDay;
   if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
 
   const rangeRows = rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay);
-  let day = rollup(rangeRows);
+  const day = rollup(rangeRows);
 
-  // Set snapshot heading
   const titleEl = document.getElementById('snapshot-title');
   const dateEl  = document.getElementById('latest-date');
   const staleEl = document.getElementById('stale-badge');
@@ -743,7 +769,7 @@ function renderSnapshot() {
         <p class="label">${tfLabel}</p>
         <p class="value" style="font-size: 22px; margin: 12px 0 8px;">No data for this range yet</p>
         <p class="sub">${STATE.currentTimeframe === 'day'
-          ? 'This day has no aggregated report — either the venue was closed, or the pipeline hasn\'t caught up.'
+          ? 'This day has no aggregated report — venue was closed, or pipeline hasn\'t caught up.'
           : 'Pipeline hasn\'t populated enough days to roll up this timeframe.'}</p>
       </div>
     `;
@@ -755,7 +781,6 @@ function renderSnapshot() {
   document.getElementById('trend-section').classList.remove('hidden');
   document.getElementById('history-section').classList.remove('hidden');
 
-  // Date label
   if (STATE.currentTimeframe === 'day') {
     dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', {
       weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
@@ -766,14 +791,12 @@ function renderSnapshot() {
     dateEl.textContent = `${fmt(s)} — ${fmt(e)} (${day.days_included} days)`;
   }
 
-  // Stale badge (day view only)
   staleEl.innerHTML = '';
   if (STATE.currentTimeframe === 'day') {
     const daysBehind = Math.floor((sydneyToday() - new Date(day.date)) / 86400000);
     if (daysBehind > 1) staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
   }
 
-  // Cards
   const cardEls = cards.map(key => CARD_DEFS[key](day, cfg));
   document.getElementById('snapshot').innerHTML = cardEls.map(c => `
     <div class="card ${c.status || 'unknown'}">
@@ -814,25 +837,16 @@ function renderChart() {
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        y: {
-          ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: '#5A544C' },
-          grid: { color: 'rgba(232, 223, 207, 0.4)' }
-        },
-        x: {
-          ticks: { font: { family: 'Inter', size: 11 }, color: '#5A544C' },
-          grid: { display: false }
-        }
+        y: { ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: '#5A544C' },
+             grid: { color: 'rgba(232, 223, 207, 0.4)' } },
+        x: { ticks: { font: { family: 'Inter', size: 11 }, color: '#5A544C' },
+             grid: { display: false } }
       },
       plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            boxWidth: 14, boxHeight: 3,
-            usePointStyle: true, pointStyle: 'line',
-            font: { family: 'Space Grotesk', size: 12, weight: '500' },
-            color: '#5A544C', padding: 20,
-          }
-        }
+        legend: { position: 'bottom',
+                  labels: { boxWidth: 14, boxHeight: 3, usePointStyle: true, pointStyle: 'line',
+                            font: { family: 'Space Grotesk', size: 12, weight: '500' },
+                            color: '#5A544C', padding: 20 } }
       }
     }
   });
@@ -863,11 +877,29 @@ async function fetchLastUpdate() {
   if (!rows.length) { document.getElementById('last-update').textContent = 'unknown'; return; }
   const latest = rows[rows.length - 1];
   const cfg = VENUE_CONFIG[STATE.currentVenue];
+  if (!cfg.dayFilePrefix) {
+    // group / synthetic — pick the freshest generated_at across real venues
+    const stamps = [];
+    for (const v of REAL_VENUES) {
+      const rrows = STATE.histories[v] || [];
+      if (!rrows.length) continue;
+      try {
+        const r = await fetch(`${VENUE_CONFIG[v].dayFilePrefix}${rrows[rrows.length-1].date}.json?t=` + Date.now());
+        const data = await r.json();
+        stamps.push(new Date(data.generated_at).getTime());
+      } catch (e) {}
+    }
+    if (stamps.length) {
+      document.getElementById('last-update').textContent = new Date(Math.max(...stamps)).toLocaleString('en-AU');
+    } else {
+      document.getElementById('last-update').textContent = 'unknown';
+    }
+    return;
+  }
   try {
     const r = await fetch(`${cfg.dayFilePrefix}${latest.date}.json?t=` + Date.now());
     const data = await r.json();
-    document.getElementById('last-update').textContent =
-      new Date(data.generated_at).toLocaleString('en-AU');
+    document.getElementById('last-update').textContent = new Date(data.generated_at).toLocaleString('en-AU');
   } catch (e) {
     document.getElementById('last-update').textContent = 'unknown';
   }
@@ -885,17 +917,21 @@ function render() {
 }
 
 // ============================================================================
-// STATE MUTATIONS (called from onclick handlers)
+// STATE MUTATIONS
 // ============================================================================
 function switchVenue(venue) {
   STATE.currentVenue = venue;
-  // Reset day to latest available for this venue
   const rows = STATE.histories[venue] || [];
   STATE.currentDay = rows.length ? rows[rows.length - 1].date : null;
   render();
 }
 function switchTimeframe(tf) {
   STATE.currentTimeframe = tf;
+  // When switching to a rollup timeframe, anchor to the freshest available day
+  if (tf !== 'day') {
+    const rows = STATE.histories[STATE.currentVenue] || [];
+    if (rows.length) STATE.currentDay = rows[rows.length - 1].date;
+  }
   render();
 }
 function switchDay(iso) {
@@ -909,19 +945,16 @@ function switchDay(iso) {
 async function bootstrap() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
 
-  // Load histories for every venue the role can see, in parallel
   STATE.histories = await loadAllHistories(CURRENT_ROLE);
 
-  // Initial venue: role default, but only if there's data. Else first with data.
+  // Initial venue: role default (must be in role.venues); if it has no data, pick first venue with data
   const defaultVenue = roleCfg.defaultVenue;
   const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
   STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
 
-  // Initial day: latest available for the initial venue
   const rows = STATE.histories[STATE.currentVenue] || [];
   STATE.currentDay = rows.length ? rows[rows.length - 1].date : isoDate(addDays(sydneyToday(), -1));
 
-  // Wire up timeframe toggle
   document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
     btn.onclick = () => switchTimeframe(btn.dataset.tf);
   });
