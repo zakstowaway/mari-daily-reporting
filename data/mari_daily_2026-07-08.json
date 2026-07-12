@@ -1,0 +1,209 @@
+{
+  "date": "2026-07-08",
+  "generated_at": "2026-07-12T22:39:21.653861Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 1587.84,
+    "revenue_ex_gst": 1443.49,
+    "cogs_dollars": 331.75,
+    "cogs_pct": 23.0,
+    "gp_dollars": 1111.74,
+    "gp_pct": 77.0,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null
+  },
+  "wages": {
+    "kitchen_dollars": 556.33,
+    "foh_dollars": 0.0,
+    "driver_dollars": 81.76,
+    "admin_dollars": 0.0,
+    "total_dollars": 638.09,
+    "wages_pct": 44.2,
+    "net_wage_pct": null,
+    "kitchen_hours": 14.2,
+    "foh_hours": 0,
+    "wages_kitchen_pct": null,
+    "wages_foh_pct": null,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 0,
+    "own_driver_dollars": 81.76,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 81.76,
+    "delivery_pct": 5.7,
+    "fees_are_estimate": true
+  },
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "red",
+    "wages": "red",
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
+  },
+  "targets": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 4.0,
+      "rev": 95.32,
+      "cost": 19.22
+    },
+    {
+      "name": "Large BBQ Chicken Pizza",
+      "qty": 3.0,
+      "rev": 91.5,
+      "cost": 13.99
+    },
+    {
+      "name": "Large Meatlovers",
+      "qty": 3.0,
+      "rev": 90.0,
+      "cost": 21.75
+    },
+    {
+      "name": "Large Super House Special",
+      "qty": 3.0,
+      "rev": 88.0,
+      "cost": 22.14
+    },
+    {
+      "name": "Regular Hawaiian",
+      "qty": 4.0,
+      "rev": 70.0,
+      "cost": 4.99
+    },
+    {
+      "name": "Regular Little Italy",
+      "qty": 3.0,
+      "rev": 69.0,
+      "cost": 14.41
+    },
+    {
+      "name": "WINGS DEAL",
+      "qty": 2.0,
+      "rev": 60.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Large Cosmopolitan",
+      "qty": 3.0,
+      "rev": 57.0,
+      "cost": 20.28
+    },
+    {
+      "name": "Regular Jimmy Jury [Dine-in]",
+      "qty": 2.0,
+      "rev": 55.8,
+      "cost": 6.67
+    },
+    {
+      "name": "Large Little Italy",
+      "qty": 2.0,
+      "rev": 54.0,
+      "cost": 17.16
+    },
+    {
+      "name": "Garlic Bread",
+      "qty": 12.0,
+      "rev": 51.0,
+      "cost": 17.04
+    },
+    {
+      "name": "Regular Meatlovers",
+      "qty": 2.0,
+      "rev": 50.0,
+      "cost": 10.38
+    },
+    {
+      "name": "Regular Super House Special",
+      "qty": 2.0,
+      "rev": 48.0,
+      "cost": 10.57
+    },
+    {
+      "name": "Large Margherita",
+      "qty": 2.0,
+      "rev": 46.0,
+      "cost": 4.59
+    },
+    {
+      "name": "Large Pepperoni",
+      "qty": 3.0,
+      "rev": 40.0,
+      "cost": 13.69
+    },
+    {
+      "name": "Large Bubba Gump",
+      "qty": 1.0,
+      "rev": 32.0,
+      "cost": 5.8
+    },
+    {
+      "name": "Large Sanchez",
+      "qty": 1.0,
+      "rev": 31.0,
+      "cost": 5.49
+    },
+    {
+      "name": "Large Jimmy Jury",
+      "qty": 1.0,
+      "rev": 30.0,
+      "cost": 6.19
+    },
+    {
+      "name": "Gluten-free Roma Special",
+      "qty": 1.0,
+      "rev": 30.0,
+      "cost": 8.55
+    },
+    {
+      "name": "Large Hawaiian",
+      "qty": 2.0,
+      "rev": 28.0,
+      "cost": 6.53
+    }
+  ]
+}
