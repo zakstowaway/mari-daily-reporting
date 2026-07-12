@@ -484,12 +484,33 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [] };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
 // Excludes dep+interest. Refresh from Xero P&L when the BEP plan is revised.
 const OVERHEADS_WEEKLY = { stow: 8899, hg: 2890, mari: 1779, group: 13568 };
+
+// Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
+// months before the window end (overheads are lumpy — quarterly power,
+// annual insurance — so never a single month). null -> caller falls back to
+// the plan-basis constant.
+function overheadsDailyRate(venue, endIso) {
+  const feed = STATE.xeroOH;
+  if (!feed.length) return null;
+  const endMonth = String(endIso || '').slice(0, 7);
+  const months = feed.filter(r => r.month && r.month < endMonth).sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  if (!months.length) return null;
+  const col = venue === 'group' ? null : `${venue}_overheads`;
+  let dollars = 0, days = 0;
+  for (const r of months) {
+    const [y, m] = r.month.split('-').map(Number);
+    days += new Date(y, m, 0).getDate();
+    if (col) dollars += toNum(r[col]);
+    else dollars += toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads);
+  }
+  return days ? { rate: dollars / days, months: months.length } : null;
+}
 
 // Trailing-N-complete-weeks actual COGS from Xero purchases. Purchases are
 // backwards-looking (bev stock turns over slowly, food ~14 days), so a
@@ -698,12 +719,14 @@ const CARD_DEFS = {
     const a = actualCogs(STATE.currentVenue, endIso || isoDate(sydneyToday()));
     const cogsPct = a ? a.pct : toNum(day.cogs_pct);
     const days = day.days_included || 1;
-    const oh = (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
+    const ohActual = overheadsDailyRate(STATE.currentVenue, endIso || isoDate(sydneyToday()));
+    const oh = ohActual ? ohActual.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
+    const ohTag = ohActual ? `Xero ${ohActual.months}-mo avg` : 'plan';
     const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh;
     return {
       label: 'Expected Profit',
       value: (profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(profit)).toLocaleString(),
-      sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (plan) \u00b7 ${fmtPct(profit / rev * 100)} margin`,
+      sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (${ohTag}) \u00b7 ${fmtPct(profit / rev * 100)} margin`,
       status: profit >= 0 ? 'green' : 'red',
     };
   },
@@ -1066,6 +1089,10 @@ async function bootstrap() {
   try {
     const r = await fetch('data/xero_cogs_weekly.csv?t=' + Date.now());
     if (r.ok) STATE.xeroCogs = parseCsv(await r.text());
+  } catch (e) {}
+  try {
+    const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
+    if (r.ok) STATE.xeroOH = parseCsv(await r.text());
   } catch (e) {}
   const defaultVenue = roleCfg.defaultVenue;
   const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
