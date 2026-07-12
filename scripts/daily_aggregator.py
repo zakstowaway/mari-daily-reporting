@@ -32,6 +32,9 @@ Kitchen / FOH split:
   they're Marilynas P&L and arrive via Mari's own schedule. They're surfaced
   as sales.mari_rideon_ex_gst for reconciliation.
 
+  Footer totals rows (empty product name) are dropped before any summing —
+  the scheduled Insights CSV ends with one and it doubles revenue otherwise.
+
 Output:
   - data/<prefix>_daily_<yyyy-mm-dd>.json   (per-day rollup with alerts)
   - data/<prefix>_daily_history.csv         (90-day trailing)
@@ -227,6 +230,20 @@ else:
     reader = csv.DictReader(io.StringIO(csv_text))
     all_rows = list(reader)
     print(f"  Parsed {len(all_rows)} rows; columns: {reader.fieldnames}")
+
+    # ---- Drop footer/subtotal rows ----
+    # The Insights "Product sales" CSV ends with a totals row whose Product
+    # Name is EMPTY. Counting it doubles the day's revenue (caught 2026-07-12:
+    # Stow showed $22.9K inc for a ~$11.3K Saturday). Only applies when the
+    # CSV actually has a product-name column — the Sales-Summary schema
+    # (Category rows, no product column) must keep all its rows.
+    fieldnames = reader.fieldnames or []
+    if any(c in fieldnames for c in ("Product Name", "Product")):
+        footer_rows = [r for r in all_rows if not (r.get("Product Name") or r.get("Product") or "").strip()]
+        if footer_rows:
+            footer_rev = sum(parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales")) for r in footer_rows)
+            print(f"  Dropped {len(footer_rows)} footer/subtotal row(s) with no product name (${footer_rev:,.2f} inc-GST)")
+            all_rows = [r for r in all_rows if (r.get("Product Name") or r.get("Product") or "").strip()]
 
     # ---- Marilynas ride-on exclusion (Stow only) ----
     # The Stow Insights schedule is site-filtered but NOT reporting-group
