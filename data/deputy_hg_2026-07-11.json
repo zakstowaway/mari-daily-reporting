@@ -1,0 +1,38 @@
+[
+  {
+    "timesheet_id": 35246,
+    "employee_id": 133,
+    "employee_name": "Devon Lukiana",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783731600,
+    "end_time": 1783772100,
+    "hours": 0.0029861111111111113,
+    "cost": 0
+  },
+  {
+    "timesheet_id": 35259,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783749600,
+    "end_time": 1783773000,
+    "hours": 0.0016666666666666668,
+    "cost": 252.521
+  },
+  {
+    "timesheet_id": 35276,
+    "employee_id": 3,
+    "employee_name": "Zak",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783754100,
+    "end_time": 1783764900,
+    "hours": 0.0008333333333333334,
+    "cost": 0
+  }
+]
