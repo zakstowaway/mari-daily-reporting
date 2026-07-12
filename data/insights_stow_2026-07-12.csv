@@ -1,0 +1,215 @@
+Position,Product Number,Product,Quantity,Percent of Quantity,Sale Amount,Percent of Sale Amount,Cost,Percent of Gross Profit
+1,,Beef Roast,62,9,2004.9,17,353.21,82
+2,,Mulled Wine,35,5,547.2,5,72.45,87
+3,,Fresh is Best Lager - Schooner,29,4,292.88,3,53.06,82
+4,,Chicken Roast,20,3,670.8,6,91.77,86
+5,,Guinness Draught - Pint,19,3,365.75,3,89.53,76
+6,,Cauliflower Cheese,17,2,122.48,1,1.15,99
+7,,Nut Roast,15,2,497.09,4,80.05,84
+8,,Stone & Wood - Schooner,15,2,214.5,2,48.59,77
+9,,Extra Gravy,12,2,24.69,0,4.04,84
+10,,Fresh is Best Summer Lager - Pint,11,2,140.32,1,23.43,83
+11,,Fresh is Best Lager - Pint,11,2,151.23,1,26.99,82
+12,,Stone & Wood - Pint,10,1,179.52,2,43.45,76
+13,,"Lemon, Lime & Bitters",10,1,56.27,0,0,100
+14,,Extra Yorkshire Pudding,9,1,20.15,0,0,100
+15,,Brownie D,8,1,0,0,15.58,0
+16,,Villa Fresco Sangiovese - Regular,8,1,106.03,1,19.32,82
+17,,Pepsi Max Glass,8,1,39.76,0,0,100
+18,,Virgin Margy,7,1,100.57,1,0,100
+19,,Garlic Bread,7,1,43.5,0,9.94,77
+20,,Rosemary Salted Fries,6,1,87.47,1,11.13,87
+21,,Extra Veg,6,1,19.69,0,0,100
+22,,Large Hawaiian,6,1,156,1,19.58,87
+23,,Ottelia Chardonnay - Regular,6,1,105.6,1,20.75,80
+24,,Espresso Martini,6,1,132,1,19.41,85
+25,,Lemonade Glass,6,1,29.7,0,0,100
+26,,Side Aioli,6,1,3.29,0,0,100
+27,,Regular Margherita,5,1,86.2,1,6.15,93
+28,,Version Two Pinot Grigio - Regular,5,1,66,1,8.83,87
+29,,Large Margherita,5,1,113,1,11.48,90
+30,,Heaps Normal Tin,5,1,60.89,1,13.35,78
+31,,Peroni,5,1,58.13,0,12.8,78
+32,,Grifter Pale - Schooner,5,1,58.19,0,12.41,79
+33,,Geppetto Pinot Noir - Regular,5,1,82.5,1,17.67,79
+34,,Online Surcharge,4,1,4.37,0,0,100
+35,,Classic Margarita,4,1,88,1,16.54,81
+36,,Cheesy Garlic Bread,4,1,32,0,7.09,78
+37,,Negroni,4,1,96.8,1,15.46,84
+38,,Philter XPA - Pint,4,1,67.08,1,12.27,82
+39,,Jalapeño Marg,4,1,101.2,1,3.04,97
+40,,Side Tomato Sauce,4,1,0,0,0,0
+41,,Buffalo Wings,4,1,74.43,1,15.61,79
+42,,Sensei Calamari,4,1,88.62,1,9.22,90
+43,,Grifter Pale - Pint,4,1,58.41,1,13.32,77
+44,,Chicken Shindig Burger,4,1,101.58,1,19.07,81
+45,,Status Quo - Schooner,3.7,1,55.93,0,11.35,80
+46,,Baked Camembert,3,0,83.95,1,0,100
+47,,Veuve Clicquot Yellow Label - Glass,3,0,118.8,1,48.46,59
+48,,Regular Cosmopolitan,3,0,72.2,1,14.52,80
+49,,Whispering Angel Rosé - Regular,3,0,92.4,1,19.65,79
+50,,Petits Detours Rosé - Regular,3,0,52.8,0,10.6,80
+51,,Add Mushrooms,3,0,4.95,0,0,100
+52,,Delivery Fee - Freshwater / Queenscliff,3,0,16.5,0,0,100
+53,,Add Pepperoni,3,0,9.9,0,0,100
+54,,Philter XPA - Schooner,3,0,38.37,0,6.84,82
+55,,Ottelia Cab Sav - Regular,3,0,56.1,0,13.82,75
+56,,Fish Tacos,3,0,67.44,1,6.55,90
+57,,Coke Zero Can,3,0,12.4,0,5.67,54
+58,,Kirin - Schooner,3,0,46.71,0,11.34,76
+59,,Sweet Potato Fries,3,0,43.36,0,7.58,83
+60,,Large Roma Special,3,0,90,1,18.66,79
+61,,Fresh Lime Soda,3,0,11.55,0,0,100
+62,,Pepsi Glass,3,0,15.01,0,0,100
+63,,Pink Lemonade Glass,3,0,15.01,0,0.41,97
+64,,American Standard Burger,3,0,86.78,1,17.53,80
+65,,Brownie,2,0,27.26,0,5.65,79
+66,,Lepinja Bread,2,0,22.72,0,0,100
+67,,Limoncello Spritz,2,0,46.2,0,10.65,77
+68,,Arancini Balls [5pc],2,0,49.76,0,0,100
+69,,Add Prawns,2,0,8.8,0,0,100
+70,,Villa Fresco Sangiovese - Bottle,2,0,111.34,1,24.19,78
+71,,Status Quo - Pint,2,0,38.5,0,8.23,79
+72,,No Pineapple,2,0,0,0,0,0
+73,,Stow Schnitty,2,0,61.12,1,10.65,83
+74,,Online Discount,2,0,-25.85,-0,0,-100
+75,,Side BBQ Sauce,2,0,0,0,0,0
+76,,No Sugar,2,0,0,0,0,0
+77,,Large Bubba Gump,2,0,59.5,1,11.6,81
+78,,Version Two Pinot Grigio - Large,2,0,41.8,0,5.89,86
+79,,Regular Jimmy Jury,2,0,48,0,6.67,86
+80,,Regular Little Italy [Dine-in],2,0,58.13,0,9.61,83
+81,,Under the Bridge Pizza,2,0,59.09,1,8.51,86
+82,,Fancy Pants Parmy - Classic,2,0,64.85,1,16.21,75
+83,,Large Sorrento,2,0,59.4,1,14.34,76
+84,,Monkey Shoulder Scotch [House],2,0,16.94,0,0,100
+85,,Trentham Estate Rosé - Regular,2,0,26.83,0,4.22,84
+86,,Regular Hawaiian,2,0,44,0,2.49,94
+87,,Add Bacon,2,0,6.16,0,0,100
+88,,On The Rocks,2,0,0,0,0,0
+89,,Large Pepperoni,2,0,50,0,9.13,82
+90,,Add Chilli,2,0,2.2,0,0,100
+91,,Tommy's Margarita,2,0,52.26,0,10.28,80
+92,,Little Dragon Can,2,0,27.95,0,7.07,75
+93,,Large Meatlovers,2,0,61.8,1,14.5,77
+94,,Large Super House Special,2,0,61.9,1,14.76,76
+95,,A. Rodda Chardonnay - Regular,2,0,61.6,1,12.33,80
+96,,Ottelia Cab Sav - Bottle,2,0,154,1,46.08,70
+97,,BBQ Wings,2,0,37.79,0,6.28,83
+98,,Stow Soda - Grapefruit,2,0,20.13,0,0.17,99
+99,,White Light Pure Vodka [House],2,0,21.78,0,3.04,86
+100,,Bang Bang Cauli,2,0,38.01,0,5.52,85
+101,,Open Price,2,0,24.85,0,0,100
+102,,Amalfi Olives,2,0,26.13,0,0,100
+103,,Regular Uber Margherita,2,0,44,0,6.39,85
+104,,Version Two Pinot Grigio - Bottle,1,0,53.9,0,8.83,84
+105,,Add Vodka,1,0,5.68,0,0,100
+106,,No Burger Sauce,1,0,0,0,0,0
+107,,Regular Margherita [Dine-in],1,0,9.24,0,1.23,87
+108,,No Pickle,1,0,0,0,0,0
+109,,Ginger Ale,1,0,4.55,0,0,100
+110,,Gluten-free Jimmy Jury,1,0,30.8,0,8.53,72
+111,,Aperol Spritz,1,0,22.72,0,3.55,84
+112,,Add Grilled Fish,1,0,9.09,0,0,100
+113,,Regular Sanchez,1,0,25.3,0,3.39,87
+114,,Swap Gravy for Aioli,1,0,0,0,0,0
+115,,Regular Little Italy,1,0,25.3,0,4.8,81
+116,,Add Anchovies,1,0,2.2,0,0,100
+117,,Corona,1,0,11.93,0,2.58,78
+118,,Bombay Dry [House],1,0,12.1,0,2.15,82
+119,,Regular Jimmy Jury [Dine-in],1,0,30.68,0,3.34,89
+120,,Kids Nuggets & Chips,1,0,14.3,0,2.25,84
+121,,Regular Paddock,1,0,25,0,3.28,87
+122,,Delivery Fee - Curl Curl / Manly / Dee Why,1,0,7.15,0,0,100
+123,,Soda [mixer],1,0,0,0,0,0
+124,,Regular Pepperoni,1,0,22,0,2.13,90
+125,,Garlic  Bread,1,0,0,0,1.42,0
+126,,Add Grilled Chicken,1,0,2.2,0,0,100
+127,,No Olives,1,0,0,0,0,0
+128,,Old Fashioned,1,0,24.2,0,4.76,80
+129,,Beef Cheek,1,0,45.33,0,0,100
+130,,Vegan Cheese [Pizza],1,0,3.3,0,0,100
+131,,Gluten-free [remove Yorkshire],1,0,0,0,0,0
+132,,Two Tonne Riesling - Bottle,1,0,84.7,1,21.36,75
+133,,Pie,1,0,37.37,0,0,100
+134,,Villa Fresco Sangiovese - Large,1,0,20.9,0,4.03,81
+135,,La Petite Mort Albarino 2025 - Bottle,1,0,107.8,1,22.89,79
+136,,Gluten-free Meatlovers,1,0,31,0,9.29,70
+137,,Casa Gheller Prosecco - Glass,1,0,17.6,0,3.35,81
+138,,Add Lepinja Bread,1,0,6.82,0,0,100
+139,,Philter Red - Pint,1,0,16.5,0,3.4,79
+140,,No Cheese [dairy-free],1,0,0,0,0,0
+141,,Lime Wedge,1,0,0,0,0,0
+142,,Arancini Balls 5pcs D,1,0,19.25,0,0,100
+143,,Extra Arancini Ball,1,0,4.54,0,0,100
+144,,Regular Sanchez VEGAN,1,0,25,0,3.02,88
+145,,$5 Stow Soda,1,0,5.5,0,0,100
+146,,Add Pumpkin,1,0,1.65,0,0,100
+147,,No Ice,1,0,0,0,0,0
+148,,Poor Tom's Strawberry Gin Tonica,1,0,23.86,0,4.45,81
+149,,Send Kids Food ASAP,1,0,0,0,0,0
+150,,Large Cosmopolitan,1,0,32,0,6.76,79
+151,,Add Pesto,1,0,1.1,0,0,100
+152,,No Jalapeños,1,0,0,0,0,0
+153,,French Martini,1,0,19.8,0,3.91,80
+154,,Coconut Margarita,1,0,25.3,0,4.22,83
+155,,Flower Child,1,0,24.99,0,2.91,88
+156,,Version Two Sparkling - Bottle,1,0,53.9,0,8.83,84
+157,,Philter Red - Schooner,1,0,12.5,0,2.53,80
+158,,Mother's Milk Shiraz - Regular,1,0,16.5,0,3.22,81
+159,,Regular BBQ Chicken Pizza [Dine-in],1,0,28.6,0,3.11,89
+160,,Add Fetta,1,0,3.3,0,0,100
+161,,Quiet Riot Negroni,1,0,26.13,0,4.36,83
+162,,San Pellegrino 500ml,1,0,9.9,0,2.32,77
+163,,Coke Can,1,0,4.4,0,1.89,57
+164,,3 Glasses,1,0,0,0,0,0
+165,,A. Rodda Tempranillo - Regular,1,0,19.8,0,5.57,72
+166,,2 Glasses,1,0,0,0,0,0
+167,,Farmhouse Salad,1,0,28.28,0,0,100
+168,,No Tomato,1,0,0,0,0,0
+169,,No Glasses Needed,1,0,0,0,0,0
+170,,Double Scoop,1,0,3.97,0,0,100
+171,,Add Roasted Tomato Coulis,1,0,3.41,0,0,100
+172,,Cauliflower Tacos,1,0,22.72,0,0,100
+173,,Swap Fries for Sweet Potato Fries,1,0,2.27,0,0,100
+174,,Large New Yorker,1,0,0,0,5.01,0
+175,,No Chilli,1,0,0,0,0,0
+176,,Eggplant Parmy,1,0,32.94,0,0,100
+177,,Crankshaft IPA - Pint,1,0,19.25,0,3.91,80
+178,,Choc  Brownie,1,0,0,0,1.95,0
+179,,Dressing on the Side,1,0,0,0,0,0
+180,,Fries D,1,0,13.2,0,0,100
+181,,Jimmy Jury.,1,0,0,0,0,0
+182,,Fresh is Best Summer Lager - Schooner,1,0,9.35,0,1.59,83
+183,,Trade Winds,1,0,15.91,0,0,100
+184,,Solo 1.25L,1,0,7,0,3.59,49
+185,,Padrillos Malbec - Regular,1,0,19.8,0,4.48,77
+186,,BBQ Wings D,1,0,16,0,3.14,80
+187,,Southern Squid,1,0,28.97,0,0,100
+188,,Buffalo Trace Bourbon [House],1,0,12.1,0,2.29,81
+189,,Feast Deal Pizzas,1,0,49.5,0,0,100
+190,,No Anchovies,1,0,0,0,0,0
+191,,Axl Rose Pizza,1,0,29.53,0,0,100
+192,,Add Ham,1,0,3.3,0,0,100
+193,,Orange,1,0,0,0,0,0
+194,,Regular Sanchez VEGAN [Dine-in],1,0,29.54,0,3.02,90
+195,,Large Paddock,1,0,31,0,5.28,83
+196,,Add Cheese,1,0,0.88,0,0,100
+197,,Regular Meatlovers,1,0,25,0,5.19,79
+198,,Geppetto Pinot Noir - Large Glass,1,0,26.4,0,5.89,78
+199,,"Large No Chorizo, No Cry",1,0,29.7,0,6.31,79
+200,,Sweet Potato Fries D,1,0,14,0,2.53,82
+201,,Aperol,1,0,10.22,0,1.25,88
+202,,Vegan Aioli,1,0,0,0,0,0
+203,,Buffalo Wings D,1,0,16,0,3.9,76
+204,,Meatlovers.,1,0,0,0,0,0
+205,,A. Rodda Chardonnay - Large,1,0,49.99,0,10.28,79
+206,,Add Pineapple,1,0,1.1,0,0,100
+207,,Regular Tandoori Chicken,1,0,24,0,2.36,90
+208,,Kuku Sauvignon Blanc - Regular,1,0,15.4,0,2.91,81
+209,,Padrillos Malbec - Bottle,1,0,81.8,1,22.39,73
+210,,Rocket Man,1,0,7.92,0,3.2,60
+211,,Lemon Meringue Martini,1,0,27.27,0,3.5,87
+212,,Side Chipotle Mayo,1,0,1.14,0,0,100
+213,,Young Henrys Cloudy Cider Can,1,0,13.2,0,2.82,79
+214,,Grifter Big Sur IPA Tin,1,0,15.4,0,3.66,76
