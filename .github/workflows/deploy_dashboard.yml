@@ -1,11 +1,13 @@
 name: Deploy dashboard to GitHub Pages
 
 on:
+  workflow_run:
+    workflows: ["Daily Pull", "Mari Daily Pull"]
+    types: [completed]
   push:
     branches: [main]
     paths:
       - 'dashboard/**'
-      - 'data/**'
   workflow_dispatch:
 
 permissions:
@@ -34,7 +36,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
-
   deploy:
     environment:
       name: github-pages
