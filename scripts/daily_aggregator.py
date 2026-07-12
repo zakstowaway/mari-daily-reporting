@@ -28,6 +28,10 @@ Kitchen / FOH split:
   reporting stay consistent. If the CSV carries a Category / Reporting Group
   column it wins over the product-name lookup.
 
+  Marilynas ride-on rows ('m') are EXCLUDED from Stow/HG venue totals —
+  they're Marilynas P&L and arrive via Mari's own schedule. They're surfaced
+  as sales.mari_rideon_ex_gst for reconciliation.
+
 Output:
   - data/<prefix>_daily_<yyyy-mm-dd>.json   (per-day rollup with alerts)
   - data/<prefix>_daily_history.csv         (90-day trailing)
@@ -221,8 +225,28 @@ if insights_file is None:
 else:
     csv_text = read_insights_csv_text(insights_file)
     reader = csv.DictReader(io.StringIO(csv_text))
-    rows = list(reader)
-    print(f"  Parsed {len(rows)} rows; columns: {reader.fieldnames}")
+    all_rows = list(reader)
+    print(f"  Parsed {len(all_rows)} rows; columns: {reader.fieldnames}")
+
+    # ---- Marilynas ride-on exclusion (Stow only) ----
+    # The Stow Insights schedule is site-filtered but NOT reporting-group
+    # filtered, so Marilynas products (rung through the Stowaway POS) appear
+    # in the CSV. They are Marilynas P&L — Mari has its own schedule + CSV —
+    # so counting them here would double-count the Group rollup. Classify
+    # every row once; 'm' rows are excluded from ALL venue totals below and
+    # surfaced separately as mari_rideon_ex_gst.
+    if split_venue:
+        row_depts = [
+            classify_product(r, (r.get("Product Name") or r.get("Product") or "").strip(), venue_key)
+            for r in all_rows
+        ]
+        rows = [r for r, d in zip(all_rows, row_depts) if d != "m"]
+        excluded = len(all_rows) - len(rows)
+        if excluded:
+            print(f"  Excluded {excluded} Marilynas ride-on rows from {venue_key} totals")
+    else:
+        row_depts = None
+        rows = all_rows
 
     revenue_inc = sum(
         parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales"))
@@ -267,11 +291,11 @@ else:
     # ---- Kitchen / FOH split (Stow + HG only) ----
     # Sums are inc-GST off the raw rows, then /1.1 to ex-GST per slice.
     # (Explicit per-slice tax isn't available; 10% GST applies to both slices.)
+    # Uses ALL rows (incl. 'm') so mari_rideon_ex_gst stays visible even
+    # though 'm' rows are excluded from the venue totals above.
     dept_sums = {k: {"rev": 0.0, "cogs": 0.0} for k in ("f", "b", "m", "o")}
     if split_venue:
-        for r in rows:
-            name = (r.get("Product Name") or r.get("Product") or "").strip()
-            d = classify_product(r, name, venue_key)
+        for r, d in zip(all_rows, row_depts):
             dept_sums[d]["rev"] += parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales"))
             dept_sums[d]["cogs"] += parse_num(col(r, "COGS", "Cost", "Cost of Goods Sold"))
         unsplit = dept_sums["o"]["rev"]
