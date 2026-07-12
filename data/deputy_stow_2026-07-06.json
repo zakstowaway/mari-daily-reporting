@@ -1,0 +1,41 @@
+[
+  {
+    "timesheet_id": 35167,
+    "employee_id": 118,
+    "employee_name": "Jack Colbran",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783315800,
+    "end_time": 1783338300,
+    "hours": 6.25,
+    "cost": 211.56,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35170,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783318500,
+    "end_time": 1783342800,
+    "hours": 6.25,
+    "cost": 218.75,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35172,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783321200,
+    "end_time": 1783341900,
+    "hours": 5.25,
+    "cost": 180.66,
+    "salaried_synth": false
+  }
+]

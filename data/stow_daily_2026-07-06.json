@@ -1,0 +1,229 @@
+{
+  "date": "2026-07-06",
+  "generated_at": "2026-07-12T22:38:02.274421Z",
+  "venue": "stowaway",
+  "venue_display": "Stowaway Bar",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 2567.41,
+    "revenue_ex_gst": 2334.01,
+    "cogs_dollars": 498.13,
+    "cogs_pct": 21.3,
+    "gp_dollars": 1835.88,
+    "gp_pct": 78.7,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 22.73,
+    "bev_ex_gst": 2311.28,
+    "food_cogs": 4.11,
+    "bev_cogs": 494.02,
+    "food_cogs_pct": 18.1,
+    "bev_cogs_pct": 21.4,
+    "food_gp_pct": 81.9,
+    "bev_gp_pct": 78.6,
+    "mari_rideon_ex_gst": 13.58,
+    "hg_food_out_ex_gst": 2939.63,
+    "stow_food_out_ex_gst": 0.0
+  },
+  "wages": {
+    "kitchen_dollars": 0.0,
+    "foh_dollars": 684.29,
+    "driver_dollars": 0.0,
+    "admin_dollars": 0.0,
+    "total_dollars": 684.29,
+    "wages_pct": 29.3,
+    "net_wage_pct": null,
+    "kitchen_hours": 0,
+    "foh_hours": 17.8,
+    "wages_kitchen_pct": 0.0,
+    "wages_foh_pct": 29.6,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "green",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "green",
+    "wages_kitchen": "green",
+    "wages_foh": "red"
+  },
+  "targets": {
+    "cogs": {
+      "target": 28.0,
+      "amber": 32.0,
+      "red": 35.0,
+      "note": "Blended food+bev COGS; bar-heavy Stow typically lands ~28-30% \u2014 refine after 8 weeks of daily data"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 70% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Version Two Pinot Grigio - Regular",
+      "qty": 23.0,
+      "rev": 264.0,
+      "cost": 40.63
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 13.0,
+      "rev": 163.3,
+      "cost": 31.8
+    },
+    {
+      "name": "Geppetto Pinot Noir - Regular",
+      "qty": 14.0,
+      "rev": 162.5,
+      "cost": 49.49
+    },
+    {
+      "name": "Aperol Spritz",
+      "qty": 7.0,
+      "rev": 116.92,
+      "cost": 24.87
+    },
+    {
+      "name": "Kirin - Schooner",
+      "qty": 9.0,
+      "rev": 112.46,
+      "cost": 34.03
+    },
+    {
+      "name": "Padrillos Malbec - Regular",
+      "qty": 6.0,
+      "rev": 109.18,
+      "cost": 26.87
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 10.0,
+      "rev": 84.85,
+      "cost": 18.24
+    },
+    {
+      "name": "Pepsi Max Glass",
+      "qty": 18.0,
+      "rev": 82.49,
+      "cost": 0.0
+    },
+    {
+      "name": "Scorched As",
+      "qty": 4.0,
+      "rev": 70.72,
+      "cost": 16.84
+    },
+    {
+      "name": "Grifter Pale - Pint",
+      "qty": 6.0,
+      "rev": 66.98,
+      "cost": 20.04
+    },
+    {
+      "name": "Pepsi Glass",
+      "qty": 14.5,
+      "rev": 65.25,
+      "cost": 0.0
+    },
+    {
+      "name": "Tommy's Margarita",
+      "qty": 3.0,
+      "rev": 64.03,
+      "cost": 14.75
+    },
+    {
+      "name": "Jalape\u00f1o Marg",
+      "qty": 3.0,
+      "rev": 64.02,
+      "cost": 2.21
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 4.0,
+      "rev": 63.13,
+      "cost": 15.85
+    },
+    {
+      "name": "Version Two Sparkling - Regular",
+      "qty": 7.0,
+      "rev": 59.0,
+      "cost": 12.37
+    },
+    {
+      "name": "White Light Pure Vodka [House]",
+      "qty": 6.0,
+      "rev": 58.38,
+      "cost": 9.12
+    },
+    {
+      "name": "Trutta Streamside Shiraz [Chilled] - Regular",
+      "qty": 3.0,
+      "rev": 55.77,
+      "cost": 11.22
+    },
+    {
+      "name": "Fresh Lime Soda",
+      "qty": 15.0,
+      "rev": 53.4,
+      "cost": 0.0
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 4.0,
+      "rev": 52.0,
+      "cost": 12.96
+    },
+    {
+      "name": "Ottelia Chardonnay - Large",
+      "qty": 2.0,
+      "rev": 51.64,
+      "cost": 11.53
+    }
+  ]
+}
