@@ -1,0 +1,30 @@
+{
+  "venue": "harry",
+  "venue_display": "Harry Gatos",
+  "computed_at": "2026-07-12T00:00:00Z",
+  "computed_from": "Initial defaults from Zak weekly-report + HG-specific BEP canonical (Olly's BEP work); refine once 8+ weeks of daily data available.",
+  "targets_and_alerts": {
+    "cogs": {
+      "target": 32.0,
+      "amber": 35.0,
+      "red": 38.0,
+      "note": "HG food-heavy mix (dumplings, shared plates) runs ~32-35% blended — heavier than Stow"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target — hospitality benchmark; splits kitchen + FOH"
+    },
+    "gp": {
+      "note": "Higher is better — 68% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "seasonal_factors": {
+    "note": "Placeholder — will be populated once 6+ months of HG daily data available."
+  },
+  "day_of_week_weights": {
+    "note": "Placeholder — will use HG sales-lookup data to compute typical Mon-Sun revenue pattern."
+  }
+}
