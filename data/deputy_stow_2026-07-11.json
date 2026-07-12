@@ -8,8 +8,9 @@
     "dept": "Kitchen",
     "start_time": 1783731600,
     "end_time": 1783774800,
-    "hours": 0.0031944444444444446,
-    "cost": 0
+    "hours": 11.5,
+    "cost": 635.82,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35248,
@@ -20,8 +21,9 @@
     "dept": "FOH",
     "start_time": 1783732500,
     "end_time": 1783770300,
-    "hours": 0.002777777777777778,
-    "cost": 0
+    "hours": 10.0,
+    "cost": 336.54,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35249,
@@ -32,8 +34,9 @@
     "dept": "FOH",
     "start_time": 1783732500,
     "end_time": 1783769400,
-    "hours": 0.0027083333333333334,
-    "cost": 455.621
+    "hours": 9.75,
+    "cost": 455.62,
+    "salaried_synth": false
   },
   {
     "timesheet_id": 35250,
@@ -44,8 +47,9 @@
     "dept": "Kitchen",
     "start_time": 1783734300,
     "end_time": 1783774800,
-    "hours": 0.0029861111111111113,
-    "cost": 0
+    "hours": 10.75,
+    "cost": 0.0,
+    "salaried_synth": false
   },
   {
     "timesheet_id": 35252,
@@ -56,8 +60,9 @@
     "dept": "FOH",
     "start_time": 1783740600,
     "end_time": 1783779300,
-    "hours": 0.0028472222222222223,
-    "cost": 360.1138
+    "hours": 10.25,
+    "cost": 360.11,
+    "salaried_synth": false
   },
   {
     "timesheet_id": 35258,
@@ -68,8 +73,22 @@
     "dept": "FOH",
     "start_time": 1783747800,
     "end_time": 1783755000,
-    "hours": 0.0005555555555555556,
-    "cost": 0
+    "hours": 2.0,
+    "cost": 70.0,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35278,
+    "employee_id": 3,
+    "employee_name": "Zak",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783750500,
+    "end_time": 1783754100,
+    "hours": 0.9,
+    "cost": 33.75,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35260,
@@ -80,7 +99,8 @@
     "dept": "FOH",
     "start_time": 1783751400,
     "end_time": 1783756800,
-    "hours": 0.0004166666666666667,
-    "cost": 0
+    "hours": 1.5,
+    "cost": 0.0,
+    "salaried_synth": false
   }
 ]
