@@ -7,6 +7,14 @@ Endpoint: https://831d4015123255.au.deputy.com/api/v1/resource/Timesheet
 Venue config (OU allow-list, dept mapping, file prefix) lives in
 scripts/venues.py — edit there to add new venues.
 
+KNOWN LIMITS (2026-07-12):
+  - Unapproved timesheets carry Cost=0 in Deputy until the morning
+    approval run — the 6am pull races it, so same-morning wages are
+    understated. Re-running the aggregator later refreshes them.
+  - Salaried staff (Min, Nicola, etc.) always cost $0 on timesheets;
+    the weekly report loads salaried wages from salaried_employees.json.
+    The daily dashboard does NOT yet — daily wages exclude salaried.
+
 Output: data/deputy_<prefix>_<yyyy-mm-dd>.json
         + data/deputy_<yyyy-mm-dd>.json (only when venue=marilynas, kept
           for backward compat with the existing daily_pull workflow)
@@ -186,7 +194,9 @@ for ts in results:
         "dept": dept,
         "start_time": ts.get("StartTime"),
         "end_time": ts.get("EndTime"),
-        "hours": (ts.get("TotalTime") or 0) / 3600,
+        # Deputy's Timesheet.TotalTime is DECIMAL HOURS (e.g. 11.5), not
+        # seconds — verified against real shifts 2026-07-11.
+        "hours": ts.get("TotalTime") or 0,
         "cost": ts.get("Cost") or 0,
     })
 
