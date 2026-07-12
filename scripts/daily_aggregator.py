@@ -2,16 +2,18 @@
 Mari daily aggregator — runs each morning after Insights CSV lands.
 
 Inputs:
-  - data/insights_<yyyy-mm-dd>.csv   (Lightspeed Insights daily sales summary)
+  - data/insights_<yyyy-mm-dd>.csv   (Lightspeed Insights daily sales summary
+                                       — may be a ZIP wrapping the CSV; we
+                                       auto-detect and unwrap.)
   - data/deputy_<yyyy-mm-dd>.json    (Deputy API daily wages)
 
 Output:
   - data/mari_daily_<yyyy-mm-dd>.json  (per-day 4-lane rollup with alerts)
-  - data/mari_daily_history.csv        (append-only 30-day trailing)
+  - data/mari_daily_history.csv        (append-only 60-day trailing)
 
 Runs claude-less on GitHub Actions cron.
 """
-import csv, json, os, sys
+import csv, io, json, os, sys, zipfile
 from pathlib import Path
 from datetime import date, timedelta, datetime
 
@@ -20,6 +22,30 @@ REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
 BASELINE = REPO_ROOT / "baselines" / "mari_baseline.json"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def read_insights_csv_text(path: Path) -> str:
+    """Return CSV text from an Insights payload that may be a raw CSV or a ZIP.
+
+    Lightspeed Insights scheduled emails deliver the report as a .zip
+    attachment containing the CSV. The workflow's ingest step writes the
+    base64-decoded bytes to insights_<date>.csv even if it's actually a
+    ZIP. We detect ZIP magic bytes (PK\\x03\\x04) and, if present, unzip
+    in memory and return the largest .csv member (Insights summary files
+    are smaller than the main data table). Otherwise read the file as
+    plain CSV text.
+    """
+    raw = path.read_bytes()
+    if raw[:4] == b"PK\x03\x04":
+        with zipfile.ZipFile(io.BytesIO(raw)) as zf:
+            csv_members = [m for m in zf.namelist() if m.lower().endswith(".csv")]
+            if not csv_members:
+                raise ValueError(f"ZIP payload has no .csv members: {zf.namelist()}")
+            largest = max(csv_members, key=lambda m: zf.getinfo(m).file_size)
+            print(f"  Unwrapped ZIP -> using member {largest!r} ({zf.getinfo(largest).file_size} bytes)")
+            return zf.read(largest).decode("utf-8-sig", errors="replace")
+    return raw.decode("utf-8-sig", errors="replace")
+
 
 # ==============================================================
 # 1. Determine target date (yesterday by default, or CLI arg)
@@ -40,11 +66,10 @@ if not insights_file.exists():
     print("Will emit alert-only record with 'data_missing' flag")
     lightspeed_data = None
 else:
-    rows = []
-    with insights_file.open() as f:
-        reader = csv.DictReader(f)
-        for r in reader:
-            rows.append(r)
+    csv_text = read_insights_csv_text(insights_file)
+    reader = csv.DictReader(io.StringIO(csv_text))
+    rows = list(reader)
+    print(f"  Parsed {len(rows)} rows; columns: {reader.fieldnames}")
     revenue_inc = sum(float(r.get("Revenue_inc_gst") or r.get("Sales") or 0) for r in rows)
     revenue_net = sum(float(r.get("Revenue_net") or r.get("NetRevenue") or 0) for r in rows) or revenue_inc / 1.1
     cogs = sum(float(r.get("COGS") or r.get("Cost") or 0) for r in rows)
