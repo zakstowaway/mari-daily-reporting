@@ -97,7 +97,7 @@ FIELDS = ["date","revenue_ex_gst","cogs_dollars","cogs_pct","wages_dollars","wag
           "food_cogs_pct","bev_cogs_pct","food_gp_pct","bev_gp_pct",
           "wages_kitchen_dollars","wages_foh_dollars","wages_kitchen_pct","wages_foh_pct",
           "cogs_food_alert","cogs_bev_alert","wages_kitchen_alert","wages_foh_alert",
-          "uber_eats_revenue","uber_direct_dollars"]
+          "uber_eats_revenue","uber_direct_dollars","leave_dollars"]
 
 
 def main():
@@ -144,13 +144,19 @@ def main():
             for r in csv.DictReader(fh):
                 ven = {"Stowaway": "stow", "HarryGatos": "hg", "Marilynas": "mari"}.get(r["Venue"])
                 if ven is None:
-                    continue
+                    # Group/Leave (weekly canon) rides on the stow rows as a
+                    # separate Leave bucket — group-level overhead, excluded
+                    # from venue wage totals, added to Group wages client-side.
+                    if r["Venue"] == "Group" and r["Department"] == "Leave":
+                        ven = "stow"
+                    else:
+                        continue
                 dept = r["Department"]
                 if dept in ("Bar", "Floor"):
                     dept = "FOH"          # canon: historical fold at query layer
                 if dept == "Venue Total":
                     dept = "_TOTAL"       # kept to derive the venue-level residual
-                elif dept not in ("FOH", "Kitchen", "Driver"):
+                elif dept not in ("FOH", "Kitchen", "Driver", "Leave"):
                     continue
                 w = float(r["TotalWagesIncSuper"] or 0)
                 wages[(ven, r["WeekEnding"])][dept] = wages[(ven, r["WeekEnding"])].get(dept, 0.0) + w
@@ -161,7 +167,7 @@ def main():
     for key, depts in wages.items():
         tot = depts.pop("_TOTAL", None)
         if tot is not None:
-            resid = tot - sum(depts.values())
+            resid = tot - sum(v for k, v in depts.items() if k != "Leave")
             if abs(resid) > 0.01:
                 depts["Residual"] = resid
 
@@ -215,6 +221,7 @@ def main():
         wd = wages_day.get((ven, dstr), {})
         kit = wd.get("Kitchen"); foh = wd.get("FOH"); drv = wd.get("Driver")
         resid = wd.get("Residual")
+        leave = wd.get("Leave")
         wages_tot = None
         if kit is not None or foh is not None or resid is not None:
             wages_tot = (kit or 0) + (foh or 0) + (resid or 0)
@@ -260,6 +267,7 @@ def main():
             "wages_foh_alert": status(wf_pct, t.get("wages_foh")),
             "uber_eats_revenue": 0,
             "uber_direct_dollars": "",
+            "leave_dollars": fmt(leave) if leave is not None else "",
         }
         out[ven][dstr] = row
 
