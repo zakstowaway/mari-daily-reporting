@@ -1,0 +1,209 @@
+{
+  "date": "2026-07-07",
+  "generated_at": "2026-07-12T22:38:50.152677Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 1456.71,
+    "revenue_ex_gst": 1324.28,
+    "cogs_dollars": 274.33,
+    "cogs_pct": 20.7,
+    "gp_dollars": 1049.95,
+    "gp_pct": 79.3,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null
+  },
+  "wages": {
+    "kitchen_dollars": 634.0,
+    "foh_dollars": 0.0,
+    "driver_dollars": 0.0,
+    "admin_dollars": 0.0,
+    "total_dollars": 634.0,
+    "wages_pct": 47.9,
+    "net_wage_pct": null,
+    "kitchen_hours": 16.2,
+    "foh_hours": 0,
+    "wages_kitchen_pct": null,
+    "wages_foh_pct": null,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 0,
+    "own_driver_dollars": 0.0,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 0.0,
+    "delivery_pct": 0.0,
+    "fees_are_estimate": true
+  },
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "amber",
+    "wages": "red",
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
+  },
+  "targets": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Regular Truffalo Soldier [Dine-in]",
+      "qty": 5.0,
+      "rev": 90.6,
+      "cost": 16.34
+    },
+    {
+      "name": "Large Super House Special",
+      "qty": 3.0,
+      "rev": 88.0,
+      "cost": 22.14
+    },
+    {
+      "name": "Large Hawaiian",
+      "qty": 3.0,
+      "rev": 76.0,
+      "cost": 9.79
+    },
+    {
+      "name": "Regular No Chorizo, No Cry [Dine-in]",
+      "qty": 4.0,
+      "rev": 72.59,
+      "cost": 11.65
+    },
+    {
+      "name": "Regular Hawaiian",
+      "qty": 3.0,
+      "rev": 66.0,
+      "cost": 3.74
+    },
+    {
+      "name": "Regular Uber Margherita [Dine-in]",
+      "qty": 4.0,
+      "rev": 62.38,
+      "cost": 12.77
+    },
+    {
+      "name": "Large Meatlovers",
+      "qty": 2.0,
+      "rev": 59.0,
+      "cost": 14.5
+    },
+    {
+      "name": "Regular BBQ Chicken Pizza [Dine-in]",
+      "qty": 3.0,
+      "rev": 55.77,
+      "cost": 10.02
+    },
+    {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 3.0,
+      "rev": 55.19,
+      "cost": 14.41
+    },
+    {
+      "name": "Regular Hail Africa [Dine-in]",
+      "qty": 3.0,
+      "rev": 55.18,
+      "cost": 8.74
+    },
+    {
+      "name": "Regular Meatlovers [Dine-in]",
+      "qty": 3.0,
+      "rev": 55.18,
+      "cost": 15.57
+    },
+    {
+      "name": "Regular El Patron [Dine-in]",
+      "qty": 3.0,
+      "rev": 54.59,
+      "cost": 10.92
+    },
+    {
+      "name": "Regular Jimmy Jury [Dine-in]",
+      "qty": 3.0,
+      "rev": 54.0,
+      "cost": 10.01
+    },
+    {
+      "name": "Large Margherita",
+      "qty": 2.0,
+      "rev": 46.0,
+      "cost": 4.59
+    },
+    {
+      "name": "Feast Deal Pizzas",
+      "qty": 1.0,
+      "rev": 45.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Under the Bridge Pizza",
+      "qty": 2.0,
+      "rev": 40.25,
+      "cost": 8.51
+    },
+    {
+      "name": "Regular Sanchez [Dine-in]",
+      "qty": 2.0,
+      "rev": 37.18,
+      "cost": 6.79
+    },
+    {
+      "name": "Large Bubba Gump",
+      "qty": 1.0,
+      "rev": 32.0,
+      "cost": 5.8
+    },
+    {
+      "name": "Large Cosmopolitan",
+      "qty": 1.0,
+      "rev": 32.0,
+      "cost": 6.76
+    },
+    {
+      "name": "Large BBQ Chicken Pizza",
+      "qty": 1.0,
+      "rev": 30.5,
+      "cost": 4.66
+    }
+  ]
+}
