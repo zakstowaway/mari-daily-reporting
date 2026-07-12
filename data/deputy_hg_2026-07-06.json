@@ -1,0 +1,80 @@
+[
+  {
+    "timesheet_id": 35165,
+    "employee_id": 133,
+    "employee_name": "Devon Lukiana",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783306800,
+    "end_time": 1783340100,
+    "hours": 8.75,
+    "cost": 294.47,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35166,
+    "employee_id": 296,
+    "employee_name": "Olivia",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783314000,
+    "end_time": 1783340100,
+    "hours": 6.75,
+    "cost": 251.42,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35168,
+    "employee_id": 242,
+    "employee_name": "David Armour",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783315800,
+    "end_time": 1783341900,
+    "hours": 7.25,
+    "cost": 245.41,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35169,
+    "employee_id": 288,
+    "employee_name": "TAKUMI ISHII",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783317600,
+    "end_time": 1783339200,
+    "hours": 5.5,
+    "cost": 191.7,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35171,
+    "employee_id": 298,
+    "employee_name": "Kiana Dettmann",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783320300,
+    "end_time": 1783341900,
+    "hours": 6.0,
+    "cost": 206.05,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35173,
+    "employee_id": 284,
+    "employee_name": "Olly",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783324800,
+    "end_time": 1783340100,
+    "hours": 4.25,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]

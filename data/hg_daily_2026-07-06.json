@@ -1,0 +1,229 @@
+{
+  "date": "2026-07-06",
+  "generated_at": "2026-07-12T23:40:40.119601Z",
+  "venue": "harry",
+  "venue_display": "Harry Gatos",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 4461.59,
+    "revenue_ex_gst": 4055.99,
+    "cogs_dollars": 282.62,
+    "cogs_pct": 7.0,
+    "gp_dollars": 3773.37,
+    "gp_pct": 93.0,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 3744.17,
+    "bev_ex_gst": 311.82,
+    "food_cogs": 236.04,
+    "bev_cogs": 46.58,
+    "food_cogs_pct": 6.3,
+    "bev_cogs_pct": 14.9,
+    "food_gp_pct": 93.7,
+    "bev_gp_pct": 85.1,
+    "mari_rideon_ex_gst": 0.0,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 10.18
+  },
+  "wages": {
+    "kitchen_dollars": 826.1,
+    "foh_dollars": 505.64,
+    "driver_dollars": 0.0,
+    "admin_dollars": 0.0,
+    "total_dollars": 1331.74,
+    "wages_pct": 32.8,
+    "net_wage_pct": null,
+    "kitchen_hours": 25.2,
+    "foh_hours": 13.2,
+    "wages_kitchen_pct": 22.1,
+    "wages_foh_pct": 162.2,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "yellow",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "green",
+    "wages_kitchen": "red",
+    "wages_foh": "red"
+  },
+  "targets": {
+    "cogs": {
+      "target": 32.0,
+      "amber": 35.0,
+      "red": 38.0,
+      "note": "HG food-heavy mix (dumplings, shared plates) runs ~32-35% blended \u2014 heavier than Stow"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Olly's BEP work put HG food COGS ~35%."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST)."
+    },
+    "wages_kitchen": {
+      "target": 14.0,
+      "amber": 17.0,
+      "red": 20.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total. HG kitchen is heavier than Stow's."
+    },
+    "wages_foh": {
+      "target": 16.0,
+      "amber": 20.0,
+      "red": 24.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 68% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Unlimited Dumplings",
+      "qty": 117.0,
+      "rev": 2803.2,
+      "cost": 0.0
+    },
+    {
+      "name": "Unlimited Dumplings",
+      "qty": 32.0,
+      "rev": 768.0,
+      "cost": 224.33
+    },
+    {
+      "name": "Duck Spring Rolls",
+      "qty": 4.0,
+      "rev": 65.57,
+      "cost": 0.0
+    },
+    {
+      "name": "BBQ Pork Buns",
+      "qty": 4.0,
+      "rev": 60.49,
+      "cost": 0.0
+    },
+    {
+      "name": "Fried Rice",
+      "qty": 4.0,
+      "rev": 59.8,
+      "cost": 0.0
+    },
+    {
+      "name": "Dumplings - Prawn Har Gow [GF]",
+      "qty": 3.0,
+      "rev": 54.59,
+      "cost": 0.0
+    },
+    {
+      "name": "River Retreat Pinot Grigio - Regular",
+      "qty": 4.0,
+      "rev": 48.0,
+      "cost": 8.04
+    },
+    {
+      "name": "Pepsi Max Glass",
+      "qty": 9.0,
+      "rev": 40.5,
+      "cost": 11.79
+    },
+    {
+      "name": "Kids Fried Rice",
+      "qty": 3.0,
+      "rev": 39.85,
+      "cost": 0.0
+    },
+    {
+      "name": "Lemon Lime Bitters",
+      "qty": 8.0,
+      "rev": 36.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 2.0,
+      "rev": 33.0,
+      "cost": 6.53
+    },
+    {
+      "name": "Outback Prawn Toast",
+      "qty": 3.0,
+      "rev": 32.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Popcorn Cauliflower",
+      "qty": 2.0,
+      "rev": 28.92,
+      "cost": 0.0
+    },
+    {
+      "name": "Kuku Sauv Blanc - Regular",
+      "qty": 2.0,
+      "rev": 26.0,
+      "cost": 5.2
+    },
+    {
+      "name": "Shredded Beef",
+      "qty": 1.0,
+      "rev": 26.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Sapporo - 500ml",
+      "qty": 2.0,
+      "rev": 25.5,
+      "cost": 7.42
+    },
+    {
+      "name": "Fried Rice",
+      "qty": 1.0,
+      "rev": 24.0,
+      "cost": 2.68
+    },
+    {
+      "name": "Mie Goreng",
+      "qty": 1.0,
+      "rev": 23.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Harry's Lager - Schooner",
+      "qty": 2.0,
+      "rev": 19.0,
+      "cost": 3.25
+    },
+    {
+      "name": "Dragon Soda",
+      "qty": 2.0,
+      "rev": 18.0,
+      "cost": 0.0
+    }
+  ]
+}
