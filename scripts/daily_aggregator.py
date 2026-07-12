@@ -6,12 +6,12 @@ Inputs (per venue):
                                                 may be a ZIP wrapping the CSV;
                                                 supports Sales-Summary and
                                                 Sales-by-Product schemas)
-  - data/deputy_<prefix>_<yyyy-mm-dd>.json    (Deputy API daily wages)
+  - data/deputy_<prefix>_<yyyy-mm-dd>.json    (Deputy API daily wages, ex-super;
+                                                salaried costs synthesized by
+                                                daily_deputy_pull.py)
   - data/payments_<prefix>_<yyyy-mm-dd>.csv   (OPTIONAL — Insights Sales by
                                                 Payment Type; gives real Uber
-                                                Eats revenue. Until the
-                                                schedule exists, Uber falls
-                                                back to $0 / product-CSV scan.)
+                                                Eats revenue.)
   - data/manual/uber_direct.json              (OPTIONAL — Zak-entered weekly
                                                 Uber Direct fee totals,
                                                 amortized across the week.)
@@ -19,25 +19,44 @@ Inputs (per venue):
   Marilynas falls back to unprefixed insights_<date>.csv / deputy_<date>.json
   for backwards compat with the existing daily_pull workflow.
 
-Kitchen / FOH split:
-  Products are classified food ('f') / bev ('b') / Marilynas ride-on ('m') /
-  other ('o') via scripts/product_dept_map.json — generated from the
-  weekly-report skill's canonical reporting_group_mapping.csv + the
-  ReportingGroup -> Department table. DO NOT hand-edit keyword rules here;
-  regenerate the map from the weekly-report skill so daily and weekly
-  reporting stay consistent. If the CSV carries a Category / Reporting Group
-  column it wins over the product-name lookup.
+2026-07-12 — aligned with the LIVE weekly-report pipeline
+(Daily Sales/skill-patches/weekly-report/scripts — not the stale packaged
+skill):
+  - Venue attribution (matches build_rich_rollups.py):
+      * Marilynas carve-out EXCLUDES 'Delivery Kitchen' (removed 2026-05-13:
+        it IS Stow Kitchen food on Uber — revenue and labour belong with
+        Stow Kitchen).
+      * Symmetric cross-venue food reallocation: Stow rows tagged
+        'Harry Gatos Food' -> HarryGatos; HG rows tagged 'Stow Food' ->
+        Stowaway. The aggregator reads the SIBLING venue's insights CSV for
+        the same date (when present) and pulls its reallocated rows in.
+  - Dept split (matches classify_rg_to_dept in build_weekly_report.py):
+      Kitchen = explicit RG set (+ Desserts + Delivery Kitchen per the
+      canonical dept-takings table); FOH/bev is the CATCH-ALL — anything
+      not Kitchen (incl. Unmapped/Modifiers) is FOH.
+  - Wages are grossed up by 12%% super (venues.SUPER_RATE) so every wage
+    figure is inc-super, same as wages_weekly.csv TotalWagesIncSuper.
+    Deputy JSON now carries an 'Admin' dept (90/10 split, from the pull).
+    Marilynas total wages INCLUDE Driver (matches Mari Venue Total in the
+    weekly canon); Driver dollars also surface in the delivery lane.
+  - Marilynas Net Wage %%: when real/estimated Uber fees are known, net
+    takings = rev_ex - uber fees, and net_wage_pct = wages / net takings.
+    Weekly canon: Net is the operationally meaningful number.
+  - History CSV is NO LONGER trimmed to 90 days — full history is kept
+    (backfilled from the product masters via scripts/backfill_history.py).
 
-  Marilynas ride-on rows ('m') are EXCLUDED from Stow/HG venue totals —
-  they're Marilynas P&L and arrive via Mari's own schedule. They're surfaced
-  as sales.mari_rideon_ex_gst for reconciliation.
+Kitchen / FOH split classification comes from scripts/product_dept_map.json —
+generated from the LIVE reporting_group_mapping.csv + the rules above.
+DO NOT hand-edit keyword rules here; regenerate the map so daily and weekly
+reporting stay consistent. If the CSV carries a Category / Reporting Group
+column it wins over the product-name lookup.
 
-  Footer totals rows (empty product name) are dropped before any summing —
-  the scheduled Insights CSV ends with one and it doubles revenue otherwise.
+Footer totals rows (empty product name) are dropped before any summing —
+the scheduled Insights CSV ends with one and it doubles revenue otherwise.
 
 Output:
   - data/<prefix>_daily_<yyyy-mm-dd>.json   (per-day rollup with alerts)
-  - data/<prefix>_daily_history.csv         (90-day trailing)
+  - data/<prefix>_daily_history.csv         (full history, backfilled)
 
 CLI:
   python daily_aggregator.py                        # yesterday, Mari
@@ -65,6 +84,9 @@ DEPT_MAP_FILE = Path(__file__).parent / "product_dept_map.json"
 # merchants.ubereats.com. This lane is the commission estimate only.
 UBER_COMMISSION_RATE = 0.30
 
+# Super gross-up: Deputy Cost is ex-super; weekly canon reports inc-super.
+SUPER_MULT = 1.0 + V.SUPER_RATE
+
 
 def read_insights_csv_text(path: Path) -> str:
     """Return CSV text from an Insights payload that may be a raw CSV or a ZIP."""
@@ -81,11 +103,7 @@ def read_insights_csv_text(path: Path) -> str:
 
 
 def parse_num(x) -> float:
-    """Parse a Kounta-Insights currency/number cell.
-
-    Handles '$1,234.56', '', None, '(45.00)' → -45.00, percentages like
-    '12.5%' → 12.5.
-    """
+    """Parse a Kounta-Insights currency/number cell."""
     if x is None:
         return 0.0
     s = str(x).strip()
@@ -114,7 +132,12 @@ def col(r: dict, *candidates: str) -> str:
 
 
 # --------------------------------------------------------------
-# Product -> department classification (canonical, from weekly-report skill)
+# Product -> department classification (LIVE weekly-report canon)
+#   'f'   food / Kitchen
+#   'b'   bev / FOH (CATCH-ALL — anything not otherwise classified)
+#   'm'   Marilynas ride-on (Stow POS rows that are Mari P&L)
+#   'hgf' Harry Gatos Food rung on the Stow POS -> HarryGatos Kitchen
+#   'stf' Stow Food rung on the HG POS        -> Stowaway Kitchen
 # --------------------------------------------------------------
 _DEPT_MAP = None
 
@@ -129,51 +152,61 @@ def _load_dept_map():
             _DEPT_MAP = {"*": {}, "stow": {}, "hg": {}}
     return _DEPT_MAP
 
-# Reporting-Group-level fallback when the CSV carries a category column.
-# Mirrors the canonical table; keyword-free.
-_RG_DEPT = None
+MARILYNAS_RGS = {
+    "marilyna's pizza", "marilynas pizza",
+    "marilyna's soft drinks", "marilynas soft drinks",
+    "add-ons - pizza", "dine-in pizza",
+    "delivery alcohol", "delivery cocktails",
+    # 'delivery kitchen' REMOVED 2026-05-13 — it's Stow Kitchen food on Uber.
+}
+FOOD_RGS = {'big plates','small plates','kitchen specials','salads','desserts','kids meals','kids',
+            'add-ons - kitchen','delivery kitchen','sides','mains','snacks','yum cha','staff dinners'}
+HG_FOOD_RG = 'harry gatos food'
+STOW_FOOD_RG = 'stow food'
 
-def _rg_dept(rg: str) -> str:
-    global _RG_DEPT
-    if _RG_DEPT is None:
-        bev = {'tap beer','cocktails - classic','cocktails - signature','red wine','white wine','rose wine',
-               'orange / skins wine','sparkling wine','pet nat wine','bottles / cans alcoholic','packaged beer',
-               'bottled beer','wine - by the glass','wine - by the bottle','non-alcoholic','mocktails',
-               'add-ons - bar','functions & misc.','soft drinks','gin','gins','vodka','vodkas','whisky',
-               'whiskies','tequila','tequilas','rum','rums','mezcal','brandy','liqueurs','other spirits',
-               'amaro / aperitif / fortified wine','sake & soju','spirits'}
-        food = {'big plates','small plates','kitchen specials','salads','desserts','kids meals','kids',
-                'add-ons - kitchen','harry gatos food','delivery kitchen','stow food','sides','snacks',
-                'yum cha','staff dinners'}
-        mari = {"marilyna's pizza",'marilynas pizza','dine-in pizza','add-ons - pizza',
-                "marilyna's soft drinks",'marilynas soft drinks','delivery alcohol','delivery cocktails'}
-        _RG_DEPT = {}
-        for g in bev: _RG_DEPT[g] = 'b'
-        for g in food: _RG_DEPT[g] = 'f'
-        for g in mari: _RG_DEPT[g] = 'm'
-    key = (rg or '').strip().lower()
-    if key.endswith(' [harrys]'):
-        key = key[:-len(' [harrys]')]
-    return _RG_DEPT.get(key, 'o')
+
+def _norm_rg(rg: str) -> str:
+    k = (rg or '').strip().lower()
+    if k.endswith(' [harrys]'):
+        k = k[:-len(' [harrys]')]
+    return k
+
+
+def _rg_dept(rg: str, venue_key: str) -> str | None:
+    """RG-level classification. Returns None when the RG is unknown/blank."""
+    k = _norm_rg(rg)
+    if not k:
+        return None
+    if venue_key == "stowaway":
+        if k in MARILYNAS_RGS:
+            return 'm'
+        if k == HG_FOOD_RG:
+            return 'hgf'
+    if venue_key == "harry" and k == STOW_FOOD_RG:
+        return 'stf'
+    if k in FOOD_RGS or k in (HG_FOOD_RG, STOW_FOOD_RG):
+        return 'f'
+    return 'b'   # FOH catch-all — matches classify_rg_to_dept in the weekly report
 
 
 def classify_product(row: dict, product_name: str, venue_key: str) -> str:
-    """-> 'f' (food/Kitchen), 'b' (bev/FOH), 'm' (Marilynas ride-on), 'o' (other).
+    """-> 'f' | 'b' | 'm' | 'hgf' | 'stf'.
 
     Prefers an explicit Reporting Group / Category column when the CSV has
-    one; otherwise resolves product name through the canonical map.
+    one; otherwise resolves product name through the canonical map, falling
+    back to 'b' (FOH catch-all, same as the weekly classifier).
     """
     rg = col(row, "Reporting Group Name", "Reporting Group", "Category")
     if rg:
-        d = _rg_dept(rg)
-        if d != 'o':
+        d = _rg_dept(rg, venue_key)
+        if d is not None:
             return d
     m = _load_dept_map()
     vkey = {"stowaway": "stow", "harry": "hg"}.get(venue_key)
     if vkey is None:
-        return 'o'
+        return 'f'   # Mari: everything is Kitchen; split not used
     pn = (product_name or '').strip()
-    return m.get(vkey, {}).get(pn) or m.get("*", {}).get(pn) or 'o'
+    return m.get(vkey, {}).get(pn) or m.get("*", {}).get(pn) or 'b'
 
 
 # --------------------------------------------------------------
@@ -206,11 +239,33 @@ print(f"Aggregating {venue_key} ({cfg['display_name']}) for: {target.isoformat()
 
 
 def resolve(*candidates: Path) -> Path | None:
-    """First existing path from a list, else None."""
     for c in candidates:
         if c.exists():
             return c
     return None
+
+
+def load_product_rows(path: Path):
+    """Parse an Insights product CSV -> (rows, fieldnames), footer dropped."""
+    csv_text = read_insights_csv_text(path)
+    reader = csv.DictReader(io.StringIO(csv_text))
+    all_rows = list(reader)
+    fieldnames = reader.fieldnames or []
+    if any(c in fieldnames for c in ("Product Name", "Product")):
+        footer_rows = [r for r in all_rows if not (r.get("Product Name") or r.get("Product") or "").strip()]
+        if footer_rows:
+            footer_rev = sum(parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales")) for r in footer_rows)
+            print(f"  Dropped {len(footer_rows)} footer/subtotal row(s) with no product name (${footer_rev:,.2f} inc-GST)")
+            all_rows = [r for r in all_rows if (r.get("Product Name") or r.get("Product") or "").strip()]
+    return all_rows, fieldnames
+
+
+def row_rev(r):
+    return parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales"))
+
+
+def row_cogs(r):
+    return parse_num(col(r, "COGS", "Cost", "Cost of Goods Sold"))
 
 
 # --------------------------------------------------------------
@@ -226,53 +281,51 @@ if insights_file is None:
     print("Will emit alert-only record with 'data_missing' flag")
     lightspeed_data = None
 else:
-    csv_text = read_insights_csv_text(insights_file)
-    reader = csv.DictReader(io.StringIO(csv_text))
-    all_rows = list(reader)
-    print(f"  Parsed {len(all_rows)} rows; columns: {reader.fieldnames}")
+    all_rows, fieldnames = load_product_rows(insights_file)
+    print(f"  Parsed {len(all_rows)} rows; columns: {fieldnames}")
 
-    # ---- Drop footer/subtotal rows ----
-    # The Insights "Product sales" CSV ends with a totals row whose Product
-    # Name is EMPTY. Counting it doubles the day's revenue (caught 2026-07-12:
-    # Stow showed $22.9K inc for a ~$11.3K Saturday). Only applies when the
-    # CSV actually has a product-name column — the Sales-Summary schema
-    # (Category rows, no product column) must keep all its rows.
-    fieldnames = reader.fieldnames or []
-    if any(c in fieldnames for c in ("Product Name", "Product")):
-        footer_rows = [r for r in all_rows if not (r.get("Product Name") or r.get("Product") or "").strip()]
-        if footer_rows:
-            footer_rev = sum(parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales")) for r in footer_rows)
-            print(f"  Dropped {len(footer_rows)} footer/subtotal row(s) with no product name (${footer_rev:,.2f} inc-GST)")
-            all_rows = [r for r in all_rows if (r.get("Product Name") or r.get("Product") or "").strip()]
+    # ---- classify every row once ----
+    row_depts = [
+        classify_product(r, (r.get("Product Name") or r.get("Product") or "").strip(), venue_key)
+        for r in all_rows
+    ]
 
-    # ---- Marilynas ride-on exclusion (Stow only) ----
-    # The Stow Insights schedule is site-filtered but NOT reporting-group
-    # filtered, so Marilynas products (rung through the Stowaway POS) appear
-    # in the CSV. They are Marilynas P&L — Mari has its own schedule + CSV —
-    # so counting them here would double-count the Group rollup. Classify
-    # every row once; 'm' rows are excluded from ALL venue totals below and
-    # surfaced separately as mari_rideon_ex_gst.
+    # ---- exclusions: rows that are ANOTHER venue's P&L ----
+    #   stowaway: 'm' (Marilynas ride-on) + 'hgf' (HarryGatos food)
+    #   harry:    'stf' (Stowaway food)
     if split_venue:
-        row_depts = [
-            classify_product(r, (r.get("Product Name") or r.get("Product") or "").strip(), venue_key)
-            for r in all_rows
-        ]
-        rows = [r for r, d in zip(all_rows, row_depts) if d != "m"]
+        excl_tags = {"stowaway": {"m", "hgf"}, "harry": {"stf"}}[venue_key]
+        rows = [r for r, d in zip(all_rows, row_depts) if d not in excl_tags]
         excluded = len(all_rows) - len(rows)
         if excluded:
-            print(f"  Excluded {excluded} Marilynas ride-on rows from {venue_key} totals")
+            excl_rev = sum(row_rev(r) for r, d in zip(all_rows, row_depts) if d in excl_tags)
+            print(f"  Excluded {excluded} cross-venue rows ({sorted(excl_tags)}) from {venue_key} totals (${excl_rev:,.2f} inc)")
     else:
-        row_depts = None
         rows = all_rows
 
-    revenue_inc = sum(
-        parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales"))
-        for r in rows
-    )
+    # ---- cross-venue INBOUND rows (symmetric food reallocation) ----
+    # Stow gains HG-file 'stf' rows; HG gains Stow-file 'hgf' rows.
+    cross_rows = []
+    if split_venue:
+        sib_prefix, sib_key, want = (
+            ("hg", "harry", "stf") if venue_key == "stowaway" else ("stow", "stowaway", "hgf")
+        )
+        sib_file = resolve(DATA_DIR / f"insights_{sib_prefix}_{target.isoformat()}.csv")
+        if sib_file is not None:
+            sib_rows, _ = load_product_rows(sib_file)
+            for r in sib_rows:
+                d = classify_product(r, (r.get("Product Name") or r.get("Product") or "").strip(), sib_key)
+                if d == want:
+                    cross_rows.append(r)
+            if cross_rows:
+                cross_rev = sum(row_rev(r) for r in cross_rows)
+                print(f"  Pulled {len(cross_rows)} reallocated rows from {sib_prefix} CSV (${cross_rev:,.2f} inc) -> {venue_key} Kitchen")
+
+    rows = rows + cross_rows
+
+    revenue_inc = sum(row_rev(r) for r in rows)
     total_tax = sum(parse_num(col(r, "Total Tax", "GST", "Tax")) for r in rows)
-    revenue_net_explicit = sum(
-        parse_num(col(r, "Revenue_net", "NetRevenue", "Net Sales")) for r in rows
-    )
+    revenue_net_explicit = sum(parse_num(col(r, "Revenue_net", "NetRevenue", "Net Sales")) for r in rows)
     if revenue_net_explicit > 0:
         revenue_net = revenue_net_explicit
     elif total_tax > 0:
@@ -280,7 +333,7 @@ else:
     else:
         revenue_net = revenue_inc / 1.1
 
-    cogs = sum(parse_num(col(r, "COGS", "Cost", "Cost of Goods Sold")) for r in rows)
+    cogs = sum(row_cogs(r) for r in rows)
     gp = revenue_net - cogs
 
     category_breakdown = {}
@@ -288,8 +341,8 @@ else:
         for r in rows:
             cat = (r.get("Category") or "Uncategorised").strip()
             category_breakdown.setdefault(cat, {"rev": 0.0, "cogs": 0.0, "qty": 0.0})
-            category_breakdown[cat]["rev"] += parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales"))
-            category_breakdown[cat]["cogs"] += parse_num(col(r, "COGS", "Cost"))
+            category_breakdown[cat]["rev"] += row_rev(r)
+            category_breakdown[cat]["cogs"] += row_cogs(r)
             category_breakdown[cat]["qty"] += parse_num(col(r, "Qty", "Product Quantity", "Quantity"))
 
     product_breakdown = []
@@ -300,31 +353,32 @@ else:
         product_breakdown.append({
             "name": name,
             "qty": parse_num(col(r, "Product Quantity", "Qty", "Quantity")),
-            "rev": parse_num(col(r, "$ Sales", "Sales", "Revenue_inc_gst")),
-            "cost": parse_num(col(r, "Cost", "COGS")),
+            "rev": row_rev(r),
+            "cost": row_cogs(r),
         })
     product_breakdown.sort(key=lambda p: p["rev"], reverse=True)
 
     # ---- Kitchen / FOH split (Stow + HG only) ----
-    # Sums are inc-GST off the raw rows, then /1.1 to ex-GST per slice.
-    # (Explicit per-slice tax isn't available; 10% GST applies to both slices.)
-    # Uses ALL rows (incl. 'm') so mari_rideon_ex_gst stays visible even
-    # though 'm' rows are excluded from the venue totals above.
-    dept_sums = {k: {"rev": 0.0, "cogs": 0.0} for k in ("f", "b", "m", "o")}
+    # 'f' + inbound cross rows = Kitchen slice; 'b' = FOH slice (catch-all).
+    # 'm'/'hgf'/'stf' outbound rows are tracked for reconciliation only.
+    dept_sums = {k: {"rev": 0.0, "cogs": 0.0} for k in ("f", "b", "m", "hgf", "stf")}
     if split_venue:
         for r, d in zip(all_rows, row_depts):
-            dept_sums[d]["rev"] += parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales", "Sale Amount", "Total Sales"))
-            dept_sums[d]["cogs"] += parse_num(col(r, "COGS", "Cost", "Cost of Goods Sold"))
-        unsplit = dept_sums["o"]["rev"]
-        if revenue_inc and unsplit / revenue_inc > 0.10:
-            print(f"  WARNING: {unsplit/revenue_inc*100:.1f}% of revenue unclassified (other) — "
-                  f"product_dept_map.json may need regenerating from the weekly-report skill")
+            dept_sums[d]["rev"] += row_rev(r)
+            dept_sums[d]["cogs"] += row_cogs(r)
+        for r in cross_rows:      # inbound reallocated rows are Kitchen/food
+            dept_sums["f"]["rev"] += row_rev(r)
+            dept_sums["f"]["cogs"] += row_cogs(r)
+        # outbound tags don't belong in this venue's slices
+        excl_tags = {"stowaway": {"m", "hgf"}, "harry": {"stf"}}[venue_key]
+        for t in excl_tags:
+            pass   # kept in dept_sums[t] for the record; not in f/b
 
     uber_eats_rev = 0
     for r in rows:
         pay_type = (r.get("PaymentType") or r.get("Payment Type") or "").lower()
         if "uber" in pay_type:
-            uber_eats_rev += parse_num(col(r, "Revenue_inc_gst", "$ Sales", "Sales"))
+            uber_eats_rev += row_rev(r)
 
     lightspeed_data = {
         "revenue_inc": revenue_inc,
@@ -341,7 +395,6 @@ else:
 
 # --------------------------------------------------------------
 # Load payments CSV (Insights "Sales by Payment Type") — optional.
-# Gives real Uber Eats revenue; overrides the product-CSV scan above.
 # --------------------------------------------------------------
 payments_file = resolve(DATA_DIR / f"payments_{prefix}_{target.isoformat()}.csv")
 payments_breakdown = None
@@ -368,8 +421,6 @@ if payments_file is not None:
 
 # --------------------------------------------------------------
 # Load manual Uber Direct weekly entry (Mari only) — optional.
-# data/manual/uber_direct.json: {"weeks": {"<week-ending Sunday ISO>": dollars}}
-# Amortized evenly across the 7 days of that week.
 # --------------------------------------------------------------
 uber_direct_dollars = 0.0
 uber_direct_file = DATA_DIR / "manual" / "uber_direct.json"
@@ -386,7 +437,8 @@ if "delivery" in lanes and uber_direct_file.exists():
         print(f"  WARNING: could not parse {uber_direct_file}: {e}")
 
 # --------------------------------------------------------------
-# Load Deputy JSON
+# Load Deputy JSON. Costs are ex-super — gross up by SUPER_MULT so every
+# reported figure is inc-super (weekly canon: TotalWagesIncSuper).
 # --------------------------------------------------------------
 deputy_file = resolve(
     DATA_DIR / f"deputy_{prefix}_{target.isoformat()}.json",
@@ -398,18 +450,26 @@ if deputy_file is None:
 else:
     with deputy_file.open() as f:
         d = json.load(f)
-    kitchen_cost = sum(t["cost"] for t in d if t.get("dept") == "Kitchen")
-    foh_cost = sum(t["cost"] for t in d if t.get("dept") == "FOH")
-    driver_cost = sum(t["cost"] for t in d if t.get("dept") == "Driver")
-    total_wages = kitchen_cost + foh_cost + driver_cost
+    def dept_cost(name):
+        return sum(t["cost"] for t in d if t.get("dept") == name) * SUPER_MULT
+    kitchen_cost = dept_cost("Kitchen")
+    foh_cost = dept_cost("FOH")
+    driver_cost = dept_cost("Driver")
+    admin_cost = dept_cost("Admin")
+    # Total = Kitchen + FOH + Admin + Driver. Driver stays inside the venue
+    # total (Mari Venue Total = Kitchen + Driver in the weekly canon) AND
+    # also surfaces in the delivery lane.
+    total_wages = kitchen_cost + foh_cost + driver_cost + admin_cost
     deputy_data = {
         "kitchen_wages": kitchen_cost,
         "foh_wages": foh_cost,
         "driver_wages": driver_cost,
+        "admin_wages": admin_cost,
         "total_wages": total_wages,
         "kitchen_hours": sum(t.get("hours", 0) for t in d if t.get("dept") == "Kitchen"),
         "foh_hours":     sum(t.get("hours", 0) for t in d if t.get("dept") == "FOH"),
         "driver_hours":  sum(t.get("hours", 0) for t in d if t.get("dept") == "Driver"),
+        "admin_hours":   sum(t.get("hours", 0) for t in d if t.get("dept") == "Admin"),
     }
 
 # --------------------------------------------------------------
@@ -438,6 +498,18 @@ else:
     wages_dollars = wages_pct = None
     delivery_dollars = delivery_pct = None
 
+# ---- Marilynas Net Wage % (weekly canon: net of Uber fees) ----
+# Real fee data (service + marketing + amendments) comes from the Uber
+# merchant portal weekly; daily we only have the 30% commission estimate +
+# amortized Uber Direct. Flagged as estimate in the record.
+net_takings_ex = net_wage_pct = None
+if venue_key == "marilynas" and rev_ex:
+    uber_fees_est = uber_commission + uber_direct_dollars
+    if uber_fees_est:
+        net_takings_ex = rev_ex - uber_fees_est
+        if wages_dollars is not None and net_takings_ex:
+            net_wage_pct = wages_dollars / net_takings_ex * 100
+
 # ---- Split lane figures ----
 split = None
 if lightspeed_data and split_venue and lightspeed_data.get("dept_sums"):
@@ -456,7 +528,8 @@ if lightspeed_data and split_venue and lightspeed_data.get("dept_sums"):
         "food_gp_pct": round((food_ex - food_cogs) / food_ex * 100, 1) if food_ex else None,
         "bev_gp_pct": round((bev_ex - bev_cogs) / bev_ex * 100, 1) if bev_ex else None,
         "mari_rideon_ex_gst": round(ds["m"]["rev"] / 1.1, 2),
-        "other_ex_gst": round(ds["o"]["rev"] / 1.1, 2),
+        "hg_food_out_ex_gst": round(ds["hgf"]["rev"] / 1.1, 2),
+        "stow_food_out_ex_gst": round(ds["stf"]["rev"] / 1.1, 2),
     }
 
 wages_kitchen_pct = wages_foh_pct = None
@@ -516,18 +589,23 @@ record = {
         "gp_dollars":      round(lightspeed_data["gp"], 2) if lightspeed_data else None,
         "gp_pct":          round(lightspeed_data["gp_pct"], 1) if lightspeed_data else None,
         "uber_eats_revenue": round(lightspeed_data.get("uber_eats_rev", 0), 2) if lightspeed_data else 0,
+        "net_takings_ex_gst": round(net_takings_ex, 2) if net_takings_ex is not None else None,
         **(split or {}),
     },
     "wages": {
         "kitchen_dollars": round(deputy_data["kitchen_wages"], 2) if deputy_data else None,
         "foh_dollars":     round(deputy_data.get("foh_wages", 0), 2) if deputy_data else None,
         "driver_dollars":  round(deputy_data["driver_wages"], 2) if deputy_data else None,
+        "admin_dollars":   round(deputy_data.get("admin_wages", 0), 2) if deputy_data else None,
         "total_dollars":   round(wages_dollars, 2) if wages_dollars is not None else None,
         "wages_pct":       round(wages_pct, 1) if wages_pct is not None else None,
+        "net_wage_pct":    round(net_wage_pct, 1) if net_wage_pct is not None else None,
         "kitchen_hours":   round(deputy_data.get("kitchen_hours", 0), 1) if deputy_data else None,
         "foh_hours":       round(deputy_data.get("foh_hours", 0), 1) if deputy_data else None,
         "wages_kitchen_pct": wages_kitchen_pct,
         "wages_foh_pct":     wages_foh_pct,
+        "includes_super": True,
+        "salaried_synthesized": True,
     },
     "delivery": {
         "uber_eats_commission_dollars": round(uber_commission, 2),
@@ -535,6 +613,7 @@ record = {
         "uber_direct_dollars":          round(uber_direct_dollars, 2),
         "total_dollars":                round(delivery_dollars, 2) if delivery_dollars is not None else None,
         "delivery_pct":                 round(delivery_pct, 1) if delivery_pct is not None else None,
+        "fees_are_estimate":            True,
     } if "delivery" in lanes else None,
     "payments_breakdown": {k: round(v, 2) for k, v in payments_breakdown.items()} if payments_breakdown else None,
     "alerts": {
@@ -558,7 +637,8 @@ with out_file.open("w") as f:
 print(f"Saved {out_file}")
 
 # --------------------------------------------------------------
-# Append to history CSV
+# Append to history CSV (FULL history — no trailing-window trim; the
+# backfill from the product masters lives in these files)
 # --------------------------------------------------------------
 history_file = DATA_DIR / f"{prefix}_daily_history.csv"
 history_rows = []
@@ -582,7 +662,6 @@ nr = {
     "wages_alert":      wages_status,
     "delivery_alert":   delivery_status,
     "gp_alert":         gp_status,
-    # ---- split columns (empty for Mari / pre-split rows) ----
     "food_ex_gst":            split["food_ex_gst"] if split else "",
     "bev_ex_gst":             split["bev_ex_gst"] if split else "",
     "food_cogs":              split["food_cogs"] if split else "",
@@ -599,13 +678,10 @@ nr = {
     "cogs_bev_alert":         cogs_bev_status,
     "wages_kitchen_alert":    wages_kitchen_status,
     "wages_foh_alert":        wages_foh_status,
-    # ---- Uber columns ----
     "uber_eats_revenue":      record["sales"]["uber_eats_revenue"],
     "uber_direct_dollars":    round(uber_direct_dollars, 2) if "delivery" in lanes else "",
 }
 history_rows.append(nr)
-cutoff = target - timedelta(days=90)
-history_rows = [r for r in history_rows if date.fromisoformat(r["date"]) > cutoff]
 history_rows.sort(key=lambda r: r["date"])
 fieldnames = list(nr.keys())
 with history_file.open("w", newline="") as f:
