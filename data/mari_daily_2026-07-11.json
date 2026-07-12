@@ -1,36 +1,36 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-11T22:33:13.654601Z",
+  "generated_at": "2026-07-12T07:57:28.418873Z",
   "venue": "Marilynas",
   "data_status": {
-    "lightspeed": "missing",
+    "lightspeed": "ok",
     "deputy": "ok"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
+    "revenue_inc_gst": 4359.0,
+    "revenue_ex_gst": 3962.76,
+    "cogs_dollars": 913.75,
+    "cogs_pct": 23.1,
+    "gp_dollars": 3049.01,
+    "gp_pct": 76.9,
     "uber_eats_revenue": 0
   },
   "wages": {
-    "kitchen_dollars": 0,
+    "kitchen_dollars": 251.66,
     "driver_dollars": 0,
-    "total_dollars": null,
-    "wages_pct": null
+    "total_dollars": 251.66,
+    "wages_pct": 6.4
   },
   "delivery": {
     "uber_eats_commission_dollars": 0,
     "own_driver_dollars": 0,
-    "total_dollars": null,
-    "delivery_pct": null
+    "total_dollars": 0,
+    "delivery_pct": 0.0
   },
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
-    "delivery": "unknown"
+    "cogs": "red",
+    "wages": "green",
+    "delivery": "green"
   },
   "targets": {
     "cogs": {
@@ -57,5 +57,127 @@
       "red": 30.0,
       "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
     }
-  }
+  },
+  "top_products": [
+    {
+      "name": "Large Super House Special",
+      "qty": 6.0,
+      "rev": 149.0,
+      "cost": 44.28
+    },
+    {
+      "name": "Large Little Italy",
+      "qty": 4.0,
+      "rev": 120.0,
+      "cost": 34.33
+    },
+    {
+      "name": "Large Margherita",
+      "qty": 5.0,
+      "rev": 109.0,
+      "cost": 11.48
+    },
+    {
+      "name": "Regular Super House Special",
+      "qty": 4.0,
+      "rev": 94.0,
+      "cost": 21.14
+    },
+    {
+      "name": "Large Meatlovers",
+      "qty": 4.0,
+      "rev": 90.0,
+      "cost": 29.0
+    },
+    {
+      "name": "$45 FEAST",
+      "qty": 2.0,
+      "rev": 90.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Regular Cosmopolitan",
+      "qty": 4.0,
+      "rev": 89.0,
+      "cost": 19.36
+    },
+    {
+      "name": "Large Hawaiian",
+      "qty": 3.0,
+      "rev": 76.0,
+      "cost": 9.79
+    },
+    {
+      "name": "Large Cosmopolitan",
+      "qty": 4.0,
+      "rev": 75.0,
+      "cost": 27.04
+    },
+    {
+      "name": "Regular Meatlovers",
+      "qty": 3.0,
+      "rev": 75.0,
+      "cost": 15.57
+    },
+    {
+      "name": "Large Tandoori Chicken",
+      "qty": 3.0,
+      "rev": 75.0,
+      "cost": 9.91
+    },
+    {
+      "name": "Regular Little Italy",
+      "qty": 3.0,
+      "rev": 73.0,
+      "cost": 14.41
+    },
+    {
+      "name": "Regular New Yorker",
+      "qty": 3.0,
+      "rev": 69.75,
+      "cost": 10.76
+    },
+    {
+      "name": "Large Pepperoni",
+      "qty": 5.0,
+      "rev": 68.0,
+      "cost": 22.82
+    },
+    {
+      "name": "Gluten-free Little Italy",
+      "qty": 2.0,
+      "rev": 62.0,
+      "cost": 20.49
+    },
+    {
+      "name": "$60 BANQUET",
+      "qty": 1.0,
+      "rev": 60.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Large Sorrento",
+      "qty": 2.0,
+      "rev": 57.0,
+      "cost": 14.34
+    },
+    {
+      "name": "Large BBQ Chicken Pizza",
+      "qty": 3.0,
+      "rev": 55.5,
+      "cost": 13.03
+    },
+    {
+      "name": "Large Jimmy Jury",
+      "qty": 2.0,
+      "rev": 54.0,
+      "cost": 12.37
+    },
+    {
+      "name": "Large Uber Margherita",
+      "qty": 2.0,
+      "rev": 52.0,
+      "cost": 8.92
+    }
+  ]
 }
