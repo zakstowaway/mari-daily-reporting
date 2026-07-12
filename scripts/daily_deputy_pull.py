@@ -216,7 +216,30 @@ for ts in results:
     company = ou_info.get("CompanyName", "") or ""
 
     if ts.get("IsLeave"):
-        continue   # leave is group overhead, never a venue cost (weekly canon)
+        # Group-level overhead (weekly canon: Group/Leave row — never a venue
+        # cost). Captured ONCE, by the stowaway pull, to avoid triple-counting
+        # across the three venue runs. Salaried leave synthesizes at base rate;
+        # LeaveRule 1 (Annual Leave) carries the statutory 17.5% loading.
+        # Hourly leave keeps Deputy's Cost (loading applied at pay-rule level).
+        if venue_key != "stowaway":
+            continue
+        lv_hours = ts.get("TotalTime") or 0
+        lv_cost = ts.get("Cost") or 0
+        lv_sal = salaried.get(str(ts.get("Employee")))
+        if lv_sal and not lv_cost:
+            lv_cost = lv_hours * lv_sal["hourly"]
+            if ts.get("LeaveRule") == 1:
+                lv_cost *= 1.175
+        emp_info = ts.get("_DPMetaData", {}).get("EmployeeInfo", {})
+        records.append({
+            "timesheet_id": ts.get("Id"), "employee_id": ts.get("Employee"),
+            "employee_name": emp_info.get("DisplayName", ""),
+            "ou_name": ou_name, "company": company, "dept": "Leave",
+            "start_time": ts.get("StartTime"), "end_time": ts.get("EndTime"),
+            "hours": round(lv_hours, 4), "cost": round(lv_cost, 2),
+            "leave_rule": ts.get("LeaveRule"),
+        })
+        continue
 
     scale = 1.0
     if capture_all:
