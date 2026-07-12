@@ -10,12 +10,13 @@
 <style>
 :root {
   color-scheme: light;
-  --group:      #0B0B0B;   /* Stowaway group ink */
+  --group:      #0B0B0B;
   --group-tint: #F2F0EA;
-  --stow:       #1B4D3E;   /* Stowaway deep green */
-  --hg:         #C8452B;   /* Harry Gatos burnt orange */
-  --mari:       #C8102E;   /* Mari tomato red */
-  --mari-dark:  #8B0A1F;
+  --stow:       #1B4D3E;
+  --stow-tint:  #E7EEEB;
+  --hg:         #C8452B;
+  --hg-tint:    #FBE9E3;
+  --mari:       #C8102E;
   --mari-tint:  #FCE9EB;
   --paper:      #FFFFFF;
   --parchment:  #FBF8F1;
@@ -38,99 +39,52 @@ body {
 .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
 
 /* ===================================================================== */
-/* LOGIN — group-level branding                                          */
+/* LOGIN                                                                 */
 /* ===================================================================== */
-.login-wrap {
-  max-width: 420px; margin: 60px auto; padding: 0 20px;
-}
+.login-wrap { max-width: 420px; margin: 60px auto; padding: 0 20px; }
 .login-card {
-  background: var(--paper);
-  border-radius: 14px;
+  background: var(--paper); border-radius: 14px;
   padding: 44px 36px 36px;
   box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0,0,0,0.04);
   border-top: 6px solid var(--group);
 }
-.group-mark {
-  text-align: center;
-  margin-bottom: 8px;
-}
+.group-mark { text-align: center; margin-bottom: 8px; }
 .group-mark .brand {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 22px;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
-  color: var(--group);
-  text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+  font-size: 22px; letter-spacing: -0.01em; line-height: 1.1;
+  color: var(--group); text-transform: uppercase;
 }
 .group-mark .brand-sub {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  margin-top: 12px;
-  display: block;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink-soft); margin-top: 12px; display: block;
 }
-.group-mark .venues {
-  display: flex; justify-content: center; gap: 8px;
-  margin-top: 18px;
-}
+.group-mark .venues { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
 .group-mark .venue-chip {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #fff;
+  font-family: 'Space Grotesk', sans-serif; font-size: 10px;
+  font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 20px; color: #fff;
 }
 .venue-chip.stow { background: var(--stow); }
 .venue-chip.hg   { background: var(--hg); }
 .venue-chip.mari { background: var(--mari); }
-
 .login-card form { margin-top: 32px; }
 .login-card label {
-  display: block;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  margin: 18px 0 6px;
+  display: block; font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft); margin: 18px 0 6px;
 }
 .login-card input {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: 'Inter', sans-serif;
-  background: var(--paper);
-  color: var(--ink);
-  transition: border-color 0.15s;
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--line);
+  border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif;
+  background: var(--paper); color: var(--ink); transition: border-color 0.15s;
 }
-.login-card input:focus {
-  outline: none;
-  border-color: var(--group);
-}
+.login-card input:focus { outline: none; border-color: var(--group); }
 .login-card button {
-  width: 100%;
-  margin-top: 24px;
-  padding: 14px;
-  background: var(--group);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
+  width: 100%; margin-top: 24px; padding: 14px;
+  background: var(--group); color: #fff; border: none; border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
   transition: background 0.15s;
 }
 .login-card button:hover { background: #2a2a2a; }
@@ -140,103 +94,131 @@ body {
 }
 
 /* ===================================================================== */
-/* HEADER (post-login)                                                   */
+/* HEADER                                                                */
 /* ===================================================================== */
 .header {
-  background: var(--paper);
-  border-bottom: 1px solid var(--line);
-  padding: 18px 0;
-  margin-bottom: 8px;
+  background: var(--paper); border-bottom: 1px solid var(--line);
+  padding: 18px 0; margin-bottom: 0;
 }
 .header-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 24px;
   display: flex; justify-content: space-between; align-items: center;
   gap: 16px; flex-wrap: wrap;
 }
-.header .brand-row {
-  display: flex; align-items: center; gap: 14px;
-}
+.header .brand-row { display: flex; align-items: center; gap: 14px; }
 .header .group-brand {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.005em;
-  color: var(--group);
-  text-transform: uppercase;
-  line-height: 1;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+  font-size: 15px; letter-spacing: -0.005em; color: var(--group);
+  text-transform: uppercase; line-height: 1;
 }
-.header .divider {
-  width: 1px; height: 28px; background: var(--line);
-}
-.header .venue-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: -0.01em;
-  line-height: 1;
-}
-.header .venue-title.mari { color: var(--mari); }
-.header .venue-title.stow { color: var(--stow); }
-.header .venue-title.hg   { color: var(--hg); }
-.header .venue-title.group{ color: var(--group); }
-.header .who {
-  font-size: 13px; color: var(--ink-soft);
-  font-family: 'Inter', sans-serif;
-}
+.header .who { font-size: 13px; color: var(--ink-soft); font-family: 'Inter', sans-serif; }
 .header .who strong { color: var(--ink); font-weight: 600; }
 .header .who a {
-  color: var(--ink);
-  text-decoration: none; cursor: pointer;
-  font-weight: 500;
-  margin-left: 6px;
-  border-bottom: 1px solid var(--line);
+  color: var(--ink); text-decoration: none; cursor: pointer;
+  font-weight: 500; margin-left: 6px; border-bottom: 1px solid var(--line);
 }
 .header .who a:hover { border-bottom-color: var(--ink); }
 
-/* venue accent strip under header */
-.venue-strip {
-  height: 4px;
-  background: var(--grey);
-  margin-bottom: 24px;
+/* venue tabs row */
+.venue-tabs {
+  background: var(--paper); border-bottom: 1px solid var(--line);
+  padding: 0 24px;
 }
+.venue-tabs-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; gap: 4px;
+}
+.venue-tab {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft);
+  padding: 16px 20px; border: none; background: transparent;
+  cursor: pointer; border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.venue-tab:hover { color: var(--ink); }
+.venue-tab.active { color: var(--ink); }
+.venue-tab.active.stow { border-bottom-color: var(--stow); color: var(--stow); }
+.venue-tab.active.hg   { border-bottom-color: var(--hg);   color: var(--hg); }
+.venue-tab.active.mari { border-bottom-color: var(--mari); color: var(--mari); }
+.venue-tab.active.group{ border-bottom-color: var(--group); }
+
+/* accent strip */
+.venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
 .venue-strip.stow { background: var(--stow); }
 .venue-strip.hg   { background: var(--hg); }
-.venue-strip.group {
+.venue-strip.group{
   background: linear-gradient(to right, var(--stow) 0%, var(--stow) 33.3%, var(--hg) 33.3%, var(--hg) 66.6%, var(--mari) 66.6%, var(--mari) 100%);
 }
 
 /* ===================================================================== */
-/* SUB-HEADER                                                            */
+/* TIMEFRAME TOGGLE + DAY PICKER                                         */
+/* ===================================================================== */
+.control-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.timeframe-toggle {
+  display: inline-flex; background: var(--paper);
+  border-radius: 10px; padding: 4px; border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.timeframe-toggle button {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft);
+  padding: 8px 14px; border: none; background: transparent;
+  border-radius: 6px; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.timeframe-toggle button:hover { color: var(--ink); }
+.timeframe-toggle button.active {
+  background: var(--ink); color: var(--paper);
+}
+
+.day-picker {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.day-pill {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 500;
+  padding: 8px 12px; border-radius: 8px;
+  background: var(--paper); border: 1px solid var(--line);
+  color: var(--ink); cursor: pointer;
+  transition: all 0.15s;
+  min-width: 60px; text-align: center; line-height: 1.3;
+}
+.day-pill .weekday {
+  display: block; font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft); margin-bottom: 2px;
+}
+.day-pill:hover { border-color: var(--ink); }
+.day-pill.no-data { opacity: 0.5; }
+.day-pill.active {
+  background: var(--ink); color: var(--paper); border-color: var(--ink);
+}
+.day-pill.active .weekday { color: rgba(255,255,255,0.75); }
+
+/* ===================================================================== */
+/* SNAPSHOT HEADING                                                      */
 /* ===================================================================== */
 .snapshot-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--ink-soft);
-  margin: 0 0 6px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px;
+  font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--ink-soft); margin: 20px 0 6px;
 }
 .snapshot-date {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: -0.01em;
+  font-family: 'Space Grotesk', sans-serif; font-size: 26px;
+  font-weight: 700; color: var(--ink); letter-spacing: -0.01em;
   margin: 0 0 22px;
 }
 .snapshot-date .stale {
-  font-size: 12px;
-  color: var(--mari);
-  font-weight: 500;
-  margin-left: 12px;
-  padding: 3px 10px;
-  background: var(--mari-tint);
-  border-radius: 12px;
-  letter-spacing: 0;
-  text-transform: none;
-  vertical-align: middle;
+  font-family: 'Inter', sans-serif; font-size: 12px; color: var(--mari);
+  font-weight: 500; margin-left: 12px; padding: 3px 10px;
+  background: var(--mari-tint); border-radius: 12px; letter-spacing: 0;
+  text-transform: none; vertical-align: middle;
 }
 
 /* ===================================================================== */
@@ -247,40 +229,21 @@ body {
 @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
 
 .card {
-  background: var(--paper);
-  border-radius: 12px;
-  padding: 22px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border-top: 4px solid var(--grey);
+  background: var(--paper); border-radius: 12px; padding: 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-top: 4px solid var(--grey);
   transition: transform 0.15s, box-shadow 0.15s;
 }
-.card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-}
+.card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
 .card .label {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-weight: 500;
-  color: var(--ink-soft);
-  margin: 0 0 8px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.15em; font-weight: 500;
+  color: var(--ink-soft); margin: 0 0 8px;
 }
 .card .value {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  margin: 0 0 4px;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--ink);
+  font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700;
+  margin: 0 0 4px; letter-spacing: -0.03em; line-height: 1; color: var(--ink);
 }
-.card .sub {
-  font-size: 13px;
-  color: var(--ink-soft);
-  font-variant-numeric: tabular-nums;
-}
+.card .sub { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .card.green   { border-top-color: var(--green);  }
 .card.yellow  { border-top-color: var(--accent); }
 .card.amber   { border-top-color: var(--amber);  }
@@ -291,61 +254,40 @@ body {
 /* SECTIONS                                                              */
 /* ===================================================================== */
 .section {
-  background: var(--paper);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background: var(--paper); border-radius: 12px; padding: 24px;
+  margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 .section h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  margin: 0 0 16px;
-  color: var(--ink-soft);
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.18em; margin: 0 0 16px; color: var(--ink-soft);
 }
 .chart-wrap { position: relative; width: 100%; height: 260px; }
 
-/* ===================================================================== */
-/* TABLE                                                                 */
-/* ===================================================================== */
+/* Table */
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
 th {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 500;
-  color: var(--ink-soft);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  background: var(--group-tint);
+  font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: var(--ink-soft);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; background: var(--group-tint);
 }
 td { font-variant-numeric: tabular-nums; color: var(--ink); }
 td.num { text-align: right; }
 tbody tr:hover { background: var(--group-tint); }
 
-/* ===================================================================== */
-/* FOOTER                                                                */
-/* ===================================================================== */
 .footer {
-  margin-top: 32px;
-  padding: 20px 0;
-  border-top: 1px solid var(--line);
-  font-size: 12px;
-  color: var(--ink-soft);
-  text-align: center;
+  margin-top: 32px; padding: 20px 0; border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--ink-soft); text-align: center;
 }
 .footer .group-tiny {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  color: var(--group);
-  letter-spacing: -0.005em;
-  text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+  color: var(--group); letter-spacing: -0.005em; text-transform: uppercase;
 }
-
 .hidden { display: none !important; }
+
+/* Coming-soon placeholder */
+.placeholder-card {
+  grid-column: 1 / -1; text-align: center; padding: 60px 24px;
+}
 </style>
 </head>
 <body>
@@ -373,24 +315,40 @@ tbody tr:hover { background: var(--group-tint); }
   </div>
 </div>
 
-<!-- DASHBOARD (hidden until login) -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
   <div class="header">
     <div class="header-inner">
       <div class="brand-row">
         <span class="group-brand">Stowaway Hospitality Group</span>
-        <span class="divider"></span>
-        <span class="venue-title group" id="venue-title">Daily Reporting</span>
       </div>
       <div class="who">
         <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
       </div>
     </div>
   </div>
-  <div class="venue-strip group" id="venue-strip"></div>
+
+  <!-- Venue tabs (only visible when the role has multi-venue access) -->
+  <div id="venue-tabs" class="venue-tabs hidden">
+    <div class="venue-tabs-inner" id="venue-tabs-inner"></div>
+  </div>
+
+  <div class="venue-strip" id="venue-strip"></div>
 
   <div class="wrap">
-    <p class="snapshot-title" id="snapshot-title">Yesterday</p>
+
+    <!-- Timeframe + Day picker -->
+    <div class="control-row">
+      <div class="timeframe-toggle" id="timeframe-toggle">
+        <button data-tf="day" class="active">Yesterday</button>
+        <button data-tf="week">This Week</button>
+        <button data-tf="month">This Month</button>
+        <button data-tf="quarter">This Quarter</button>
+      </div>
+      <div class="day-picker" id="day-picker"></div>
+    </div>
+
+    <p class="snapshot-title" id="snapshot-title">Snapshot</p>
     <p class="snapshot-date"><span id="latest-date"></span><span id="stale-badge"></span></p>
 
     <div class="grid" id="snapshot"></div>
@@ -419,7 +377,7 @@ tbody tr:hover { background: var(--group-tint); }
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
 // ============================================================================
-// AUTH — client-side, obscure-URL + SHA-256 hashed passwords.
+// AUTH — obscure URL + SHA-256 hashed passwords
 // ============================================================================
 let USERS = null;
 let CURRENT_ROLE = null;
@@ -456,19 +414,14 @@ function logout() {
   CURRENT_USER = null; CURRENT_ROLE = null;
   document.getElementById('login').classList.remove('hidden');
   document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('trend-section').classList.remove('hidden');
-  document.getElementById('history-section').classList.remove('hidden');
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 }
 async function showDashboard() {
   document.getElementById('login').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
-  document.getElementById('trend-section').classList.remove('hidden');
-  document.getElementById('history-section').classList.remove('hidden');
   document.getElementById('who-name').textContent = CURRENT_USER.display;
-  applyVenueTheme();
-  await loadData();
+  await bootstrap();
 }
 async function tryResume() {
   await loadUsers();
@@ -484,140 +437,345 @@ async function tryResume() {
 }
 
 // ============================================================================
-// ROLE-BASED VIEW CONFIG
+// VENUE + ROLE CONFIG
 // ============================================================================
-// venue: 'group' | 'stow' | 'hg' | 'mari'   — drives the header color/label
-// scope: 'mari' | 'placeholder'             — drives what data section renders
-const VIEWS = {
-  admin: {
-    venue: 'group', venueLabel: 'All Venues',
-    scope: 'mari',
+const VENUE_CONFIG = {
+  mari: {
+    label: "Marilyna's",
+    chipClass: 'mari',
+    historyFile: 'data/mari_daily_history.csv',
+    dayFilePrefix: 'data/mari_daily_',
     cards: ['revenue', 'cogs', 'wages', 'delivery'],
     chart_lines: ['cogs', 'wages', 'delivery'],
     history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
-    show_dollar_amounts: true,
   },
-  pizza: {
-    venue: 'mari', venueLabel: "Marilyna's",
-    scope: 'mari',
-    cards: ['revenue', 'cogs', 'wages', 'delivery'],
-    chart_lines: ['cogs', 'wages', 'delivery'],
-    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
-    show_dollar_amounts: true,
+  stow: {
+    label: 'Stowaway',
+    chipClass: 'stow',
+    historyFile: 'data/stow_daily_history.csv',
+    dayFilePrefix: 'data/stow_daily_',
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
   },
-  bigchef: {
-    venue: 'group', venueLabel: 'All Kitchens',
-    scope: 'mari',
-    cards: ['revenue', 'cogs', 'wages'],
-    chart_lines: ['cogs', 'wages'],
-    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct'],
-    show_dollar_amounts: true,
+  hg: {
+    label: 'Harry Gatos',
+    chipClass: 'hg',
+    historyFile: 'data/hg_daily_history.csv',
+    dayFilePrefix: 'data/hg_daily_',
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
   },
-  stowfood: { venue: 'stow', venueLabel: 'Stowaway · Kitchen',    scope: 'placeholder' },
-  hgfood:   { venue: 'hg',   venueLabel: 'Harry Gatos · Kitchen', scope: 'placeholder' },
-  bar:      { venue: 'group',venueLabel: 'Bar / FOH · Stow + HG', scope: 'placeholder' },
 };
 
-function applyVenueTheme() {
-  const cfg = VIEWS[CURRENT_ROLE] || VIEWS.admin;
-  const strip = document.getElementById('venue-strip');
-  const title = document.getElementById('venue-title');
-  strip.className = 'venue-strip ' + cfg.venue;
-  title.className = 'venue-title ' + cfg.venue;
-  title.textContent = cfg.venueLabel;
-}
-
-const CARD_DEFS = {
-  revenue: (day, cfg) => ({ label: 'Revenue (ex-GST)', value: '$' + Math.round(parseFloat(day.revenue_ex_gst) || 0).toLocaleString(), sub: day.date, status: 'unknown' }),
-  cogs:    (day, cfg) => ({ label: 'COGS', value: (day.cogs_pct || '?') + '%', sub: cfg.show_dollar_amounts ? '$' + Math.round(parseFloat(day.cogs_dollars) || 0).toLocaleString() : '', status: day.cogs_alert }),
-  wages:   (day, cfg) => ({ label: 'Wages', value: (day.wages_pct || '?') + '%', sub: cfg.show_dollar_amounts ? '$' + Math.round(parseFloat(day.wages_dollars) || 0).toLocaleString() : '', status: day.wages_alert }),
-  delivery:(day, cfg) => ({ label: 'Delivery', value: (day.delivery_pct || '?') + '%', sub: cfg.show_dollar_amounts ? '$' + Math.round(parseFloat(day.delivery_dollars) || 0).toLocaleString() : '', status: day.delivery_alert }),
-};
-
-const CHART_LINE_DEFS = {
-  cogs:     { label: 'COGS %',     key: 'cogs_pct',     color: '#C8102E' },
-  wages:    { label: 'Wages %',    key: 'wages_pct',    color: '#1A1A1A' },
-  delivery: { label: 'Delivery %', key: 'delivery_pct', color: '#E8A82B' },
-};
-
-const COL_DEFS = {
-  date:            { label: 'Date',         num: false, render: r => r.date },
-  revenue_ex_gst:  { label: 'Rev (ex-GST)', num: true,  render: r => '$' + Math.round(parseFloat(r.revenue_ex_gst) || 0).toLocaleString() },
-  cogs_pct:        { label: 'COGS %',       num: true,  render: r => r.cogs_pct + '%' },
-  wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct + '%' },
-  delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct + '%' },
-  gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct + '%' },
+// role.venues = which venue tabs the role can see (order = tab order)
+// role.defaultVenue = initial selection
+// role.cards / chart_lines / history_cols override VENUE_CONFIG when set
+const ROLE_CONFIG = {
+  admin:    { venues: ['stow', 'hg', 'mari'], defaultVenue: 'mari', show_dollar_amounts: true },
+  pizza:    { venues: ['mari'],               defaultVenue: 'mari', show_dollar_amounts: true },
+  stowfood: { venues: ['stow'],               defaultVenue: 'stow', show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },  // kitchen focus
+  hgfood:   { venues: ['hg'],                 defaultVenue: 'hg',   show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },
+  bar:      { venues: ['stow', 'hg'],         defaultVenue: 'stow', show_dollar_amounts: true },
+  bigchef:  { venues: ['stow', 'hg', 'mari'], defaultVenue: 'mari', show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages'] },
 };
 
 // ============================================================================
-// DATA LOADING & RENDERING
+// STATE
 // ============================================================================
-async function loadData() {
-  const cfg = VIEWS[CURRENT_ROLE] || VIEWS.admin;
+const STATE = {
+  histories: {},          // venue key -> [rows]
+  currentVenue: null,
+  currentTimeframe: 'day', // 'day' | 'week' | 'month' | 'quarter'
+  currentDay: null,        // ISO date string
+  lastUpdate: null,
+};
 
-  if (cfg.scope === 'placeholder') {
-    renderPlaceholder(cfg);
-    return;
-  }
-
-  const historyRes = await fetch('data/mari_daily_history.csv?t=' + Date.now());
-  const historyText = await historyRes.text();
-  const history = parseCsv(historyText);
-
-  const latest = history[history.length - 1];
-  const latestDate = new Date(latest.date);
-  document.getElementById('latest-date').textContent = latestDate.toLocaleDateString('en-AU', {weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'});
-
-  const now = new Date();
-  const daysBehind = Math.floor((now - latestDate) / 86400000);
-  const staleEl = document.getElementById('stale-badge');
-  if (daysBehind > 1) {
-    staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
-  } else {
-    staleEl.innerHTML = '';
-  }
-
-  renderSnapshot(latest, cfg);
-  renderChart(history, cfg);
-  renderHistoryTable(history, cfg);
-
-  try {
-    const lastRes = await fetch(`data/mari_daily_${latest.date}.json?t=` + Date.now());
-    const lastData = await lastRes.json();
-    document.getElementById('last-update').textContent = new Date(lastData.generated_at).toLocaleString('en-AU');
-  } catch (e) {
-    document.getElementById('last-update').textContent = 'unknown';
-  }
-}
-
-function renderPlaceholder(cfg) {
-  document.getElementById('snapshot-title').textContent = cfg.venueLabel;
-  document.getElementById('latest-date').textContent = '';
-  document.getElementById('stale-badge').innerHTML = '';
-  document.getElementById('snapshot').innerHTML = `
-    <div class="card unknown" style="grid-column: 1 / -1; text-align: center; padding: 60px 24px;">
-      <p class="label">Coming Soon</p>
-      <p class="value" style="font-size: 24px; margin: 12px 0 8px;">Not wired up yet</p>
-      <p class="sub" style="max-width: 400px; margin: 0 auto;">Data for this venue / department will appear here once the reporting pipeline is built.</p>
-    </div>
-  `;
-  document.getElementById('trend-section').classList.add('hidden');
-  document.getElementById('history-section').classList.add('hidden');
-  document.getElementById('last-update').textContent = 'n/a';
-}
-
+// ============================================================================
+// UTILS
+// ============================================================================
 function parseCsv(text) {
   const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
   const headers = lines[0].split(',');
   return lines.slice(1).map(line => {
     const values = line.split(',');
     return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
   });
 }
+function toNum(x) {
+  const n = parseFloat(x);
+  return isFinite(n) ? n : 0;
+}
+function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
+function isoDate(d) { return d.toISOString().slice(0, 10); }
+function sydneyToday() {
+  // Zak's browser is in Sydney → Date already reflects Sydney date
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); return c; }
 
-function renderSnapshot(day, cfg) {
-  const cards = cfg.cards.map(key => CARD_DEFS[key](day, cfg));
-  document.getElementById('snapshot').innerHTML = cards.map(c => `
+function quarterStart(d) {
+  const q = Math.floor(d.getMonth() / 3);
+  return new Date(d.getFullYear(), q * 3, 1);
+}
+function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function weekStart(d) { // Monday
+  const day = d.getDay(); // 0=Sun
+  const offset = day === 0 ? -6 : 1 - day;
+  return addDays(d, offset);
+}
+
+// ============================================================================
+// DATA LOADING
+// ============================================================================
+async function loadHistory(venue) {
+  const cfg = VENUE_CONFIG[venue];
+  try {
+    const res = await fetch(cfg.historyFile + '?t=' + Date.now());
+    if (!res.ok) return [];
+    const text = await res.text();
+    return parseCsv(text);
+  } catch (e) { return []; }
+}
+
+async function loadAllHistories(role) {
+  const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
+  const results = await Promise.all(roleCfg.venues.map(async v => [v, await loadHistory(v)]));
+  const out = {};
+  for (const [v, rows] of results) out[v] = rows;
+  return out;
+}
+
+// ============================================================================
+// AGGREGATION (client-side rollups)
+// ============================================================================
+function rowsForTimeframe(rows, timeframe, anchorDay) {
+  // anchorDay: ISO string of the "yesterday" reference date
+  const anchor = new Date(anchorDay);
+  let start;
+  if (timeframe === 'day') return rows.filter(r => r.date === anchorDay);
+  if (timeframe === 'week')    start = weekStart(anchor);
+  if (timeframe === 'month')   start = monthStart(anchor);
+  if (timeframe === 'quarter') start = quarterStart(anchor);
+  const startIso = isoDate(start);
+  const endIso = anchorDay;
+  return rows.filter(r => r.date >= startIso && r.date <= endIso);
+}
+
+function rollup(rows) {
+  if (!rows.length) return null;
+  if (rows.length === 1) return rows[0];   // single-day view: raw row wins
+  const sums = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
+  let n = 0;
+  for (const r of rows) {
+    if (!r.revenue_ex_gst) continue;  // skip empty (closed) days
+    sums.revenue_ex_gst += toNum(r.revenue_ex_gst);
+    sums.cogs_dollars   += toNum(r.cogs_dollars);
+    sums.wages_dollars  += toNum(r.wages_dollars);
+    sums.delivery_dollars += toNum(r.delivery_dollars);
+    sums.gp_dollars     += toNum(r.gp_dollars);
+    n++;
+  }
+  if (n === 0) return null;
+  const rev = sums.revenue_ex_gst;
+  return {
+    date: rows[0].date + ' → ' + rows[rows.length - 1].date,
+    days_included: n,
+    revenue_ex_gst: sums.revenue_ex_gst,
+    cogs_dollars:   sums.cogs_dollars,
+    cogs_pct:       rev ? sums.cogs_dollars / rev * 100 : 0,
+    wages_dollars:  sums.wages_dollars,
+    wages_pct:      rev ? sums.wages_dollars / rev * 100 : 0,
+    delivery_dollars: sums.delivery_dollars,
+    delivery_pct:   rev ? sums.delivery_dollars / rev * 100 : 0,
+    gp_dollars:     sums.gp_dollars,
+    gp_pct:         rev ? sums.gp_dollars / rev * 100 : 0,
+    cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
+  };
+}
+
+// ============================================================================
+// CARDS
+// ============================================================================
+const CARD_DEFS = {
+  revenue: (day, cfg) => ({
+    label: 'Revenue (ex-GST)',
+    value: fmtDollars(toNum(day.revenue_ex_gst)),
+    sub: day.days_included ? `${day.days_included} days` : day.date,
+    status: 'unknown',
+  }),
+  cogs: (day, cfg) => ({
+    label: 'COGS',
+    value: day.cogs_pct != null && day.cogs_pct !== '' ? fmtPct(toNum(day.cogs_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
+    status: day.cogs_alert,
+  }),
+  wages: (day, cfg) => ({
+    label: 'Wages',
+    value: day.wages_pct != null && day.wages_pct !== '' ? fmtPct(toNum(day.wages_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '',
+    status: day.wages_alert,
+  }),
+  delivery: (day, cfg) => ({
+    label: 'Delivery',
+    value: day.delivery_pct != null && day.delivery_pct !== '' ? fmtPct(toNum(day.delivery_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.delivery_dollars)) : '',
+    status: day.delivery_alert,
+  }),
+  gp: (day, cfg) => ({
+    label: 'GP',
+    value: day.gp_pct != null && day.gp_pct !== '' ? fmtPct(toNum(day.gp_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.gp_dollars)) : '',
+    status: day.gp_alert || 'unknown',
+  }),
+};
+
+const CHART_LINE_DEFS = {
+  cogs:     { label: 'COGS %',     key: 'cogs_pct',     color: '#C8102E' },
+  wages:    { label: 'Wages %',    key: 'wages_pct',    color: '#1A1A1A' },
+  delivery: { label: 'Delivery %', key: 'delivery_pct', color: '#E8A82B' },
+  gp:       { label: 'GP %',       key: 'gp_pct',       color: '#0F6E56' },
+};
+
+const COL_DEFS = {
+  date:            { label: 'Date',         num: false, render: r => r.date },
+  revenue_ex_gst:  { label: 'Rev (ex-GST)', num: true,  render: r => fmtDollars(toNum(r.revenue_ex_gst)) },
+  cogs_pct:        { label: 'COGS %',       num: true,  render: r => r.cogs_pct ? fmtPct(toNum(r.cogs_pct)) : '—' },
+  wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct ? fmtPct(toNum(r.wages_pct)) : '—' },
+  delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct ? fmtPct(toNum(r.delivery_pct)) : '—' },
+  gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct ? fmtPct(toNum(r.gp_pct)) : '—' },
+};
+
+// ============================================================================
+// RENDER
+// ============================================================================
+function renderVenueTabs() {
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const tabsEl = document.getElementById('venue-tabs');
+  const inner = document.getElementById('venue-tabs-inner');
+  if (roleCfg.venues.length <= 1) {
+    tabsEl.classList.add('hidden');
+    return;
+  }
+  tabsEl.classList.remove('hidden');
+  inner.innerHTML = roleCfg.venues.map(v => {
+    const cfg = VENUE_CONFIG[v];
+    const active = v === STATE.currentVenue ? `active ${cfg.chipClass}` : '';
+    return `<button class="venue-tab ${active}" onclick="switchVenue('${v}')">${cfg.label}</button>`;
+  }).join('');
+}
+
+function renderVenueStrip() {
+  const el = document.getElementById('venue-strip');
+  const cfg = VENUE_CONFIG[STATE.currentVenue];
+  el.className = 'venue-strip ' + cfg.chipClass;
+}
+
+function renderTimeframeToggle() {
+  document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tf === STATE.currentTimeframe);
+  });
+}
+
+function renderDayPicker() {
+  const picker = document.getElementById('day-picker');
+  if (STATE.currentTimeframe !== 'day') {
+    picker.style.display = 'none';
+    return;
+  }
+  picker.style.display = 'flex';
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  const rowsByDate = Object.fromEntries(rows.map(r => [r.date, r]));
+
+  // Last 7 days ending yesterday
+  const today = sydneyToday();
+  const days = [];
+  for (let i = 7; i >= 1; i--) days.push(addDays(today, -i));
+  picker.innerHTML = days.map(d => {
+    const iso = isoDate(d);
+    const has = !!rowsByDate[iso] && rowsByDate[iso].revenue_ex_gst;
+    const active = iso === STATE.currentDay ? 'active' : '';
+    const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
+    const dn = d.getDate();
+    return `<button class="day-pill ${active} ${has ? '' : 'no-data'}" onclick="switchDay('${iso}')">
+      <span class="weekday">${wd}</span>${dn}
+    </button>`;
+  }).join('');
+}
+
+function renderSnapshot() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const cards = (roleCfg.cards || venueCfg.cards);
+  const cfg = { show_dollar_amounts: roleCfg.show_dollar_amounts };
+  const rows = STATE.histories[STATE.currentVenue] || [];
+
+  // Determine the range and get the (possibly rolled up) day view
+  let anchorDay = STATE.currentDay;
+  if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+
+  const rangeRows = rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay);
+  let day = rollup(rangeRows);
+
+  // Set snapshot heading
+  const titleEl = document.getElementById('snapshot-title');
+  const dateEl  = document.getElementById('latest-date');
+  const staleEl = document.getElementById('stale-badge');
+
+  const tfLabel = {
+    day: 'Selected day', week: 'This Week', month: 'This Month', quarter: 'This Quarter',
+  }[STATE.currentTimeframe];
+  titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
+
+  if (!day) {
+    dateEl.textContent = 'No data';
+    staleEl.innerHTML = '';
+    document.getElementById('snapshot').innerHTML = `
+      <div class="card unknown placeholder-card">
+        <p class="label">${tfLabel}</p>
+        <p class="value" style="font-size: 22px; margin: 12px 0 8px;">No data for this range yet</p>
+        <p class="sub">${STATE.currentTimeframe === 'day'
+          ? 'This day has no aggregated report — either the venue was closed, or the pipeline hasn\'t caught up.'
+          : 'Pipeline hasn\'t populated enough days to roll up this timeframe.'}</p>
+      </div>
+    `;
+    document.getElementById('trend-section').classList.add('hidden');
+    document.getElementById('history-section').classList.add('hidden');
+    return;
+  }
+
+  document.getElementById('trend-section').classList.remove('hidden');
+  document.getElementById('history-section').classList.remove('hidden');
+
+  // Date label
+  if (STATE.currentTimeframe === 'day') {
+    dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', {
+      weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
+    });
+  } else {
+    const [s, e] = day.date.split(' → ');
+    const fmt = d => new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+    dateEl.textContent = `${fmt(s)} — ${fmt(e)} (${day.days_included} days)`;
+  }
+
+  // Stale badge (day view only)
+  staleEl.innerHTML = '';
+  if (STATE.currentTimeframe === 'day') {
+    const daysBehind = Math.floor((sydneyToday() - new Date(day.date)) / 86400000);
+    if (daysBehind > 1) staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
+  }
+
+  // Cards
+  const cardEls = cards.map(key => CARD_DEFS[key](day, cfg));
+  document.getElementById('snapshot').innerHTML = cardEls.map(c => `
     <div class="card ${c.status || 'unknown'}">
       <p class="label">${c.label}</p>
       <p class="value">${c.value}</p>
@@ -627,25 +785,32 @@ function renderSnapshot(day, cfg) {
 }
 
 let CHART_INSTANCE = null;
-function renderChart(history, cfg) {
+function renderChart() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const lines = (roleCfg.chart_lines || venueCfg.chart_lines);
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  const trailing = rows.slice(-30);
+
   const ctx = document.getElementById('trend-chart').getContext('2d');
   if (CHART_INSTANCE) CHART_INSTANCE.destroy();
-  const datasets = cfg.chart_lines.map(line => {
+  const datasets = lines.map(line => {
     const def = CHART_LINE_DEFS[line];
     return {
       label: def.label,
-      data: history.map(r => parseFloat(r[def.key])),
+      data: trailing.map(r => toNum(r[def.key])),
       borderColor: def.color,
       backgroundColor: def.color + '20',
       tension: 0.3,
       borderWidth: 2.5,
       pointRadius: 3,
       pointBackgroundColor: def.color,
+      spanGaps: true,
     };
   });
   CHART_INSTANCE = new Chart(ctx, {
     type: 'line',
-    data: { labels: history.map(r => r.date.slice(5)), datasets },
+    data: { labels: trailing.map(r => r.date.slice(5)), datasets },
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
@@ -673,19 +838,95 @@ function renderChart(history, cfg) {
   });
 }
 
-function renderHistoryTable(history, cfg) {
+function renderHistoryTable() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const cols = (roleCfg.history_cols || venueCfg.history_cols);
+  const rows = STATE.histories[STATE.currentVenue] || [];
+
   const thead = document.getElementById('history-thead');
-  thead.innerHTML = cfg.history_cols.map(k => {
+  thead.innerHTML = cols.map(k => {
     const def = COL_DEFS[k];
     return `<th class="${def.num ? 'num' : ''}">${def.label}</th>`;
   }).join('');
   const tbody = document.querySelector('#history-table tbody');
-  tbody.innerHTML = history.slice().reverse().slice(0, 30).map(r =>
-    '<tr>' + cfg.history_cols.map(k => {
+  tbody.innerHTML = rows.slice().reverse().slice(0, 30).map(r =>
+    '<tr>' + cols.map(k => {
       const def = COL_DEFS[k];
       return `<td class="${def.num ? 'num' : ''}">${def.render(r)}</td>`;
     }).join('') + '</tr>'
   ).join('');
+}
+
+async function fetchLastUpdate() {
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  if (!rows.length) { document.getElementById('last-update').textContent = 'unknown'; return; }
+  const latest = rows[rows.length - 1];
+  const cfg = VENUE_CONFIG[STATE.currentVenue];
+  try {
+    const r = await fetch(`${cfg.dayFilePrefix}${latest.date}.json?t=` + Date.now());
+    const data = await r.json();
+    document.getElementById('last-update').textContent =
+      new Date(data.generated_at).toLocaleString('en-AU');
+  } catch (e) {
+    document.getElementById('last-update').textContent = 'unknown';
+  }
+}
+
+function render() {
+  renderVenueTabs();
+  renderVenueStrip();
+  renderTimeframeToggle();
+  renderDayPicker();
+  renderSnapshot();
+  renderChart();
+  renderHistoryTable();
+  fetchLastUpdate();
+}
+
+// ============================================================================
+// STATE MUTATIONS (called from onclick handlers)
+// ============================================================================
+function switchVenue(venue) {
+  STATE.currentVenue = venue;
+  // Reset day to latest available for this venue
+  const rows = STATE.histories[venue] || [];
+  STATE.currentDay = rows.length ? rows[rows.length - 1].date : null;
+  render();
+}
+function switchTimeframe(tf) {
+  STATE.currentTimeframe = tf;
+  render();
+}
+function switchDay(iso) {
+  STATE.currentDay = iso;
+  render();
+}
+
+// ============================================================================
+// BOOTSTRAP
+// ============================================================================
+async function bootstrap() {
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+
+  // Load histories for every venue the role can see, in parallel
+  STATE.histories = await loadAllHistories(CURRENT_ROLE);
+
+  // Initial venue: role default, but only if there's data. Else first with data.
+  const defaultVenue = roleCfg.defaultVenue;
+  const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
+  STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
+
+  // Initial day: latest available for the initial venue
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  STATE.currentDay = rows.length ? rows[rows.length - 1].date : isoDate(addDays(sydneyToday(), -1));
+
+  // Wire up timeframe toggle
+  document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
+    btn.onclick = () => switchTimeframe(btn.dataset.tf);
+  });
+
+  render();
 }
 
 // Boot
