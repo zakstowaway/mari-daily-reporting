@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stowaway Hospitality Group — Daily Reporting</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="16x16" href="logo_16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
+<link rel="icon" type="image/png" sizes="128x128" href="logo_128.png">
+<link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light dark;
+  --group:      #0B0B0B;
+  --group-tint: #F2F0EA;
+  --stow:       #1B4D3E;
+  --stow-tint:  #E7EEEB;
+  --hg:         #C8452B;
+  --hg-tint:    #FBE9E3;
+  --mari:       #C8102E;
+  --mari-tint:  #FCE9EB;
+  --paper:      #FFFFFF;
+  --parchment:  #FBF8F1;
+  --ink:        #1A1A1A;
+  --ink-soft:   #5A544C;
+  --line:       #E8DFCF;
+  --accent:     #E8A82B;
+  --green:      #0F6E56;
+  --amber:      #D97706;
+  --red:        #A32D2D;
+  --grey:       #C9C2B3;
+  --wages-line: #1A1A1A;
+  --grid-line:  rgba(232, 223, 207, 0.4);
+  --logo-filter: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --group:      #F2F0EA;
+    --group-tint: #201E1A;
+    --stow:       #3A9578;
+    --stow-tint:  #12241E;
+    --hg:         #E86A47;
+    --hg-tint:    #2A140B;
+    --mari:       #E64663;
+    --mari-tint:  #2E1116;
+    --paper:      #1D1B17;
+    --parchment:  #12100D;
+    --ink:        #F2F0EA;
+    --ink-soft:   #B7B1A4;
+    --line:       #2F2C26;
+    --accent:     #F5C25A;
+    --green:      #4CB399;
+    --amber:      #F2A03F;
+    --red:        #E64663;
+    --grey:       #3F3C34;
+    --wages-line: #F2F0EA;
+    --grid-line:  rgba(120, 110, 90, 0.2);
+    --logo-filter: none;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--parchment); color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+/* LOGIN */
+.login-wrap { max-width: 420px; margin: 60px auto; padding: 0 20px; }
+.login-card {
+  background: var(--paper); border-radius: 14px;
+  padding: 44px 36px 36px;
+  box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0,0,0,0.04);
+  border-top: 6px solid var(--group);
+}
+@media (prefers-color-scheme: dark) {
+  .login-card { box-shadow: 0 14px 44px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4); }
+}
+.group-mark { text-align: center; margin-bottom: 8px; }
+.brand-logo {
+  width: 140px; height: 140px;
+  display: block; margin: 0 auto 14px;
+  object-fit: contain;
+  filter: var(--logo-filter);
+}
+.group-mark .brand-sub {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ink-soft); margin-top: 4px; display: block;
+}
+.group-mark .venues { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+.group-mark .venue-chip {
+  font-family: 'Space Grotesk', sans-serif; font-size: 10px;
+  font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 20px; color: #fff;
+}
+.venue-chip.stow { background: var(--stow); }
+.venue-chip.hg   { background: var(--hg); }
+.venue-chip.mari { background: var(--mari); }
+.login-card form { margin-top: 32px; }
+.login-card label {
+  display: block; font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft); margin: 18px 0 6px;
+}
+.login-card input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--line);
+  border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif;
+  background: var(--paper); color: var(--ink); transition: border-color 0.15s;
+}
+.login-card input:focus { outline: none; border-color: var(--ink); }
+.login-card button {
+  width: 100%; margin-top: 24px; padding: 14px;
+  background: var(--group); color: var(--paper); border: none; border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  transition: background 0.15s;
+}
+.login-card button:hover { opacity: 0.85; }
+.login-card .err {
+  color: var(--mari); font-size: 12px; text-align: center;
+  margin-top: 14px; height: 16px; font-weight: 500;
+}
+
+/* HEADER */
+.header {
+  background: var(--paper); border-bottom: 1px solid var(--line);
+  padding: 18px 0; margin-bottom: 0;
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; flex-wrap: wrap;
+}
+.header .brand-row { display: flex; align-items: center; gap: 10px; }
+.header .header-logo {
+  width: 34px; height: 34px; display: inline-block;
+  filter: var(--logo-filter);
+  object-fit: contain;
+}
+.header .group-brand {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+  font-size: 15px; letter-spacing: -0.005em; color: var(--group);
+  text-transform: uppercase; line-height: 1;
+}
+.header .who { font-size: 13px; color: var(--ink-soft); font-family: 'Inter', sans-serif; }
+.header .who strong { color: var(--ink); font-weight: 600; }
+.header .who a {
+  color: var(--ink); text-decoration: none; cursor: pointer;
+  font-weight: 500; margin-left: 6px; border-bottom: 1px solid var(--line);
+}
+.header .who a:hover { border-bottom-color: var(--ink); }
+
+/* Venue tabs */
+.venue-tabs {
+  background: var(--paper); border-bottom: 1px solid var(--line);
+  padding: 0 24px;
+}
+.venue-tabs-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.venue-tab {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-soft);
+  padding: 16px 20px; border: none; background: transparent;
+  cursor: pointer; border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.venue-tab:hover { color: var(--ink); }
+.venue-tab.active { color: var(--ink); }
+.venue-tab.active.stow { border-bottom-color: var(--stow); color: var(--stow); }
+.venue-tab.active.hg   { border-bottom-color: var(--hg);   color: var(--hg); }
+.venue-tab.active.mari { border-bottom-color: var(--mari); color: var(--mari); }
+.venue-tab.active.group{ border-bottom-color: var(--group); color: var(--group); }
+
+/* accent strip */
+.venue-strip { height: 4px; background: var(--grey); }
+.venue-strip.mari { background: var(--mari); }
+.venue-strip.stow { background: var(--stow); }
+.venue-strip.hg   { background: var(--hg); }
+.venue-strip.group{
+  background: linear-gradient(to right, var(--stow) 0%, var(--stow) 33.3%, var(--hg) 33.3%, var(--hg) 66.6%, var(--mari) 66.6%, var(--mari) 100%);
+}
+
+/* Timeframe + Day picker */
+.control-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.timeframe-toggle {
+  display: inline-flex; background: var(--paper);
+  border-radius: 10px; padding: 4px; border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.timeframe-toggle button {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-soft);
+  padding: 8px 14px; border: none; background: transparent;
+  border-radius: 6px; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.timeframe-toggle button:hover { color: var(--ink); }
+.timeframe-toggle button.active { background: var(--group); color: var(--paper); }
+
+.day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+.day-pill {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px; font-weight: 500;
+  padding: 8px 12px; border-radius: 8px;
+  background: var(--paper); border: 1px solid var(--line);
+  color: var(--ink); cursor: pointer;
+  transition: all 0.15s;
+  min-width: 60px; text-align: center; line-height: 1.3;
+}
+.day-pill .weekday {
+  display: block; font-size: 9px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-soft); margin-bottom: 2px;
+}
+.day-pill:hover { border-color: var(--ink); }
+.day-pill.no-data { opacity: 0.5; }
+.day-pill.active {
+  background: var(--group); color: var(--paper); border-color: var(--group);
+}
+.day-pill.active .weekday { color: rgba(255,255,255,0.75); }
+
+/* Snapshot heading */
+.snapshot-title {
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px;
+  font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--ink-soft); margin: 20px 0 6px;
+}
+.snapshot-date {
+  font-family: 'Space Grotesk', sans-serif; font-size: 26px;
+  font-weight: 700; color: var(--ink); letter-spacing: -0.01em;
+  margin: 0 0 22px;
+}
+.snapshot-date .stale {
+  font-family: 'Inter', sans-serif; font-size: 12px; color: var(--mari);
+  font-weight: 500; margin-left: 12px; padding: 3px 10px;
+  background: var(--mari-tint); border-radius: 12px; letter-spacing: 0;
+  text-transform: none; vertical-align: middle;
+}
+
+/* Cards */
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 28px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--paper); border-radius: 12px; padding: 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-top: 4px solid var(--grey);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.card .label {
+  font-family: 'Space Grotesk', sans-serif; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.15em; font-weight: 500;
+  color: var(--ink-soft); margin: 0 0 8px;
+}
+.card .value {
+  font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700;
+  margin: 0 0 4px; letter-spacing: -0.03em; line-height: 1; color: var(--ink);
+}
+.card .sub { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.card.green   { border-top-color: var(--green);  }
+.card.yellow  { border-top-color: var(--accent); }
+.card.amber   { border-top-color: var(--amber);  }
+.card.red     { border-top-color: var(--mari);   }
+.card.unknown { border-top-color: var(--grey);   }
+
+/* Sections */
+.section {
+  background: var(--paper); border-radius: 12px; padding: 24px;
+  margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.section h2 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.18em; margin: 0 0 16px; color: var(--ink-soft);
+}
+.chart-wrap { position: relative; width: 100%; height: 260px; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+th {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: var(--ink-soft);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; background: var(--group-tint);
+}
+td { font-variant-numeric: tabular-nums; color: var(--ink); }
+td.num { text-align: right; }
+tbody tr:hover { background: var(--group-tint); }
+
+.footer {
+  margin-top: 32px; padding: 20px 0; border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--ink-soft); text-align: center;
+}
+.footer .group-tiny {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+  color: var(--group); letter-spacing: -0.005em; text-transform: uppercase;
+}
+.hidden { display: none !important; }
+.placeholder-card { grid-column: 1 / -1; text-align: center; padding: 60px 24px; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login" class="login-wrap">
+  <div class="login-card">
+    <div class="group-mark">
+      <img class="brand-logo" alt="Stowaway Hospitality Group" src="logo_512.png">
+      <span class="brand-sub">Hospitality Group · Daily Reporting</span>
+      <div class="venues">
+        <span class="venue-chip stow">Stowaway</span>
+        <span class="venue-chip hg">Harry Gatos</span>
+        <span class="venue-chip mari">Marilyna's</span>
+      </div>
+    </div>
+    <form id="login-form" onsubmit="return doLogin(event)">
+      <label for="username">Username</label>
+      <input id="username" name="username" autocomplete="username" autofocus>
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password">
+      <button type="submit">Sign In</button>
+      <div class="err" id="login-err"></div>
+    </form>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+  <div class="header">
+    <div class="header-inner">
+      <div class="brand-row">
+        <img class="header-logo" alt="" src="logo_128.png">
+        <span class="group-brand">Stowaway Hospitality Group</span>
+      </div>
+      <div class="who">
+        <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="venue-tabs" class="venue-tabs hidden">
+    <div class="venue-tabs-inner" id="venue-tabs-inner"></div>
+  </div>
+
+  <div class="venue-strip" id="venue-strip"></div>
+
+  <div class="wrap">
+    <div class="control-row">
+      <div class="timeframe-toggle" id="timeframe-toggle">
+        <button data-tf="day" class="active">Yesterday</button>
+        <button data-tf="week">This Week</button>
+        <button data-tf="month">This Month</button>
+        <button data-tf="quarter">This Quarter</button>
+      </div>
+      <div class="day-picker" id="day-picker"></div>
+    </div>
+
+    <p class="snapshot-title" id="snapshot-title">Snapshot</p>
+    <p class="snapshot-date"><span id="latest-date"></span><span id="stale-badge"></span></p>
+
+    <div class="grid" id="snapshot"></div>
+
+    <div class="section" id="trend-section">
+      <h2>30-Day Trailing</h2>
+      <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+    </div>
+
+    <div class="section" id="history-section">
+      <h2>Daily History</h2>
+      <table id="history-table">
+        <thead><tr id="history-thead"></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <span class="group-tiny">Stowaway Hospitality Group</span> ·
+      Data from Lightspeed Insights + Deputy · Refreshed daily 6am AEST ·
+      Last update: <span id="last-update"></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<script>
+// Dark mode detection — swap chart line colors that would be invisible on dark bg
+const IS_DARK = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const CSS_VAR = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+// ============================================================================
+// AUTH
+// ============================================================================
+let USERS = null;
+let CURRENT_ROLE = null;
+let CURRENT_USER = null;
+
+async function loadUsers() {
+  const r = await fetch('users.json?t=' + Date.now());
+  USERS = await r.json();
+}
+async function sha256Hex(s) {
+  const buf = new TextEncoder().encode(s);
+  const digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+async function doLogin(evt) {
+  evt.preventDefault();
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  if (!USERS) await loadUsers();
+  const user = USERS.users[u];
+  if (!user) { errEl.textContent = 'Invalid credentials'; return false; }
+  const hash = await sha256Hex(USERS.salt + p);
+  if (hash !== user.hash) { errEl.textContent = 'Invalid credentials'; return false; }
+  CURRENT_USER = { username: u, ...user };
+  CURRENT_ROLE = user.role;
+  sessionStorage.setItem('mari_session', JSON.stringify(CURRENT_USER));
+  showDashboard();
+  return false;
+}
+function logout() {
+  sessionStorage.removeItem('mari_session');
+  CURRENT_USER = null; CURRENT_ROLE = null;
+  document.getElementById('login').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
+async function showDashboard() {
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  document.getElementById('who-name').textContent = CURRENT_USER.display;
+  await bootstrap();
+}
+async function tryResume() {
+  await loadUsers();
+  const raw = sessionStorage.getItem('mari_session');
+  if (!raw) return;
+  try {
+    const s = JSON.parse(raw);
+    if (USERS.users[s.username] && USERS.users[s.username].hash === s.hash) {
+      CURRENT_USER = s; CURRENT_ROLE = s.role;
+      showDashboard();
+    }
+  } catch (e) {}
+}
+
+// ============================================================================
+// VENUE + ROLE CONFIG
+// ============================================================================
+const REAL_VENUES = ['mari', 'stow', 'hg'];
+
+const VENUE_CONFIG = {
+  group: {
+    label: 'Group', chipClass: 'group',
+    historyFile: null, dayFilePrefix: null,
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+    synthetic: true,
+  },
+  mari: {
+    label: "Marilyna's", chipClass: 'mari',
+    historyFile: 'data/mari_daily_history.csv', dayFilePrefix: 'data/mari_daily_',
+    cards: ['revenue', 'cogs', 'wages', 'delivery'],
+    chart_lines: ['cogs', 'wages', 'delivery'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
+  },
+  stow: {
+    label: 'Stowaway', chipClass: 'stow',
+    historyFile: 'data/stow_daily_history.csv', dayFilePrefix: 'data/stow_daily_',
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+  },
+  hg: {
+    label: 'Harry Gatos', chipClass: 'hg',
+    historyFile: 'data/hg_daily_history.csv', dayFilePrefix: 'data/hg_daily_',
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+  },
+};
+
+const ROLE_CONFIG = {
+  admin:    { venues: ['group', 'stow', 'hg', 'mari'], defaultVenue: 'group', show_dollar_amounts: true },
+  pizza:    { venues: ['mari'],                        defaultVenue: 'mari',  show_dollar_amounts: true },
+  stowfood: { venues: ['stow'],                        defaultVenue: 'stow',  show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },
+  hgfood:   { venues: ['hg'],                          defaultVenue: 'hg',    show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },
+  bar:      { venues: ['stow', 'hg'],                  defaultVenue: 'stow',  show_dollar_amounts: true },
+  bigchef:  { venues: ['group', 'stow', 'hg', 'mari'], defaultVenue: 'group', show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages'] },
+};
+
+// ============================================================================
+// STATE
+// ============================================================================
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null };
+
+// ============================================================================
+// UTILS
+// ============================================================================
+function parseCsv(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',');
+  return lines.slice(1).map(line => {
+    const values = line.split(',');
+    return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
+  });
+}
+function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
+function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
+function isoDate(d) { return d.toISOString().slice(0, 10); }
+function sydneyToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); return c; }
+function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Date(d.getFullYear(), q * 3, 1); }
+function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+function weekStart(d) { const day = d.getDay(); const offset = day === 0 ? -6 : 1 - day; return addDays(d, offset); }
+
+// ============================================================================
+// DATA LOADING
+// ============================================================================
+async function loadHistory(venue) {
+  const cfg = VENUE_CONFIG[venue];
+  if (!cfg.historyFile) return [];
+  try {
+    const res = await fetch(cfg.historyFile + '?t=' + Date.now());
+    if (!res.ok) return [];
+    const text = await res.text();
+    return parseCsv(text);
+  } catch (e) { return []; }
+}
+
+async function loadAllHistories(role) {
+  const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
+  const seesGroup = roleCfg.venues.includes('group');
+  const realVenuesToLoad = seesGroup ? REAL_VENUES : roleCfg.venues.filter(v => VENUE_CONFIG[v] && !VENUE_CONFIG[v].synthetic);
+  const results = await Promise.all(realVenuesToLoad.map(async v => [v, await loadHistory(v)]));
+  const out = {};
+  for (const [v, rows] of results) out[v] = rows;
+  if (seesGroup) out.group = synthesizeGroupHistory(out);
+  return out;
+}
+
+function synthesizeGroupHistory(histories) {
+  const allDates = new Set();
+  for (const v of REAL_VENUES) {
+    for (const r of histories[v] || []) allDates.add(r.date);
+  }
+  const rows = [];
+  for (const date of Array.from(allDates).sort()) {
+    const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
+    let venueCount = 0;
+    for (const v of REAL_VENUES) {
+      const row = (histories[v] || []).find(r => r.date === date);
+      if (!row || !row.revenue_ex_gst) continue;
+      sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
+      sum.cogs_dollars     += toNum(row.cogs_dollars);
+      sum.wages_dollars    += toNum(row.wages_dollars);
+      sum.delivery_dollars += toNum(row.delivery_dollars);
+      sum.gp_dollars       += toNum(row.gp_dollars);
+      venueCount++;
+    }
+    if (venueCount === 0) continue;
+    const rev = sum.revenue_ex_gst;
+    rows.push({
+      date,
+      revenue_ex_gst:   sum.revenue_ex_gst,
+      cogs_dollars:     sum.cogs_dollars,
+      cogs_pct:         rev ? sum.cogs_dollars / rev * 100 : 0,
+      wages_dollars:    sum.wages_dollars,
+      wages_pct:        rev ? sum.wages_dollars / rev * 100 : 0,
+      delivery_dollars: sum.delivery_dollars,
+      delivery_pct:     rev ? sum.delivery_dollars / rev * 100 : 0,
+      gp_dollars:       sum.gp_dollars,
+      gp_pct:           rev ? sum.gp_dollars / rev * 100 : 0,
+      contributing_venues: venueCount,
+      cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
+    });
+  }
+  return rows;
+}
+
+// ============================================================================
+// AGGREGATION (rollups over a date range)
+// ============================================================================
+function rowsForTimeframe(rows, timeframe, anchorDay) {
+  const anchor = new Date(anchorDay);
+  let start;
+  if (timeframe === 'day') return rows.filter(r => r.date === anchorDay);
+  if (timeframe === 'week')    start = weekStart(anchor);
+  if (timeframe === 'month')   start = monthStart(anchor);
+  if (timeframe === 'quarter') start = quarterStart(anchor);
+  const startIso = isoDate(start);
+  const endIso = anchorDay;
+  return rows.filter(r => r.date >= startIso && r.date <= endIso);
+}
+
+function rollup(rows) {
+  if (!rows.length) return null;
+  if (rows.length === 1) return rows[0];
+  const sums = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
+  let n = 0;
+  for (const r of rows) {
+    if (!r.revenue_ex_gst) continue;
+    sums.revenue_ex_gst   += toNum(r.revenue_ex_gst);
+    sums.cogs_dollars     += toNum(r.cogs_dollars);
+    sums.wages_dollars    += toNum(r.wages_dollars);
+    sums.delivery_dollars += toNum(r.delivery_dollars);
+    sums.gp_dollars       += toNum(r.gp_dollars);
+    n++;
+  }
+  if (n === 0) return null;
+  const rev = sums.revenue_ex_gst;
+  return {
+    date: rows[0].date + ' → ' + rows[rows.length - 1].date,
+    days_included: n,
+    revenue_ex_gst: sums.revenue_ex_gst,
+    cogs_dollars:   sums.cogs_dollars,
+    cogs_pct:       rev ? sums.cogs_dollars / rev * 100 : 0,
+    wages_dollars:  sums.wages_dollars,
+    wages_pct:      rev ? sums.wages_dollars / rev * 100 : 0,
+    delivery_dollars: sums.delivery_dollars,
+    delivery_pct:   rev ? sums.delivery_dollars / rev * 100 : 0,
+    gp_dollars:     sums.gp_dollars,
+    gp_pct:         rev ? sums.gp_dollars / rev * 100 : 0,
+    cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
+  };
+}
+
+// ============================================================================
+// CARDS
+// ============================================================================
+const CARD_DEFS = {
+  revenue: (day, cfg) => ({
+    label: 'Revenue (ex-GST)',
+    value: fmtDollars(toNum(day.revenue_ex_gst)),
+    sub: day.days_included ? `${day.days_included} days`
+       : day.contributing_venues ? `${day.contributing_venues} of 3 venues`
+       : day.date,
+    status: 'unknown',
+  }),
+  cogs: (day, cfg) => ({
+    label: 'COGS',
+    value: day.cogs_pct != null && day.cogs_pct !== '' ? fmtPct(toNum(day.cogs_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
+    status: day.cogs_alert,
+  }),
+  wages: (day, cfg) => ({
+    label: 'Wages',
+    value: day.wages_pct != null && day.wages_pct !== '' ? fmtPct(toNum(day.wages_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '',
+    status: day.wages_alert,
+  }),
+  delivery: (day, cfg) => ({
+    label: 'Delivery',
+    value: day.delivery_pct != null && day.delivery_pct !== '' ? fmtPct(toNum(day.delivery_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.delivery_dollars)) : '',
+    status: day.delivery_alert,
+  }),
+  gp: (day, cfg) => ({
+    label: 'GP',
+    value: day.gp_pct != null && day.gp_pct !== '' ? fmtPct(toNum(day.gp_pct)) : '—',
+    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.gp_dollars)) : '',
+    status: day.gp_alert || 'unknown',
+  }),
+};
+
+// Chart line colors — wages line reads from CSS var so it flips in dark mode
+const CHART_LINE_DEFS = {
+  cogs:     { label: 'COGS %',     key: 'cogs_pct',     color: '#C8102E' },
+  wages:    { label: 'Wages %',    key: 'wages_pct',    color: IS_DARK ? '#F2F0EA' : '#1A1A1A' },
+  delivery: { label: 'Delivery %', key: 'delivery_pct', color: '#E8A82B' },
+  gp:       { label: 'GP %',       key: 'gp_pct',       color: '#0F6E56' },
+};
+
+const COL_DEFS = {
+  date:            { label: 'Date',         num: false, render: r => r.date },
+  revenue_ex_gst:  { label: 'Rev (ex-GST)', num: true,  render: r => fmtDollars(toNum(r.revenue_ex_gst)) },
+  cogs_pct:        { label: 'COGS %',       num: true,  render: r => r.cogs_pct ? fmtPct(toNum(r.cogs_pct)) : '—' },
+  wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct ? fmtPct(toNum(r.wages_pct)) : '—' },
+  delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct ? fmtPct(toNum(r.delivery_pct)) : '—' },
+  gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct ? fmtPct(toNum(r.gp_pct)) : '—' },
+};
+
+// ============================================================================
+// RENDER
+// ============================================================================
+function renderVenueTabs() {
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const tabsEl = document.getElementById('venue-tabs');
+  const inner = document.getElementById('venue-tabs-inner');
+  if (roleCfg.venues.length <= 1) { tabsEl.classList.add('hidden'); return; }
+  tabsEl.classList.remove('hidden');
+  inner.innerHTML = roleCfg.venues.map(v => {
+    const cfg = VENUE_CONFIG[v];
+    const active = v === STATE.currentVenue ? `active ${cfg.chipClass}` : '';
+    return `<button class="venue-tab ${active}" onclick="switchVenue('${v}')">${cfg.label}</button>`;
+  }).join('');
+}
+
+function renderVenueStrip() {
+  const el = document.getElementById('venue-strip');
+  const cfg = VENUE_CONFIG[STATE.currentVenue];
+  el.className = 'venue-strip ' + cfg.chipClass;
+}
+
+function renderTimeframeToggle() {
+  document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tf === STATE.currentTimeframe);
+  });
+}
+
+function renderDayPicker() {
+  const picker = document.getElementById('day-picker');
+  if (STATE.currentTimeframe !== 'day') { picker.style.display = 'none'; return; }
+  picker.style.display = 'flex';
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  const rowsByDate = Object.fromEntries(rows.map(r => [r.date, r]));
+
+  const today = sydneyToday();
+  const days = [];
+  for (let i = 7; i >= 1; i--) days.push(addDays(today, -i));
+  picker.innerHTML = days.map(d => {
+    const iso = isoDate(d);
+    const has = !!rowsByDate[iso] && rowsByDate[iso].revenue_ex_gst;
+    const active = iso === STATE.currentDay ? 'active' : '';
+    const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
+    const dn = d.getDate();
+    return `<button class="day-pill ${active} ${has ? '' : 'no-data'}" onclick="switchDay('${iso}')">
+      <span class="weekday">${wd}</span>${dn}
+    </button>`;
+  }).join('');
+}
+
+function renderSnapshot() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const cards = (roleCfg.cards || venueCfg.cards);
+  const cfg = { show_dollar_amounts: roleCfg.show_dollar_amounts };
+  const rows = STATE.histories[STATE.currentVenue] || [];
+
+  let anchorDay = STATE.currentDay;
+  if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+
+  const rangeRows = rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay);
+  const day = rollup(rangeRows);
+
+  const titleEl = document.getElementById('snapshot-title');
+  const dateEl  = document.getElementById('latest-date');
+  const staleEl = document.getElementById('stale-badge');
+
+  const tfLabel = { day: 'Selected day', week: 'This Week', month: 'This Month', quarter: 'This Quarter' }[STATE.currentTimeframe];
+  titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
+
+  if (!day) {
+    dateEl.textContent = 'No data';
+    staleEl.innerHTML = '';
+    document.getElementById('snapshot').innerHTML = `
+      <div class="card unknown placeholder-card">
+        <p class="label">${tfLabel}</p>
+        <p class="value" style="font-size: 22px; margin: 12px 0 8px;">No data for this range yet</p>
+        <p class="sub">${STATE.currentTimeframe === 'day'
+          ? 'This day has no aggregated report — venue was closed, or pipeline hasn\'t caught up.'
+          : 'Pipeline hasn\'t populated enough days to roll up this timeframe.'}</p>
+      </div>
+    `;
+    document.getElementById('trend-section').classList.add('hidden');
+    document.getElementById('history-section').classList.add('hidden');
+    return;
+  }
+
+  document.getElementById('trend-section').classList.remove('hidden');
+  document.getElementById('history-section').classList.remove('hidden');
+
+  if (STATE.currentTimeframe === 'day') {
+    dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', {
+      weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
+    });
+  } else {
+    const [s, e] = day.date.split(' → ');
+    const fmt = d => new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+    dateEl.textContent = `${fmt(s)} — ${fmt(e)} (${day.days_included} days)`;
+  }
+
+  staleEl.innerHTML = '';
+  if (STATE.currentTimeframe === 'day') {
+    const daysBehind = Math.floor((sydneyToday() - new Date(day.date)) / 86400000);
+    if (daysBehind > 1) staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
+  }
+
+  const cardEls = cards.map(key => CARD_DEFS[key](day, cfg));
+  document.getElementById('snapshot').innerHTML = cardEls.map(c => `
+    <div class="card ${c.status || 'unknown'}">
+      <p class="label">${c.label}</p>
+      <p class="value">${c.value}</p>
+      <p class="sub">${c.sub || ''}</p>
+    </div>
+  `).join('');
+}
+
+let CHART_INSTANCE = null;
+function renderChart() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const lines = (roleCfg.chart_lines || venueCfg.chart_lines);
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  const trailing = rows.slice(-30);
+
+  const tickColor = IS_DARK ? '#B7B1A4' : '#5A544C';
+  const gridColor = IS_DARK ? 'rgba(120,110,90,0.2)' : 'rgba(232,223,207,0.4)';
+
+  const ctx = document.getElementById('trend-chart').getContext('2d');
+  if (CHART_INSTANCE) CHART_INSTANCE.destroy();
+  const datasets = lines.map(line => {
+    const def = CHART_LINE_DEFS[line];
+    return {
+      label: def.label, data: trailing.map(r => toNum(r[def.key])),
+      borderColor: def.color, backgroundColor: def.color + '20',
+      tension: 0.3, borderWidth: 2.5, pointRadius: 3,
+      pointBackgroundColor: def.color, spanGaps: true,
+    };
+  });
+  CHART_INSTANCE = new Chart(ctx, {
+    type: 'line',
+    data: { labels: trailing.map(r => r.date.slice(5)), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: tickColor },
+             grid: { color: gridColor } },
+        x: { ticks: { font: { family: 'Inter', size: 11 }, color: tickColor },
+             grid: { display: false } }
+      },
+      plugins: {
+        legend: { position: 'bottom',
+                  labels: { boxWidth: 14, boxHeight: 3, usePointStyle: true, pointStyle: 'line',
+                            font: { family: 'Space Grotesk', size: 12, weight: '500' },
+                            color: tickColor, padding: 20 } }
+      }
+    }
+  });
+}
+
+function renderHistoryTable() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const cols = (roleCfg.history_cols || venueCfg.history_cols);
+  const rows = STATE.histories[STATE.currentVenue] || [];
+
+  const thead = document.getElementById('history-thead');
+  thead.innerHTML = cols.map(k => {
+    const def = COL_DEFS[k];
+    return `<th class="${def.num ? 'num' : ''}">${def.label}</th>`;
+  }).join('');
+  const tbody = document.querySelector('#history-table tbody');
+  tbody.innerHTML = rows.slice().reverse().slice(0, 30).map(r =>
+    '<tr>' + cols.map(k => {
+      const def = COL_DEFS[k];
+      return `<td class="${def.num ? 'num' : ''}">${def.render(r)}</td>`;
+    }).join('') + '</tr>'
+  ).join('');
+}
+
+async function fetchLastUpdate() {
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  if (!rows.length) { document.getElementById('last-update').textContent = 'unknown'; return; }
+  const latest = rows[rows.length - 1];
+  const cfg = VENUE_CONFIG[STATE.currentVenue];
+  if (!cfg.dayFilePrefix) {
+    const stamps = [];
+    for (const v of REAL_VENUES) {
+      const rrows = STATE.histories[v] || [];
+      if (!rrows.length) continue;
+      try {
+        const r = await fetch(`${VENUE_CONFIG[v].dayFilePrefix}${rrows[rrows.length-1].date}.json?t=` + Date.now());
+        const data = await r.json();
+        stamps.push(new Date(data.generated_at).getTime());
+      } catch (e) {}
+    }
+    if (stamps.length) {
+      document.getElementById('last-update').textContent = new Date(Math.max(...stamps)).toLocaleString('en-AU');
+    } else {
+      document.getElementById('last-update').textContent = 'unknown';
+    }
+    return;
+  }
+  try {
+    const r = await fetch(`${cfg.dayFilePrefix}${latest.date}.json?t=` + Date.now());
+    const data = await r.json();
+    document.getElementById('last-update').textContent = new Date(data.generated_at).toLocaleString('en-AU');
+  } catch (e) {
+    document.getElementById('last-update').textContent = 'unknown';
+  }
+}
+
+function render() {
+  renderVenueTabs();
+  renderVenueStrip();
+  renderTimeframeToggle();
+  renderDayPicker();
+  renderSnapshot();
+  renderChart();
+  renderHistoryTable();
+  fetchLastUpdate();
+}
+
+function switchVenue(venue) {
+  STATE.currentVenue = venue;
+  const rows = STATE.histories[venue] || [];
+  STATE.currentDay = rows.length ? rows[rows.length - 1].date : null;
+  render();
+}
+function switchTimeframe(tf) {
+  STATE.currentTimeframe = tf;
+  if (tf !== 'day') {
+    const rows = STATE.histories[STATE.currentVenue] || [];
+    if (rows.length) STATE.currentDay = rows[rows.length - 1].date;
+  }
+  render();
+}
+function switchDay(iso) {
+  STATE.currentDay = iso;
+  render();
+}
+
+async function bootstrap() {
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  STATE.histories = await loadAllHistories(CURRENT_ROLE);
+  const defaultVenue = roleCfg.defaultVenue;
+  const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
+  STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  STATE.currentDay = rows.length ? rows[rows.length - 1].date : isoDate(addDays(sydneyToday(), -1));
+  document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
+    btn.onclick = () => switchTimeframe(btn.dataset.tf);
+  });
+  render();
+}
+
+tryResume().catch(e => console.error(e));
+</script>
+
+</body>
+</html>
