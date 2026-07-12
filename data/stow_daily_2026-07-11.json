@@ -1,0 +1,223 @@
+{
+  "date": "2026-07-11",
+  "generated_at": "2026-07-12T12:11:07.442896Z",
+  "venue": "stowaway",
+  "venue_display": "Stowaway Bar",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 22950.41,
+    "revenue_ex_gst": 20868.53,
+    "cogs_dollars": 4425.4,
+    "cogs_pct": 21.2,
+    "gp_dollars": 16443.13,
+    "gp_pct": 78.8,
+    "uber_eats_revenue": 0,
+    "food_ex_gst": 1676.5,
+    "bev_ex_gst": 6273.26,
+    "food_cogs": 407.43,
+    "bev_cogs": 1426.15,
+    "food_cogs_pct": 24.3,
+    "bev_cogs_pct": 22.7,
+    "food_gp_pct": 75.7,
+    "bev_gp_pct": 77.3,
+    "mari_rideon_ex_gst": 2119.37,
+    "other_ex_gst": 12914.25
+  },
+  "wages": {
+    "kitchen_dollars": 0,
+    "foh_dollars": 815.73,
+    "driver_dollars": 0,
+    "total_dollars": 815.73,
+    "wages_pct": 3.9,
+    "kitchen_hours": 0.0,
+    "foh_hours": 0.0,
+    "wages_kitchen_pct": 0.0,
+    "wages_foh_pct": 13.0
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "green",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "yellow",
+    "wages_kitchen": "green",
+    "wages_foh": "green"
+  },
+  "targets": {
+    "cogs": {
+      "target": 28.0,
+      "amber": 32.0,
+      "red": 35.0,
+      "note": "Blended food+bev COGS; bar-heavy Stow typically lands ~28-30% \u2014 refine after 8 weeks of daily data"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 70% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Aperol Spritz",
+      "qty": 20.0,
+      "rev": 335.9,
+      "cost": 71.05
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 19.0,
+      "rev": 315.58,
+      "cost": 89.53
+    },
+    {
+      "name": "American Standard Burger",
+      "qty": 14.0,
+      "rev": 297.17,
+      "cost": 81.82
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 14.0,
+      "rev": 277.98,
+      "cost": 57.15
+    },
+    {
+      "name": "Mulled Wine",
+      "qty": 18.0,
+      "rev": 273.92,
+      "cost": 37.26
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 30.0,
+      "rev": 233.24,
+      "cost": 54.82
+    },
+    {
+      "name": "Fancy Pants Parmy - Classic",
+      "qty": 8.0,
+      "rev": 223.27,
+      "cost": 64.84
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 17.0,
+      "rev": 222.28,
+      "cost": 55.07
+    },
+    {
+      "name": "Grifter Pale - Schooner",
+      "qty": 21.0,
+      "rev": 215.2,
+      "cost": 52.18
+    },
+    {
+      "name": "Kirin - Schooner",
+      "qty": 15.0,
+      "rev": 211.38,
+      "cost": 56.71
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 17.0,
+      "rev": 205.64,
+      "cost": 41.71
+    },
+    {
+      "name": "Kirin - Pint",
+      "qty": 10.0,
+      "rev": 188.67,
+      "cost": 50.71
+    },
+    {
+      "name": "Jalape\u00f1o Marg",
+      "qty": 8.0,
+      "rev": 188.51,
+      "cost": 6.08
+    },
+    {
+      "name": "Mother's Milk Shiraz - Regular",
+      "qty": 12.0,
+      "rev": 180.99,
+      "cost": 38.6
+    },
+    {
+      "name": "Petits Detours Ros\u00e9 - Regular",
+      "qty": 11.0,
+      "rev": 179.15,
+      "cost": 38.88
+    },
+    {
+      "name": "Status Quo - Pint",
+      "qty": 10.0,
+      "rev": 175.0,
+      "cost": 41.14
+    },
+    {
+      "name": "Lychee Martini",
+      "qty": 9.0,
+      "rev": 172.6,
+      "cost": 32.61
+    },
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 10.0,
+      "rev": 172.24,
+      "cost": 43.45
+    },
+    {
+      "name": "Petits Detours Ros\u00e9 Mediterranee - Bottle",
+      "qty": 3.0,
+      "rev": 166.4,
+      "cost": 49.49
+    },
+    {
+      "name": "Casa Gheller Prosecco - Glass",
+      "qty": 10.0,
+      "rev": 161.05,
+      "cost": 33.46
+    }
+  ]
+}
