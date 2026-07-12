@@ -1,0 +1,93 @@
+[
+  {
+    "timesheet_id": 35193,
+    "employee_id": 3,
+    "employee_name": "Zak",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783479600,
+    "end_time": 1783506600,
+    "hours": 0.7,
+    "cost": 26.25,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35192,
+    "employee_id": 15,
+    "employee_name": "Marssheel Marssheel",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783483200,
+    "end_time": 1783512000,
+    "hours": 7.75,
+    "cost": 327.88,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35194,
+    "employee_id": 287,
+    "employee_name": "Min",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783483200,
+    "end_time": 1783486800,
+    "hours": 0.1,
+    "cost": 5.53,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35196,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783483200,
+    "end_time": 1783491300,
+    "hours": 0.225,
+    "cost": 7.88,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35202,
+    "employee_id": 296,
+    "employee_name": "Olivia",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783490400,
+    "end_time": 1783503900,
+    "hours": 3.25,
+    "cost": 119.63,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35203,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783491300,
+    "end_time": 1783513800,
+    "hours": 5.75,
+    "cost": 201.25,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35204,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783492200,
+    "end_time": 1783507500,
+    "hours": 3.75,
+    "cost": 127.5,
+    "salaried_synth": false
+  }
+]
