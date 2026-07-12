@@ -592,6 +592,10 @@ function synthesizeGroupHistory(histories) {
       sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
       sum.cogs_dollars     += toNum(row.cogs_dollars);
       sum.wages_dollars    += toNum(row.wages_dollars);
+      // Group/Leave (weekly canon): group-level overhead carried on the stow
+      // rows' leave_dollars — excluded from venue wage %, included here so
+      // the Group wage figure reflects the TRUE total wage cost.
+      sum.wages_dollars    += toNum(row.leave_dollars);
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
       venueCount++;
