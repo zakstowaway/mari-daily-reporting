@@ -1,0 +1,229 @@
+{
+  "date": "2026-07-09",
+  "generated_at": "2026-07-12T23:41:13.163782Z",
+  "venue": "harry",
+  "venue_display": "Harry Gatos",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 1551.3,
+    "revenue_ex_gst": 1410.27,
+    "cogs_dollars": 197.9,
+    "cogs_pct": 14.0,
+    "gp_dollars": 1212.37,
+    "gp_pct": 86.0,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 1075.73,
+    "bev_ex_gst": 334.55,
+    "food_cogs": 129.88,
+    "bev_cogs": 68.02,
+    "food_cogs_pct": 12.1,
+    "bev_cogs_pct": 20.3,
+    "food_gp_pct": 87.9,
+    "bev_gp_pct": 79.7,
+    "mari_rideon_ex_gst": 0.0,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 0.0
+  },
+  "wages": {
+    "kitchen_dollars": 667.45,
+    "foh_dollars": 394.21,
+    "driver_dollars": 0.0,
+    "admin_dollars": 22.66,
+    "total_dollars": 1084.32,
+    "wages_pct": 76.9,
+    "net_wage_pct": null,
+    "kitchen_hours": 14.8,
+    "foh_hours": 9.8,
+    "wages_kitchen_pct": 62.0,
+    "wages_foh_pct": 117.8,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "red",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "green",
+    "wages_kitchen": "red",
+    "wages_foh": "red"
+  },
+  "targets": {
+    "cogs": {
+      "target": 32.0,
+      "amber": 35.0,
+      "red": 38.0,
+      "note": "HG food-heavy mix (dumplings, shared plates) runs ~32-35% blended \u2014 heavier than Stow"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Olly's BEP work put HG food COGS ~35%."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST)."
+    },
+    "wages_kitchen": {
+      "target": 14.0,
+      "amber": 17.0,
+      "red": 20.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total. HG kitchen is heavier than Stow's."
+    },
+    "wages_foh": {
+      "target": 16.0,
+      "amber": 20.0,
+      "red": 24.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 68% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Shredded Beef",
+      "qty": 7.0,
+      "rev": 182.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Miso",
+      "qty": 6.0,
+      "rev": 127.6,
+      "cost": 0.0
+    },
+    {
+      "name": "Tonkotsu",
+      "qty": 4.0,
+      "rev": 116.0,
+      "cost": 16.66
+    },
+    {
+      "name": "Fried Rice",
+      "qty": 4.0,
+      "rev": 96.0,
+      "cost": 10.72
+    },
+    {
+      "name": "Unlimited BBQ",
+      "qty": 2.0,
+      "rev": 90.0,
+      "cost": 17.17
+    },
+    {
+      "name": "Devon's Prawn Toast",
+      "qty": 5.0,
+      "rev": 80.0,
+      "cost": 19.44
+    },
+    {
+      "name": "Dumplings - Prawn Har Gow [GF]",
+      "qty": 4.0,
+      "rev": 76.0,
+      "cost": 17.65
+    },
+    {
+      "name": "Sapporo - 500ml",
+      "qty": 5.0,
+      "rev": 75.0,
+      "cost": 18.55
+    },
+    {
+      "name": "Duck Spring Roll",
+      "qty": 4.0,
+      "rev": 64.0,
+      "cost": 14.29
+    },
+    {
+      "name": "BBQ Pork Buns",
+      "qty": 4.0,
+      "rev": 60.0,
+      "cost": 14.0
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 3.0,
+      "rev": 57.0,
+      "cost": 9.79
+    },
+    {
+      "name": "Dumplings - Veg Gyoza",
+      "qty": 4.0,
+      "rev": 56.0,
+      "cost": 7.84
+    },
+    {
+      "name": "Angas & Bremer Ros\u00e9 - Bottle",
+      "qty": 1.0,
+      "rev": 49.0,
+      "cost": 9.65
+    },
+    {
+      "name": "Mie Goreng",
+      "qty": 2.0,
+      "rev": 47.0,
+      "cost": 6.36
+    },
+    {
+      "name": "Chicken Karaage",
+      "qty": 2.0,
+      "rev": 34.0,
+      "cost": 0.0
+    },
+    {
+      "name": "From Sundays Shiraz - Regular",
+      "qty": 2.0,
+      "rev": 30.0,
+      "cost": 5.6
+    },
+    {
+      "name": "Grifter Big Sur IPA Can [HG]",
+      "qty": 2.0,
+      "rev": 28.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Vegetarian Spring Rolls",
+      "qty": 2.0,
+      "rev": 28.0,
+      "cost": 3.3
+    },
+    {
+      "name": "Harry's Lager - Pint",
+      "qty": 2.0,
+      "rev": 25.0,
+      "cost": 4.36
+    },
+    {
+      "name": "Corona",
+      "qty": 2.0,
+      "rev": 22.0,
+      "cost": 5.31
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "timesheet_id": 35209,
+    "employee_id": 1,
+    "employee_name": "Kris Hegarty",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783562400,
+    "end_time": 1783580400,
+    "hours": 0.45,
+    "cost": 20.23,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35210,
+    "employee_id": 15,
+    "employee_name": "Marssheel Marssheel",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783562400,
+    "end_time": 1783599300,
+    "hours": 9.75,
+    "cost": 412.5,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35213,
+    "employee_id": 242,
+    "employee_name": "David Armour",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783575000,
+    "end_time": 1783597500,
+    "hours": 6.25,
+    "cost": 194.64,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35215,
+    "employee_id": 296,
+    "employee_name": "Olivia",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1783576800,
+    "end_time": 1783596600,
+    "hours": 5.0,
+    "cost": 183.44,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35220,
+    "employee_id": 1,
+    "employee_name": "Kris Hegarty",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1783580400,
+    "end_time": 1783593000,
+    "hours": 3.5,
+    "cost": 157.33,
+    "salaried_synth": true
+  }
+]
