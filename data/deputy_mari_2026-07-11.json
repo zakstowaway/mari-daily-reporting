@@ -8,8 +8,9 @@
     "dept": "Kitchen",
     "start_time": 1783735200,
     "end_time": 1783775700,
-    "hours": 0.003125,
-    "cost": 0
+    "hours": 11.25,
+    "cost": 405.65,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35261,
@@ -20,8 +21,9 @@
     "dept": "Kitchen",
     "start_time": 1783751400,
     "end_time": 1783764000,
-    "hours": 0.0009722222222222222,
-    "cost": 142.17
+    "hours": 3.5,
+    "cost": 142.17,
+    "salaried_synth": false
   },
   {
     "timesheet_id": 35262,
@@ -32,8 +34,9 @@
     "dept": "Kitchen",
     "start_time": 1783754100,
     "end_time": 1783766700,
-    "hours": 0.0009722222222222222,
-    "cost": 0
+    "hours": 3.5,
+    "cost": 0.0,
+    "salaried_synth": false
   },
   {
     "timesheet_id": 35263,
@@ -44,8 +47,22 @@
     "dept": "Kitchen",
     "start_time": 1783755000,
     "end_time": 1783765800,
-    "hours": 0.0008333333333333334,
-    "cost": 0
+    "hours": 3.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35264,
+    "employee_id": 190,
+    "employee_name": "John Campbell",
+    "ou_name": "Driver",
+    "company": "Stowaway",
+    "dept": "Driver",
+    "start_time": 1783755000,
+    "end_time": 1783768500,
+    "hours": 3.75,
+    "cost": 0.0,
+    "salaried_synth": false
   },
   {
     "timesheet_id": 35265,
@@ -56,7 +73,8 @@
     "dept": "Kitchen",
     "start_time": 1783756800,
     "end_time": 1783770300,
-    "hours": 0.0010416666666666667,
-    "cost": 109.494
+    "hours": 3.75,
+    "cost": 109.49,
+    "salaried_synth": false
   }
 ]
