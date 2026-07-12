@@ -7,13 +7,28 @@ Endpoint: https://831d4015123255.au.deputy.com/api/v1/resource/Timesheet
 Venue config (OU allow-list, dept mapping, file prefix) lives in
 scripts/venues.py — edit there to add new venues.
 
-KNOWN LIMITS (2026-07-12):
+2026-07-12 — aligned with the weekly-report wages pipeline
+(build_wages_from_deputy.py + salaried_employees.json):
+  - SALARIED SYNTHESIS: Deputy returns Cost=0 for salaried staff (Min,
+    Nicola, Kris, ...). Their per-shift cost is now synthesized as
+    hours × (annual / 52 / 40) from scripts/salaried_employees.json —
+    same model the weekly report uses. (The weekly 40h cap / leave residual
+    can't apply on a single day; the Tuesday report remains the payroll
+    reconciliation point.)
+  - MONDAY REALLOCATION: Stow Kitchen shifts on Mondays are HarryGatos
+    Kitchen labour (Stow kitchen closed Mondays, HG rings through that POS).
+    The stowaway pull drops them; the harry pull picks them up.
+  - ADMIN SPLIT: worked Admin-OU time splits 90% Stowaway / 10% HarryGatos
+    (dept 'Admin'). Marilynas gets no admin share.
+  - Leave shifts (IsLeave) are skipped — leave is a group-level overhead in
+    the weekly canon, never a venue cost.
+
+KNOWN LIMITS:
   - Unapproved timesheets carry Cost=0 in Deputy until the morning
     approval run — the 6am pull races it, so same-morning wages are
-    understated. Re-running the aggregator later refreshes them.
-  - Salaried staff (Min, Nicola, etc.) always cost $0 on timesheets;
-    the weekly report loads salaried wages from salaried_employees.json.
-    The daily dashboard does NOT yet — daily wages exclude salaried.
+    understated for HOURLY staff. Re-running the aggregator later
+    refreshes them. (Salaried costs are synthesized, so they're right
+    regardless of approval state.)
 
 Output: data/deputy_<prefix>_<yyyy-mm-dd>.json
         + data/deputy_<yyyy-mm-dd>.json (only when venue=marilynas, kept
@@ -43,6 +58,23 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 DEPUTY_HOST = "https://831d4015123255.au.deputy.com"
 TOKEN = os.environ.get("DEPUTY_TOKEN")
+
+SALARIED_FILE = Path(__file__).parent / "salaried_employees.json"
+
+
+def load_salaried() -> dict:
+    """employee_id (str) -> hourly base rate (annual / 52 / 40)."""
+    if not SALARIED_FILE.exists():
+        print(f"WARNING: {SALARIED_FILE} missing — salaried shifts will cost $0")
+        return {}
+    with SALARIED_FILE.open() as f:
+        cfg = json.load(f)
+    hpw = cfg.get("_hours_per_week", 40)
+    wpy = cfg.get("_weeks_per_year", 52)
+    return {
+        str(eid): {"name": e["name"], "hourly": e["annual"] / wpy / hpw}
+        for eid, e in cfg.get("employees", {}).items()
+    }
 
 
 def _do_request(req):
@@ -125,10 +157,13 @@ if not TOKEN:
     sys.exit(2)
 
 cfg = V.get(venue_key)
+is_monday = target.weekday() == 0
+admin_share = V.ADMIN_SHARES.get(venue_key, 0.0)
+salaried = load_salaried()
 print(f"Venue: {venue_key} ({cfg['display_name']})")
-print(f"Target date: {target.isoformat()} (Sydney)")
+print(f"Target date: {target.isoformat()} (Sydney){' — MONDAY (Stow Kitchen -> HG Kitchen realloc active)' if is_monday else ''}")
 print(f"Mode: {'ALL timesheets (venue filter off)' if capture_all else 'venue only'}")
-print(f"Venue OUs: {V.all_ous(venue_key)}")
+print(f"Venue OUs: {V.all_ous(venue_key)} | admin share: {admin_share} | salaried roster: {len(salaried)}")
 
 # Sydney-day boundaries → UTC epoch. July = winter = UTC+10 (AEST).
 day_start_dt = datetime(target.year, target.month, target.day, 0, 0, 0, tzinfo=timezone(timedelta(hours=10)))
@@ -174,31 +209,67 @@ if ou_counter:
         print(f"  {n:3d}  OU='{ou}'  Company='{co}'{marker}")
 
 records = []
+synth_count = 0
 for ts in results:
     ou_info = ts.get("_DPMetaData", {}).get("OperationalUnitInfo", {})
     ou_name = ou_info.get("OperationalUnitName", "")
     company = ou_info.get("CompanyName", "") or ""
 
-    if not capture_all and ou_name not in venue_ous:
+    if ts.get("IsLeave"):
+        continue   # leave is group overhead, never a venue cost (weekly canon)
+
+    scale = 1.0
+    if capture_all:
+        dept = V.dept_for_ou(venue_key, ou_name) or ou_name or "Kitchen"
+    elif ou_name == V.ADMIN_OU_NAME:
+        # Worked admin time splits 90/10 Stowaway/HarryGatos.
+        if admin_share <= 0:
+            continue
+        dept = "Admin"
+        scale = admin_share
+    elif ou_name == V.MONDAY_REALLOCATED_OU and is_monday:
+        # Stow Kitchen on a Monday is HarryGatos Kitchen labour.
+        if venue_key == "harry":
+            dept = "Kitchen"
+        else:
+            continue   # stowaway (and everyone else) drops it
+    elif ou_name in venue_ous:
+        if venue_key == "stowaway" and ou_name == V.MONDAY_REALLOCATED_OU and is_monday:
+            continue   # unreachable (handled above) but kept for clarity
+        dept = V.dept_for_ou(venue_key, ou_name) or "Kitchen"
+    else:
         continue
 
-    dept = V.dept_for_ou(venue_key, ou_name) or "Kitchen"  # fallback if OU somehow not classified
-
     emp_info = ts.get("_DPMetaData", {}).get("EmployeeInfo", {})
+    emp_id = ts.get("Employee")
+    # Deputy's Timesheet.TotalTime is DECIMAL HOURS (e.g. 11.5), not
+    # seconds — verified against real shifts 2026-07-11.
+    hours = ts.get("TotalTime") or 0
+    cost = ts.get("Cost") or 0
+
+    # Salaried synthesis: Deputy costs salaried staff at $0. Use the weekly
+    # canon model: hours × (annual / 52 / 40).
+    sal = salaried.get(str(emp_id))
+    if sal and not cost:
+        cost = hours * sal["hourly"]
+        synth_count += 1
+
     records.append({
         "timesheet_id": ts.get("Id"),
-        "employee_id": ts.get("Employee"),
+        "employee_id": emp_id,
         "employee_name": emp_info.get("DisplayName", ""),
         "ou_name": ou_name,
         "company": company,
         "dept": dept,
         "start_time": ts.get("StartTime"),
         "end_time": ts.get("EndTime"),
-        # Deputy's Timesheet.TotalTime is DECIMAL HOURS (e.g. 11.5), not
-        # seconds — verified against real shifts 2026-07-11.
-        "hours": ts.get("TotalTime") or 0,
-        "cost": ts.get("Cost") or 0,
+        "hours": round(hours * scale, 4),
+        "cost": round(cost * scale, 2),
+        "salaried_synth": bool(sal and cost),
     })
+
+if synth_count:
+    print(f"Synthesized cost for {synth_count} salaried shift(s) from salaried_employees.json")
 
 # Write the prefixed file — new canonical filename.
 prefixed_file = DATA_DIR / f"deputy_{cfg['file_prefix']}_{target.isoformat()}.json"
@@ -223,4 +294,4 @@ for r in records:
 
 print(f"Saved {len(records)} {venue_key} timesheets to {prefixed_file}")
 for dept in sorted(dept_costs):
-    print(f"  {dept}: ${dept_costs[dept]:,.2f}  ({dept_hours[dept]:.1f} hours)")
+    print(f"  {dept}: ${dept_costs[dept]:,.2f}  ({dept_hours[dept]:.1f} hours)  [ex-super]")
