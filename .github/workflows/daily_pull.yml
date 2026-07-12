@@ -9,9 +9,12 @@ on:
   # Fired by Pipedream when a venue's Insights email arrives
   repository_dispatch:
     types:
-      - insights-csv-arrived    # marilynas (legacy name kept for back-compat)
-      - stow-csv-arrived        # stowaway
-      - hg-csv-arrived          # harry gatos
+      - insights-csv-arrived     # marilynas Sales by Product (legacy name kept for back-compat)
+      - stow-csv-arrived         # stowaway Sales by Product
+      - hg-csv-arrived           # harry gatos Sales by Product
+      - mari-payments-arrived    # marilynas Sales by Payment Type
+      - stow-payments-arrived    # stowaway Sales by Payment Type
+      - hg-payments-arrived      # harry gatos Sales by Payment Type
 
   workflow_dispatch:
     inputs:
@@ -35,19 +38,33 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Determine venue
+      - name: Determine venue + payload kind
         id: venue
         run: |
+          EVENT="${{ github.event.action }}"
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             V="${{ inputs.venue }}"
           elif [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
             V="${{ github.event.client_payload.venue }}"
             # legacy fallback: old dispatches don't set venue
-            if [[ -z "$V" ]]; then V="marilynas"; fi
+            if [[ -z "$V" ]]; then
+              case "$EVENT" in
+                stow-*) V=stowaway ;;
+                hg-*)   V=harry ;;
+                *)      V=marilynas ;;
+              esac
+            fi
           else
-            V="marilynas"   # cron defaults to Mari for now
+            V="marilynas"   # single-venue default; cron loops all venues below
           fi
           echo "venue=$V" >> $GITHUB_OUTPUT
+          # Payload kind: payments events carry a Sales-by-Payment-Type CSV
+          if [[ "$EVENT" == *"payments"* ]]; then
+            KIND=payments
+          else
+            KIND=insights
+          fi
+          echo "kind=$KIND" >> $GITHUB_OUTPUT
           # Map venue -> file prefix (matches scripts/venues.py)
           case "$V" in
             marilynas) PREFIX=mari ;;
@@ -56,7 +73,7 @@ jobs:
             *) echo "::error::unknown venue $V"; exit 1 ;;
           esac
           echo "prefix=$PREFIX" >> $GITHUB_OUTPUT
-          echo "Venue: $V (prefix: $PREFIX)"
+          echo "Venue: $V (prefix: $PREFIX, kind: $KIND)"
 
       - name: Determine target date
         id: date
@@ -67,13 +84,18 @@ jobs:
             echo "target=$(TZ='Australia/Sydney' date -d 'yesterday' +%Y-%m-%d)" >> $GITHUB_OUTPUT
           fi
 
-      - name: Ingest Insights CSV from event payload
+      - name: Ingest CSV from event payload
         if: github.event_name == 'repository_dispatch'
         run: |
           TARGET_DATE="${{ steps.date.outputs.target }}"
           PREFIX="${{ steps.venue.outputs.prefix }}"
+          KIND="${{ steps.venue.outputs.kind }}"
           TMP_BIN="/tmp/insights_payload.bin"
-          FINAL_CSV="data/insights_${PREFIX}_${TARGET_DATE}.csv"
+          if [[ "$KIND" == "payments" ]]; then
+            FINAL_CSV="data/payments_${PREFIX}_${TARGET_DATE}.csv"
+          else
+            FINAL_CSV="data/insights_${PREFIX}_${TARGET_DATE}.csv"
+          fi
           mkdir -p data /tmp/insights_unzip
 
           echo '${{ toJson(github.event.client_payload.csv_base64) }}' | tr -d '"' | base64 -d > "$TMP_BIN"
@@ -88,17 +110,28 @@ jobs:
           else
             mv "$TMP_BIN" "$FINAL_CSV"
           fi
-          # For marilynas, also drop the legacy unprefixed file for aggregator's fallback
-          if [[ "$PREFIX" == "mari" ]]; then cp "$FINAL_CSV" "data/insights_${TARGET_DATE}.csv"; fi
+          # For marilynas sales CSV, also drop the legacy unprefixed file for aggregator's fallback
+          if [[ "$PREFIX" == "mari" && "$KIND" == "insights" ]]; then cp "$FINAL_CSV" "data/insights_${TARGET_DATE}.csv"; fi
           echo "Wrote $FINAL_CSV"
 
-      - name: Deputy pull
+      - name: Deputy pull + aggregate
         env:
           DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
-        run: python scripts/daily_deputy_pull.py --venue ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}
-
-      - name: Aggregate
-        run: python scripts/daily_aggregator.py --venue ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}
+        run: |
+          # Cron fans out over every venue (covers missed dispatches for all
+          # three); dispatch/manual runs stay single-venue. Aggregation is
+          # idempotent - re-running a venue with unchanged inputs rewrites
+          # the same record.
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            VENUES="marilynas stowaway harry"
+          else
+            VENUES="${{ steps.venue.outputs.venue }}"
+          fi
+          for V in $VENUES; do
+            echo "=== $V ==="
+            python scripts/daily_deputy_pull.py --venue "$V" ${{ steps.date.outputs.target }}
+            python scripts/daily_aggregator.py --venue "$V" ${{ steps.date.outputs.target }}
+          done
 
       - name: Commit updated data
         run: |
