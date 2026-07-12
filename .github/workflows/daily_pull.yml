@@ -1,38 +1,62 @@
-name: Mari Daily Pull
+name: Daily Pull
 
 on:
-  # Fire at 6am Sydney time daily (UTC = 20:00 previous day for AEST winter, 19:00 for AEDT summer)
-  # We schedule TWICE (both are conservative — running at both times ensures 6am regardless of DST)
+  # 6am Sydney fallback for missed dispatches
   schedule:
-    - cron: '0 20 * * *'   # 6am AEST (winter, UTC+10)
-    - cron: '0 19 * * *'   # 6am AEDT (summer, UTC+11)
+    - cron: '0 20 * * *'   # 6am AEST (winter)
+    - cron: '0 19 * * *'   # 6am AEDT (summer)
 
-  # Triggered by Zapier when Insights email arrives
+  # Fired by Pipedream when a venue's Insights email arrives
   repository_dispatch:
-    types: [insights-csv-arrived]
+    types:
+      - insights-csv-arrived    # marilynas (legacy name kept for back-compat)
+      - stow-csv-arrived        # stowaway
+      - hg-csv-arrived          # harry gatos
 
-  # Manual trigger for testing
   workflow_dispatch:
     inputs:
       target_date:
         description: 'Target date (YYYY-MM-DD), defaults to yesterday'
         required: false
         default: ''
+      venue:
+        description: 'Venue key (marilynas, stowaway, harry)'
+        required: false
+        default: 'marilynas'
 
 jobs:
   pull-and-aggregate:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
     steps:
-      - name: Check out repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Determine venue
+        id: venue
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            V="${{ inputs.venue }}"
+          elif [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            V="${{ github.event.client_payload.venue }}"
+            # legacy fallback: old dispatches don't set venue
+            if [[ -z "$V" ]]; then V="marilynas"; fi
+          else
+            V="marilynas"   # cron defaults to Mari for now
+          fi
+          echo "venue=$V" >> $GITHUB_OUTPUT
+          # Map venue -> file prefix (matches scripts/venues.py)
+          case "$V" in
+            marilynas) PREFIX=mari ;;
+            stowaway)  PREFIX=stow ;;
+            harry)     PREFIX=hg   ;;
+            *) echo "::error::unknown venue $V"; exit 1 ;;
+          esac
+          echo "prefix=$PREFIX" >> $GITHUB_OUTPUT
+          echo "Venue: $V (prefix: $PREFIX)"
 
       - name: Determine target date
         id: date
@@ -40,41 +64,46 @@ jobs:
           if [[ -n "${{ inputs.target_date }}" ]]; then
             echo "target=${{ inputs.target_date }}" >> $GITHUB_OUTPUT
           else
-            # Sydney date (yesterday)
             echo "target=$(TZ='Australia/Sydney' date -d 'yesterday' +%Y-%m-%d)" >> $GITHUB_OUTPUT
           fi
-          echo "Target date: $(cat $GITHUB_OUTPUT | grep target)"
 
       - name: Ingest Insights CSV from event payload
         if: github.event_name == 'repository_dispatch'
         run: |
-          # Zapier POSTs the base64 CSV content in the dispatch payload
-          echo '${{ toJson(github.event.client_payload.csv_base64) }}' | tr -d '"' | base64 -d > data/insights_${{ steps.date.outputs.target }}.csv
-          echo "Insights CSV received via dispatch"
+          TARGET_DATE="${{ steps.date.outputs.target }}"
+          PREFIX="${{ steps.venue.outputs.prefix }}"
+          TMP_BIN="/tmp/insights_payload.bin"
+          FINAL_CSV="data/insights_${PREFIX}_${TARGET_DATE}.csv"
+          mkdir -p data /tmp/insights_unzip
+
+          echo '${{ toJson(github.event.client_payload.csv_base64) }}' | tr -d '"' | base64 -d > "$TMP_BIN"
+          FILE_TYPE=$(file --mime-type -b "$TMP_BIN")
+          echo "Detected: $FILE_TYPE"
+
+          if [[ "$FILE_TYPE" == "application/zip" ]]; then
+            unzip -o "$TMP_BIN" -d /tmp/insights_unzip
+            LARGEST_CSV=$(find /tmp/insights_unzip -name '*.csv' -printf '%s %p\n' | sort -rn | head -1 | awk '{print $2}')
+            [[ -z "$LARGEST_CSV" ]] && { echo "::error::ZIP has no CSV"; exit 1; }
+            mv "$LARGEST_CSV" "$FINAL_CSV"
+          else
+            mv "$TMP_BIN" "$FINAL_CSV"
+          fi
+          # For marilynas, also drop the legacy unprefixed file for aggregator's fallback
+          if [[ "$PREFIX" == "mari" ]]; then cp "$FINAL_CSV" "data/insights_${TARGET_DATE}.csv"; fi
+          echo "Wrote $FINAL_CSV"
 
       - name: Deputy pull
         env:
           DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
-        run: |
-          python scripts/daily_deputy_pull.py ${{ steps.date.outputs.target }}
+        run: python scripts/daily_deputy_pull.py --venue ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}
 
       - name: Aggregate
-        run: |
-          python scripts/daily_aggregator.py ${{ steps.date.outputs.target }}
+        run: python scripts/daily_aggregator.py --venue ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}
 
       - name: Commit updated data
         run: |
-          git config user.name "Mari Daily Pull"
+          git config user.name "Daily Pull"
           git config user.email "hello@stowawaybar.com"
           git add data/
-          git diff --quiet --staged || git commit -m "Daily pull ${{ steps.date.outputs.target }}"
+          git diff --quiet --staged || git commit -m "Daily pull ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}"
           git push
-
-      - name: Failure notification (any step)
-        if: failure()
-        # Zapier catches this via webhook. Cheapest cross-platform notification.
-        run: |
-          curl -X POST "${{ secrets.FAILURE_WEBHOOK }}" \
-            -H "Content-Type: application/json" \
-            -d '{"date":"${{ steps.date.outputs.target }}","status":"failed","workflow":"mari-daily"}' \
-            || echo "Notification failed too — check GitHub Actions history"
