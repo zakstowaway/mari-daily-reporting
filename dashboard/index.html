@@ -4,8 +4,10 @@
 <meta charset="utf-8">
 <title>Stowaway Hospitality Group — Daily Reporting</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" sizes="16x16" href="logo_16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="logo_32.png">
+<link rel="icon" type="image/png" sizes="128x128" href="logo_128.png">
+<link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -68,6 +70,7 @@ body {
 }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
 
+/* LOGIN */
 .login-wrap { max-width: 420px; margin: 60px auto; padding: 0 20px; }
 .login-card {
   background: var(--paper); border-radius: 14px;
@@ -84,9 +87,6 @@ body {
   display: block; margin: 0 auto 14px;
   object-fit: contain;
   filter: var(--logo-filter);
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
 }
 .group-mark .brand-sub {
   font-family: 'Space Grotesk', sans-serif; font-weight: 500;
@@ -127,6 +127,7 @@ body {
   margin-top: 14px; height: 16px; font-weight: 500;
 }
 
+/* HEADER */
 .header {
   background: var(--paper); border-bottom: 1px solid var(--line);
   padding: 18px 0; margin-bottom: 0;
@@ -155,8 +156,15 @@ body {
 }
 .header .who a:hover { border-bottom-color: var(--ink); }
 
-.venue-tabs { background: var(--paper); border-bottom: 1px solid var(--line); padding: 0 24px; }
-.venue-tabs-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 4px; flex-wrap: wrap; }
+/* Venue tabs */
+.venue-tabs {
+  background: var(--paper); border-bottom: 1px solid var(--line);
+  padding: 0 24px;
+}
+.venue-tabs-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
 .venue-tab {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
@@ -172,6 +180,7 @@ body {
 .venue-tab.active.mari { border-bottom-color: var(--mari); color: var(--mari); }
 .venue-tab.active.group{ border-bottom-color: var(--group); color: var(--group); }
 
+/* accent strip */
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
 .venue-strip.stow { background: var(--stow); }
@@ -180,7 +189,11 @@ body {
   background: linear-gradient(to right, var(--stow) 0%, var(--stow) 33.3%, var(--hg) 33.3%, var(--hg) 66.6%, var(--mari) 66.6%, var(--mari) 100%);
 }
 
-.control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+/* Timeframe + Day picker */
+.control-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
 .timeframe-toggle {
   display: inline-flex; background: var(--paper);
   border-radius: 10px; padding: 4px; border: 1px solid var(--line);
@@ -196,10 +209,6 @@ body {
 }
 .timeframe-toggle button:hover { color: var(--ink); }
 .timeframe-toggle button.active { background: var(--group); color: var(--paper); }
-.range-picker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.range-picker input[type="date"] { background: transparent; color: var(--ink); border: 1px solid rgba(128,128,128,.35); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; color-scheme: light dark; }
-.range-picker .range-sep { opacity: .6; font-size: 13px; }
-.range-picker .range-apply { background: var(--group); color: var(--paper); border: 0; border-radius: 8px; padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; }
 
 .day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
 .day-pill {
@@ -218,9 +227,12 @@ body {
 }
 .day-pill:hover { border-color: var(--ink); }
 .day-pill.no-data { opacity: 0.5; }
-.day-pill.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.day-pill.active {
+  background: var(--group); color: var(--paper); border-color: var(--group);
+}
 .day-pill.active .weekday { color: rgba(255,255,255,0.75); }
 
+/* Snapshot heading */
 .snapshot-title {
   font-family: 'Space Grotesk', sans-serif; font-size: 12px;
   font-weight: 500; text-transform: uppercase; letter-spacing: 0.18em;
@@ -238,10 +250,10 @@ body {
   text-transform: none; vertical-align: middle;
 }
 
+/* Cards */
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 0 28px; }
-.grid.six { grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 900px) { .grid, .grid.six { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 500px) { .grid, .grid.six { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
 
 .card {
   background: var(--paper); border-radius: 12px; padding: 22px;
@@ -258,7 +270,6 @@ body {
   font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700;
   margin: 0 0 4px; letter-spacing: -0.03em; line-height: 1; color: var(--ink);
 }
-.grid.six .card .value { font-size: 30px; }
 .card .sub { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .card.green   { border-top-color: var(--green);  }
 .card.yellow  { border-top-color: var(--accent); }
@@ -266,6 +277,7 @@ body {
 .card.red     { border-top-color: var(--mari);   }
 .card.unknown { border-top-color: var(--grey);   }
 
+/* Sections */
 .section {
   background: var(--paper); border-radius: 12px; padding: 24px;
   margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -276,6 +288,7 @@ body {
 }
 .chart-wrap { position: relative; width: 100%; height: 260px; }
 
+/* Table */
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
 th {
@@ -300,10 +313,11 @@ tbody tr:hover { background: var(--group-tint); }
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login" class="login-wrap">
   <div class="login-card">
     <div class="group-mark">
-      <img class="brand-logo" alt="Stowaway Hospitality Group" src="logo_32.png">
+      <img class="brand-logo" alt="Stowaway Hospitality Group" src="logo_512.png">
       <span class="brand-sub">Hospitality Group · Daily Reporting</span>
       <div class="venues">
         <span class="venue-chip stow">Stowaway</span>
@@ -322,11 +336,12 @@ tbody tr:hover { background: var(--group-tint); }
   </div>
 </div>
 
+<!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
   <div class="header">
     <div class="header-inner">
       <div class="brand-row">
-        <img class="header-logo" alt="" src="logo_32.png">
+        <img class="header-logo" alt="" src="logo_128.png">
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
       <div class="who">
@@ -346,20 +361,10 @@ tbody tr:hover { background: var(--group-tint); }
       <div class="timeframe-toggle" id="timeframe-toggle">
         <button data-tf="day" class="active">Yesterday</button>
         <button data-tf="week">This Week</button>
-        <button data-tf="lastweek">Last Week</button>
         <button data-tf="month">This Month</button>
-        <button data-tf="lastmonth">Last Month</button>
         <button data-tf="quarter">This Quarter</button>
-        <button data-tf="lastquarter">Last Quarter</button>
-        <button data-tf="range">Custom</button>
       </div>
       <div class="day-picker" id="day-picker"></div>
-      <div class="range-picker" id="range-picker" style="display:none">
-        <input type="date" id="range-start">
-        <span class="range-sep">to</span>
-        <input type="date" id="range-end">
-        <button class="range-apply" id="range-apply">Apply</button>
-      </div>
     </div>
 
     <p class="snapshot-title" id="snapshot-title">Snapshot</p>
@@ -368,8 +373,16 @@ tbody tr:hover { background: var(--group-tint); }
     <div class="grid" id="snapshot"></div>
 
     <div class="section" id="trend-section">
-      <h2 id="trend-title">30-Day Trailing</h2>
+      <h2>30-Day Trailing</h2>
       <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
+    </div>
+
+    <div class="section" id="history-section">
+      <h2>Daily History</h2>
+      <table id="history-table">
+        <thead><tr id="history-thead"></tr></thead>
+        <tbody></tbody>
+      </table>
     </div>
 
     <div class="footer">
@@ -382,8 +395,13 @@ tbody tr:hover { background: var(--group-tint); }
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <script>
+// Dark mode detection — swap chart line colors that would be invisible on dark bg
 const IS_DARK = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+const CSS_VAR = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
+// ============================================================================
+// AUTH
+// ============================================================================
 let USERS = null;
 let CURRENT_ROLE = null;
 let CURRENT_USER = null;
@@ -441,103 +459,63 @@ async function tryResume() {
   } catch (e) {}
 }
 
+// ============================================================================
+// VENUE + ROLE CONFIG
+// ============================================================================
 const REAL_VENUES = ['mari', 'stow', 'hg'];
 
 const VENUE_CONFIG = {
-  group: { label: 'Group', chipClass: 'group', historyFile: null, dayFilePrefix: null,
-    cards: ['revenue', 'cogs', 'wages', 'gp'], chart_lines: ['cogs', 'wages', 'gp'],
-    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'], synthetic: true },
-  mari: { label: "Marilyna's", chipClass: 'mari',
+  group: {
+    label: 'Group', chipClass: 'group',
+    historyFile: null, dayFilePrefix: null,
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
+    chart_lines: ['cogs', 'wages', 'gp'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+    synthetic: true,
+  },
+  mari: {
+    label: "Marilyna's", chipClass: 'mari',
     historyFile: 'data/mari_daily_history.csv', dayFilePrefix: 'data/mari_daily_',
-    cards: ['revenue', 'cogs', 'wages', 'delivery'], chart_lines: ['cogs', 'wages', 'delivery'],
-    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'] },
-  stow: { label: 'Stowaway', chipClass: 'stow',
+    cards: ['revenue', 'cogs', 'wages', 'delivery'],
+    chart_lines: ['cogs', 'wages', 'delivery'],
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'delivery_pct', 'gp_pct'],
+  },
+  stow: {
+    label: 'Stowaway', chipClass: 'stow',
     historyFile: 'data/stow_daily_history.csv', dayFilePrefix: 'data/stow_daily_',
-    cards: ['revenue', 'cogs_food', 'cogs_bev', 'wages_kitchen', 'wages_foh', 'gp'],
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
     chart_lines: ['cogs', 'wages', 'gp'],
-    history_cols: ['date', 'revenue_ex_gst', 'food_ex_gst', 'bev_ex_gst', 'wages_kitchen_pct', 'wages_foh_pct', 'gp_pct'] },
-  hg: { label: 'Harry Gatos', chipClass: 'hg',
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+  },
+  hg: {
+    label: 'Harry Gatos', chipClass: 'hg',
     historyFile: 'data/hg_daily_history.csv', dayFilePrefix: 'data/hg_daily_',
-    cards: ['revenue', 'cogs_food', 'cogs_bev', 'wages_kitchen', 'wages_foh', 'gp'],
+    cards: ['revenue', 'cogs', 'wages', 'gp'],
     chart_lines: ['cogs', 'wages', 'gp'],
-    history_cols: ['date', 'revenue_ex_gst', 'food_ex_gst', 'bev_ex_gst', 'wages_kitchen_pct', 'wages_foh_pct', 'gp_pct'] },
+    history_cols: ['date', 'revenue_ex_gst', 'cogs_pct', 'wages_pct', 'gp_pct'],
+  },
 };
 
 const ROLE_CONFIG = {
   admin:    { venues: ['group', 'stow', 'hg', 'mari'], defaultVenue: 'group', show_dollar_amounts: true },
-  pizza:    { venues: ['mari'], defaultVenue: 'mari', show_dollar_amounts: true },
-  stowfood: { venues: ['stow'], defaultVenue: 'stow', show_dollar_amounts: true,
-    cards: ['revenue_food', 'cogs_food', 'wages_kitchen', 'gp_food'],
-    chart_lines: ['cogs_food', 'wages_kitchen', 'gp_food'],
-    history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
-  hgfood:   { venues: ['hg'], defaultVenue: 'hg', show_dollar_amounts: true,
-    cards: ['revenue_food', 'cogs_food', 'wages_kitchen', 'gp_food'],
-    chart_lines: ['cogs_food', 'wages_kitchen', 'gp_food'],
-    history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
-  bar:      { venues: ['stow', 'hg'], defaultVenue: 'stow', show_dollar_amounts: true,
-    cards: ['revenue_bev', 'cogs_bev', 'wages_foh', 'gp_bev'],
-    chart_lines: ['cogs_bev', 'wages_foh', 'gp_bev'],
-    history_cols: ['date', 'bev_ex_gst', 'bev_cogs_pct', 'wages_foh_pct', 'bev_gp_pct'] },
+  pizza:    { venues: ['mari'],                        defaultVenue: 'mari',  show_dollar_amounts: true },
+  stowfood: { venues: ['stow'],                        defaultVenue: 'stow',  show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },
+  hgfood:   { venues: ['hg'],                          defaultVenue: 'hg',    show_dollar_amounts: true,
+              cards: ['revenue', 'cogs', 'wages', 'gp'] },
+  bar:      { venues: ['stow', 'hg'],                  defaultVenue: 'stow',  show_dollar_amounts: true },
   bigchef:  { venues: ['group', 'stow', 'hg', 'mari'], defaultVenue: 'group', show_dollar_amounts: true,
-    cards: ['revenue_food', 'cogs_food', 'wages_kitchen', 'gp_food'],
-    chart_lines: ['cogs_food', 'wages_kitchen', 'gp_food'],
-    history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
+              cards: ['revenue', 'cogs', 'wages'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [] };
+// ============================================================================
+// STATE
+// ============================================================================
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null };
 
-// Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
-// (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
-// Excludes dep+interest. Refresh from Xero P&L when the BEP plan is revised.
-const OVERHEADS_WEEKLY = { stow: 8899, hg: 2890, mari: 1779, group: 13568 };
-
-// Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
-// months before the window end (overheads are lumpy — quarterly power,
-// annual insurance — so never a single month). null -> caller falls back to
-// the plan-basis constant.
-function overheadsDailyRate(venue, endIso) {
-  const feed = STATE.xeroOH;
-  if (!feed.length) return null;
-  const endMonth = String(endIso || '').slice(0, 7);
-  const months = feed.filter(r => r.month && r.month < endMonth).sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
-  if (!months.length) return null;
-  const col = venue === 'group' ? null : `${venue}_overheads`;
-  let dollars = 0, days = 0;
-  for (const r of months) {
-    const [y, m] = r.month.split('-').map(Number);
-    days += new Date(y, m, 0).getDate();
-    if (col) dollars += toNum(r[col]);
-    else dollars += toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads);
-  }
-  return days ? { rate: dollars / days, months: months.length } : null;
-}
-
-// Trailing-N-complete-weeks actual COGS from Xero purchases. Purchases are
-// backwards-looking (bev stock turns over slowly, food ~14 days), so a
-// 4-week window is the honest attribution — never single days.
-function actualCogs(venue, endIso, nWeeks = 4) {
-  const rowsAll = STATE.xeroCogs;
-  if (!rowsAll.length) return null;
-  const weeks = [...new Set(rowsAll.filter(r => r.week_ending <= endIso).map(r => r.week_ending))].sort().slice(-nWeeks);
-  if (!weeks.length) return null;
-  const vens = venue === 'group' ? REAL_VENUES : [venue];
-  let purch = 0;
-  for (const r of rowsAll) {
-    if (weeks.includes(r.week_ending) && vens.includes(r.venue)) purch += toNum(r.actual_cogs_ex_gst);
-  }
-  // revenue over those same weeks, from the venue's daily history
-  const hist = STATE.histories[venue] || [];
-  let rev = 0;
-  for (const we of weeks) {
-    const end = new Date(we); const start = addDays(end, -6);
-    const sIso = isoDate(start), eIso = we;
-    for (const r of hist) if (r.date >= sIso && r.date <= eIso) rev += toNum(r.revenue_ex_gst);
-  }
-  if (!rev) return null;
-  return { pct: purch / rev * 100, purchases: purch, revenue: rev, weeks: weeks.length, from: weeks[0], to: weeks[weeks.length - 1] };
-}
-
-
+// ============================================================================
+// UTILS
+// ============================================================================
 function parseCsv(text) {
   const lines = text.trim().split('\n');
   if (lines.length < 2) return [];
@@ -548,7 +526,6 @@ function parseCsv(text) {
   });
 }
 function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
-function hasVal(x) { return x != null && x !== '' && isFinite(parseFloat(x)); }
 function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
 function isoDate(d) { return d.toISOString().slice(0, 10); }
@@ -558,6 +535,9 @@ function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Da
 function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
 function weekStart(d) { const day = d.getDay(); const offset = day === 0 ? -6 : 1 - day; return addDays(d, offset); }
 
+// ============================================================================
+// DATA LOADING
+// ============================================================================
 async function loadHistory(venue) {
   const cfg = VENUE_CONFIG[venue];
   if (!cfg.historyFile) return [];
@@ -568,6 +548,7 @@ async function loadHistory(venue) {
     return parseCsv(text);
   } catch (e) { return []; }
 }
+
 async function loadAllHistories(role) {
   const roleCfg = ROLE_CONFIG[role] || ROLE_CONFIG.admin;
   const seesGroup = roleCfg.venues.includes('group');
@@ -581,7 +562,9 @@ async function loadAllHistories(role) {
 
 function synthesizeGroupHistory(histories) {
   const allDates = new Set();
-  for (const v of REAL_VENUES) for (const r of histories[v] || []) allDates.add(r.date);
+  for (const v of REAL_VENUES) {
+    for (const r of histories[v] || []) allDates.add(r.date);
+  }
   const rows = [];
   for (const date of Array.from(allDates).sort()) {
     const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
@@ -592,10 +575,6 @@ function synthesizeGroupHistory(histories) {
       sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
       sum.cogs_dollars     += toNum(row.cogs_dollars);
       sum.wages_dollars    += toNum(row.wages_dollars);
-      // Group/Leave (weekly canon): group-level overhead carried on the stow
-      // rows' leave_dollars — excluded from venue wage %, included here so
-      // the Group wage figure reflects the TRUE total wage cost.
-      sum.wages_dollars    += toNum(row.leave_dollars);
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
       venueCount++;
@@ -603,11 +582,16 @@ function synthesizeGroupHistory(histories) {
     if (venueCount === 0) continue;
     const rev = sum.revenue_ex_gst;
     rows.push({
-      date, revenue_ex_gst: sum.revenue_ex_gst,
-      cogs_dollars: sum.cogs_dollars, cogs_pct: rev ? sum.cogs_dollars / rev * 100 : 0,
-      wages_dollars: sum.wages_dollars, wages_pct: rev ? sum.wages_dollars / rev * 100 : 0,
-      delivery_dollars: sum.delivery_dollars, delivery_pct: rev ? sum.delivery_dollars / rev * 100 : 0,
-      gp_dollars: sum.gp_dollars, gp_pct: rev ? sum.gp_dollars / rev * 100 : 0,
+      date,
+      revenue_ex_gst:   sum.revenue_ex_gst,
+      cogs_dollars:     sum.cogs_dollars,
+      cogs_pct:         rev ? sum.cogs_dollars / rev * 100 : 0,
+      wages_dollars:    sum.wages_dollars,
+      wages_pct:        rev ? sum.wages_dollars / rev * 100 : 0,
+      delivery_dollars: sum.delivery_dollars,
+      delivery_pct:     rev ? sum.delivery_dollars / rev * 100 : 0,
+      gp_dollars:       sum.gp_dollars,
+      gp_pct:           rev ? sum.gp_dollars / rev * 100 : 0,
       contributing_venues: venueCount,
       cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
     });
@@ -615,235 +599,97 @@ function synthesizeGroupHistory(histories) {
   return rows;
 }
 
-// Fields summed across days/venues in rollups. Split fields ride along so
-// week/month/quarter views can recompute split percentages properly.
-const SUM_FIELDS = ['revenue_ex_gst', 'cogs_dollars', 'wages_dollars', 'delivery_dollars', 'gp_dollars',
-  'food_ex_gst', 'bev_ex_gst', 'food_cogs', 'bev_cogs', 'wages_kitchen_dollars', 'wages_foh_dollars'];
-
+// ============================================================================
+// AGGREGATION (rollups over a date range)
+// ============================================================================
 function rowsForTimeframe(rows, timeframe, anchorDay) {
   const anchor = new Date(anchorDay);
+  let start;
   if (timeframe === 'day') return rows.filter(r => r.date === anchorDay);
-  if (timeframe === 'range') {
-    if (!STATE.rangeStart || !STATE.rangeEnd) return [];
-    return rows.filter(r => r.date >= STATE.rangeStart && r.date <= STATE.rangeEnd);
-  }
-  let start, endIso = anchorDay;
   if (timeframe === 'week')    start = weekStart(anchor);
   if (timeframe === 'month')   start = monthStart(anchor);
   if (timeframe === 'quarter') start = quarterStart(anchor);
-  // Completed windows — computed off today, independent of the data anchor.
-  const today = sydneyToday();
-  if (timeframe === 'lastweek') {
-    const thisWk = weekStart(today);
-    start = addDays(thisWk, -7); endIso = isoDate(addDays(thisWk, -1));
-  }
-  if (timeframe === 'lastmonth') {
-    const thisMo = monthStart(today);
-    start = new Date(thisMo.getFullYear(), thisMo.getMonth() - 1, 1);
-    endIso = isoDate(addDays(thisMo, -1));
-  }
-  if (timeframe === 'lastquarter') {
-    const thisQ = quarterStart(today);
-    start = new Date(thisQ.getFullYear(), thisQ.getMonth() - 3, 1);
-    endIso = isoDate(addDays(thisQ, -1));
-  }
   const startIso = isoDate(start);
+  const endIso = anchorDay;
   return rows.filter(r => r.date >= startIso && r.date <= endIso);
 }
+
 function rollup(rows) {
   if (!rows.length) return null;
   if (rows.length === 1) return rows[0];
-  const sums = {};
-  for (const f of SUM_FIELDS) sums[f] = 0;
-  const present = {};
+  const sums = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
   let n = 0;
   for (const r of rows) {
     if (!r.revenue_ex_gst) continue;
-    for (const f of SUM_FIELDS) {
-      if (hasVal(r[f])) { sums[f] += toNum(r[f]); present[f] = true; }
-    }
+    sums.revenue_ex_gst   += toNum(r.revenue_ex_gst);
+    sums.cogs_dollars     += toNum(r.cogs_dollars);
+    sums.wages_dollars    += toNum(r.wages_dollars);
+    sums.delivery_dollars += toNum(r.delivery_dollars);
+    sums.gp_dollars       += toNum(r.gp_dollars);
     n++;
   }
   if (n === 0) return null;
   const rev = sums.revenue_ex_gst;
-  const out = {
-    date: rows[0].date + ' — ' + rows[rows.length - 1].date,
+  return {
+    date: rows[0].date + ' → ' + rows[rows.length - 1].date,
     days_included: n,
     revenue_ex_gst: sums.revenue_ex_gst,
-    cogs_dollars: sums.cogs_dollars, cogs_pct: rev ? sums.cogs_dollars / rev * 100 : 0,
-    wages_dollars: sums.wages_dollars, wages_pct: rev ? sums.wages_dollars / rev * 100 : 0,
-    delivery_dollars: sums.delivery_dollars, delivery_pct: rev ? sums.delivery_dollars / rev * 100 : 0,
-    gp_dollars: sums.gp_dollars, gp_pct: rev ? sums.gp_dollars / rev * 100 : 0,
+    cogs_dollars:   sums.cogs_dollars,
+    cogs_pct:       rev ? sums.cogs_dollars / rev * 100 : 0,
+    wages_dollars:  sums.wages_dollars,
+    wages_pct:      rev ? sums.wages_dollars / rev * 100 : 0,
+    delivery_dollars: sums.delivery_dollars,
+    delivery_pct:   rev ? sums.delivery_dollars / rev * 100 : 0,
+    gp_dollars:     sums.gp_dollars,
+    gp_pct:         rev ? sums.gp_dollars / rev * 100 : 0,
     cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
   };
-  // Split lanes: only emit when at least one row in range carried the field,
-  // so the pre-split history doesn't render misleading zeros.
-  if (present.food_ex_gst) {
-    out.food_ex_gst = sums.food_ex_gst;
-    out.food_cogs = sums.food_cogs;
-    out.food_cogs_pct = sums.food_ex_gst ? sums.food_cogs / sums.food_ex_gst * 100 : 0;
-    out.food_gp_pct = sums.food_ex_gst ? (sums.food_ex_gst - sums.food_cogs) / sums.food_ex_gst * 100 : 0;
-  }
-  if (present.bev_ex_gst) {
-    out.bev_ex_gst = sums.bev_ex_gst;
-    out.bev_cogs = sums.bev_cogs;
-    out.bev_cogs_pct = sums.bev_ex_gst ? sums.bev_cogs / sums.bev_ex_gst * 100 : 0;
-    out.bev_gp_pct = sums.bev_ex_gst ? (sums.bev_ex_gst - sums.bev_cogs) / sums.bev_ex_gst * 100 : 0;
-  }
-  if (present.wages_kitchen_dollars) {
-    out.wages_kitchen_dollars = sums.wages_kitchen_dollars;
-    out.wages_kitchen_pct = sums.food_ex_gst ? sums.wages_kitchen_dollars / sums.food_ex_gst * 100 : '';
-  }
-  if (present.wages_foh_dollars) {
-    out.wages_foh_dollars = sums.wages_foh_dollars;
-    out.wages_foh_pct = sums.bev_ex_gst ? sums.wages_foh_dollars / sums.bev_ex_gst * 100 : '';
-  }
-  return out;
 }
 
-// Mari has no food/bev split (kitchen-only venue) — the *_food cards fall back
-// to the blended figures so `bigchef` can compare kitchens across all venues.
+// ============================================================================
+// CARDS
+// ============================================================================
 const CARD_DEFS = {
-  cogs_actual: (day, cfg) => {
-    const endIso = String(day.date || '').includes(' \u2014 ') ? String(day.date).split(' \u2014 ')[1] : String(day.date || '');
-    const a = actualCogs(STATE.currentVenue, endIso || isoDate(sydneyToday()));
-    if (!a) return { label: 'Actual COGS (Xero)', value: '\u2014', sub: 'no purchase data yet', status: 'unknown' };
-    const est = hasVal(day.cogs_pct) ? ` vs est. ${fmtPct(toNum(day.cogs_pct))}` : '';
-    return {
-      label: 'Actual COGS (Xero)',
-      value: fmtPct(a.pct),
-      sub: `4-wk purchases ${fmtDollars(a.purchases)}${est}`,
-      status: 'unknown',
-    };
-  },
-  profit: (day, cfg) => {
-    const rev = toNum(day.revenue_ex_gst);
-    if (!rev || !hasVal(day.wages_dollars)) return { label: 'Expected Profit', value: '\u2014', sub: 'needs revenue + wages', status: 'unknown' };
-    const endIso = String(day.date || '').includes(' \u2014 ') ? String(day.date).split(' \u2014 ')[1] : String(day.date || '');
-    const a = actualCogs(STATE.currentVenue, endIso || isoDate(sydneyToday()));
-    const cogsPct = a ? a.pct : toNum(day.cogs_pct);
-    const days = day.days_included || 1;
-    const ohActual = overheadsDailyRate(STATE.currentVenue, endIso || isoDate(sydneyToday()));
-    const oh = ohActual ? ohActual.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
-    const ohTag = ohActual ? `Xero ${ohActual.months}-mo avg` : 'plan';
-    const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh;
-    return {
-      label: 'Expected Profit',
-      value: (profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(profit)).toLocaleString(),
-      sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (${ohTag}) \u00b7 ${fmtPct(profit / rev * 100)} margin`,
-      status: profit >= 0 ? 'green' : 'red',
-    };
-  },
   revenue: (day, cfg) => ({
     label: 'Revenue (ex-GST)',
     value: fmtDollars(toNum(day.revenue_ex_gst)),
-    sub: day.days_included ? `${day.days_included} days` : day.contributing_venues ? `${day.contributing_venues} of 3 venues` : day.date,
+    sub: day.days_included ? `${day.days_included} days`
+       : day.contributing_venues ? `${day.contributing_venues} of 3 venues`
+       : day.date,
     status: 'unknown',
   }),
   cogs: (day, cfg) => ({
     label: 'COGS',
-    value: hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—',
+    value: day.cogs_pct != null && day.cogs_pct !== '' ? fmtPct(toNum(day.cogs_pct)) : '—',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
     status: day.cogs_alert,
   }),
   wages: (day, cfg) => ({
     label: 'Wages',
-    value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—',
+    value: day.wages_pct != null && day.wages_pct !== '' ? fmtPct(toNum(day.wages_pct)) : '—',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '',
     status: day.wages_alert,
   }),
   delivery: (day, cfg) => ({
     label: 'Delivery',
-    value: hasVal(day.delivery_pct) ? fmtPct(toNum(day.delivery_pct)) : '—',
+    value: day.delivery_pct != null && day.delivery_pct !== '' ? fmtPct(toNum(day.delivery_pct)) : '—',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.delivery_dollars)) : '',
     status: day.delivery_alert,
   }),
   gp: (day, cfg) => ({
     label: 'GP',
-    value: hasVal(day.gp_pct) ? fmtPct(toNum(day.gp_pct)) : '—',
+    value: day.gp_pct != null && day.gp_pct !== '' ? fmtPct(toNum(day.gp_pct)) : '—',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.gp_dollars)) : '',
     status: day.gp_alert || 'unknown',
   }),
-  revenue_food: (day, cfg) => {
-    const split = hasVal(day.food_ex_gst);
-    return {
-      label: split ? 'Food Revenue (ex-GST)' : 'Revenue (ex-GST)',
-      value: fmtDollars(toNum(split ? day.food_ex_gst : day.revenue_ex_gst)),
-      sub: day.days_included ? `${day.days_included} days` : day.date,
-      status: 'unknown',
-    };
-  },
-  revenue_bev: (day, cfg) => ({
-    label: 'Bev Revenue (ex-GST)',
-    value: hasVal(day.bev_ex_gst) ? fmtDollars(toNum(day.bev_ex_gst)) : '—',
-    sub: day.days_included ? `${day.days_included} days` : day.date,
-    status: 'unknown',
-  }),
-  cogs_food: (day, cfg) => {
-    const split = hasVal(day.food_cogs_pct);
-    return {
-      label: 'Food COGS',
-      value: split ? fmtPct(toNum(day.food_cogs_pct)) : hasVal(day.cogs_pct) && !hasVal(day.bev_ex_gst) ? fmtPct(toNum(day.cogs_pct)) : '—',
-      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.food_cogs)) + ' / ' + fmtDollars(toNum(day.food_ex_gst)) + ' food rev' : 'awaiting split data',
-      status: split ? (day.cogs_food_alert || 'unknown') : 'unknown',
-    };
-  },
-  cogs_bev: (day, cfg) => {
-    const split = hasVal(day.bev_cogs_pct);
-    return {
-      label: 'Bev COGS',
-      value: split ? fmtPct(toNum(day.bev_cogs_pct)) : '—',
-      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.bev_cogs)) + ' / ' + fmtDollars(toNum(day.bev_ex_gst)) + ' bev rev' : 'awaiting split data',
-      status: split ? (day.cogs_bev_alert || 'unknown') : 'unknown',
-    };
-  },
-  wages_kitchen: (day, cfg) => {
-    const has = hasVal(day.wages_kitchen_dollars);
-    return {
-      label: 'Kitchen Wages',
-      value: hasVal(day.wages_kitchen_pct) ? fmtPct(toNum(day.wages_kitchen_pct)) : '—',
-      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_kitchen_dollars)) + ' vs food rev' : 'awaiting split data',
-      status: has ? (day.wages_kitchen_alert || 'unknown') : 'unknown',
-    };
-  },
-  wages_foh: (day, cfg) => {
-    const has = hasVal(day.wages_foh_dollars);
-    return {
-      label: 'FOH Wages',
-      value: hasVal(day.wages_foh_pct) ? fmtPct(toNum(day.wages_foh_pct)) : '—',
-      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_foh_dollars)) + ' vs bev rev' : 'awaiting split data',
-      status: has ? (day.wages_foh_alert || 'unknown') : 'unknown',
-    };
-  },
-  gp_food: (day, cfg) => {
-    const split = hasVal(day.food_gp_pct);
-    return {
-      label: split ? 'Food GP' : 'GP',
-      value: split ? fmtPct(toNum(day.food_gp_pct)) : hasVal(day.gp_pct) ? fmtPct(toNum(day.gp_pct)) : '—',
-      sub: '',
-      status: 'unknown',
-    };
-  },
-  gp_bev: (day, cfg) => ({
-    label: 'Bev GP',
-    value: hasVal(day.bev_gp_pct) ? fmtPct(toNum(day.bev_gp_pct)) : '—',
-    sub: '',
-    status: 'unknown',
-  }),
 };
 
+// Chart line colors — wages line reads from CSS var so it flips in dark mode
 const CHART_LINE_DEFS = {
-  revenue:  { label: 'Revenue $',  key: 'revenue_ex_gst', color: '#3A7BD5', axis: 'y2' },
   cogs:     { label: 'COGS %',     key: 'cogs_pct',     color: '#C8102E' },
   wages:    { label: 'Wages %',    key: 'wages_pct',    color: IS_DARK ? '#F2F0EA' : '#1A1A1A' },
   delivery: { label: 'Delivery %', key: 'delivery_pct', color: '#E8A82B' },
   gp:       { label: 'GP %',       key: 'gp_pct',       color: '#0F6E56' },
-  cogs_food:     { label: 'Food COGS %',     key: 'food_cogs_pct',     color: '#C8452B' },
-  cogs_bev:      { label: 'Bev COGS %',      key: 'bev_cogs_pct',      color: '#C8102E' },
-  wages_kitchen: { label: 'Kitchen Wages %', key: 'wages_kitchen_pct', color: IS_DARK ? '#F2F0EA' : '#1A1A1A' },
-  wages_foh:     { label: 'FOH Wages %',     key: 'wages_foh_pct',     color: '#E8A82B' },
-  gp_food:       { label: 'Food GP %',       key: 'food_gp_pct',       color: '#0F6E56' },
-  gp_bev:        { label: 'Bev GP %',        key: 'bev_gp_pct',        color: '#1B4D3E' },
 };
 
 const COL_DEFS = {
@@ -853,16 +699,11 @@ const COL_DEFS = {
   wages_pct:       { label: 'Wages %',      num: true,  render: r => r.wages_pct ? fmtPct(toNum(r.wages_pct)) : '—' },
   delivery_pct:    { label: 'Delivery %',   num: true,  render: r => r.delivery_pct ? fmtPct(toNum(r.delivery_pct)) : '—' },
   gp_pct:          { label: 'GP %',         num: true,  render: r => r.gp_pct ? fmtPct(toNum(r.gp_pct)) : '—' },
-  food_ex_gst:     { label: 'Food $',       num: true,  render: r => hasVal(r.food_ex_gst) ? fmtDollars(toNum(r.food_ex_gst)) : '—' },
-  bev_ex_gst:      { label: 'Bev $',        num: true,  render: r => hasVal(r.bev_ex_gst) ? fmtDollars(toNum(r.bev_ex_gst)) : '—' },
-  food_cogs_pct:   { label: 'Food COGS %',  num: true,  render: r => hasVal(r.food_cogs_pct) ? fmtPct(toNum(r.food_cogs_pct)) : '—' },
-  bev_cogs_pct:    { label: 'Bev COGS %',   num: true,  render: r => hasVal(r.bev_cogs_pct) ? fmtPct(toNum(r.bev_cogs_pct)) : '—' },
-  wages_kitchen_pct: { label: 'Kitchen W %', num: true, render: r => hasVal(r.wages_kitchen_pct) ? fmtPct(toNum(r.wages_kitchen_pct)) : '—' },
-  wages_foh_pct:   { label: 'FOH W %',      num: true,  render: r => hasVal(r.wages_foh_pct) ? fmtPct(toNum(r.wages_foh_pct)) : '—' },
-  food_gp_pct:     { label: 'Food GP %',    num: true,  render: r => hasVal(r.food_gp_pct) ? fmtPct(toNum(r.food_gp_pct)) : '—' },
-  bev_gp_pct:      { label: 'Bev GP %',     num: true,  render: r => hasVal(r.bev_gp_pct) ? fmtPct(toNum(r.bev_gp_pct)) : '—' },
 };
 
+// ============================================================================
+// RENDER
+// ============================================================================
 function renderVenueTabs() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const tabsEl = document.getElementById('venue-tabs');
@@ -875,43 +716,26 @@ function renderVenueTabs() {
     return `<button class="venue-tab ${active}" onclick="switchVenue('${v}')">${cfg.label}</button>`;
   }).join('');
 }
+
 function renderVenueStrip() {
   const el = document.getElementById('venue-strip');
   const cfg = VENUE_CONFIG[STATE.currentVenue];
   el.className = 'venue-strip ' + cfg.chipClass;
 }
+
 function renderTimeframeToggle() {
   document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tf === STATE.currentTimeframe);
   });
 }
-function renderRangePicker() {
-  const el = document.getElementById('range-picker');
-  const show = STATE.currentTimeframe === 'range';
-  el.style.display = show ? 'flex' : 'none';
-  if (!show) return;
-  const rows = STATE.histories[STATE.currentVenue] || [];
-  const minD = rows.length ? rows[0].date : '';
-  const maxD = rows.length ? rows[rows.length - 1].date : '';
-  const si = document.getElementById('range-start'), ei = document.getElementById('range-end');
-  si.min = minD; si.max = maxD; ei.min = minD; ei.max = maxD;
-  if (!si.value) si.value = STATE.rangeStart || (rows.length ? rows[Math.max(0, rows.length - 28)].date : '');
-  if (!ei.value) ei.value = STATE.rangeEnd || maxD;
-}
-function applyRange() {
-  const si = document.getElementById('range-start'), ei = document.getElementById('range-end');
-  if (!si.value || !ei.value) return;
-  STATE.rangeStart = si.value <= ei.value ? si.value : ei.value;
-  STATE.rangeEnd   = si.value <= ei.value ? ei.value : si.value;
-  render();
-}
+
 function renderDayPicker() {
-  renderRangePicker();
   const picker = document.getElementById('day-picker');
   if (STATE.currentTimeframe !== 'day') { picker.style.display = 'none'; return; }
   picker.style.display = 'flex';
   const rows = STATE.histories[STATE.currentVenue] || [];
   const rowsByDate = Object.fromEntries(rows.map(r => [r.date, r]));
+
   const today = sydneyToday();
   const days = [];
   for (let i = 7; i >= 1; i--) days.push(addDays(today, -i));
@@ -921,92 +745,99 @@ function renderDayPicker() {
     const active = iso === STATE.currentDay ? 'active' : '';
     const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
     const dn = d.getDate();
-    return `<button class="day-pill ${active} ${has ? '' : 'no-data'}" onclick="switchDay('${iso}')"><span class="weekday">${wd}</span>${dn}</button>`;
+    return `<button class="day-pill ${active} ${has ? '' : 'no-data'}" onclick="switchDay('${iso}')">
+      <span class="weekday">${wd}</span>${dn}
+    </button>`;
   }).join('');
-}
-
-// Card lists: role config wins (slice-scoped roles like stowfood/bar carry
-// their own cards, with blended fallbacks on Mari/Group), else venue default.
-function cardsForCurrentView() {
-  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
-  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
-  const base = (roleCfg.cards || venueCfg.cards);
-  return CURRENT_ROLE === 'admin' ? [...base, 'cogs_actual', 'profit'] : base;
 }
 
 function renderSnapshot() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
-  const cards = cardsForCurrentView();
+  const cards = (roleCfg.cards || venueCfg.cards);
   const cfg = { show_dollar_amounts: roleCfg.show_dollar_amounts };
   const rows = STATE.histories[STATE.currentVenue] || [];
+
   let anchorDay = STATE.currentDay;
   if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+
   const rangeRows = rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay);
   const day = rollup(rangeRows);
+
   const titleEl = document.getElementById('snapshot-title');
   const dateEl  = document.getElementById('latest-date');
   const staleEl = document.getElementById('stale-badge');
-  const tfLabel = { day: 'Selected day', week: 'This Week', lastweek: 'Last Week', month: 'This Month', lastmonth: 'Last Month', quarter: 'This Quarter', lastquarter: 'Last Quarter', range: 'Custom range' }[STATE.currentTimeframe];
+
+  const tfLabel = { day: 'Selected day', week: 'This Week', month: 'This Month', quarter: 'This Quarter' }[STATE.currentTimeframe];
   titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
-  const snapshotEl = document.getElementById('snapshot');
-  snapshotEl.className = 'grid' + (cards.length > 4 ? ' six' : '');
+
   if (!day) {
     dateEl.textContent = 'No data';
     staleEl.innerHTML = '';
-    // No-data state respects the split card layout so the venue tab shows
-    // exactly what it'll look like once the venue's Insights schedule fires.
-    const ghostCards = cards.map(key => {
-      const c = CARD_DEFS[key]({}, cfg);
-      return `<div class="card unknown"><p class="label">${c.label}</p><p class="value">—</p><p class="sub">no data yet</p></div>`;
-    }).join('');
-    snapshotEl.innerHTML = ghostCards;
+    document.getElementById('snapshot').innerHTML = `
+      <div class="card unknown placeholder-card">
+        <p class="label">${tfLabel}</p>
+        <p class="value" style="font-size: 22px; margin: 12px 0 8px;">No data for this range yet</p>
+        <p class="sub">${STATE.currentTimeframe === 'day'
+          ? 'This day has no aggregated report — venue was closed, or pipeline hasn\'t caught up.'
+          : 'Pipeline hasn\'t populated enough days to roll up this timeframe.'}</p>
+      </div>
+    `;
     document.getElementById('trend-section').classList.add('hidden');
+    document.getElementById('history-section').classList.add('hidden');
     return;
   }
+
   document.getElementById('trend-section').classList.remove('hidden');
+  document.getElementById('history-section').classList.remove('hidden');
+
   if (STATE.currentTimeframe === 'day') {
-    dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+    dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', {
+      weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
+    });
   } else {
-    const [s, e] = day.date.split(' — ');
+    const [s, e] = day.date.split(' → ');
     const fmt = d => new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
     dateEl.textContent = `${fmt(s)} — ${fmt(e)} (${day.days_included} days)`;
   }
+
   staleEl.innerHTML = '';
   if (STATE.currentTimeframe === 'day') {
     const daysBehind = Math.floor((sydneyToday() - new Date(day.date)) / 86400000);
     if (daysBehind > 1) staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
   }
+
   const cardEls = cards.map(key => CARD_DEFS[key](day, cfg));
-  snapshotEl.innerHTML = cardEls.map(c => `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
+  document.getElementById('snapshot').innerHTML = cardEls.map(c => `
+    <div class="card ${c.status || 'unknown'}">
+      <p class="label">${c.label}</p>
+      <p class="value">${c.value}</p>
+      <p class="sub">${c.sub || ''}</p>
+    </div>
+  `).join('');
 }
 
 let CHART_INSTANCE = null;
 function renderChart() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
-  const lines = ['revenue', ...(roleCfg.chart_lines || venueCfg.chart_lines)];
+  const lines = (roleCfg.chart_lines || venueCfg.chart_lines);
   const rows = STATE.histories[STATE.currentVenue] || [];
-  let trailing, chartTitle;
-  if (STATE.currentTimeframe === 'day') {
-    trailing = rows.slice(-30);
-    chartTitle = '30-Day Trailing';
-  } else {
-    let anchorDay = STATE.currentDay;
-    if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
-    trailing = rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay);
-    if (trailing.length < 2) trailing = rows.slice(-30);
-    chartTitle = 'Selected Period — Daily';
-  }
-  const titleEl = document.getElementById('trend-title');
-  if (titleEl) titleEl.textContent = chartTitle;
+  const trailing = rows.slice(-30);
+
   const tickColor = IS_DARK ? '#B7B1A4' : '#5A544C';
   const gridColor = IS_DARK ? 'rgba(120,110,90,0.2)' : 'rgba(232,223,207,0.4)';
+
   const ctx = document.getElementById('trend-chart').getContext('2d');
   if (CHART_INSTANCE) CHART_INSTANCE.destroy();
   const datasets = lines.map(line => {
     const def = CHART_LINE_DEFS[line];
-    return { label: def.label, yAxisID: def.axis || 'y', data: trailing.map(r => hasVal(r[def.key]) ? toNum(r[def.key]) : null), borderColor: def.color, backgroundColor: def.color + '20', tension: 0.3, borderWidth: 2.5, pointRadius: trailing.length > 45 ? 0 : 3, pointBackgroundColor: def.color, spanGaps: true };
+    return {
+      label: def.label, data: trailing.map(r => toNum(r[def.key])),
+      borderColor: def.color, backgroundColor: def.color + '20',
+      tension: 0.3, borderWidth: 2.5, pointRadius: 3,
+      pointBackgroundColor: def.color, spanGaps: true,
+    };
   });
   CHART_INSTANCE = new Chart(ctx, {
     type: 'line',
@@ -1014,13 +845,39 @@ function renderChart() {
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        y: { ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: tickColor }, grid: { color: gridColor } },
-        y2: { position: 'right', ticks: { callback: v => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v), font: { family: 'Inter', size: 11 }, color: '#3A7BD5' }, grid: { display: false } },
-        x: { ticks: { font: { family: 'Inter', size: 11 }, color: tickColor, maxTicksLimit: 16 }, grid: { display: false } }
+        y: { ticks: { callback: v => v + '%', font: { family: 'Inter', size: 11 }, color: tickColor },
+             grid: { color: gridColor } },
+        x: { ticks: { font: { family: 'Inter', size: 11 }, color: tickColor },
+             grid: { display: false } }
       },
-      plugins: { legend: { position: 'bottom', labels: { boxWidth: 14, boxHeight: 3, usePointStyle: true, pointStyle: 'line', font: { family: 'Space Grotesk', size: 12, weight: '500' }, color: tickColor, padding: 20 } } }
+      plugins: {
+        legend: { position: 'bottom',
+                  labels: { boxWidth: 14, boxHeight: 3, usePointStyle: true, pointStyle: 'line',
+                            font: { family: 'Space Grotesk', size: 12, weight: '500' },
+                            color: tickColor, padding: 20 } }
+      }
     }
   });
+}
+
+function renderHistoryTable() {
+  const venueCfg = VENUE_CONFIG[STATE.currentVenue];
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  const cols = (roleCfg.history_cols || venueCfg.history_cols);
+  const rows = STATE.histories[STATE.currentVenue] || [];
+
+  const thead = document.getElementById('history-thead');
+  thead.innerHTML = cols.map(k => {
+    const def = COL_DEFS[k];
+    return `<th class="${def.num ? 'num' : ''}">${def.label}</th>`;
+  }).join('');
+  const tbody = document.querySelector('#history-table tbody');
+  tbody.innerHTML = rows.slice().reverse().slice(0, 30).map(r =>
+    '<tr>' + cols.map(k => {
+      const def = COL_DEFS[k];
+      return `<td class="${def.num ? 'num' : ''}">${def.render(r)}</td>`;
+    }).join('') + '</tr>'
+  ).join('');
 }
 
 async function fetchLastUpdate() {
@@ -1039,8 +896,11 @@ async function fetchLastUpdate() {
         stamps.push(new Date(data.generated_at).getTime());
       } catch (e) {}
     }
-    if (stamps.length) document.getElementById('last-update').textContent = new Date(Math.max(...stamps)).toLocaleString('en-AU');
-    else document.getElementById('last-update').textContent = 'unknown';
+    if (stamps.length) {
+      document.getElementById('last-update').textContent = new Date(Math.max(...stamps)).toLocaleString('en-AU');
+    } else {
+      document.getElementById('last-update').textContent = 'unknown';
+    }
     return;
   }
   try {
@@ -1059,6 +919,7 @@ function render() {
   renderDayPicker();
   renderSnapshot();
   renderChart();
+  renderHistoryTable();
   fetchLastUpdate();
 }
 
@@ -1074,30 +935,16 @@ function switchTimeframe(tf) {
     const rows = STATE.histories[STATE.currentVenue] || [];
     if (rows.length) STATE.currentDay = rows[rows.length - 1].date;
   }
-  if (tf === 'range' && !STATE.rangeStart) {
-    const rows = STATE.histories[STATE.currentVenue] || [];
-    if (rows.length) {
-      STATE.rangeStart = rows[Math.max(0, rows.length - 28)].date;
-      STATE.rangeEnd = rows[rows.length - 1].date;
-    }
-  }
   render();
 }
 function switchDay(iso) {
   STATE.currentDay = iso;
   render();
 }
+
 async function bootstrap() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   STATE.histories = await loadAllHistories(CURRENT_ROLE);
-  try {
-    const r = await fetch('data/xero_cogs_weekly.csv?t=' + Date.now());
-    if (r.ok) STATE.xeroCogs = parseCsv(await r.text());
-  } catch (e) {}
-  try {
-    const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
-    if (r.ok) STATE.xeroOH = parseCsv(await r.text());
-  } catch (e) {}
   const defaultVenue = roleCfg.defaultVenue;
   const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
   STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
@@ -1106,7 +953,6 @@ async function bootstrap() {
   document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
     btn.onclick = () => switchTimeframe(btn.dataset.tf);
   });
-  document.getElementById('range-apply').onclick = applyRange;
   render();
 }
 
