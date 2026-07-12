@@ -8,8 +8,9 @@
     "dept": "Kitchen",
     "start_time": 1783731600,
     "end_time": 1783772100,
-    "hours": 0.0029861111111111113,
-    "cost": 0
+    "hours": 10.75,
+    "cost": 361.78,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35259,
@@ -20,8 +21,22 @@
     "dept": "FOH",
     "start_time": 1783749600,
     "end_time": 1783773000,
-    "hours": 0.0016666666666666668,
-    "cost": 252.521
+    "hours": 6.0,
+    "cost": 252.52,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35278,
+    "employee_id": 3,
+    "employee_name": "Zak",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783750500,
+    "end_time": 1783754100,
+    "hours": 0.1,
+    "cost": 3.75,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35276,
@@ -32,7 +47,8 @@
     "dept": "FOH",
     "start_time": 1783754100,
     "end_time": 1783764900,
-    "hours": 0.0008333333333333334,
-    "cost": 0
+    "hours": 3.0,
+    "cost": 112.5,
+    "salaried_synth": true
   }
 ]
