@@ -783,12 +783,25 @@ const CARD_DEFS = {
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '',
     status: day.wages_alert,
   }),
-  delivery: (day, cfg) => ({
-    label: 'Delivery',
-    value: hasVal(day.delivery_pct) ? fmtPct(toNum(day.delivery_pct)) : '—',
-    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.delivery_dollars)) : '',
-    status: day.delivery_alert,
-  }),
+  delivery: (day, cfg) => {
+    // driver wages (history) + REAL platform fees (Xero monthly feed,
+    // trailing 3-mo rate applied to this window's revenue).
+    const rev = toNum(day.revenue_ex_gst);
+    const endIso = String(day.date || '').includes(' — ') ? String(day.date).split(' — ')[1] : String(day.date || '');
+    const dfr = deliveryFeesPct(STATE.currentVenue, endIso || isoDate(sydneyToday()));
+    const fees = (dfr && rev) ? rev * dfr.pct / 100 : 0;
+    const driver = toNum(day.delivery_dollars);
+    const total = driver + fees;
+    const pct = rev ? total / rev * 100 : null;
+    return {
+      label: 'Delivery',
+      value: pct !== null ? fmtPct(pct) : '—',
+      sub: cfg.show_dollar_amounts
+        ? (fees ? `driver ${fmtDollars(driver)} + platform fees ${fmtDollars(fees)} (Xero)` : fmtDollars(driver))
+        : '',
+      status: day.delivery_alert,
+    };
+  },
   gp: (day, cfg) => ({
     label: 'GP',
     value: hasVal(day.gp_pct) ? fmtPct(toNum(day.gp_pct)) : '—',
