@@ -171,6 +171,7 @@ body {
 .venue-tab.active.hg   { border-bottom-color: var(--hg);   color: var(--hg); }
 .venue-tab.active.mari { border-bottom-color: var(--mari); color: var(--mari); }
 .venue-tab.active.group{ border-bottom-color: var(--group); color: var(--group); }
+.eatclub-tab { margin-left: auto; text-decoration: none; display: inline-flex; align-items: center; }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -333,7 +334,6 @@ tbody tr:hover { background: var(--group-tint); }
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
       <div class="who">
-        <a id="eatclub-link" href="eatclub.html" style="display:none; margin-right: 6px;">EatClub</a>
         <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
       </div>
     </div>
@@ -437,7 +437,6 @@ async function showDashboard() {
   document.getElementById('login').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('who-name').textContent = CURRENT_USER.display;
-  document.getElementById('eatclub-link').style.display = CURRENT_ROLE === 'admin' ? '' : 'none';
   await bootstrap();
 }
 async function tryResume() {
@@ -1076,7 +1075,9 @@ function renderVenueTabs() {
     const cfg = VENUE_CONFIG[v];
     const active = v === STATE.currentVenue ? `active ${cfg.chipClass}` : '';
     return `<button class="venue-tab ${active}" onclick="switchVenue('${v}')">${cfg.label}</button>`;
-  }).join('');
+  }).join('') + (CURRENT_ROLE === 'admin'
+    ? `<a class="venue-tab eatclub-tab" href="eatclub.html">EatClub</a>`
+    : '');
 }
 function renderVenueStrip() {
   const el = document.getElementById('venue-strip');
