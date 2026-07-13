@@ -200,6 +200,9 @@ body {
 .range-picker input[type="date"] { background: transparent; color: var(--ink); border: 1px solid rgba(128,128,128,.35); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; color-scheme: light dark; }
 .range-picker .range-sep { opacity: .6; font-size: 13px; }
 .range-picker .range-apply { background: var(--group); color: var(--paper); border: 0; border-radius: 8px; padding: 7px 14px; font: inherit; font-size: 13px; cursor: pointer; }
+.strip-label { font-size: 13px; opacity: .75; margin: 0 0 4px; }
+.strip-bar { display: flex; height: 30px; border-radius: 8px; overflow: hidden; }
+.strip-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; opacity: .8; margin-top: 6px; }
 
 .day-picker { display: flex; gap: 6px; flex-wrap: wrap; }
 .day-pill {
@@ -367,6 +370,9 @@ tbody tr:hover { background: var(--group-tint); }
 
     <div class="grid" id="snapshot"></div>
 
+    <div id="dollar-strip" style="margin-top: 16px;"></div>
+    <div class="grid" id="split-snapshot" style="margin-top: 12px;"></div>
+
     <div class="section" id="trend-section">
       <h2 id="trend-title">30-Day Trailing</h2>
       <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
@@ -490,6 +496,75 @@ const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', curr
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
 // Excludes dep+interest. Refresh from Xero P&L when the BEP plan is revised.
 const OVERHEADS_WEEKLY = { stow: 8899, hg: 2890, mari: 1779, group: 13568 };
+
+const PLAN_WAGE_SHARE = { stow: 0.624, hg: 0.207, mari: 0.170, group: 1.0 };
+
+function pill(text, kind) {
+  const m = { red: ['#FCEBEB', '#791F1F', '#501313', '#F7C1C1'],
+              green: ['#E1F5EE', '#085041', '#04342C', '#9FE1CB'],
+              warn: ['#FAEEDA', '#633806', '#412402', '#FAC775'] }[kind];
+  const bg = IS_DARK ? m[2] : m[0], fg = IS_DARK ? m[3] : m[1];
+  return `<span style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:8px;background:${bg};color:${fg};vertical-align:2px;white-space:nowrap;">${text}</span>`;
+}
+
+function winEnd(day) {
+  const t = String(day.date || '');
+  if (t.includes(' \u2014 ')) return t.split(' \u2014 ')[1];
+  return /^\d{4}-\d{2}-\d{2}$/.test(t) ? t : isoDate(sydneyToday());
+}
+
+// YoY: same window shifted -364 days (weekday-aligned) to strip seasonality.
+function yoyRevenueDelta(rows, timeframe, anchorDay) {
+  const cur = rowsForTimeframe(rows, timeframe, anchorDay);
+  if (!cur.length) return null;
+  const ps = isoDate(addDays(new Date(cur[0].date), -364));
+  const pe = isoDate(addDays(new Date(cur[cur.length - 1].date), -364));
+  const prev = rows.filter(r => r.date >= ps && r.date <= pe);
+  if (!prev.length) return null;
+  const cr = cur.reduce((t, r) => t + toNum(r.revenue_ex_gst), 0);
+  const pr = prev.reduce((t, r) => t + toNum(r.revenue_ex_gst), 0);
+  if (!pr) return null;
+  return (cr - pr) / pr * 100;
+}
+
+function wageMedian12wk(rows) {
+  const byWk = {};
+  for (const r of rows) {
+    if (!hasVal(r.wages_dollars)) continue;
+    const ws = isoDate(weekStart(new Date(r.date)));
+    const b = byWk[ws] = byWk[ws] || { w: 0, rev: 0 };
+    b.w += toNum(r.wages_dollars); b.rev += toNum(r.revenue_ex_gst);
+  }
+  const wks = Object.keys(byWk).sort().slice(-13, -1);
+  const pcts = wks.map(k => byWk[k].rev ? byWk[k].w / byWk[k].rev * 100 : null)
+                  .filter(x => x !== null).sort((a, b) => a - b);
+  return pcts.length ? pcts[Math.floor(pcts.length / 2)] : null;
+}
+
+// Owners' salaries + payroll tax + workers comp: in Xero payroll, never in
+// Deputy. Residual = Xero group payroll - Deputy group wages (incl leave)
+// over trailing complete months, split by plan wage share (board P&L canon).
+function corpPayrollDaily(venue, endIso) {
+  const feed = STATE.xeroOH;
+  if (!feed.length) return 0;
+  const endMonth = String(endIso || '').slice(0, 7);
+  const months = feed.filter(r => r.month && r.month < endMonth && hasVal(r.group_payroll))
+                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  if (!months.length) return 0;
+  const monthSet = new Set(months.map(r => r.month));
+  let xero = 0, deputy = 0, days = 0;
+  for (const r of months) {
+    xero += toNum(r.group_payroll);
+    const [y, m] = r.month.split('-').map(Number);
+    days += new Date(y, m, 0).getDate();
+  }
+  for (const v of REAL_VENUES) for (const r of (STATE.histories[v] || [])) {
+    if (!monthSet.has(r.date.slice(0, 7))) continue;
+    deputy += toNum(r.wages_dollars) + toNum(r.leave_dollars);
+  }
+  const residual = Math.max(0, xero - deputy);
+  return days ? residual * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
+}
 
 // Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
 // months before the window end (overheads are lumpy — quarterly power,
@@ -755,22 +830,67 @@ const CARD_DEFS = {
     const ohTag = ohActual ? `Xero ${ohActual.months}-mo avg` : 'plan';
     const dfr = deliveryFeesPct(STATE.currentVenue, endIso || isoDate(sydneyToday()));
     const df = dfr ? rev * dfr.pct / 100 : 0;
-    const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh - df;
+    const cp = corpPayrollDaily(STATE.currentVenue, endIso || isoDate(sydneyToday())) * days;
+    const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh - df - cp;
     return {
-      label: 'Expected Profit',
+      label: 'Expected profit ' + pill('open period', 'warn'),
       value: (profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(profit)).toLocaleString(),
       sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (${ohTag})` +
-           (df ? ` \u00b7 delivery fees ${fmtDollars(df)} (Xero)` : '') +
+           (df ? ` \u00b7 delivery ${fmtDollars(df)}` : '') +
+           (cp ? ` \u00b7 corp payroll ${fmtDollars(cp)}` : '') +
            ` \u00b7 ${fmtPct(profit / rev * 100)} margin`,
       status: profit >= 0 ? 'green' : 'red',
     };
   },
-  revenue: (day, cfg) => ({
-    label: 'Revenue (ex-GST)',
-    value: fmtDollars(toNum(day.revenue_ex_gst)),
-    sub: day.days_included ? `${day.days_included} days` : day.contributing_venues ? `${day.contributing_venues} of 3 venues` : day.date,
-    status: 'unknown',
-  }),
+  revenue: (day, cfg) => {
+    let sub = day.days_included ? `${day.days_included} days` : day.contributing_venues ? `${day.contributing_venues} of 3 venues` : day.date;
+    if (CURRENT_ROLE === 'admin') {
+      const rows = STATE.histories[STATE.currentVenue] || [];
+      let anchorDay = STATE.currentDay;
+      if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+      const d = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
+      if (d !== null) sub += ' \u00b7 ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + '% vs same period last year', d >= 0 ? 'green' : 'red');
+    }
+    return { label: 'Revenue (ex-GST)', value: fmtDollars(toNum(day.revenue_ex_gst)), sub, status: 'unknown' };
+  },
+  wages_hero: (day, cfg) => {
+    const med = wageMedian12wk(STATE.histories[STATE.currentVenue] || []);
+    let sub = cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '';
+    sub += STATE.currentVenue === 'mari' ? ' incl driver \u00b7 Deputy' : ' \u00b7 Deputy incl super';
+    if (med !== null && hasVal(day.wages_pct)) {
+      const d = toNum(day.wages_pct) - med;
+      sub += ' \u00b7 ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + 'pp vs 12-wk median', d > 1 ? 'red' : d < -1 ? 'green' : 'warn');
+    }
+    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '\u2014', sub, status: day.wages_alert };
+  },
+  cogs_merged: (day, cfg) => {
+    const a = actualCogs(STATE.currentVenue, winEnd(day));
+    const est = hasVal(day.cogs_pct) ? toNum(day.cogs_pct) : null;
+    if (!a) return { label: 'COGS', value: est !== null ? fmtPct(est) : '\u2014', sub: 'expected (Lightspeed) \u2014 no Xero purchases yet', status: day.cogs_alert };
+    let chip = '';
+    if (est !== null) {
+      const d = a.pct - est;
+      chip = ' ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + 'pp vs expected', d > 1.5 ? 'red' : 'green');
+    }
+    return { label: 'COGS', value: fmtPct(a.pct) + chip,
+      sub: `actual, Xero 4-wk purchases \u00b7 expected ${est !== null ? fmtPct(est) : '\u2014'} (Lightspeed)`, status: 'unknown' };
+  },
+  delivery_fees: (day, cfg) => {
+    const rev = toNum(day.revenue_ex_gst);
+    const dfr = deliveryFeesPct(STATE.currentVenue, winEnd(day));
+    if (!dfr || !rev) return { label: 'Delivery platforms', value: '\u2014', sub: 'no Xero fee data', status: 'unknown' };
+    const src = STATE.currentVenue === 'mari' ? 'Uber + DoorDash' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
+    return { label: 'Delivery platforms', value: fmtPct(dfr.pct),
+      sub: `${fmtDollars(rev * dfr.pct / 100)} ${src} fees (Xero) \u00b7 driver in wages`, status: 'unknown' };
+  },
+  overheads: (day, cfg) => {
+    const rev = toNum(day.revenue_ex_gst);
+    const days = day.days_included || 1;
+    const ohA = overheadsDailyRate(STATE.currentVenue, winEnd(day));
+    const oh = ohA ? ohA.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
+    return { label: 'Overheads', value: rev ? fmtPct(oh / rev * 100) : '\u2014',
+      sub: `${fmtDollars(oh)} \u00b7 rent + share of group OH (${ohA ? 'Xero ' + ohA.months + '-mo' : 'plan'})`, status: 'unknown' };
+  },
   cogs: (day, cfg) => ({
     label: 'Expected COGS (Lightspeed)',
     value: hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—',
@@ -975,7 +1095,7 @@ function cardsForCurrentView() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const base = (roleCfg.cards || venueCfg.cards);
-  return CURRENT_ROLE === 'admin' ? [...base, 'cogs_actual', 'profit'] : base;
+  return CURRENT_ROLE === 'admin' ? ['revenue', 'profit', 'wages_hero', 'cogs_merged', 'delivery_fees', 'overheads'] : base;
 }
 
 function renderSnapshot() {
@@ -1005,6 +1125,8 @@ function renderSnapshot() {
       return `<div class="card unknown"><p class="label">${c.label}</p><p class="value">—</p><p class="sub">no data yet</p></div>`;
     }).join('');
     snapshotEl.innerHTML = ghostCards;
+    document.getElementById('dollar-strip').innerHTML = '';
+    document.getElementById('split-snapshot').innerHTML = '';
     document.getElementById('trend-section').classList.add('hidden');
     return;
   }
@@ -1023,6 +1145,44 @@ function renderSnapshot() {
   }
   const cardEls = cards.map(key => CARD_DEFS[key](day, cfg));
   snapshotEl.innerHTML = cardEls.map(c => `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
+  renderExtras(day, cfg);
+}
+
+function renderExtras(day, cfg) {
+  const strip = document.getElementById('dollar-strip');
+  const splitEl = document.getElementById('split-snapshot');
+  strip.innerHTML = ''; splitEl.innerHTML = '';
+  if (CURRENT_ROLE !== 'admin' || !day) return;
+  const rev = toNum(day.revenue_ex_gst);
+  if (rev > 0 && hasVal(day.wages_dollars)) {
+    const endIso = winEnd(day);
+    const a = actualCogs(STATE.currentVenue, endIso);
+    const cogsPct = a ? a.pct : toNum(day.cogs_pct);
+    const days = day.days_included || 1;
+    const ohA = overheadsDailyRate(STATE.currentVenue, endIso);
+    const oh = ohA ? ohA.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
+    const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
+    const df = dfr ? rev * dfr.pct / 100 : 0;
+    const cp = corpPayrollDaily(STATE.currentVenue, endIso) * days;
+    const segs = [
+      ['COGS', cogsPct, '#D85A30'],
+      ['Wages', toNum(day.wages_dollars) / rev * 100, '#7F77DD'],
+      ['Delivery', df / rev * 100, '#EF9F27'],
+      ['Corp payroll', cp / rev * 100, '#D4537E'],
+      ['Overheads', oh / rev * 100, '#888780'],
+    ].filter(sg => sg[1] > 0.05);
+    const profitPct = 100 - segs.reduce((t, sg) => t + sg[1], 0);
+    segs.push(['Profit', profitPct, profitPct >= 0 ? '#1D9E75' : '#E24B4A']);
+    strip.innerHTML = '<p class="strip-label">Where each revenue dollar went</p>'
+      + '<div class="strip-bar">' + segs.map(sg => `<div style="width:${Math.max(0, Math.min(100, sg[1])).toFixed(2)}%;background:${sg[2]};"></div>`).join('') + '</div>'
+      + '<div class="strip-legend">' + segs.map(sg => `<span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${sg[2]};margin-right:5px;"></span>${sg[0]} ${sg[1].toFixed(1)}%</span>`).join('') + '</div>';
+  }
+  if ((STATE.currentVenue === 'stow' || STATE.currentVenue === 'hg') && hasVal(day.food_ex_gst)) {
+    splitEl.innerHTML = ['cogs_food', 'cogs_bev', 'wages_kitchen', 'wages_foh'].map(k => {
+      const c = CARD_DEFS[k](day, cfg);
+      return `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`;
+    }).join('');
+  }
 }
 
 let CHART_INSTANCE = null;
@@ -1048,6 +1208,44 @@ function renderChart() {
   const gridColor = IS_DARK ? 'rgba(120,110,90,0.2)' : 'rgba(232,223,207,0.4)';
   const ctx = document.getElementById('trend-chart').getContext('2d');
   if (CHART_INSTANCE) CHART_INSTANCE.destroy();
+  if (CURRENT_ROLE === 'admin') {
+    const endIso = trailing.length ? trailing[trailing.length - 1].date : isoDate(sydneyToday());
+    const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
+    const ohA = overheadsDailyRate(STATE.currentVenue, endIso);
+    const ohDaily = ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7;
+    const cpDaily = corpPayrollDaily(STATE.currentVenue, endIso);
+    const dailyBins = trailing.length <= 45;
+    const bins = {};
+    for (const r of trailing) {
+      const key = dailyBins ? r.date : isoDate(weekStart(new Date(r.date)));
+      const b = bins[key] = bins[key] || { rev: 0, cogs: 0, wages: 0, days: 0 };
+      b.rev += toNum(r.revenue_ex_gst); b.cogs += toNum(r.cogs_dollars);
+      b.wages += toNum(r.wages_dollars); b.days += 1;
+    }
+    const keys = Object.keys(bins).sort();
+    const mk = (label, color, fn) => ({ type: 'bar', label, stack: 'costs', backgroundColor: color, borderWidth: 0, data: keys.map(fn) });
+    const stackSets = [
+      mk('COGS', '#D85A30', k => Math.round(bins[k].cogs)),
+      mk('Wages', '#7F77DD', k => Math.round(bins[k].wages)),
+      mk('Delivery', '#EF9F27', k => Math.round(dfr ? bins[k].rev * dfr.pct / 100 : 0)),
+      mk('Corp payroll', '#D4537E', k => Math.round(cpDaily * bins[k].days)),
+      mk('Overheads', '#888780', k => Math.round(ohDaily * bins[k].days)),
+      { type: 'line', label: 'Revenue', data: keys.map(k => Math.round(bins[k].rev)), borderColor: '#378ADD', backgroundColor: '#378ADD20', borderWidth: 2.5, pointRadius: keys.length > 45 ? 0 : 3, pointBackgroundColor: '#378ADD', tension: 0.25 },
+    ];
+    if (titleEl) titleEl.textContent = (dailyBins ? 'Daily' : 'Weekly') + ' costs stacked vs revenue \u2014 the gap is profit';
+    CHART_INSTANCE = new Chart(ctx, {
+      data: { labels: keys.map(k => k.slice(5)), datasets: stackSets },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          y: { stacked: true, ticks: { callback: v => '$' + (v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v), font: { family: 'Inter', size: 11 }, color: tickColor }, grid: { color: gridColor } },
+          x: { stacked: true, ticks: { font: { family: 'Inter', size: 11 }, color: tickColor, maxTicksLimit: 16 }, grid: { display: false } }
+        },
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 14, boxHeight: 8, font: { family: 'Space Grotesk', size: 12, weight: '500' }, color: tickColor, padding: 16 } } }
+      }
+    });
+    return;
+  }
   const datasets = lines.map(line => {
     const def = CHART_LINE_DEFS[line];
     return { label: def.label, yAxisID: def.axis || 'y', data: trailing.map(r => hasVal(r[def.key]) ? toNum(r[def.key]) : null), borderColor: def.color, backgroundColor: def.color + '20', tension: 0.3, borderWidth: 2.5, pointRadius: trailing.length > 45 ? 0 : 3, pointBackgroundColor: def.color, spanGaps: true };
