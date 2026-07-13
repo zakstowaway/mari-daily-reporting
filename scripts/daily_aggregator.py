@@ -265,7 +265,12 @@ def row_rev(r):
 
 
 def row_cogs(r):
-    return parse_num(col(r, "COGS", "Cost", "Cost of Goods Sold"))
+    c = parse_num(col(r, "COGS", "Cost", "Cost of Goods Sold"))
+    # Guard against Lightspeed recipe-cost typos (e.g. Serpents Kiss Schooner
+    # at $145,158.75/unit, Sep 2025): absurd costs are treated as missing.
+    if c > max(5 * row_rev(r), 500):
+        return 0.0
+    return c
 
 
 # --------------------------------------------------------------
