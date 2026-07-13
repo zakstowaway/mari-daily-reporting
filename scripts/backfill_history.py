@@ -125,6 +125,11 @@ def main():
                 v, dept = route(r["Venue"], r.get("ReportingGroup", ""))
                 amt = float(r["Sale Amount"] or 0)
                 cost = float(r["Cost"] or 0)
+                # Lightspeed recipe-cost typos poison est. COGS (Serpents Kiss
+                # Schooner carried $145,158.75/unit cost through Sep 2025 —
+                # $5.2M of fake COGS). Absurd costs are treated as missing.
+                if cost > max(5 * amt, 500):
+                    cost = 0.0
                 cell = agg[(v, d)]
                 cell["rev"] += amt
                 cell["cogs"] += cost
