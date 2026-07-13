@@ -1,0 +1,41 @@
+[
+  {
+    "timesheet_id": 35295,
+    "employee_id": 145,
+    "employee_name": "Rhys Taylor",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783920600,
+    "end_time": 1783945800,
+    "hours": 6.5,
+    "cost": 184.75,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35292,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783922400,
+    "end_time": 1783945800,
+    "hours": 6.25,
+    "cost": 218.75,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35300,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783926000,
+    "end_time": 1783944900,
+    "hours": 4.75,
+    "cost": 163.74,
+    "salaried_synth": false
+  }
+]
