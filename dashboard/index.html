@@ -333,6 +333,7 @@ tbody tr:hover { background: var(--group-tint); }
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
       <div class="who">
+        <a id="eatclub-link" href="eatclub.html" style="display:none; margin-right: 6px;">EatClub</a>
         <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
       </div>
     </div>
@@ -436,6 +437,7 @@ async function showDashboard() {
   document.getElementById('login').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   document.getElementById('who-name').textContent = CURRENT_USER.display;
+  document.getElementById('eatclub-link').style.display = CURRENT_ROLE === 'admin' ? '' : 'none';
   await bootstrap();
 }
 async function tryResume() {
@@ -570,6 +572,29 @@ function corpPayrollDaily(venue, endIso) {
   return days ? residual * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
 }
 
+// P&L over the wage-covered slice of the selected window. Long windows can
+// include days before wage data exists (late Nov 2025) — costs and profit
+// are computed only over days with full cost data, and labelled as such.
+function pnlWindow(day) {
+  const revAll = toNum(day.revenue_ex_gst);
+  if (!revAll || !hasVal(day.wages_dollars)) return null;
+  const daysAll = day.days_included || 1;
+  const wdays = day.wage_days || daysAll;
+  const rev = day.rev_wage_days ? toNum(day.rev_wage_days) : revAll;
+  const endIso = winEnd(day);
+  const a = actualCogs(STATE.currentVenue, endIso);
+  const estBase = day.cogs_wage_days && rev ? toNum(day.cogs_wage_days) / rev * 100 : toNum(day.cogs_pct);
+  const cogsPct = a ? a.pct : estBase;
+  const ohA = overheadsDailyRate(STATE.currentVenue, endIso);
+  const oh = ohA ? ohA.rate * wdays : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * wdays;
+  const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
+  const df = dfr ? rev * dfr.pct / 100 : 0;
+  const cp = corpPayrollDaily(STATE.currentVenue, endIso) * wdays;
+  const wages = toNum(day.wages_dollars);
+  const profit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
+  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, wages, profit, partial: wdays < daysAll };
+}
+
 // Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
 // months before the window end (overheads are lumpy — quarterly power,
 // annual insurance — so never a single month). null -> caller falls back to
@@ -657,7 +682,7 @@ function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
 function hasVal(x) { return x != null && x !== '' && isFinite(parseFloat(x)); }
 function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
-function isoDate(d) { return d.toISOString().slice(0, 10); }
+function isoDate(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function sydneyToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
 function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); return c; }
 function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Date(d.getFullYear(), q * 3, 1); }
@@ -692,12 +717,13 @@ function synthesizeGroupHistory(histories) {
   for (const date of Array.from(allDates).sort()) {
     const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
     let venueCount = 0;
+    let wagePresent = false;
     for (const v of REAL_VENUES) {
       const row = (histories[v] || []).find(r => r.date === date);
       if (!row || !row.revenue_ex_gst) continue;
       sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
       sum.cogs_dollars     += toNum(row.cogs_dollars);
-      sum.wages_dollars    += toNum(row.wages_dollars);
+      if (hasVal(row.wages_dollars)) { sum.wages_dollars += toNum(row.wages_dollars); wagePresent = true; }
       // Group/Leave (weekly canon): group-level overhead carried on the stow
       // rows' leave_dollars — excluded from venue wage %, included here so
       // the Group wage figure reflects the TRUE total wage cost.
@@ -711,7 +737,8 @@ function synthesizeGroupHistory(histories) {
     rows.push({
       date, revenue_ex_gst: sum.revenue_ex_gst,
       cogs_dollars: sum.cogs_dollars, cogs_pct: rev ? sum.cogs_dollars / rev * 100 : 0,
-      wages_dollars: sum.wages_dollars, wages_pct: rev ? sum.wages_dollars / rev * 100 : 0,
+      wages_dollars: wagePresent ? sum.wages_dollars : '',
+      wages_pct: wagePresent && rev ? sum.wages_dollars / rev * 100 : '',
       delivery_dollars: sum.delivery_dollars, delivery_pct: rev ? sum.delivery_dollars / rev * 100 : 0,
       gp_dollars: sum.gp_dollars, gp_pct: rev ? sum.gp_dollars / rev * 100 : 0,
       contributing_venues: venueCount,
@@ -777,12 +804,13 @@ function rollup(rows) {
   const sums = {};
   for (const f of SUM_FIELDS) sums[f] = 0;
   const present = {};
-  let n = 0;
+  let n = 0, wageDays = 0, revW = 0, cogsW = 0;
   for (const r of rows) {
     if (!r.revenue_ex_gst) continue;
     for (const f of SUM_FIELDS) {
       if (hasVal(r[f])) { sums[f] += toNum(r[f]); present[f] = true; }
     }
+    if (hasVal(r.wages_dollars)) { wageDays++; revW += toNum(r.revenue_ex_gst); cogsW += toNum(r.cogs_dollars); }
     n++;
   }
   if (n === 0) return null;
@@ -790,9 +818,11 @@ function rollup(rows) {
   const out = {
     date: rows[0].date + ' — ' + rows[rows.length - 1].date,
     days_included: n,
+    wage_days: wageDays, rev_wage_days: revW, cogs_wage_days: cogsW,
     revenue_ex_gst: sums.revenue_ex_gst,
     cogs_dollars: sums.cogs_dollars, cogs_pct: rev ? sums.cogs_dollars / rev * 100 : 0,
-    wages_dollars: sums.wages_dollars, wages_pct: rev ? sums.wages_dollars / rev * 100 : 0,
+    wages_dollars: wageDays ? sums.wages_dollars : '',
+    wages_pct: wageDays && revW ? sums.wages_dollars / revW * 100 : '',
     delivery_dollars: sums.delivery_dollars, delivery_pct: rev ? sums.delivery_dollars / rev * 100 : 0,
     gp_dollars: sums.gp_dollars, gp_pct: rev ? sums.gp_dollars / rev * 100 : 0,
     cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
@@ -838,27 +868,17 @@ const CARD_DEFS = {
     };
   },
   profit: (day, cfg) => {
-    const rev = toNum(day.revenue_ex_gst);
-    if (!rev || !hasVal(day.wages_dollars)) return { label: 'Expected Profit', value: '\u2014', sub: 'needs revenue + wages', status: 'unknown' };
-    const endIso = String(day.date || '').includes(' \u2014 ') ? String(day.date).split(' \u2014 ')[1] : String(day.date || '');
-    const a = actualCogs(STATE.currentVenue, endIso || isoDate(sydneyToday()));
-    const cogsPct = a ? a.pct : toNum(day.cogs_pct);
-    const days = day.days_included || 1;
-    const ohActual = overheadsDailyRate(STATE.currentVenue, endIso || isoDate(sydneyToday()));
-    const oh = ohActual ? ohActual.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
-    const ohTag = ohActual ? `Xero ${ohActual.months}-mo avg` : 'plan';
-    const dfr = deliveryFeesPct(STATE.currentVenue, endIso || isoDate(sydneyToday()));
-    const df = dfr ? rev * dfr.pct / 100 : 0;
-    const cp = corpPayrollDaily(STATE.currentVenue, endIso || isoDate(sydneyToday())) * days;
-    const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh - df - cp;
+    const w = pnlWindow(day);
+    if (!w) return { label: 'Expected profit', value: '\u2014', sub: 'needs revenue + wages', status: 'unknown' };
     return {
       label: 'Expected profit ' + pill('open period', 'warn'),
-      value: (profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(profit)).toLocaleString(),
-      sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (${ohTag})` +
-           (df ? ` \u00b7 delivery ${fmtDollars(df)}` : '') +
-           (cp ? ` \u00b7 corp payroll ${fmtDollars(cp)}` : '') +
-           ` \u00b7 ${fmtPct(profit / rev * 100)} margin`,
-      status: profit >= 0 ? 'green' : 'red',
+      value: (w.profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(w.profit)).toLocaleString(),
+      sub: `${w.a ? 'actual' : 'est.'} COGS ${fmtPct(w.cogsPct)} \u00b7 OH ${fmtDollars(w.oh)}` +
+           (w.df ? ` \u00b7 delivery ${fmtDollars(w.df)}` : '') +
+           (w.cp ? ` \u00b7 corp payroll ${fmtDollars(w.cp)}` : '') +
+           ` \u00b7 ${fmtPct(w.profit / w.rev * 100)} margin` +
+           (w.partial ? ` \u00b7 ${w.wdays} of ${w.daysAll} days costed` : ''),
+      status: w.profit >= 0 ? 'green' : 'red',
     };
   },
   revenue: (day, cfg) => {
@@ -1172,23 +1192,15 @@ function renderExtras(day, cfg) {
   const splitEl = document.getElementById('split-snapshot');
   strip.innerHTML = ''; splitEl.innerHTML = '';
   if (CURRENT_ROLE !== 'admin' || !day) return;
-  const rev = toNum(day.revenue_ex_gst);
-  if (rev > 0 && hasVal(day.wages_dollars)) {
-    const endIso = winEnd(day);
-    const a = actualCogs(STATE.currentVenue, endIso);
-    const cogsPct = a ? a.pct : toNum(day.cogs_pct);
-    const days = day.days_included || 1;
-    const ohA = overheadsDailyRate(STATE.currentVenue, endIso);
-    const oh = ohA ? ohA.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
-    const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
-    const df = dfr ? rev * dfr.pct / 100 : 0;
-    const cp = corpPayrollDaily(STATE.currentVenue, endIso) * days;
+  const w = pnlWindow(day);
+  if (w) {
+    const rev = w.rev;
     const segs = [
-      ['COGS', cogsPct, '#D85A30'],
-      ['Wages', toNum(day.wages_dollars) / rev * 100, '#7F77DD'],
-      ['Delivery', df / rev * 100, '#EF9F27'],
-      ['Corp payroll', cp / rev * 100, '#D4537E'],
-      ['Overheads', oh / rev * 100, '#888780'],
+      ['COGS', w.cogsPct, '#D85A30'],
+      ['Wages', w.wages / rev * 100, '#7F77DD'],
+      ['Delivery', w.df / rev * 100, '#EF9F27'],
+      ['Corp payroll', w.cp / rev * 100, '#D4537E'],
+      ['Overheads', w.oh / rev * 100, '#888780'],
     ].filter(sg => sg[1] > 0.05);
     const profitPct = 100 - segs.reduce((t, sg) => t + sg[1], 0);
     segs.push(['Profit', profitPct, profitPct >= 0 ? '#1D9E75' : '#E24B4A']);
