@@ -512,6 +512,33 @@ function overheadsDailyRate(venue, endIso) {
   return days ? { rate: dollars / days, months: months.length } : null;
 }
 
+// Delivery fees as a % of venue revenue, from the Xero monthly feed
+// (trailing up-to-3 complete months). Canon: UberEats + DoorDash + Uber
+// Direct -> Mari; ME&U + Doshii surcharges -> Stow/HG by revenue share.
+function deliveryFeesPct(venue, endIso) {
+  const feed = STATE.xeroOH;
+  if (!feed.length) return null;
+  const endMonth = String(endIso || '').slice(0, 7);
+  const months = feed.filter(r => r.month && r.month < endMonth && (hasVal(r.mari_uber_fees) || hasVal(r.meu_fees)))
+                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  if (!months.length) return null;
+  const monthSet = new Set(months.map(r => r.month));
+  const revOf = v => (STATE.histories[v] || []).reduce((t, r) => monthSet.has(r.date.slice(0, 7)) ? t + toNum(r.revenue_ex_gst) : t, 0);
+  let fees = 0, rev = 0;
+  if (venue === 'mari') {
+    fees = months.reduce((t, r) => t + toNum(r.mari_uber_fees), 0);
+    rev = revOf('mari');
+  } else if (venue === 'stow' || venue === 'hg') {
+    fees = months.reduce((t, r) => t + toNum(r.meu_fees), 0);
+    rev = revOf('stow') + revOf('hg');   // same % across both = revenue-share split
+  } else {   // group
+    fees = months.reduce((t, r) => t + toNum(r.mari_uber_fees) + toNum(r.meu_fees), 0);
+    rev = revOf('mari') + revOf('stow') + revOf('hg');
+  }
+  if (!rev || !fees) return null;
+  return { pct: fees / rev * 100, months: months.length };
+}
+
 // Trailing-N-complete-weeks actual COGS from Xero purchases. Purchases are
 // backwards-looking (bev stock turns over slowly, food ~14 days), so a
 // 4-week window is the honest attribution — never single days.
@@ -539,11 +566,11 @@ function actualCogs(venue, endIso, nWeeks = 4) {
 
 
 function parseCsv(text) {
-  const lines = text.trim().split('\n');
+  const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = lines[0].split(',');
+  const headers = lines[0].split(',').map(h => h.trim());
   return lines.slice(1).map(line => {
-    const values = line.split(',');
+    const values = line.split(',').map(v => v.trim());
     return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
   });
 }
@@ -726,11 +753,15 @@ const CARD_DEFS = {
     const ohActual = overheadsDailyRate(STATE.currentVenue, endIso || isoDate(sydneyToday()));
     const oh = ohActual ? ohActual.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
     const ohTag = ohActual ? `Xero ${ohActual.months}-mo avg` : 'plan';
-    const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh;
+    const dfr = deliveryFeesPct(STATE.currentVenue, endIso || isoDate(sydneyToday()));
+    const df = dfr ? rev * dfr.pct / 100 : 0;
+    const profit = rev - rev * cogsPct / 100 - toNum(day.wages_dollars) - oh - df;
     return {
       label: 'Expected Profit',
       value: (profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(profit)).toLocaleString(),
-      sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (${ohTag}) \u00b7 ${fmtPct(profit / rev * 100)} margin`,
+      sub: `${a ? 'actual' : 'est.'} COGS ${fmtPct(cogsPct)} \u00b7 OH ${fmtDollars(oh)} (${ohTag})` +
+           (df ? ` \u00b7 delivery fees ${fmtDollars(df)} (Xero)` : '') +
+           ` \u00b7 ${fmtPct(profit / rev * 100)} margin`,
       status: profit >= 0 ? 'green' : 'red',
     };
   },
@@ -741,7 +772,7 @@ const CARD_DEFS = {
     status: 'unknown',
   }),
   cogs: (day, cfg) => ({
-    label: 'COGS',
+    label: 'Expected COGS (Lightspeed)',
     value: hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—',
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
     status: day.cogs_alert,
