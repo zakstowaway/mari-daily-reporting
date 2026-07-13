@@ -182,7 +182,7 @@ body {
 
 .control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
 .timeframe-toggle {
-  display: inline-flex; background: var(--paper);
+  display: inline-flex; flex-wrap: wrap; background: var(--paper);
   border-radius: 10px; padding: 4px; border: 1px solid var(--line);
   box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
@@ -354,6 +354,10 @@ tbody tr:hover { background: var(--group-tint); }
         <button data-tf="lastmonth">Last Month</button>
         <button data-tf="quarter">This Quarter</button>
         <button data-tf="lastquarter">Last Quarter</button>
+        <button data-tf="thisfy">This FY</button>
+        <button data-tf="lastfy">Last FY</button>
+        <button data-tf="last12">Last 12 mo</button>
+        <button data-tf="all">All time</button>
         <button data-tf="range">Custom</button>
       </div>
       <div class="day-picker" id="day-picker"></div>
@@ -520,7 +524,7 @@ function yoyRevenueDelta(rows, timeframe, anchorDay) {
   const ps = isoDate(addDays(new Date(cur[0].date), -364));
   const pe = isoDate(addDays(new Date(cur[cur.length - 1].date), -364));
   const prev = rows.filter(r => r.date >= ps && r.date <= pe);
-  if (!prev.length) return null;
+  if (!prev.length || prev.length < cur.length * 0.8) return null;
   const cr = cur.reduce((t, r) => t + toNum(r.revenue_ex_gst), 0);
   const pr = prev.reduce((t, r) => t + toNum(r.revenue_ex_gst), 0);
   if (!pr) return null;
@@ -748,6 +752,21 @@ function rowsForTimeframe(rows, timeframe, anchorDay) {
     const thisQ = quarterStart(today);
     start = new Date(thisQ.getFullYear(), thisQ.getMonth() - 3, 1);
     endIso = isoDate(addDays(thisQ, -1));
+  }
+  // AU financial year: 1 Jul - 30 Jun
+  const fyStartYear = today.getMonth() >= 6 ? today.getFullYear() : today.getFullYear() - 1;
+  if (timeframe === 'thisfy') {
+    start = new Date(fyStartYear, 6, 1);
+  }
+  if (timeframe === 'lastfy') {
+    start = new Date(fyStartYear - 1, 6, 1);
+    endIso = isoDate(new Date(fyStartYear, 5, 30));
+  }
+  if (timeframe === 'last12') {
+    start = addDays(today, -365);
+  }
+  if (timeframe === 'all') {
+    return rows;
   }
   const startIso = isoDate(start);
   return rows.filter(r => r.date >= startIso && r.date <= endIso);
@@ -1111,7 +1130,7 @@ function renderSnapshot() {
   const titleEl = document.getElementById('snapshot-title');
   const dateEl  = document.getElementById('latest-date');
   const staleEl = document.getElementById('stale-badge');
-  const tfLabel = { day: 'Selected day', week: 'This Week', lastweek: 'Last Week', month: 'This Month', lastmonth: 'Last Month', quarter: 'This Quarter', lastquarter: 'Last Quarter', range: 'Custom range' }[STATE.currentTimeframe];
+  const tfLabel = { day: 'Selected day', week: 'This Week', lastweek: 'Last Week', month: 'This Month', lastmonth: 'Last Month', quarter: 'This Quarter', lastquarter: 'Last Quarter', thisfy: 'This FY', lastfy: 'Last FY', last12: 'Last 12 months', all: 'All time', range: 'Custom range' }[STATE.currentTimeframe];
   titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
   const snapshotEl = document.getElementById('snapshot');
   snapshotEl.className = 'grid' + (cards.length > 4 ? ' six' : '');
