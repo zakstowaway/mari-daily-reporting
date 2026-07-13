@@ -571,6 +571,37 @@ function corpPayrollDaily(venue, endIso) {
   return days ? residual * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
 }
 
+// Typical share of weekly revenue by day-of-week (getDay index, 0=Sun),
+// from the trailing ~12 weeks. Used to apportion overheads: a Saturday
+// carries its typical share of the weekly overhead, not a flat 1/7.
+function dowShares(venue) {
+  STATE._dow = STATE._dow || {};
+  if (STATE._dow[venue] !== undefined) return STATE._dow[venue];
+  const rows = (STATE.histories[venue] || []).slice(-84);
+  const sum = [0,0,0,0,0,0,0], cnt = [0,0,0,0,0,0,0];
+  for (const r of rows) {
+    const rev = toNum(r.revenue_ex_gst);
+    if (!rev) continue;
+    const d = new Date(r.date).getDay();
+    sum[d] += rev; cnt[d]++;
+  }
+  const means = sum.map((x, i) => cnt[i] ? x / cnt[i] : 0);
+  const tot = means.reduce((a, b) => a + b, 0);
+  STATE._dow[venue] = tot ? means.map(x => x / tot) : null;
+  return STATE._dow[venue];
+}
+
+// OH factor for a window: sum of (7 x typical share) over its wage-covered
+// days — equals plain day-count for whole weeks, weights partial windows.
+function ohFactor(day, venue, wdays) {
+  const shares = dowShares(venue);
+  if (!shares) return wdays;
+  if (day.dow_counts) return 7 * day.dow_counts.reduce((t, c, i) => t + c * shares[i], 0);
+  const t = String(day.date || '');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return 7 * shares[new Date(t).getDay()];
+  return wdays;
+}
+
 // P&L over the wage-covered slice of the selected window. Long windows can
 // include days before wage data exists (late Nov 2025) — costs and profit
 // are computed only over days with full cost data, and labelled as such.
@@ -585,7 +616,8 @@ function pnlWindow(day) {
   const estBase = day.cogs_wage_days && rev ? toNum(day.cogs_wage_days) / rev * 100 : toNum(day.cogs_pct);
   const cogsPct = a ? a.pct : estBase;
   const ohA = overheadsDailyRate(STATE.currentVenue, endIso);
-  const oh = ohA ? ohA.rate * wdays : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * wdays;
+  const ohf = ohFactor(day, STATE.currentVenue, wdays);
+  const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7) * ohf;
   const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
   const df = dfr ? rev * dfr.pct / 100 : 0;
   const cp = corpPayrollDaily(STATE.currentVenue, endIso) * wdays;
@@ -804,12 +836,16 @@ function rollup(rows) {
   for (const f of SUM_FIELDS) sums[f] = 0;
   const present = {};
   let n = 0, wageDays = 0, revW = 0, cogsW = 0;
+  const dowCounts = [0, 0, 0, 0, 0, 0, 0];
   for (const r of rows) {
     if (!r.revenue_ex_gst) continue;
     for (const f of SUM_FIELDS) {
       if (hasVal(r[f])) { sums[f] += toNum(r[f]); present[f] = true; }
     }
-    if (hasVal(r.wages_dollars)) { wageDays++; revW += toNum(r.revenue_ex_gst); cogsW += toNum(r.cogs_dollars); }
+    if (hasVal(r.wages_dollars)) {
+      wageDays++; revW += toNum(r.revenue_ex_gst); cogsW += toNum(r.cogs_dollars);
+      dowCounts[new Date(r.date).getDay()]++;
+    }
     n++;
   }
   if (n === 0) return null;
@@ -817,7 +853,7 @@ function rollup(rows) {
   const out = {
     date: rows[0].date + ' — ' + rows[rows.length - 1].date,
     days_included: n,
-    wage_days: wageDays, rev_wage_days: revW, cogs_wage_days: cogsW,
+    wage_days: wageDays, rev_wage_days: revW, cogs_wage_days: cogsW, dow_counts: dowCounts,
     revenue_ex_gst: sums.revenue_ex_gst,
     cogs_dollars: sums.cogs_dollars, cogs_pct: rev ? sums.cogs_dollars / rev * 100 : 0,
     wages_dollars: wageDays ? sums.wages_dollars : '',
@@ -925,9 +961,10 @@ const CARD_DEFS = {
     const rev = toNum(day.revenue_ex_gst);
     const days = day.days_included || 1;
     const ohA = overheadsDailyRate(STATE.currentVenue, winEnd(day));
-    const oh = ohA ? ohA.rate * days : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7 * days;
+    const ohf = ohFactor(day, STATE.currentVenue, days);
+    const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7) * ohf;
     return { label: 'Overheads', value: rev ? fmtPct(oh / rev * 100) : '\u2014',
-      sub: `${fmtDollars(oh)} \u00b7 rent + share of group OH (${ohA ? 'Xero ' + ohA.months + '-mo' : 'plan'})`, status: 'unknown' };
+      sub: `${fmtDollars(oh)} \u00b7 rent + share of group OH (${ohA ? 'Xero ' + ohA.months + '-mo' : 'plan'}) \u00b7 DOW-weighted`, status: 'unknown' };
   },
   cogs: (day, cfg) => ({
     label: 'Expected COGS (Lightspeed)',
@@ -1261,7 +1298,10 @@ function renderChart() {
       mk('Wages', '#7F77DD', k => Math.round(bins[k].wages)),
       mk('Delivery', '#EF9F27', k => Math.round(dfr ? bins[k].rev * dfr.pct / 100 : 0)),
       mk('Corp payroll', '#D4537E', k => Math.round(cpDaily * bins[k].days)),
-      mk('Overheads', '#888780', k => Math.round(ohDaily * bins[k].days)),
+      mk('Overheads', '#888780', k => {
+        const sh = dowShares(STATE.currentVenue);
+        return Math.round(dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * bins[k].days);
+      }),
       { type: 'line', label: 'Revenue', data: keys.map(k => Math.round(bins[k].rev)), borderColor: '#378ADD', backgroundColor: '#378ADD20', borderWidth: 2.5, pointRadius: keys.length > 45 ? 0 : 3, pointBackgroundColor: '#378ADD', tension: 0.25 },
     ];
     if (titleEl) titleEl.textContent = (dailyBins ? 'Daily' : 'Weekly') + ' costs stacked vs revenue \u2014 the gap is profit';
