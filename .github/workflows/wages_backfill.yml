@@ -1,0 +1,33 @@
+name: Wages Backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: 'From (YYYY-MM-DD)'
+        required: true
+      to_date:
+        description: 'To (YYYY-MM-DD)'
+        required: true
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Deputy wages backfill
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/backfill_wages_deputy.py "${{ inputs.from_date }}" "${{ inputs.to_date }}"
+      - name: Commit
+        run: |
+          git config user.name "Wages Backfill"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Deputy wages backfill ${{ inputs.from_date }}..${{ inputs.to_date }}"
+          git push
