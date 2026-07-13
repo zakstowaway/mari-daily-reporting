@@ -1,0 +1,79 @@
+<!doctype html><html><head><meta charset=utf-8><title>EatClub — Harry Gatos</title>
+<style>
+body{font-family:-apple-system,Helvetica,Arial;margin:32px;color:#16181d;background:#fff}
+h1{margin-bottom:2px;font-size:26px} h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:#666;margin:34px 0 10px}
+.sub{color:#777;margin-bottom:24px;font-size:14px}
+.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.card{border:1px solid #e6e6e6;border-radius:10px;padding:13px 17px;min-width:118px}
+.card .v{font-size:21px;font-weight:600} .card .l{font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.04em}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid #eee;padding:9px 10px;text-align:right;font-size:14px;vertical-align:top}
+th:first-child,td:first-child,th:last-child,td:last-child{text-align:left}
+th{background:#fafafa;font-size:11px;text-transform:uppercase;color:#666;letter-spacing:.04em}
+.pos{color:#12794a;font-weight:600} .neg{color:#b23b3b;font-weight:600}
+.mutetxt{color:#999;font-size:12px} .whytxt{color:#777;font-size:12px;margin-top:3px;max-width:330px;line-height:1.35}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.03em}
+.pill.good{background:#e4f5eb;color:#12794a} .pill.warn{background:#fff2e0;color:#9a5b12} .pill.mute{background:#f0f0f0;color:#777}
+.flag{background:#fff8ea;border-left:4px solid #e8a33d;padding:13px 16px;border-radius:6px;margin-top:14px;font-size:14px;line-height:1.5}
+.flag.red{background:#fdefef;border-left-color:#c9524f}
+.big{font-size:16px;font-weight:700;color:#12794a}
+tr.tot td{border-top:2px solid #333;background:#fafafa;font-weight:700}
+</style></head><body>
+<script>
+try {
+  var _s = JSON.parse(sessionStorage.getItem('mari_session') || 'null');
+  if (!_s || _s.role !== 'admin') location.replace('/');
+} catch (e) { location.replace('/'); }
+</script>
+<div style="margin-bottom:14px"><a href="/" style="font-size:14px;color:#666;text-decoration:none">&larr; Back to dashboard</a></div>
+
+
+<h1>EatClub — Harry Gatos</h1>
+<div class=sub>Launched 1 Jul 2026 · generated 12 Jul 2026 · latest night 2026-07-11</div>
+
+<div class=cards>
+<div class=card><div class=l>Redeemed tables</div><div class=v>28</div></div>
+<div class=card><div class=l>Covers</div><div class=v>66</div></div>
+<div class=card><div class=l>Full menu value</div><div class=v>$4,142</div></div>
+<div class=card><div class=l>Net to HG</div><div class=v>$2,801</div></div>
+<div class=card><div class=l>Channel cost</div><div class=v>$1,341</div><div class=l>32.4% of bill</div></div>
+<div class=card><div class=l>Unredeemed</div><div class=v>5</div><div class=l>cost $0</div></div>
+<div class=card><div class=l>Returning</div><div class=v>0</div><div class=l>of 28</div></div>
+</div>
+
+<h2>Weekly contribution — net of EatClub discount, commission &amp; blended COGS (ex-GST)</h2>
+<table>
+<tr><th>Week</th><th>Menu value</th><th>Discount</th><th>Commission</th><th>Net revenue</th><th>COGS @ 22.0%</th><th>Contribution</th><th>% of net</th><th>Per cover</th></tr>
+<tr><td>w/e 12 Jul<br><span class=mutetxt>4 nights · 14 tables · 32 covers</span></td><td>$1,817</td><td class=neg>−$441</td><td class=neg>−$182</td><td>$1,195</td><td class=neg>−$400</td><td class=big>$795</td><td>66.5%</td><td>$24.85</td></tr><tr><td>w/e 05 Jul<br><span class=mutetxt>4 nights · 14 tables · 34 covers</span></td><td>$1,948</td><td class=neg>−$431</td><td class=neg>−$195</td><td>$1,322</td><td class=neg>−$429</td><td class=big>$893</td><td>67.6%</td><td>$26.28</td></tr>
+<tr class=tot><td>Program to date</td><td>$3,766</td><td class=neg>−$872</td><td class=neg>−$377</td><td>$2,517</td><td class=neg>−$828</td><td class=big>$1,688</td><td>67.1%</td><td>$25.58</td></tr>
+</table>
+<div class=flag><b>Blended COGS 22.0%</b>, from the cost model against the real night mix (food 68% @ 77% GP · alcohol 28% @ ~80% · non-alc 2.5% @ 87%). Lightspeed's own Cost column reads ~35% COGS but 22% of HG sales carry a $0 cost and the column is discount-polluted — not used.
+<br>COGS is charged on the <b>full</b> menu volume (the kitchen cooks the whole dish, the discount comes off the price, not the plate). Commission taken at 10% ex-GST — the 11% billed includes GST, which you reclaim. <b>Labour is excluded</b> — the marginal-wage view lives in the weekly margin/wage task.</div>
+
+<h2>Cannibalisation — offer window 17:00–20:59 (inc-GST)</h2>
+<table>
+<tr><th>Night</th><th>Window total</th><th>EatClub bills</th><th>Full-price window</th><th>DOW baseline</th><th>vs base</th><th>Verdict</th></tr>
+<tr><td>2026-07-01<br><span class=mutetxt>Wed</span></td><td>$1,385</td><td>$292</td><td><b>$1,093</b></td><td>$1,296</td><td class=neg>-15.6%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-02<br><span class=mutetxt>Thu</span></td><td>$1,233</td><td>$132</td><td><b>$1,101</b></td><td>$1,131</td><td class=neg>-2.6%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-03<br><span class=mutetxt>Fri</span></td><td>$4,514</td><td>$918</td><td><b>$3,596</b></td><td>$2,664</td><td class=pos>+35.0%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-04<br><span class=mutetxt>Sat</span></td><td>$3,374</td><td>$801</td><td><b>$2,573</b></td><td>$2,474</td><td class=pos>+4.0%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-06<br><span class=mutetxt>Mon</span></td><td>$842</td><td>$0</td><td><b>$842</b></td><td>$2,088</td><td class=neg>-59.7%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-08<br><span class=mutetxt>Wed</span></td><td>$390</td><td>$83</td><td><b>$306</b></td><td>$1,296</td><td class=neg>-76.3%</td><td><span class='pill mute'>WEAK NIGHT</span><div class=whytxt>Dead Wednesday regardless — 1 table.</div></td></tr><tr><td>2026-07-09<br><span class=mutetxt>Thu</span></td><td>$1,289</td><td>$582</td><td><b>$707</b></td><td>$1,131</td><td class=neg>-37.5%</td><td><span class='pill warn'>RESCUE</span><div class=whytxt>Weather killed traffic; tier manually lifted 25%→30% to pull people in. Deep offer was the RESPONSE to the dead night, not its cause.</div></td></tr><tr><td>2026-07-10<br><span class=mutetxt>Fri</span></td><td>$3,614</td><td>$597</td><td><b>$3,017</b></td><td>$2,664</td><td class=pos>+13.2%</td><td><span class='pill good'>INCREMENTAL</span><div class=whytxt>Standard 25% tier, full-price window ABOVE baseline — EatClub sat on top of a normal Friday.</div></td></tr>
+</table>
+<div class=flag>Baseline = mean window revenue for that weekday across the 8 weeks before launch (6 May – 30 Jun). EatClub rings the FULL bill on the POS, so its bills are subtracted to isolate full-price trade.
+<br><b>Offer tier is not fixed:</b> when a night is dying the team lifts the discount to pull traffic in — so a deep-discount night with a weak window is a <b>rescue</b>, not cannibalisation. Thu 9 Jul is exactly that (weather).</div>
+
+<h2>Nightly redemptions</h2>
+<table>
+<tr><th>Night</th><th>Tables</th><th>Covers</th><th>Full bill</th><th>Net</th><th>Channel cost</th><th>Cost %</th><th>SPH full</th><th>SPH net</th></tr>
+<tr><td>2026-07-11</td><td>4</td><td>10</td><td>$736.78</td><td>$514.48</td><td>$222.30</td><td>30.2%</td><td>$73.68</td><td>$51.45</td></tr>
+<tr><td>2026-07-10</td><td>5</td><td>11</td><td>$597.12</td><td>$383.79</td><td>$213.33</td><td>35.7%</td><td>$54.28</td><td>$34.89</td></tr>
+<tr><td>2026-07-09</td><td>4</td><td>9</td><td>$581.65</td><td>$365.01</td><td>$216.64</td><td>37.2%</td><td>$64.63</td><td>$40.56</td></tr>
+<tr><td>2026-07-08</td><td>1</td><td>2</td><td>$83.49</td><td>$56.93</td><td>$26.56</td><td>31.8%</td><td>$41.74</td><td>$28.46</td></tr>
+<tr><td>2026-07-04</td><td>3</td><td>10</td><td>$800.93</td><td>$577.63</td><td>$223.30</td><td>27.9%</td><td>$80.09</td><td>$57.76</td></tr>
+<tr><td>2026-07-03</td><td>6</td><td>15</td><td>$918.39</td><td>$615.89</td><td>$302.50</td><td>32.9%</td><td>$61.23</td><td>$41.06</td></tr>
+<tr><td>2026-07-02</td><td>1</td><td>2</td><td>$131.76</td><td>$85.87</td><td>$45.89</td><td>34.8%</td><td>$65.88</td><td>$42.94</td></tr>
+<tr><td>2026-07-01</td><td>4</td><td>7</td><td>$291.95</td><td>$201.14</td><td>$90.81</td><td>31.1%</td><td>$41.71</td><td>$28.73</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="flag red"><b>Drink attach.</b> Fri 10 Jul night mix ran <b>food 68.1% / alcohol 28.2% / non-alc 2.5%</b> against the regular benchmark of 61 / 35 / 3.5 — booze under-indexing by ~7 points on a night EatClub was 15% of takings. This is the one metric trending the wrong way, and it compounds HG's existing bar-spend decline (−30% YoY per open day).</div>
+<div class=flag><b>Zero returning customers.</b> All 28 redeemed tables to date are NEW. Until someone comes back at full price, this channel is discounting, not acquiring — that number is the whole business case.</div>
+<div class=flag><b>Table-level attach is not measurable.</b> Insights order-level explores are locked behind "Upgrade to Custom" on the account that can see HG, so EatClub bills can't be matched to POS orders. All mix figures above are NIGHT level (every table, not just EatClub).</div>
+
+</body></html>
