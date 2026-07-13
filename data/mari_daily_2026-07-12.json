@@ -1,6 +1,6 @@
 {
   "date": "2026-07-12",
-  "generated_at": "2026-07-12T23:30:15.015738Z",
+  "generated_at": "2026-07-13T00:53:13.770812Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -29,6 +29,7 @@
     "foh_dollars": 0.0,
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
+    "leave_dollars": 0.0,
     "total_dollars": 588.06,
     "wages_pct": 37.7,
     "net_wage_pct": null,
