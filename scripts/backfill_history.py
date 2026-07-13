@@ -223,8 +223,10 @@ def main():
         resid = wd.get("Residual")
         leave = wd.get("Leave")
         wages_tot = None
-        if kit is not None or foh is not None or resid is not None:
-            wages_tot = (kit or 0) + (foh or 0) + (resid or 0)
+        if kit is not None or foh is not None or resid is not None or drv is not None:
+            # Mari Venue Total INCLUDES Driver (weekly canon); the delivery
+            # lane still shows driver dollars separately for visibility.
+            wages_tot = (kit or 0) + (foh or 0) + (drv or 0) + (resid or 0)
         wages_pct = wages_tot / rev_ex * 100 if (wages_tot is not None and rev_ex) else None
         split = ven in ("stow", "hg")
         f_ex = c["f_rev"] / 1.1; b_ex = c["b_rev"] / 1.1
