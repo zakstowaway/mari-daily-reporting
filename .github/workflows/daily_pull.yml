@@ -1,5 +1,11 @@
 name: Daily Pull
 
+# Serialized: simultaneous venue dispatches were racing on git push and
+# LOSING the losers' CSV payloads (2026-07-14: stow+hg morning data gone).
+concurrency:
+  group: daily-pull
+  cancel-in-progress: false
+
 on:
   # 6am Sydney fallback for missed dispatches
   schedule:
@@ -139,4 +145,5 @@ jobs:
           git config user.email "hello@stowawaybar.com"
           git add data/
           git diff --quiet --staged || git commit -m "Daily pull ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}"
+          git pull --rebase origin main
           git push
