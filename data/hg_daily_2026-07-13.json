@@ -1,6 +1,6 @@
 {
   "date": "2026-07-13",
-  "generated_at": "2026-07-14T00:21:10.805653Z",
+  "generated_at": "2026-07-14T06:56:08.861527Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -15,38 +15,38 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 2981.7,
-    "revenue_ex_gst": 2710.64,
+    "revenue_inc_gst": 5525.61,
+    "revenue_ex_gst": 5294.58,
     "cogs_dollars": 772.66,
-    "cogs_pct": 28.5,
-    "gp_dollars": 1937.98,
-    "gp_pct": 71.5,
+    "cogs_pct": 14.6,
+    "gp_dollars": 4521.92,
+    "gp_pct": 85.4,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 1983.91,
+    "food_ex_gst": 4296.55,
     "bev_ex_gst": 726.73,
     "food_cogs": 597.64,
     "bev_cogs": 175.02,
-    "food_cogs_pct": 30.1,
+    "food_cogs_pct": 13.9,
     "bev_cogs_pct": 24.1,
-    "food_gp_pct": 69.9,
+    "food_gp_pct": 86.1,
     "bev_gp_pct": 75.9,
     "mari_rideon_ex_gst": 0.0,
     "hg_food_out_ex_gst": 0.0,
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
-    "kitchen_dollars": 0.0,
+    "kitchen_dollars": 518.96,
     "foh_dollars": 469.62,
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
-    "total_dollars": 469.62,
-    "wages_pct": 17.3,
+    "total_dollars": 988.58,
+    "wages_pct": 18.7,
     "net_wage_pct": null,
     "kitchen_hours": 12.8,
     "foh_hours": 12.0,
-    "wages_kitchen_pct": 0.0,
+    "wages_kitchen_pct": 12.1,
     "wages_foh_pct": 64.6,
     "includes_super": true,
     "salaried_synthesized": true
@@ -108,6 +108,12 @@
   "top_products": [
     {
       "name": "Unlimited Dumplings",
+      "qty": 86.0,
+      "rev": 2040.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Unlimited Dumplings",
       "qty": 80.0,
       "rev": 1819.2,
       "cost": 560.82
@@ -119,10 +125,22 @@
       "cost": 40.61
     },
     {
+      "name": "Fried Rice",
+      "qty": 5.0,
+      "rev": 116.51,
+      "cost": 0.0
+    },
+    {
       "name": "Tonkotsu",
       "qty": 4.0,
       "rev": 102.0,
       "cost": 16.66
+    },
+    {
+      "name": "Shredded Beef",
+      "qty": 3.0,
+      "rev": 78.85,
+      "cost": 0.0
     },
     {
       "name": "Miso",
@@ -143,6 +161,12 @@
       "cost": 13.06
     },
     {
+      "name": "Dumplings - Prawn Har Gow [GF]",
+      "qty": 3.0,
+      "rev": 55.18,
+      "cost": 0.0
+    },
+    {
       "name": "Trutta Streamside Shiraz - Large [HG]",
       "qty": 2.0,
       "rev": 50.0,
@@ -153,6 +177,12 @@
       "qty": 2.0,
       "rev": 47.0,
       "cost": 6.36
+    },
+    {
+      "name": "Popcorn Cauliflower",
+      "qty": 3.0,
+      "rev": 42.92,
+      "cost": 0.0
     },
     {
       "name": "Lemonade Glass",
@@ -191,39 +221,9 @@
       "cost": 5.36
     },
     {
-      "name": "Heaps Normal Quiet XPA",
-      "qty": 3.0,
-      "rev": 31.5,
-      "cost": 7.78
-    },
-    {
-      "name": "Dragon Soda",
-      "qty": 3.0,
-      "rev": 27.0,
-      "cost": 0.0
-    },
-    {
-      "name": "Yuzu Orange Soda",
-      "qty": 3.0,
-      "rev": 27.0,
-      "cost": 0.0
-    },
-    {
-      "name": "Sapporo - 500ml",
-      "qty": 3.0,
-      "rev": 26.1,
-      "cost": 11.13
-    },
-    {
-      "name": "Kuku Sauv Blanc - Regular",
+      "name": "Outback Prawn Toast",
       "qty": 2.0,
-      "rev": 26.0,
-      "cost": 5.2
-    },
-    {
-      "name": "Shredded Beef",
-      "qty": 1.0,
-      "rev": 26.0,
+      "rev": 32.0,
       "cost": 0.0
     }
   ]
