@@ -1,0 +1,41 @@
+[
+  {
+    "timesheet_id": 35308,
+    "employee_id": 1,
+    "employee_name": "Kris Hegarty",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783994400,
+    "end_time": 1784020500,
+    "hours": 6.075,
+    "cost": 273.07,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35310,
+    "employee_id": 145,
+    "employee_name": "Rhys Taylor",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1783998000,
+    "end_time": 1784033100,
+    "hours": 9.25,
+    "cost": 317.23,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35314,
+    "employee_id": 284,
+    "employee_name": "Olly",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784012400,
+    "end_time": 1784029500,
+    "hours": 4.75,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]
