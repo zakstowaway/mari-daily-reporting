@@ -1,0 +1,210 @@
+{
+  "date": "2026-07-14",
+  "generated_at": "2026-07-14T20:10:29.879977Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 863.68,
+    "revenue_ex_gst": 785.17,
+    "cogs_dollars": 175.44,
+    "cogs_pct": 22.3,
+    "gp_dollars": 609.73,
+    "gp_pct": 77.7,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null
+  },
+  "wages": {
+    "kitchen_dollars": 0.0,
+    "foh_dollars": 0.0,
+    "driver_dollars": 0.0,
+    "admin_dollars": 0.0,
+    "leave_dollars": 0.0,
+    "total_dollars": 0.0,
+    "wages_pct": 0.0,
+    "net_wage_pct": null,
+    "kitchen_hours": 14.8,
+    "foh_hours": 0,
+    "wages_kitchen_pct": null,
+    "wages_foh_pct": null,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 0,
+    "own_driver_dollars": 0.0,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 0.0,
+    "delivery_pct": 0.0,
+    "fees_are_estimate": true
+  },
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "amber",
+    "wages": "green",
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
+  },
+  "targets": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Large Super House Special",
+      "qty": 5.0,
+      "rev": 89.0,
+      "cost": 36.9
+    },
+    {
+      "name": "Large Sanchez",
+      "qty": 3.0,
+      "rev": 89.0,
+      "cost": 16.47
+    },
+    {
+      "name": "Regular Super House Special",
+      "qty": 3.0,
+      "rev": 72.0,
+      "cost": 15.85
+    },
+    {
+      "name": "Banquet Deal Pizzas",
+      "qty": 1.0,
+      "rev": 60.0,
+      "cost": 0.0
+    },
+    {
+      "name": "$60 BANQUET",
+      "qty": 1.0,
+      "rev": 60.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Large Hawaiian",
+      "qty": 2.0,
+      "rev": 48.0,
+      "cost": 6.53
+    },
+    {
+      "name": "$45 FEAST",
+      "qty": 1.0,
+      "rev": 45.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Regular Hawaiian",
+      "qty": 2.0,
+      "rev": 38.0,
+      "cost": 2.49
+    },
+    {
+      "name": "Axl Rose Pizza",
+      "qty": 2.0,
+      "rev": 37.18,
+      "cost": 0.0
+    },
+    {
+      "name": "Large Bubba Gump",
+      "qty": 1.0,
+      "rev": 32.0,
+      "cost": 5.8
+    },
+    {
+      "name": "Gluten-free Meatlovers",
+      "qty": 1.0,
+      "rev": 31.0,
+      "cost": 9.29
+    },
+    {
+      "name": "Gluten-free Super House Special",
+      "qty": 1.0,
+      "rev": 30.0,
+      "cost": 9.38
+    },
+    {
+      "name": "Large Jimmy Jury",
+      "qty": 1.0,
+      "rev": 27.0,
+      "cost": 6.19
+    },
+    {
+      "name": "Large Sorrento",
+      "qty": 1.0,
+      "rev": 27.0,
+      "cost": 7.17
+    },
+    {
+      "name": "Regular Meatlovers",
+      "qty": 1.0,
+      "rev": 25.0,
+      "cost": 5.19
+    },
+    {
+      "name": "Large Tandoori Chicken",
+      "qty": 1.0,
+      "rev": 25.0,
+      "cost": 3.3
+    },
+    {
+      "name": "Regular BBQ Chicken Pizza",
+      "qty": 1.0,
+      "rev": 24.5,
+      "cost": 3.11
+    },
+    {
+      "name": "Regular New Yorker",
+      "qty": 1.0,
+      "rev": 24.0,
+      "cost": 3.59
+    },
+    {
+      "name": "Large Margherita",
+      "qty": 1.0,
+      "rev": 23.0,
+      "cost": 2.3
+    },
+    {
+      "name": "Regular Vegetarian",
+      "qty": 1.0,
+      "rev": 21.0,
+      "cost": 2.37
+    }
+  ]
+}
