@@ -2,7 +2,7 @@ name: Deploy dashboard to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["Daily Pull", "Mari Daily Pull"]
+    workflows: ["Daily Pull", "Mari Daily Pull", "Wages Backfill"]
     types: [completed]
   push:
     branches: [main]
@@ -32,6 +32,8 @@ jobs:
           cp -r dashboard/* _site/
           mkdir -p _site/data
           cp -r data/* _site/data/ 2>/dev/null || echo "No data yet"
+          mkdir -p _site/baselines
+          cp -r baselines/*.json _site/baselines/ 2>/dev/null || echo "No baselines"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
