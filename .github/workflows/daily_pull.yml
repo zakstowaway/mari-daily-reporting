@@ -120,6 +120,15 @@ jobs:
           if [[ "$PREFIX" == "mari" && "$KIND" == "insights" ]]; then cp "$FINAL_CSV" "data/insights_${TARGET_DATE}.csv"; fi
           echo "Wrote $FINAL_CSV"
 
+      - name: Preserve CSV payload immediately
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          git config user.name "Daily Pull"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Ingest payload ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
+
       - name: Deputy pull + aggregate
         env:
           DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
@@ -145,5 +154,4 @@ jobs:
           git config user.email "hello@stowawaybar.com"
           git add data/
           git diff --quiet --staged || git commit -m "Daily pull ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}"
-          git pull --rebase origin main
-          git push
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
