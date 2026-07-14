@@ -172,6 +172,9 @@ body {
 .venue-tab.active.mari { border-bottom-color: var(--mari); color: var(--mari); }
 .venue-tab.active.group{ border-bottom-color: var(--group); color: var(--group); }
 .eatclub-tab { margin-left: auto; text-decoration: none; display: inline-flex; align-items: center; }
+.card.clickable { cursor: pointer; }
+.card.clickable:hover { border-color: var(--ink-soft); }
+.card.focused { outline: 2px solid var(--group); outline-offset: -1px; }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -495,7 +498,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [] };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -1220,8 +1223,12 @@ function renderSnapshot() {
     const daysBehind = Math.floor((sydneyToday() - new Date(day.date)) / 86400000);
     if (daysBehind > 1) staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
   }
-  const cardEls = cards.map(key => CARD_DEFS[key](day, cfg));
-  snapshotEl.innerHTML = cardEls.map(c => `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
+  const cardEls = cards.map(key => ({ key, ...CARD_DEFS[key](day, cfg) }));
+  const clickable = CURRENT_ROLE === 'admin';
+  snapshotEl.innerHTML = cardEls.map(c =>
+    `<div class="card ${c.status || 'unknown'}${clickable ? ' clickable' : ''}${STATE.focusMetric === c.key ? ' focused' : ''}"` +
+    (clickable ? ` onclick="focusMetric('${c.key}')" title="Click to focus the chart on this metric"` : '') +
+    `><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
   renderExtras(day, cfg);
 }
 
@@ -1287,11 +1294,65 @@ function renderChart() {
     const bins = {};
     for (const r of trailing) {
       const key = dailyBins ? r.date : isoDate(weekStart(new Date(r.date)));
-      const b = bins[key] = bins[key] || { rev: 0, cogs: 0, wages: 0, days: 0 };
+      const b = bins[key] = bins[key] || { rev: 0, cogs: 0, wages: 0, days: 0, wageDays: 0, drv: 0 };
       b.rev += toNum(r.revenue_ex_gst); b.cogs += toNum(r.cogs_dollars);
-      b.wages += toNum(r.wages_dollars); b.days += 1;
+      if (hasVal(r.wages_dollars)) { b.wages += toNum(r.wages_dollars); b.wageDays += 1; }
+      b.drv += toNum(r.delivery_dollars);
+      b.days += 1;
     }
     const keys = Object.keys(bins).sort();
+
+    if (STATE.focusMetric) {
+      const sh = dowShares(STATE.currentVenue);
+      const ohOf = k => dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * bins[k].days;
+      const t = STATE.baselines[STATE.currentVenue] || {};
+      const a = actualCogs(STATE.currentVenue, endIso);
+      const FOCUS = {
+        revenue:       { label: 'Revenue $', unit: '$', target: null,
+                         fn: k => bins[k].rev },
+        wages_hero:    { label: 'Wages %', unit: '%', target: t.wages && t.wages.target,
+                         fn: k => bins[k].wageDays && bins[k].rev ? bins[k].wages / bins[k].rev * 100 : null },
+        cogs_merged:   { label: 'Expected COGS % (Lightspeed)', unit: '%', target: t.cogs && t.cogs.target,
+                         fn: k => bins[k].rev ? bins[k].cogs / bins[k].rev * 100 : null },
+        delivery_fees: { label: 'Delivery %', unit: '%', target: t.delivery && t.delivery.target,
+                         fn: k => bins[k].rev ? (bins[k].drv + (dfr ? bins[k].rev * dfr.pct / 100 : 0)) / bins[k].rev * 100 : null },
+        overheads:     { label: 'Overheads %', unit: '%', target: null,
+                         fn: k => bins[k].rev ? ohOf(k) / bins[k].rev * 100 : null },
+        profit:        { label: 'Expected profit $', unit: '$', target: null,
+                         fn: k => {
+                           if (!bins[k].wageDays) return null;
+                           const cogsPct = a ? a.pct : (bins[k].rev ? bins[k].cogs / bins[k].rev * 100 : 0);
+                           return bins[k].rev - bins[k].rev * cogsPct / 100 - bins[k].wages - ohOf(k)
+                                  - (dfr ? bins[k].rev * dfr.pct / 100 : 0) - cpDaily * bins[k].days;
+                         } },
+      };
+      const def = FOCUS[STATE.focusMetric];
+      if (def) {
+        const series = keys.map(def.fn);
+        const vals = series.filter(x => x !== null && isFinite(x));
+        const avg = vals.length ? vals.reduce((x, y) => x + y, 0) / vals.length : null;
+        const fmtTick = def.unit === '$' ? (v => '$' + (Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : v)) : (v => v + '%');
+        const sets = [
+          { label: def.label, data: series.map(x => x === null ? null : Math.round(x * 10) / 10), borderColor: '#378ADD', backgroundColor: '#378ADD20', borderWidth: 2.5, pointRadius: keys.length > 45 ? 0 : 3, pointBackgroundColor: '#378ADD', tension: 0.25, spanGaps: true },
+        ];
+        if (avg !== null) sets.push({ label: 'Period average', data: keys.map(() => Math.round(avg * 10) / 10), borderColor: tickColor, borderDash: [6, 5], borderWidth: 1.5, pointRadius: 0 });
+        if (def.target != null) sets.push({ label: 'Target', data: keys.map(() => def.target), borderColor: '#1D9E75', borderDash: [2, 4], borderWidth: 2, pointRadius: 0 });
+        if (titleEl) titleEl.textContent = def.label + ' \u2014 ' + (dailyBins ? 'daily' : 'weekly') + ' \u00b7 click the card again to return';
+        CHART_INSTANCE = new Chart(ctx, {
+          type: 'line',
+          data: { labels: keys.map(k => k.slice(5)), datasets: sets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+              y: { ticks: { callback: fmtTick, font: { family: 'Inter', size: 11 }, color: tickColor }, grid: { color: gridColor } },
+              x: { ticks: { font: { family: 'Inter', size: 11 }, color: tickColor, maxTicksLimit: 16 }, grid: { display: false } }
+            },
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 14, boxHeight: 3, usePointStyle: true, pointStyle: 'line', font: { family: 'Space Grotesk', size: 12, weight: '500' }, color: tickColor, padding: 16 } } }
+          }
+        });
+        return;
+      }
+    }
     const mk = (label, color, fn) => ({ type: 'bar', label, stack: 'costs', backgroundColor: color, borderWidth: 0, data: keys.map(fn) });
     const stackSets = [
       mk('COGS', '#D85A30', k => Math.round(bins[k].cogs)),
@@ -1376,8 +1437,13 @@ function render() {
   fetchLastUpdate();
 }
 
+function focusMetric(key) {
+  STATE.focusMetric = STATE.focusMetric === key ? null : key;
+  render();
+}
 function switchVenue(venue) {
   STATE.currentVenue = venue;
+  STATE.focusMetric = null;
   const rows = STATE.histories[venue] || [];
   STATE.currentDay = rows.length ? rows[rows.length - 1].date : null;
   render();
@@ -1412,6 +1478,12 @@ async function bootstrap() {
     const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
     if (r.ok) STATE.xeroOH = parseCsv(await r.text());
   } catch (e) {}
+  for (const [v, f] of [['mari', 'mari_baseline.json'], ['stow', 'stow_baseline.json'], ['hg', 'hg_baseline.json']]) {
+    try {
+      const r = await fetch('baselines/' + f + '?t=' + Date.now());
+      if (r.ok) STATE.baselines[v] = (await r.json()).targets_and_alerts || {};
+    } catch (e) {}
+  }
   const defaultVenue = roleCfg.defaultVenue;
   const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
   STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
