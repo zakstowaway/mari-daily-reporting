@@ -1,0 +1,15 @@
+[
+  {
+    "timesheet_id": 35308,
+    "employee_id": 1,
+    "employee_name": "Kris Hegarty",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1783994400,
+    "end_time": 1784020500,
+    "hours": 0.675,
+    "cost": 30.34,
+    "salaried_synth": true
+  }
+]
