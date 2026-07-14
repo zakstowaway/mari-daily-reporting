@@ -1,6 +1,6 @@
 {
   "date": "2026-07-13",
-  "generated_at": "2026-07-13T23:26:05.449591Z",
+  "generated_at": "2026-07-14T00:21:10.805653Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -10,19 +10,30 @@
     "gp"
   ],
   "data_status": {
-    "lightspeed": "missing",
+    "lightspeed": "ok",
     "deputy": "ok",
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
+    "revenue_inc_gst": 2981.7,
+    "revenue_ex_gst": 2710.64,
+    "cogs_dollars": 772.66,
+    "cogs_pct": 28.5,
+    "gp_dollars": 1937.98,
+    "gp_pct": 71.5,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 1983.91,
+    "bev_ex_gst": 726.73,
+    "food_cogs": 597.64,
+    "bev_cogs": 175.02,
+    "food_cogs_pct": 30.1,
+    "bev_cogs_pct": 24.1,
+    "food_gp_pct": 69.9,
+    "bev_gp_pct": 75.9,
+    "mari_rideon_ex_gst": 0.0,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 0.0
   },
   "wages": {
     "kitchen_dollars": 0.0,
@@ -30,27 +41,27 @@
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
-    "total_dollars": null,
-    "wages_pct": null,
+    "total_dollars": 469.62,
+    "wages_pct": 17.3,
     "net_wage_pct": null,
     "kitchen_hours": 12.8,
     "foh_hours": 12.0,
-    "wages_kitchen_pct": null,
-    "wages_foh_pct": null,
+    "wages_kitchen_pct": 0.0,
+    "wages_foh_pct": 64.6,
     "includes_super": true,
     "salaried_synthesized": true
   },
   "delivery": null,
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
+    "cogs": "green",
+    "wages": "green",
     "delivery": "n/a",
-    "gp": "unknown",
-    "cogs_food": "unknown",
-    "cogs_bev": "unknown",
-    "wages_kitchen": "unknown",
-    "wages_foh": "unknown"
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "yellow",
+    "wages_kitchen": "green",
+    "wages_foh": "red"
   },
   "targets": {
     "cogs": {
@@ -94,5 +105,126 @@
       "target_direction": "high_is_good"
     }
   },
-  "top_products": []
+  "top_products": [
+    {
+      "name": "Unlimited Dumplings",
+      "qty": 80.0,
+      "rev": 1819.2,
+      "cost": 560.82
+    },
+    {
+      "name": "Pepsi Max Glass",
+      "qty": 31.0,
+      "rev": 135.0,
+      "cost": 40.61
+    },
+    {
+      "name": "Tonkotsu",
+      "qty": 4.0,
+      "rev": 102.0,
+      "cost": 16.66
+    },
+    {
+      "name": "Miso",
+      "qty": 3.0,
+      "rev": 73.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Negroni",
+      "qty": 4.0,
+      "rev": 61.2,
+      "cost": 19.06
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 4.0,
+      "rev": 56.0,
+      "cost": 13.06
+    },
+    {
+      "name": "Trutta Streamside Shiraz - Large [HG]",
+      "qty": 2.0,
+      "rev": 50.0,
+      "cost": 12.03
+    },
+    {
+      "name": "Mie Goreng",
+      "qty": 2.0,
+      "rev": 47.0,
+      "cost": 6.36
+    },
+    {
+      "name": "Lemonade Glass",
+      "qty": 10.0,
+      "rev": 40.5,
+      "cost": 0.0
+    },
+    {
+      "name": "Sapporo - Schooner",
+      "qty": 4.0,
+      "rev": 40.0,
+      "cost": 12.61
+    },
+    {
+      "name": "Harry's Lager - Schooner",
+      "qty": 4.0,
+      "rev": 38.0,
+      "cost": 6.5
+    },
+    {
+      "name": "Harry's Lager - Pint",
+      "qty": 3.0,
+      "rev": 37.5,
+      "cost": 6.54
+    },
+    {
+      "name": "Pepsi Glass",
+      "qty": 8.0,
+      "rev": 36.0,
+      "cost": 10.48
+    },
+    {
+      "name": "Fried Rice",
+      "qty": 2.0,
+      "rev": 32.2,
+      "cost": 5.36
+    },
+    {
+      "name": "Heaps Normal Quiet XPA",
+      "qty": 3.0,
+      "rev": 31.5,
+      "cost": 7.78
+    },
+    {
+      "name": "Dragon Soda",
+      "qty": 3.0,
+      "rev": 27.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Yuzu Orange Soda",
+      "qty": 3.0,
+      "rev": 27.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Sapporo - 500ml",
+      "qty": 3.0,
+      "rev": 26.1,
+      "cost": 11.13
+    },
+    {
+      "name": "Kuku Sauv Blanc - Regular",
+      "qty": 2.0,
+      "rev": 26.0,
+      "cost": 5.2
+    },
+    {
+      "name": "Shredded Beef",
+      "qty": 1.0,
+      "rev": 26.0,
+      "cost": 0.0
+    }
+  ]
 }
