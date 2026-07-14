@@ -1,6 +1,6 @@
 {
   "date": "2026-07-13",
-  "generated_at": "2026-07-13T23:26:03.312969Z",
+  "generated_at": "2026-07-14T06:54:38.771840Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -10,19 +10,30 @@
     "gp"
   ],
   "data_status": {
-    "lightspeed": "missing",
+    "lightspeed": "ok",
     "deputy": "ok",
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
+    "revenue_inc_gst": 1736.2,
+    "revenue_ex_gst": 1578.38,
+    "cogs_dollars": 414.51,
+    "cogs_pct": 26.3,
+    "gp_dollars": 1163.87,
+    "gp_pct": 73.7,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 0.0,
+    "bev_ex_gst": 1578.36,
+    "food_cogs": 0.0,
+    "bev_cogs": 414.51,
+    "food_cogs_pct": null,
+    "bev_cogs_pct": 26.3,
+    "food_gp_pct": null,
+    "bev_gp_pct": 73.7,
+    "mari_rideon_ex_gst": 13.08,
+    "hg_food_out_ex_gst": 2312.65,
+    "stow_food_out_ex_gst": 0.0
   },
   "wages": {
     "kitchen_dollars": 0.0,
@@ -30,27 +41,27 @@
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
-    "total_dollars": null,
-    "wages_pct": null,
+    "total_dollars": 635.31,
+    "wages_pct": 40.3,
     "net_wage_pct": null,
     "kitchen_hours": 0,
     "foh_hours": 17.5,
     "wages_kitchen_pct": null,
-    "wages_foh_pct": null,
+    "wages_foh_pct": 40.3,
     "includes_super": true,
     "salaried_synthesized": true
   },
   "delivery": null,
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
+    "cogs": "green",
+    "wages": "red",
     "delivery": "n/a",
-    "gp": "unknown",
+    "gp": "green",
     "cogs_food": "unknown",
-    "cogs_bev": "unknown",
+    "cogs_bev": "amber",
     "wages_kitchen": "unknown",
-    "wages_foh": "unknown"
+    "wages_foh": "red"
   },
   "targets": {
     "cogs": {
@@ -94,5 +105,126 @@
       "target_direction": "high_is_good"
     }
   },
-  "top_products": []
+  "top_products": [
+    {
+      "name": "Cri De Couer Pinot Noir - Bottle",
+      "qty": 2.0,
+      "rev": 254.0,
+      "cost": 124.3
+    },
+    {
+      "name": "Mulled Wine",
+      "qty": 8.0,
+      "rev": 119.48,
+      "cost": 16.56
+    },
+    {
+      "name": "A. Rodda Chardonnay - Regular",
+      "qty": 3.0,
+      "rev": 84.0,
+      "cost": 18.5
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 4.0,
+      "rev": 81.31,
+      "cost": 16.54
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Regular",
+      "qty": 8.0,
+      "rev": 79.79,
+      "cost": 19.3
+    },
+    {
+      "name": "Pepsi Max Glass",
+      "qty": 16.0,
+      "rev": 72.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Pepsi Glass",
+      "qty": 16.0,
+      "rev": 72.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Petits Detours Ros\u00e9 - Regular",
+      "qty": 4.0,
+      "rev": 64.0,
+      "cost": 14.14
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 6.0,
+      "rev": 62.0,
+      "cost": 14.72
+    },
+    {
+      "name": "Kuku Sauvignon Blanc - Regular",
+      "qty": 4.0,
+      "rev": 56.46,
+      "cost": 11.66
+    },
+    {
+      "name": "Hahn Super Dry GF",
+      "qty": 5.0,
+      "rev": 54.21,
+      "cost": 13.4
+    },
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 3.0,
+      "rev": 51.0,
+      "cost": 13.03
+    },
+    {
+      "name": "White Light Pure Vodka [House]",
+      "qty": 6.0,
+      "rev": 50.0,
+      "cost": 9.12
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 3.0,
+      "rev": 49.0,
+      "cost": 14.14
+    },
+    {
+      "name": "Ottelia Chardonnay - Large",
+      "qty": 2.0,
+      "rev": 45.0,
+      "cost": 11.53
+    },
+    {
+      "name": "Lemon, Lime & Bitters",
+      "qty": 8.0,
+      "rev": 40.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Dark & Stormy",
+      "qty": 2.0,
+      "rev": 28.0,
+      "cost": 7.58
+    },
+    {
+      "name": "Kirin - Schooner",
+      "qty": 2.0,
+      "rev": 28.0,
+      "cost": 7.56
+    },
+    {
+      "name": "Status Quo - Pint",
+      "qty": 2.0,
+      "rev": 28.0,
+      "cost": 8.23
+    },
+    {
+      "name": "Philter XPA - Pint",
+      "qty": 3.0,
+      "rev": 27.0,
+      "cost": 9.0
+    }
+  ]
 }
