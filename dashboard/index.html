@@ -1240,7 +1240,7 @@ const CARD_DEFS = {
         ? `${uberLbl}+DD+Direct ${fmtDollars(fa.mari)} \u00b7 ME&U+Doshii ${fmtDollars(fa.meu)}`
         : 'ME&U + Doshii, revenue-share';
       return { label: 'Delivery platforms ' + pill('actual', 'green'), value: fmtPct(fa.fees / rev * 100),
-        sub: `${fmtDollars(fa.fees)} booked in Xero, ${fa.nMonths} complete month${fa.nMonths > 1 ? 's' : ''} \u00b7 ${src} \u00b7 driver in wages`, status: 'unknown' };
+        sub: `${fmtDollars(fa.fees)} actual${fa.portal ? ' (Uber portal + Xero)' : ', booked in Xero'}, ${fa.nMonths} complete month${fa.nMonths > 1 ? 's' : ''} \u00b7 ${src} \u00b7 driver in wages`, status: 'unknown' };
     }
     const dfr = deliveryFeesPct(STATE.currentVenue, winEnd(day));
     if (!dfr || !rev) return { label: 'Delivery platforms', value: '\u2014', sub: 'no Xero fee data', status: 'unknown' };
