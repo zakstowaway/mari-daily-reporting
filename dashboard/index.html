@@ -642,7 +642,8 @@ function pnlWindow(day) {
   const ohf = ohFactor(day, STATE.currentVenue, wdays);
   const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7) * ohf;
   const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
-  const df = dfr ? rev * dfr.pct / 100 : 0;
+  const fa = feesActualWindow(day);
+  const df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
   const cp = corpPayrollDaily(STATE.currentVenue, endIso) * ohf;   // DOW-weighted, same as overheads
   const wages = toNum(day.wages_dollars);
   const profit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
@@ -791,6 +792,40 @@ function actualCogsSplit(venue, endIso, nWeeks = 4) {
   if (!fRev && !bRev) return null;
   return { food: fRev ? food / fRev * 100 : null, bev: bRev ? bev / bRev * 100 : null };
 }
+// Actual booked platform fees for windows made of whole COMPLETED months
+// present in the Xero feed. No stock-journal requirement — fee accounts are
+// reconciled continuously, so a finished month's booking is real.
+function feesActualWindow(day) {
+  const t = String((day && day.date) || '');
+  if (!t.includes(' — ')) return null;
+  const parts = t.split(' — ');
+  const sIso = parts[0], eIso = parts[1];
+  if (sIso.slice(8) !== '01') return null;
+  const eD = new Date(eIso);
+  if (new Date(eD.getFullYear(), eD.getMonth() + 1, 0).getDate() !== eD.getDate()) return null;
+  const feed = Object.fromEntries(STATE.xeroOH.map(r => [r.month, r]));
+  const curMonth = isoDate(sydneyToday()).slice(0, 7);
+  const months = [];
+  let cur = new Date(sIso);
+  while (isoDate(cur) <= eIso) {
+    months.push(isoDate(cur).slice(0, 7));
+    cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+  }
+  if (!months.length || !months.every(m => feed[m] && m < curMonth)) return null;
+  let mari = 0, meu = 0;
+  for (const m of months) { mari += toNum(feed[m].mari_uber_fees); meu += toNum(feed[m].meu_fees); }
+  const v = STATE.currentVenue;
+  let fees;
+  if (v === 'mari') fees = mari;
+  else if (v === 'group') fees = mari + meu;
+  else {
+    const revOf = vv => (STATE.histories[vv] || []).reduce((tt, r) => (r.date >= sIso && r.date <= eIso) ? tt + toNum(r.revenue_ex_gst) : tt, 0);
+    const rs = revOf('stow'), rh = revOf('hg');
+    fees = (rs + rh) ? meu * (v === 'stow' ? rs : rh) / (rs + rh) : 0;
+  }
+  return { fees, mari, meu, nMonths: months.length };
+}
+
 // Closed months: the Closing Stock Movement journal exists in Xero for that
 // month (board rule, 2026-07-15). A genuinely-$0 journal reads as open —
 // acceptable, it just stays "expected" until a journal posts.
@@ -1162,11 +1197,21 @@ const CARD_DEFS = {
   },
   delivery_fees: (day, cfg) => {
     const rev = toNum(day.revenue_ex_gst);
+    const fa = feesActualWindow(day);
+    if (fa && rev) {
+      const src = STATE.currentVenue === 'mari'
+        ? `Uber + DoorDash + Direct ${fmtDollars(fa.mari)}`
+        : STATE.currentVenue === 'group'
+        ? `Uber+DD+Direct ${fmtDollars(fa.mari)} \u00b7 ME&U+Doshii ${fmtDollars(fa.meu)}`
+        : 'ME&U + Doshii, revenue-share';
+      return { label: 'Delivery platforms ' + pill('actual', 'green'), value: fmtPct(fa.fees / rev * 100),
+        sub: `${fmtDollars(fa.fees)} booked in Xero, ${fa.nMonths} complete month${fa.nMonths > 1 ? 's' : ''} \u00b7 ${src} \u00b7 driver in wages`, status: 'unknown' };
+    }
     const dfr = deliveryFeesPct(STATE.currentVenue, winEnd(day));
     if (!dfr || !rev) return { label: 'Delivery platforms', value: '\u2014', sub: 'no Xero fee data', status: 'unknown' };
     const src = STATE.currentVenue === 'mari' ? 'Uber + DoorDash' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
     return { label: 'Delivery platforms', value: fmtPct(dfr.pct),
-      sub: `${fmtDollars(rev * dfr.pct / 100)} ${src} fees (Xero) \u00b7 driver in wages`, status: 'unknown' };
+      sub: `est. ${fmtDollars(rev * dfr.pct / 100)} ${src} fees (Xero trailing ${dfr.months}-mo rate) \u00b7 driver in wages`, status: 'unknown' };
   },
   overheads: (day, cfg) => {
     const rev = toNum(day.revenue_ex_gst);
