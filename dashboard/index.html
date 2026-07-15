@@ -1333,7 +1333,8 @@ const CARD_DEFS = {
       if (sp.bev !== null) bits.push('bev ' + fmtPct(sp.bev));
       sub2 += ' \u00b7 ' + bits.join(' / ') + ' actual';
     }
-    return { label: 'COGS', value: fmtPct(a.pct) + chip, sub: sub2, status: 'unknown' };
+    sub2 += ` · tgt ${fmtPct(COGS_TARGET_PCT)}`;
+    return { label: 'COGS', value: fmtPct(a.pct) + chip, sub: sub2, status: cogsStatus(a.pct) };
   },
   delivery_fees: (day, cfg) => {
     const rev = toNum(day.revenue_ex_gst);
@@ -1363,12 +1364,15 @@ const CARD_DEFS = {
     return { label: 'Overheads', value: rev ? fmtPct(oh / rev * 100) : '\u2014',
       sub: `${fmtDollars(oh)} \u00b7 rent + share of group OH (${ohA ? 'Xero ' + ohA.months + '-mo' : 'plan'}) \u00b7 DOW-weighted`, status: 'unknown' };
   },
-  cogs: (day, cfg) => ({
-    label: 'Expected COGS (Lightspeed)',
-    value: hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—',
-    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
-    status: day.cogs_alert,
-  }),
+  cogs: (day, cfg) => {
+    const has = hasVal(day.cogs_pct);
+    return {
+      label: 'Expected COGS (Lightspeed)',
+      value: has ? fmtPct(toNum(day.cogs_pct)) : '—',
+      sub: (cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '') + (has ? ` · tgt ${fmtPct(COGS_TARGET_PCT)}` : ''),
+      status: has ? cogsStatus(toNum(day.cogs_pct)) : day.cogs_alert,
+    };
+  },
   wages: (day, cfg) => {
     const tgt = wageTargetFor(day);
     let sub = cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '';
@@ -1399,12 +1403,15 @@ const CARD_DEFS = {
       status: day.delivery_alert,
     };
   },
-  gp: (day, cfg) => ({
-    label: 'GP',
-    value: hasVal(day.gp_pct) ? fmtPct(toNum(day.gp_pct)) : '—',
-    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.gp_dollars)) : '',
-    status: day.gp_alert || 'unknown',
-  }),
+  gp: (day, cfg) => {
+    const has = hasVal(day.gp_pct);
+    return {
+      label: 'GP',
+      value: has ? fmtPct(toNum(day.gp_pct)) : '—',
+      sub: (cfg.show_dollar_amounts ? fmtDollars(toNum(day.gp_dollars)) : '') + (has ? ` · tgt ${fmtPct(100 - COGS_TARGET_PCT)}` : ''),
+      status: has ? cogsStatus(100 - toNum(day.gp_pct)) : 'unknown',
+    };
+  },
   revenue_food: (day, cfg) => {
     const split = hasVal(day.food_ex_gst);
     return {
@@ -1425,8 +1432,8 @@ const CARD_DEFS = {
     return {
       label: 'Food COGS',
       value: split ? fmtPct(toNum(day.food_cogs_pct)) : hasVal(day.cogs_pct) && !hasVal(day.bev_ex_gst) ? fmtPct(toNum(day.cogs_pct)) : '—',
-      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.food_cogs)) + ' / ' + fmtDollars(toNum(day.food_ex_gst)) + ' food rev' : 'awaiting split data',
-      status: split ? (day.cogs_food_alert || 'unknown') : 'unknown',
+      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.food_cogs)) + ' / ' + fmtDollars(toNum(day.food_ex_gst)) + ` food rev · tgt ${fmtPct(COGS_TARGET_PCT)}` : 'awaiting split data',
+      status: split ? cogsStatus(toNum(day.food_cogs_pct)) : 'unknown',
     };
   },
   cogs_bev: (day, cfg) => {
@@ -1434,8 +1441,8 @@ const CARD_DEFS = {
     return {
       label: 'Bev COGS',
       value: split ? fmtPct(toNum(day.bev_cogs_pct)) : '—',
-      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.bev_cogs)) + ' / ' + fmtDollars(toNum(day.bev_ex_gst)) + ' bev rev' : 'awaiting split data',
-      status: split ? (day.cogs_bev_alert || 'unknown') : 'unknown',
+      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.bev_cogs)) + ' / ' + fmtDollars(toNum(day.bev_ex_gst)) + ` bev rev · tgt ${fmtPct(COGS_TARGET_PCT)}` : 'awaiting split data',
+      status: split ? cogsStatus(toNum(day.bev_cogs_pct)) : 'unknown',
     };
   },
   wages_kitchen: (day, cfg) => {
@@ -1482,19 +1489,23 @@ const CARD_DEFS = {
   },
   gp_food: (day, cfg) => {
     const split = hasVal(day.food_gp_pct);
+    const v2 = split ? toNum(day.food_gp_pct) : hasVal(day.gp_pct) ? toNum(day.gp_pct) : null;
     return {
       label: split ? 'Food GP' : 'GP',
-      value: split ? fmtPct(toNum(day.food_gp_pct)) : hasVal(day.gp_pct) ? fmtPct(toNum(day.gp_pct)) : '—',
-      sub: '',
-      status: 'unknown',
+      value: v2 !== null ? fmtPct(v2) : '—',
+      sub: v2 !== null ? `tgt ${fmtPct(100 - COGS_TARGET_PCT)}` : '',
+      status: v2 !== null ? cogsStatus(100 - v2) : 'unknown',
     };
   },
-  gp_bev: (day, cfg) => ({
-    label: 'Bev GP',
-    value: hasVal(day.bev_gp_pct) ? fmtPct(toNum(day.bev_gp_pct)) : '—',
-    sub: '',
-    status: 'unknown',
-  }),
+  gp_bev: (day, cfg) => {
+    const has = hasVal(day.bev_gp_pct);
+    return {
+      label: 'Bev GP',
+      value: has ? fmtPct(toNum(day.bev_gp_pct)) : '—',
+      sub: has ? `tgt ${fmtPct(100 - COGS_TARGET_PCT)}` : '',
+      status: has ? cogsStatus(100 - toNum(day.bev_gp_pct)) : 'unknown',
+    };
+  },
 };
 
 const CHART_LINE_DEFS = {
@@ -1725,9 +1736,15 @@ function renderExtras(day, cfg) {
   const vbEl = document.getElementById('venue-breakdown');
   strip.innerHTML = ''; splitEl.innerHTML = '';
   if (waEl) waEl.innerHTML = ''; if (dhEl) dhEl.innerHTML = ''; if (vbEl) vbEl.innerHTML = '';
-  if (CURRENT_ROLE !== 'admin' || !day) return;
-  renderVenueBreakdown(); renderWeekAhead(); renderDataHealth();
+  if (!day) return;
+  // Week-ahead roster forecast is for EVERYONE — managers roster their venue.
+  renderWeekAhead();
   const srEl = document.getElementById('story-row');
+  if (CURRENT_ROLE !== 'admin') {
+    if (srEl) srEl.style.gridTemplateColumns = '1fr';
+    return;
+  }
+  renderVenueBreakdown(); renderDataHealth();
   if (srEl) srEl.style.gridTemplateColumns = (vbEl && vbEl.innerHTML) ? '' : '1fr';
   const w = pnlWindow(day);
   if (w) {
@@ -1758,6 +1775,8 @@ function renderExtras(day, cfg) {
 // target = 30% x (its share of weekly wages / its share of weekly revenue),
 // trailing 12 weeks. Revenue-weighted across the week = exactly 30%.
 const WAGE_TARGET_PCT = 30;
+const COGS_TARGET_PCT = 22;   // universal (Zak, 2026-07-15)
+function cogsStatus(pct) { return pct > COGS_TARGET_PCT + 2 ? 'red' : pct < COGS_TARGET_PCT - 2 ? 'green' : 'amber'; }
 function dowWageTarget(venue, dow) {
   STATE._dwt = STATE._dwt || {};
   if (STATE._dwt[venue] === undefined) {
@@ -2005,7 +2024,7 @@ function renderChart() {
                          fn: (k, B = bins) => B[k].rev },
         wages_hero:    { label: 'Wages %', unit: '%', target: WAGE_TARGET_PCT,
                          fn: (k, B = bins) => B[k].wageDays && B[k].rev ? B[k].wages / B[k].rev * 100 : null },
-        cogs_merged:   { label: 'Expected COGS % (Lightspeed)', unit: '%', target: t.cogs && t.cogs.target,
+        cogs_merged:   { label: 'Expected COGS % (Lightspeed)', unit: '%', target: COGS_TARGET_PCT,
                          fn: (k, B = bins) => B[k].rev ? B[k].cogs / B[k].rev * 100 : null },
         delivery_fees: { label: 'Delivery %', unit: '%', target: t.delivery && t.delivery.target,
                          fn: (k, B = bins) => B[k].rev ? (B[k].drv + (dfr ? B[k].rev * dfr.pct / 100 : 0)) / B[k].rev * 100 : null },
@@ -2215,8 +2234,13 @@ function switchDay(iso) {
 async function bootstrap() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   STATE.histories = await loadAllHistories(CURRENT_ROLE);
+  // Roster forecast is OPERATIONAL — every role gets the week-ahead view.
+  try {
+    const r = await fetch('data/roster_week.json?t=' + Date.now());
+    if (r.ok) STATE.roster = await r.json();
+  } catch (e) {}
   // Economic feeds are ADMIN-ONLY (Zak, 2026-07-15: only admin sees overheads
-  // and profit) — manager roles never download Xero/roster/fee data at all.
+  // and profit) — manager roles never download Xero/fee data at all.
   if (CURRENT_ROLE === 'admin') {
     try {
       const r = await fetch('data/xero_cogs_weekly.csv?t=' + Date.now());
@@ -2225,10 +2249,6 @@ async function bootstrap() {
     try {
       const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
       if (r.ok) STATE.xeroOH = parseCsv(await r.text());
-    } catch (e) {}
-    try {
-      const r = await fetch('data/roster_week.json?t=' + Date.now());
-      if (r.ok) STATE.roster = await r.json();
     } catch (e) {}
     try {
       const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
