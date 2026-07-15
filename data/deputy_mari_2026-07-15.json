@@ -1,0 +1,41 @@
+[
+  {
+    "timesheet_id": 35319,
+    "employee_id": 142,
+    "employee_name": "Renan Borba Bagesteiro",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784088000,
+    "end_time": 1784116800,
+    "hours": 8.0,
+    "cost": 288.46,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35328,
+    "employee_id": 78,
+    "employee_name": "Sushant Acharya",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784098800,
+    "end_time": 1784116800,
+    "hours": 5.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35329,
+    "employee_id": 123,
+    "employee_name": "Kade Marshall-Witte",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784100600,
+    "end_time": 1784109600,
+    "hours": 2.5,
+    "cost": 84.62,
+    "salaried_synth": false
+  }
+]
