@@ -1,8 +1,9 @@
 name: Roster Pull
 
-# Pulls the next 7 days of rostered shifts from Deputy so the dashboard can
-# show projected wage % (rostered $ vs DOW revenue forecast) BEFORE shifts
-# happen. Runs each morning after the daily pulls, and again early afternoon
+# Pulls two payroll weeks of rostered shifts from Deputy (this week's Monday
+# + 14 days) so the dashboard can show projected wage % (rostered $ vs DOW
+# revenue forecast) BEFORE shifts happen, and total it against a Mon-Sun wage
+# target. Runs each morning after the daily pulls, and again early afternoon
 # to catch same-day roster changes.
 
 concurrency:

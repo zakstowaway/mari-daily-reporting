@@ -1,5 +1,5 @@
 """
-Roster-forward wages — pulls the NEXT 7 days of rostered shifts from Deputy
+Roster-forward wages — pulls TWO PAYROLL WEEKS of rostered shifts from Deputy
 and writes data/roster_week.json for the dashboard's week-ahead view.
 
 Same canon as the timesheet pulls (daily_deputy_pull.py):
@@ -42,9 +42,17 @@ cfg = json.loads(SALARIED_FILE.read_text())
 SAL = {str(k): v["annual"] / cfg.get("_weeks_per_year", 52) / cfg.get("_hours_per_week", 40)
        for k, v in cfg["employees"].items()}
 
-start = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else \
+# Anchor to the PAYROLL WEEK, not "today" (Zak, 2026-07-15). Wages are
+# budgeted and reconciled Mon-Sun, so a rolling next-7-days window straddles
+# two payroll weeks and can't be totalled against a weekly target. We pull from
+# THIS week's Monday and run 14 days, which covers the current payroll week
+# (elapsed days included — the dashboard prefers actuals for those, but having
+# the roster lets it show a cell before the actuals land) plus all of next week
+# as it gets rostered.
+anchor = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else \
     datetime.now(timezone(timedelta(hours=OFFSET_H))).date()
-end = start + timedelta(days=7)
+start = anchor - timedelta(days=anchor.weekday())   # Monday of anchor's week
+end = start + timedelta(days=14)                    # 2 full payroll weeks
 
 
 def api_post(path, body):
