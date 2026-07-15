@@ -1,0 +1,80 @@
+[
+  {
+    "timesheet_id": 35320,
+    "employee_id": 287,
+    "employee_name": "Min",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1784088000,
+    "end_time": 1784093400,
+    "hours": 1.35,
+    "cost": 74.64,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35321,
+    "employee_id": 5,
+    "employee_name": "Nicola Bisato",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1784091600,
+    "end_time": 1784119500,
+    "hours": 6.525,
+    "cost": 219.59,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35323,
+    "employee_id": 292,
+    "employee_name": "Sophie Campbell",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784093400,
+    "end_time": 1784118600,
+    "hours": 6.5,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35324,
+    "employee_id": 287,
+    "employee_name": "Min",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784093400,
+    "end_time": 1784117700,
+    "hours": 6.25,
+    "cost": 345.55,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35322,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1784095200,
+    "end_time": 1784118600,
+    "hours": 5.4,
+    "cost": 189.0,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35327,
+    "employee_id": 298,
+    "employee_name": "Kiana Dettmann",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784098800,
+    "end_time": 1784115000,
+    "hours": 4.5,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]
