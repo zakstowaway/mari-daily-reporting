@@ -1,0 +1,44 @@
+name: Dept Split Backfill
+
+# Fills wages_kitchen/foh/driver_dollars on history rows that have a total but
+# no split (Mari: every row, from the old split_venue gate). Defaults to a DRY
+# RUN that only reports how well Deputy's totals reconcile with the stored ones —
+# tick `write` to actually publish.
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: 'From (YYYY-MM-DD)'
+        required: true
+        default: '2024-10-20'
+      to_date:
+        description: 'To (YYYY-MM-DD)'
+        required: true
+      write:
+        description: 'Actually write (unticked = dry run report only)'
+        type: boolean
+        default: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Dept split backfill
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/backfill_dept_split.py "${{ inputs.from_date }}" "${{ inputs.to_date }}" ${{ inputs.write && '--write' || '' }}
+      - name: Commit
+        if: ${{ inputs.write }}
+        run: |
+          git config user.name "Dept Split Backfill"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Deputy dept split backfill ${{ inputs.from_date }}..${{ inputs.to_date }}"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
