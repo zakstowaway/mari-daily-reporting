@@ -1390,19 +1390,31 @@ const CARD_DEFS = {
   },
   wages_kitchen: (day, cfg) => {
     const has = hasVal(day.wages_kitchen_dollars);
+    // HG canon: dept wages read against TOTAL venue revenue (bev too small
+    // for dept-vs-dept). Stow stays Kitchen-vs-food.
+    const hgMode = STATE.currentVenue === 'hg';
+    const rev = toNum(day.revenue_ex_gst);
+    const pct = hgMode
+      ? (has && rev ? toNum(day.wages_kitchen_dollars) / rev * 100 : null)
+      : (hasVal(day.wages_kitchen_pct) ? toNum(day.wages_kitchen_pct) : null);
     return {
       label: 'Kitchen Wages',
-      value: hasVal(day.wages_kitchen_pct) ? fmtPct(toNum(day.wages_kitchen_pct)) : '—',
-      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_kitchen_dollars)) + ' vs food rev' : 'awaiting split data',
+      value: pct !== null ? fmtPct(pct) : '—',
+      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_kitchen_dollars)) + (hgMode ? ' vs total rev' : ' vs food rev') : 'awaiting split data',
       status: has ? (day.wages_kitchen_alert || 'unknown') : 'unknown',
     };
   },
   wages_foh: (day, cfg) => {
     const has = hasVal(day.wages_foh_dollars);
+    const hgMode = STATE.currentVenue === 'hg';
+    const rev = toNum(day.revenue_ex_gst);
+    const pct = hgMode
+      ? (has && rev ? toNum(day.wages_foh_dollars) / rev * 100 : null)
+      : (hasVal(day.wages_foh_pct) ? toNum(day.wages_foh_pct) : null);
     return {
       label: 'FOH Wages',
-      value: hasVal(day.wages_foh_pct) ? fmtPct(toNum(day.wages_foh_pct)) : '—',
-      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_foh_dollars)) + ' vs bev rev' : 'awaiting split data',
+      value: pct !== null ? fmtPct(pct) : '—',
+      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_foh_dollars)) + (hgMode ? ' vs total rev' : ' vs bev rev') : 'awaiting split data',
       status: has ? (day.wages_foh_alert || 'unknown') : 'unknown',
     };
   },
@@ -1716,14 +1728,22 @@ function renderWeekAhead() {
       const kit = dd.Kitchen || 0;
       const foh = dd.FOH || 0;
       const df2 = dowDeptForecast(v, dow);
-      // Dept-level closed days (Stow kitchen shuts Mondays): typical dept
-      // revenue ~nothing -> label instead of a meaningless %.
-      const kLine = df2.food < 150
-        ? `<b>Kitchen</b> closed${kit > 100 ? ' · but ' + fmtDollars(kit) + ' rostered' : ''}`
-        : `<b>Kitchen</b> ${fmtPct(kit / df2.food * 100)} · ${fmtDollars(kit)} vs food ${fmtDollars(df2.food)}`;
-      const fLine = df2.bev < 150
-        ? `<b>FOH</b> closed${foh > 100 ? ' · but ' + fmtDollars(foh) + ' rostered' : ''}`
-        : `<b>FOH</b> ${fmtPct(foh / df2.bev * 100)} · ${fmtDollars(foh)} vs bev ${fmtDollars(df2.bev)}`;
+      let kLine, fLine;
+      if (v === 'hg') {
+        // HG canon (Zak, 2026-07-15): dept wages read against TOTAL venue
+        // revenue — HG's bev take is too small for dept-vs-dept to mean much.
+        kLine = `<b>Kitchen</b> ${fcst ? fmtPct(kit / fcst * 100) : '—'} of total · ${fmtDollars(kit)}`;
+        fLine = `<b>FOH</b> ${fcst ? fmtPct(foh / fcst * 100) : '—'} of total · ${fmtDollars(foh)}`;
+      } else {
+        // Stow: dept-vs-dept (Kitchen vs food, FOH vs bev), with dept-level
+        // closed days (kitchen shuts Mondays) labelled instead of a fake %.
+        kLine = df2.food < 150
+          ? `<b>Kitchen</b> closed${kit > 100 ? ' · but ' + fmtDollars(kit) + ' rostered' : ''}`
+          : `<b>Kitchen</b> ${fmtPct(kit / df2.food * 100)} · ${fmtDollars(kit)} vs food ${fmtDollars(df2.food)}`;
+        fLine = df2.bev < 150
+          ? `<b>FOH</b> closed${foh > 100 ? ' · but ' + fmtDollars(foh) + ' rostered' : ''}`
+          : `<b>FOH</b> ${fmtPct(foh / df2.bev * 100)} · ${fmtDollars(foh)} vs bev ${fmtDollars(df2.bev)}`;
+      }
       dept = `<p class="wa-dept">${kLine}<br>${fLine}</p>`;
     }
     return `<div class="wa-cell ${cls}">
