@@ -1094,6 +1094,20 @@ function synthesizeGroupHistory(histories) {
       gp_dollars: sum.gp_dollars, gp_pct: rev ? sum.gp_dollars / rev * 100 : 0,
       contributing_venues: venueCount,
       cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
+      ...(splitPresent ? {
+        food_ex_gst: sum.food_ex_gst, bev_ex_gst: sum.bev_ex_gst,
+        food_cogs: sum.food_cogs, bev_cogs: sum.bev_cogs,
+        food_cogs_pct: sum.food_ex_gst ? sum.food_cogs / sum.food_ex_gst * 100 : '',
+        bev_cogs_pct: sum.bev_ex_gst ? sum.bev_cogs / sum.bev_ex_gst * 100 : '',
+        food_gp_pct: sum.food_ex_gst ? (sum.food_ex_gst - sum.food_cogs) / sum.food_ex_gst * 100 : '',
+        bev_gp_pct: sum.bev_ex_gst ? (sum.bev_ex_gst - sum.bev_cogs) / sum.bev_ex_gst * 100 : '',
+      } : {}),
+      ...(kwPresent ? {
+        wages_kitchen_dollars: sum.wages_kitchen_dollars,
+        wages_foh_dollars: sum.wages_foh_dollars,
+        wages_kitchen_pct: rev ? sum.wages_kitchen_dollars / rev * 100 : '',
+        wages_foh_pct: rev ? sum.wages_foh_dollars / rev * 100 : '',
+      } : {}),
     });
   }
   return rows;
