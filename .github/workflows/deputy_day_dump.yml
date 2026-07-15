@@ -1,0 +1,16 @@
+name: Deputy Day Dump
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: 'Day to dump (YYYY-MM-DD)'
+        required: true
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - env: { DEPUTY_TOKEN: "${{ secrets.DEPUTY_TOKEN }}" }
+        run: python scripts/deputy_day_dump.py "${{ inputs.day }}"
