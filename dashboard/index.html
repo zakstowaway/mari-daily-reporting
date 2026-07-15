@@ -1760,7 +1760,7 @@ function renderWeekAhead() {
   const gen = STATE.roster.generated ? new Date(STATE.roster.generated) : null;
   el.innerHTML = '<p class="strip-label">Week ahead — rostered wage % vs typical revenue (change the roster, change the number)</p>'
     + '<div class="wa-row">' + cells + '</div>'
-    + `<p style="font-size:11px;opacity:.55;margin:6px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays${target ? ` · target ${fmtPct(target)}` : ''}${gen ? ` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
+    + `<p style="font-size:11px;opacity:.55;margin:6px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays${target ? ` · target ${fmtPct(target)}, split across depts by trailing wage mix` : ''} · headline includes admin share, dept lines don't${gen ? ` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
 }
 
 // Group view: one table answering "who made the money?" for the selected
