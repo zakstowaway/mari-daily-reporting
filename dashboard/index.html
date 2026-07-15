@@ -226,6 +226,10 @@ body {
 }
 .timeframe-toggle button:hover { color: var(--ink); }
 .timeframe-toggle button.active { background: var(--group); color: var(--paper); }
+.timeframe-toggle select { background: transparent; color: var(--ink-soft); border: 0; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.timeframe-toggle select:hover { color: var(--ink); }
+.timeframe-toggle select.active { background: var(--group); color: var(--paper); }
+.timeframe-toggle select option { color: initial; }
 .range-picker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .range-picker input[type="date"] { background: transparent; color: var(--ink); border: 1px solid rgba(128,128,128,.35); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; color-scheme: light dark; }
 .range-picker .range-sep { opacity: .6; font-size: 13px; }
@@ -277,6 +281,7 @@ body {
 @media (max-width: 500px) { .grid, .grid.six { grid-template-columns: 1fr; } }
 
 .card {
+  position: relative;
   background: var(--paper); border-radius: 12px; padding: 22px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-top: 4px solid var(--grey);
   transition: transform 0.15s, box-shadow 0.15s;
@@ -292,7 +297,10 @@ body {
   margin: 0 0 4px; letter-spacing: -0.03em; line-height: 1; color: var(--ink);
 }
 .grid.six .card .value { font-size: 30px; }
-.card .sub { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.card .sub { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card:hover .sub { -webkit-line-clamp: unset; }
+.spark { position: absolute; top: 18px; right: 18px; pointer-events: none; }
 .card.green   { border-top-color: var(--green);  }
 .card.yellow  { border-top-color: var(--accent); }
 .card.amber   { border-top-color: var(--amber);  }
@@ -384,11 +392,14 @@ tbody tr:hover { background: var(--group-tint); }
         <button data-tf="lastmonth">Last Month</button>
         <button data-tf="quarter">This Quarter</button>
         <button data-tf="lastquarter">Last Quarter</button>
-        <button data-tf="thisfy">This FY</button>
-        <button data-tf="lastfy">Last FY</button>
-        <button data-tf="last12">Last 12 mo</button>
-        <button data-tf="all">All time</button>
-        <button data-tf="range">Custom</button>
+        <select id="tf-more">
+          <option value="">More…</option>
+          <option value="thisfy">This FY</option>
+          <option value="lastfy">Last FY</option>
+          <option value="last12">Last 12 months</option>
+          <option value="all">All time</option>
+          <option value="range">Custom range…</option>
+        </select>
       </div>
       <div class="day-picker" id="day-picker"></div>
       <div class="range-picker" id="range-picker" style="display:none">
@@ -1449,6 +1460,12 @@ function renderTimeframeToggle() {
   document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tf === STATE.currentTimeframe);
   });
+  const more = document.getElementById('tf-more');
+  if (more) {
+    const on = ['thisfy', 'lastfy', 'last12', 'all', 'range'].includes(STATE.currentTimeframe);
+    more.classList.toggle('active', on);
+    more.value = on ? STATE.currentTimeframe : '';
+  }
 }
 function renderRangePicker() {
   const el = document.getElementById('range-picker');
@@ -1549,11 +1566,31 @@ function renderSnapshot() {
   }
   const cardEls = cards.map(key => ({ key, ...CARD_DEFS[key](day, cfg) }));
   const clickable = CURRENT_ROLE === 'admin';
+  // 30-day sparklines for the metrics with honest daily series
+  const spark = {};
+  if (CURRENT_ROLE === 'admin') {
+    const last30 = rows.slice(-30);
+    spark.revenue = last30.map(r => toNum(r.revenue_ex_gst) || null);
+    spark.wages_hero = last30.map(r => hasVal(r.wages_pct) && toNum(r.revenue_ex_gst) ? toNum(r.wages_pct) : null);
+    spark.cogs_merged = last30.map(r => toNum(r.revenue_ex_gst) ? toNum(r.cogs_pct) : null);
+  }
   snapshotEl.innerHTML = cardEls.map(c =>
     `<div class="card ${c.status || 'unknown'}${clickable ? ' clickable' : ''}${STATE.focusMetric === c.key ? ' focused' : ''}"` +
     (clickable ? ` onclick="focusMetric('${c.key}')" title="Click to focus the chart on this metric"` : '') +
-    `><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
+    `>${spark[c.key] ? sparkline(spark[c.key]) : ''}<p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
   renderExtras(day, cfg);
+}
+
+function sparkline(vals) {
+  const v = vals.filter(x => x !== null && isFinite(x));
+  if (v.length < 5) return '';
+  const min = Math.min(...v), max = Math.max(...v);
+  const W = 72, H = 26;
+  const pts = vals.map((x, i) => (x === null || !isFinite(x)) ? null :
+    `${(i / (vals.length - 1) * W).toFixed(1)},${max === min ? H / 2 : (H - 2 - (x - min) / (max - min) * (H - 4)).toFixed(1)}`)
+    .filter(Boolean).join(' ');
+  const col = IS_DARK ? '#8B87D9' : '#7F77DD';
+  return `<svg class="spark" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.5" opacity=".65"/></svg>`;
 }
 
 function renderExtras(day, cfg) {
@@ -1667,9 +1704,9 @@ function renderVenueBreakdown() {
     </tr>`;
   }).join('');
   if (!body) return;
-  el.innerHTML = `<table class="vb-table">
+  el.innerHTML = `<div style="overflow-x:auto;"><table class="vb-table">
     <thead><tr><th>Venue</th><th>Revenue</th><th>vs LY</th><th>Wages</th><th>COGS</th><th>Exp. profit</th><th>Margin</th></tr></thead>
-    <tbody>${body}</tbody></table>`;
+    <tbody>${body}</tbody></table></div>`;
 }
 
 // Pipeline health: is every number on this page trustworthy right now?
@@ -1850,20 +1887,23 @@ function renderChart() {
         return;
       }
     }
-    const mk = (label, color, fn) => ({ type: 'bar', label, stack: 'costs', backgroundColor: color, borderWidth: 0, data: keys.map(fn) });
+    const shc = dowShares(STATE.currentVenue);
+    const cogsArr = keys.map(k => Math.round(bins[k].cogs));
+    const wageArr = keys.map(k => Math.round(bins[k].wages));
+    const delvArr = keys.map(k => Math.round(dfr ? bins[k].rev * dfr.pct / 100 : 0));
+    const cpArr = keys.map(k => Math.round(dailyBins && shc ? cpDaily * 7 * shc[new Date(k).getDay()] : cpDaily * bins[k].days));
+    const ohArr = keys.map(k => Math.round(dailyBins && shc ? ohDaily * 7 * shc[new Date(k).getDay()] : ohDaily * bins[k].days));
+    const revArr = keys.map(k => Math.round(bins[k].rev));
+    const profArr = keys.map((k, i) => bins[k].wageDays ? revArr[i] - cogsArr[i] - wageArr[i] - delvArr[i] - cpArr[i] - ohArr[i] : null);
+    const mk = (label, color, data) => ({ type: 'bar', label, stack: 'costs', backgroundColor: color, borderWidth: 0, data });
     const stackSets = [
-      mk('COGS', '#D85A30', k => Math.round(bins[k].cogs)),
-      mk('Wages', '#7F77DD', k => Math.round(bins[k].wages)),
-      mk('Delivery', '#EF9F27', k => Math.round(dfr ? bins[k].rev * dfr.pct / 100 : 0)),
-      mk('Corp payroll', '#D4537E', k => {
-        const shc = dowShares(STATE.currentVenue);
-        return Math.round(dailyBins && shc ? cpDaily * 7 * shc[new Date(k).getDay()] : cpDaily * bins[k].days);
-      }),
-      mk('Overheads', '#888780', k => {
-        const sh = dowShares(STATE.currentVenue);
-        return Math.round(dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * bins[k].days);
-      }),
-      { type: 'line', label: 'Revenue', data: keys.map(k => Math.round(bins[k].rev)), borderColor: '#378ADD', backgroundColor: '#378ADD20', borderWidth: 2.5, pointRadius: keys.length > 45 ? 0 : 3, pointBackgroundColor: '#378ADD', tension: 0.25 },
+      mk('COGS', '#D85A30', cogsArr),
+      mk('Wages', '#7F77DD', wageArr),
+      mk('Delivery', '#EF9F27', delvArr),
+      mk('Corp payroll', '#D4537E', cpArr),
+      mk('Overheads', '#888780', ohArr),
+      { type: 'line', label: 'Revenue', data: revArr, borderColor: '#378ADD', backgroundColor: '#378ADD20', borderWidth: 2.5, pointRadius: keys.length > 45 ? 0 : 3, pointBackgroundColor: '#378ADD', tension: 0.25 },
+      { type: 'line', label: 'Profit', data: profArr, borderColor: '#1D9E75', borderWidth: 2, borderDash: [5, 4], pointRadius: 0, tension: 0.25, spanGaps: false },
     ];
     if (titleEl) titleEl.textContent = (dailyBins ? 'Daily' : 'Weekly') + ' costs stacked vs revenue \u2014 the gap is profit';
     CHART_INSTANCE = new Chart(ctx, {
@@ -2006,6 +2046,8 @@ async function bootstrap() {
   document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
     btn.onclick = () => switchTimeframe(btn.dataset.tf);
   });
+  const more = document.getElementById('tf-more');
+  if (more) more.onchange = () => { if (more.value) switchTimeframe(more.value); };
   document.getElementById('range-apply').onclick = applyRange;
   render();
 }
