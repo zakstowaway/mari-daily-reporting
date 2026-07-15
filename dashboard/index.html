@@ -213,6 +213,9 @@ body {
 .vb-pos { color: #1D9E75; } .vb-neg { color: #E24B4A; }
 .wa-dept { font-size: 11px; margin: 5px 0 0; line-height: 1.55; border-top: 1px solid var(--line); padding-top: 5px; }
 .wa-dept b { font-weight: 600; }
+.wa-tgt { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; margin: 2px 0 0; opacity: .9; }
+.wa-trim { font-size: 11px; font-weight: 600; margin: 4px 0 0; color: #E24B4A; }
+.wa-room { font-size: 11px; margin: 4px 0 0; color: #1D9E75; opacity: .9; }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -1889,14 +1892,24 @@ function renderWeekAhead() {
       const kClosed = v === 'stow' && df2.food < 150;
       const kLine = kClosed
         ? `<b>Kitchen</b> closed${kit > 100 ? ' · but ' + fmtDollars(kit) + ' rostered' : ''}`
-        : `<b>Kitchen</b> <span${col(kp2, kT)}>${kp2 !== null ? fmtPct(kp2) : '—'}</span> of total · ${fmtDollars(kit)}${kT ? ` · tgt ${fmtPct(kT)}` : ''}`;
-      const fLine = `<b>FOH</b> <span${col(fp2, fT)}>${fp2 !== null ? fmtPct(fp2) : '—'}</span> of total · ${fmtDollars(foh)}${fT ? ` · tgt ${fmtPct(fT)}` : ''}`;
+        : `<b>Kitchen</b> <span${col(kp2, kT)}>${kp2 !== null ? fmtPct(kp2) : '—'}</span> of total · ${fmtDollars(kit)}${kT ? ` · tgt ${fmtPct(kT)}` : ''}${kT && fcst && kit - kT / 100 * fcst > 25 ? ` · <span style="color:#E24B4A;font-weight:600;">cut ${fmtDollars(kit - kT / 100 * fcst)}</span>` : ''}`;
+      const fLine = `<b>FOH</b> <span${col(fp2, fT)}>${fp2 !== null ? fmtPct(fp2) : '—'}</span> of total · ${fmtDollars(foh)}${fT ? ` · tgt ${fmtPct(fT)}` : ''}${fT && fcst && foh - fT / 100 * fcst > 25 ? ` · <span style="color:#E24B4A;font-weight:600;">cut ${fmtDollars(foh - fT / 100 * fcst)}</span>` : ''}`;
       dept = `<p class="wa-dept">${kLine}<br>${fLine}</p>`;
+    }
+    // The actionable line: wage BUDGET for the day (target% x typical rev)
+    // and exactly how many dollars to trim if the roster runs over it.
+    let action = '';
+    if (pct !== null && target !== null && fcst) {
+      const diff = rost - target / 100 * fcst;
+      if (diff > 25) action = `<p class="wa-trim">cut ${fmtDollars(diff)} to hit target</p>`;
+      else if (diff < -100) action = `<p class="wa-room">${fmtDollars(-diff)} under budget</p>`;
     }
     return `<div class="wa-cell ${cls}">
       <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
       <p class="wa-pct">${pct !== null ? fmtPct(pct) : '—'}</p>
-      <p class="wa-sub">roster ${fmtDollars(rost)}<br>typical rev ${fcst ? fmtDollars(fcst) : '—'}${target !== null ? ' · tgt ' + fmtPct(target) : ''}</p>
+      ${target !== null ? `<p class="wa-tgt">target ${fmtPct(target)}${fcst ? ' · budget ' + fmtDollars(target / 100 * fcst) : ''}</p>` : ''}
+      <p class="wa-sub">roster ${fmtDollars(rost)}<br>typical rev ${fcst ? fmtDollars(fcst) : '—'}</p>
+      ${action}
       ${dept}
     </div>`;
   }).join('');
