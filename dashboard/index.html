@@ -2114,27 +2114,31 @@ function switchDay(iso) {
 async function bootstrap() {
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   STATE.histories = await loadAllHistories(CURRENT_ROLE);
-  try {
-    const r = await fetch('data/xero_cogs_weekly.csv?t=' + Date.now());
-    if (r.ok) STATE.xeroCogs = parseCsv(await r.text());
-  } catch (e) {}
-  try {
-    const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
-    if (r.ok) STATE.xeroOH = parseCsv(await r.text());
-  } catch (e) {}
-  try {
-    const r = await fetch('data/roster_week.json?t=' + Date.now());
-    if (r.ok) STATE.roster = await r.json();
-  } catch (e) {}
-  try {
-    const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
-    if (r.ok) STATE.uberFees = parseCsv(await r.text());
-  } catch (e) {}
-  for (const [v, f] of [['mari', 'mari_baseline.json'], ['stow', 'stow_baseline.json'], ['hg', 'hg_baseline.json']]) {
+  // Economic feeds are ADMIN-ONLY (Zak, 2026-07-15: only admin sees overheads
+  // and profit) — manager roles never download Xero/roster/fee data at all.
+  if (CURRENT_ROLE === 'admin') {
     try {
-      const r = await fetch('baselines/' + f + '?t=' + Date.now());
-      if (r.ok) STATE.baselines[v] = (await r.json()).targets_and_alerts || {};
+      const r = await fetch('data/xero_cogs_weekly.csv?t=' + Date.now());
+      if (r.ok) STATE.xeroCogs = parseCsv(await r.text());
     } catch (e) {}
+    try {
+      const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
+      if (r.ok) STATE.xeroOH = parseCsv(await r.text());
+    } catch (e) {}
+    try {
+      const r = await fetch('data/roster_week.json?t=' + Date.now());
+      if (r.ok) STATE.roster = await r.json();
+    } catch (e) {}
+    try {
+      const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
+      if (r.ok) STATE.uberFees = parseCsv(await r.text());
+    } catch (e) {}
+    for (const [v, f] of [['mari', 'mari_baseline.json'], ['stow', 'stow_baseline.json'], ['hg', 'hg_baseline.json']]) {
+      try {
+        const r = await fetch('baselines/' + f + '?t=' + Date.now());
+        if (r.ok) STATE.baselines[v] = (await r.json()).targets_and_alerts || {};
+      } catch (e) {}
+    }
   }
   const defaultVenue = roleCfg.defaultVenue;
   const withData = roleCfg.venues.find(v => (STATE.histories[v] || []).length > 0);
