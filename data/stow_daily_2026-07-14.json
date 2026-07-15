@@ -1,6 +1,6 @@
 {
   "date": "2026-07-14",
-  "generated_at": "2026-07-14T23:15:28.463717Z",
+  "generated_at": "2026-07-15T05:15:44.945104Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -10,19 +10,30 @@
     "gp"
   ],
   "data_status": {
-    "lightspeed": "missing",
+    "lightspeed": "ok",
     "deputy": "ok",
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": null,
-    "revenue_ex_gst": null,
-    "cogs_dollars": null,
-    "cogs_pct": null,
-    "gp_dollars": null,
-    "gp_pct": null,
+    "revenue_inc_gst": 2363.36,
+    "revenue_ex_gst": 2148.58,
+    "cogs_dollars": 456.83,
+    "cogs_pct": 21.3,
+    "gp_dollars": 1691.75,
+    "gp_pct": 78.7,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 448.15,
+    "bev_ex_gst": 1700.35,
+    "food_cogs": 87.06,
+    "bev_cogs": 369.77,
+    "food_cogs_pct": 19.4,
+    "bev_cogs_pct": 21.7,
+    "food_gp_pct": 80.6,
+    "bev_gp_pct": 78.3,
+    "mari_rideon_ex_gst": 1343.05,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 0.0
   },
   "wages": {
     "kitchen_dollars": 0.0,
@@ -30,27 +41,27 @@
     "driver_dollars": 0.0,
     "admin_dollars": 305.84,
     "leave_dollars": 0.0,
-    "total_dollars": null,
-    "wages_pct": null,
+    "total_dollars": 661.14,
+    "wages_pct": 30.8,
     "net_wage_pct": null,
     "kitchen_hours": 4.8,
     "foh_hours": 9.2,
-    "wages_kitchen_pct": null,
-    "wages_foh_pct": null,
+    "wages_kitchen_pct": 0.0,
+    "wages_foh_pct": 20.9,
     "includes_super": true,
     "salaried_synthesized": true
   },
   "delivery": null,
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "unknown",
-    "wages": "unknown",
+    "cogs": "green",
+    "wages": "yellow",
     "delivery": "n/a",
-    "gp": "unknown",
-    "cogs_food": "unknown",
-    "cogs_bev": "unknown",
-    "wages_kitchen": "unknown",
-    "wages_foh": "unknown"
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "green",
+    "wages_kitchen": "green",
+    "wages_foh": "yellow"
   },
   "targets": {
     "cogs": {
@@ -94,5 +105,126 @@
       "target_direction": "high_is_good"
     }
   },
-  "top_products": []
+  "top_products": [
+    {
+      "name": "Version Two Pinot Grigio - Regular",
+      "qty": 13.0,
+      "rev": 110.2,
+      "cost": 22.97
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Regular",
+      "qty": 11.0,
+      "rev": 109.2,
+      "cost": 26.53
+    },
+    {
+      "name": "Espresso Martini",
+      "qty": 5.0,
+      "rev": 96.65,
+      "cost": 16.18
+    },
+    {
+      "name": "Mulled Wine",
+      "qty": 6.0,
+      "rev": 90.98,
+      "cost": 12.42
+    },
+    {
+      "name": "Rosemary Salted Fries",
+      "qty": 6.0,
+      "rev": 79.51,
+      "cost": 11.13
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 7.0,
+      "rev": 77.5,
+      "cost": 17.18
+    },
+    {
+      "name": "Version Two Sparkling - Regular",
+      "qty": 9.0,
+      "rev": 74.02,
+      "cost": 15.9
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 8.0,
+      "rev": 72.51,
+      "cost": 14.64
+    },
+    {
+      "name": "Jalape\u00f1o Marg",
+      "qty": 3.0,
+      "rev": 69.76,
+      "cost": 2.28
+    },
+    {
+      "name": "Kuku Sauvignon Blanc - Regular",
+      "qty": 5.0,
+      "rev": 69.52,
+      "cost": 14.57
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 4.0,
+      "rev": 63.0,
+      "cost": 18.85
+    },
+    {
+      "name": "Philter Red - Pint",
+      "qty": 4.0,
+      "rev": 60.98,
+      "cost": 13.6
+    },
+    {
+      "name": "$60 BANQUET",
+      "qty": 1.0,
+      "rev": 60.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Philter XPA - Pint",
+      "qty": 5.0,
+      "rev": 57.49,
+      "cost": 15.0
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 4.0,
+      "rev": 53.72,
+      "cost": 12.96
+    },
+    {
+      "name": "Bang Bang Cauli",
+      "qty": 3.0,
+      "rev": 52.68,
+      "cost": 8.28
+    },
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 3.0,
+      "rev": 51.56,
+      "cost": 13.03
+    },
+    {
+      "name": "Baked Camembert",
+      "qty": 2.0,
+      "rev": 50.62,
+      "cost": 0.0
+    },
+    {
+      "name": "Geppetto Pinot Noir - Large Glass",
+      "qty": 2.0,
+      "rev": 49.57,
+      "cost": 11.78
+    },
+    {
+      "name": "Version Two Pinot Grigio - Bottle",
+      "qty": 1.0,
+      "rev": 49.0,
+      "cost": 8.83
+    }
+  ]
 }
