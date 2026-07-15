@@ -178,6 +178,20 @@ body {
 #year-toggles .yt-label { font-size: 12px; opacity: .7; margin-right: 2px; }
 #year-toggles .yt-btn { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; padding: 4px 12px; border-radius: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer; }
 #year-toggles .yt-btn.active { background: var(--group); border-color: var(--group); color: var(--paper); }
+.wa-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+@media (max-width: 900px) { .wa-row { grid-template-columns: repeat(4, 1fr); } }
+.wa-cell { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.wa-cell .wa-day { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .65; margin: 0 0 4px; }
+.wa-cell .wa-pct { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 600; margin: 0; }
+.wa-cell .wa-sub { font-size: 11px; opacity: .65; margin: 3px 0 0; line-height: 1.5; }
+.wa-cell.good .wa-pct { color: #1D9E75; }
+.wa-cell.bad .wa-pct { color: #E24B4A; }
+.dh-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.dh-chip { font-size: 12px; padding: 5px 11px; border-radius: 9px; border: 1px solid var(--line); }
+.dh-chip strong { font-weight: 600; }
+.dh-chip.ok { border-color: rgba(29,158,117,.45); }
+.dh-chip.warn { background: rgba(232,168,43,.13); border-color: rgba(232,168,43,.4); }
+.dh-chip.bad { background: rgba(226,75,74,.15); border-color: rgba(226,75,74,.45); }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -383,6 +397,8 @@ tbody tr:hover { background: var(--group-tint); }
 
     <div id="dollar-strip" style="margin-top: 16px;"></div>
     <div class="grid" id="split-snapshot" style="margin-top: 12px;"></div>
+    <div id="week-ahead" style="margin-top: 20px;"></div>
+    <div id="data-health" style="margin-top: 20px;"></div>
 
     <div class="section" id="trend-section">
       <h2 id="trend-title">30-Day Trailing</h2>
@@ -502,7 +518,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [] };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -706,6 +722,149 @@ function actualCogs(venue, endIso, nWeeks = 4) {
   return { pct: purch / rev * 100, purchases: purch, revenue: rev, weeks: weeks.length, from: weeks[0], to: weeks[weeks.length - 1] };
 }
 
+
+// ---- v12 helpers -------------------------------------------------
+// Typical revenue for a day-of-week: median of the last 8 same-DOW trading
+// days. 0 when the venue has never traded that DOW.
+function dowForecast(venue, dow) {
+  STATE._fcst = STATE._fcst || {};
+  if (!STATE._fcst[venue]) {
+    const rows = STATE.histories[venue] || [];
+    const by = [[], [], [], [], [], [], []];
+    for (let i = rows.length - 1; i >= 0; i--) {
+      const rev = toNum(rows[i].revenue_ex_gst);
+      if (rev <= 0) continue;
+      const d = new Date(rows[i].date).getDay();
+      if (by[d].length < 8) by[d].push(rev);
+      if (by.every(a => a.length >= 8)) break;
+    }
+    STATE._fcst[venue] = by.map(a => {
+      if (!a.length) return 0;
+      const s2 = [...a].sort((x, y) => x - y);
+      return s2.length % 2 ? s2[(s2.length - 1) / 2] : (s2[s2.length / 2 - 1] + s2[s2.length / 2]) / 2;
+    });
+  }
+  return STATE._fcst[venue][dow];
+}
+function venueForecast(venue, dow) {
+  return venue === 'group'
+    ? ['stow', 'hg', 'mari'].reduce((t, p) => t + (dowForecast(p, dow) || 0), 0)
+    : (dowForecast(venue, dow) || 0);
+}
+// Breakeven: daily fixed cost / (1 - variable %). Variable = actual COGS %
+// + platform fee % + 12-wk median wage % (wages treated as variable at the
+// margin, matching the BEP workbooks).
+function breakevenParts(venue, endIso) {
+  const ohA = overheadsDailyRate(venue, endIso);
+  const fixedDaily = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) + corpPayrollDaily(venue, endIso);
+  const a = actualCogs(venue, endIso);
+  const dfr = deliveryFeesPct(venue, endIso);
+  const wm = wageMedian12wk(STATE.histories[venue] || []);
+  if (!a && wm === null) return null;
+  const varPct = (a ? a.pct : 0) + (dfr ? dfr.pct : 0) + (wm || 0);
+  if (varPct >= 95) return null;
+  return { fixedDaily, varPct };
+}
+// Actual COGS split: Xero purchase categories over the trailing 4 complete
+// weeks vs dept revenue over the same weeks (Mari is all-food).
+function actualCogsSplit(venue, endIso, nWeeks = 4) {
+  const rowsAll = STATE.xeroCogs;
+  if (!rowsAll.length) return null;
+  const weeks = [...new Set(rowsAll.filter(r => r.week_ending <= endIso).map(r => r.week_ending))].sort().slice(-nWeeks);
+  if (!weeks.length) return null;
+  const vens = venue === 'group' ? REAL_VENUES : [venue];
+  let food = 0, bev = 0;
+  for (const r of rowsAll) if (weeks.includes(r.week_ending) && vens.includes(r.venue)) {
+    food += toNum(r.food_ex_gst); bev += toNum(r.bev_ex_gst);
+  }
+  let fRev = 0, bRev = 0;
+  for (const v of vens) {
+    const hist = STATE.histories[v] || [];
+    for (const we of weeks) {
+      const sIso = isoDate(addDays(new Date(we), -6));
+      for (const r of hist) if (r.date >= sIso && r.date <= we) {
+        if (v === 'mari') fRev += toNum(r.revenue_ex_gst);
+        else { fRev += toNum(r.food_ex_gst); bRev += toNum(r.bev_ex_gst); }
+      }
+    }
+  }
+  if (!fRev && !bRev) return null;
+  return { food: fRev ? food / fRev * 100 : null, bev: bRev ? bev / bRev * 100 : null };
+}
+// Closed months: the Closing Stock Movement journal exists in Xero for that
+// month (board rule, 2026-07-15). A genuinely-$0 journal reads as open —
+// acceptable, it just stays "expected" until a journal posts.
+function closedMonthsSet() {
+  const out = new Set();
+  for (const r of STATE.xeroOH) if (r.month && Math.abs(toNum(r.stock_movement)) > 0.005) out.add(r.month);
+  return out;
+}
+// Actual P&L for whole-month windows where every month is closed:
+//   COS   = group CoS ex-Misc, apportioned by the venue's purchase share
+//   wages = Xero payroll (incl owners/super/ptx/wcomp) x plan wage share
+//   OH    = the venue's ACTUAL overhead months (not the trailing average)
+//   fees  = real platform fees (Uber/DoorDash -> Mari, ME&U -> rev share)
+function actualProfitWindow(day) {
+  const t = String((day && day.date) || '');
+  if (!t.includes(' — ')) return null;
+  const parts = t.split(' — ');
+  const sIso = parts[0], eIso = parts[1];
+  if (sIso.slice(8) !== '01') return null;
+  const eD = new Date(eIso);
+  if (new Date(eD.getFullYear(), eD.getMonth() + 1, 0).getDate() !== eD.getDate()) return null;
+  const months = [];
+  let cur = new Date(sIso);
+  while (isoDate(cur) <= eIso) {
+    months.push(isoDate(cur).slice(0, 7));
+    cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
+  }
+  const closed = closedMonthsSet();
+  const feed = Object.fromEntries(STATE.xeroOH.map(r => [r.month, r]));
+  if (!months.length || !months.every(m => closed.has(m) && feed[m])) return null;
+  const v = STATE.currentVenue;
+  const rev = toNum(day.revenue_ex_gst);
+  if (!rev) return null;
+  const purchV = { stow: 0, hg: 0, mari: 0 };
+  for (const r of STATE.xeroCogs) {
+    if (r.week_ending >= sIso && r.week_ending <= eIso && purchV[r.venue] !== undefined) {
+      purchV[r.venue] += toNum(r.actual_cogs_ex_gst);
+    }
+  }
+  const purchTot = purchV.stow + purchV.hg + purchV.mari;
+  const cosShare = v === 'group' ? 1 : (purchTot ? purchV[v] / purchTot : 0);
+  if (v !== 'group' && !cosShare) return null;
+  const revOf = vv => (STATE.histories[vv] || []).reduce((tt, r) => (r.date >= sIso && r.date <= eIso) ? tt + toNum(r.revenue_ex_gst) : tt, 0);
+  const meuShare = (v === 'stow' || v === 'hg') ? (() => {
+    const rs = revOf('stow'), rh = revOf('hg');
+    return (rs + rh) ? (v === 'stow' ? rs : rh) / (rs + rh) : 0;
+  })() : 1;
+  let cos = 0, wages = 0, oh = 0, df = 0;
+  for (const m of months) {
+    const r = feed[m];
+    cos += toNum(r.group_cos_ex_misc) * cosShare;
+    wages += toNum(r.group_payroll) * (PLAN_WAGE_SHARE[v] || 1);
+    oh += v === 'group'
+      ? toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads)
+      : toNum(r[v + '_overheads']);
+    df += v === 'mari' ? toNum(r.mari_uber_fees)
+        : v === 'group' ? toNum(r.mari_uber_fees) + toNum(r.meu_fees)
+        : toNum(r.meu_fees) * meuShare;
+  }
+  const profit = rev - cos - wages - oh - df;
+  return { profit, cos, wages, oh, df, rev, nMonths: months.length };
+}
+// Period boundaries for pacing (current, incomplete periods only).
+function periodBounds(tf, anchorIso) {
+  if (!anchorIso) return null;
+  const a = new Date(anchorIso);
+  const today = sydneyToday();
+  if (tf === 'week') { const st = weekStart(a); return { s: isoDate(st), e: isoDate(addDays(st, 6)) }; }
+  if (tf === 'month') return { s: isoDate(monthStart(a)), e: isoDate(new Date(a.getFullYear(), a.getMonth() + 1, 0)) };
+  if (tf === 'quarter') { const q = quarterStart(a); return { s: isoDate(q), e: isoDate(new Date(q.getFullYear(), q.getMonth() + 3, 0)) }; }
+  if (tf === 'thisfy') { const fy = today.getMonth() >= 6 ? today.getFullYear() : today.getFullYear() - 1; return { s: isoDate(new Date(fy, 6, 1)), e: isoDate(new Date(fy + 1, 5, 30)) }; }
+  return null;
+}
+// ---- end v12 helpers ----------------------------------------------
 
 function parseCsv(text) {
   const lines = text.trim().split(/\r?\n/);
@@ -911,15 +1070,36 @@ const CARD_DEFS = {
   },
   profit: (day, cfg) => {
     const w = pnlWindow(day);
+    const ap = actualProfitWindow(day);
+    if (ap) {
+      const fmtP = x => (x < 0 ? '\u2212$' : '$') + Math.round(Math.abs(x)).toLocaleString();
+      const dlt = w ? ap.profit - w.profit : null;
+      return {
+        label: 'Actual profit ' + pill('closed \u00b7 Xero', 'green'),
+        value: fmtP(ap.profit),
+        sub: `COS ${fmtPct(ap.cos / ap.rev * 100)} \u00b7 payroll ${fmtPct(ap.wages / ap.rev * 100)} \u00b7 OH ${fmtDollars(ap.oh)}` +
+             (ap.df ? ` \u00b7 platform fees ${fmtDollars(ap.df)}` : '') +
+             ` \u00b7 ${fmtPct(ap.profit / ap.rev * 100)} margin` +
+             (dlt !== null ? ` \u00b7 expected said ${fmtP(w.profit)} (\u0394 ${fmtP(dlt)})` : '') +
+             ` \u00b7 ${ap.nMonths} closed month${ap.nMonths > 1 ? 's' : ''}, stock journals posted`,
+        status: ap.profit >= 0 ? 'green' : 'red',
+      };
+    }
     if (!w) return { label: 'Expected profit', value: '\u2014', sub: 'needs revenue + wages', status: 'unknown' };
+    let sub = `${w.a ? 'actual' : 'est.'} COGS ${fmtPct(w.cogsPct)} \u00b7 OH ${fmtDollars(w.oh)}` +
+           (w.df ? ` \u00b7 delivery ${fmtDollars(w.df)}` : '') +
+           (w.cp ? ` \u00b7 corp payroll ${fmtDollars(w.cp)}` : '') +
+           ` \u00b7 ${fmtPct(w.profit / w.rev * 100)} margin`;
+    const bp = breakevenParts(STATE.currentVenue, winEnd(day));
+    if (bp) {
+      const be = bp.fixedDaily * ohFactor(day, STATE.currentVenue, w.wdays) / (1 - bp.varPct / 100);
+      sub += ` \u00b7 breakeven ${fmtDollars(be)}`;
+    }
+    if (w.partial) sub += ` \u00b7 ${w.wdays} of ${w.daysAll} days costed`;
     return {
       label: 'Expected profit ' + pill('open period', 'warn'),
       value: (w.profit < 0 ? '\u2212$' : '$') + Math.round(Math.abs(w.profit)).toLocaleString(),
-      sub: `${w.a ? 'actual' : 'est.'} COGS ${fmtPct(w.cogsPct)} \u00b7 OH ${fmtDollars(w.oh)}` +
-           (w.df ? ` \u00b7 delivery ${fmtDollars(w.df)}` : '') +
-           (w.cp ? ` \u00b7 corp payroll ${fmtDollars(w.cp)}` : '') +
-           ` \u00b7 ${fmtPct(w.profit / w.rev * 100)} margin` +
-           (w.partial ? ` \u00b7 ${w.wdays} of ${w.daysAll} days costed` : ''),
+      sub,
       status: w.profit >= 0 ? 'green' : 'red',
     };
   },
@@ -931,6 +1111,23 @@ const CARD_DEFS = {
       if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
       const d = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
       if (d !== null) sub += ' \u00b7 ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + '% vs same period last year', d >= 0 ? 'green' : 'red');
+      // Pacing: project the current period to its end via DOW medians.
+      const pb = periodBounds(STATE.currentTimeframe, anchorDay);
+      if (pb) {
+        const cur = rows.filter(r => r.date >= pb.s && r.date <= pb.e);
+        const lastData = cur.length ? cur[cur.length - 1].date : null;
+        if (lastData && lastData < pb.e) {
+          let proj = cur.reduce((t2, r) => t2 + toNum(r.revenue_ex_gst), 0);
+          for (let dd = addDays(new Date(lastData), 1); isoDate(dd) <= pb.e; dd = addDays(dd, 1)) {
+            proj += venueForecast(STATE.currentVenue, dd.getDay());
+          }
+          const lyS = isoDate(addDays(new Date(pb.s), -364)), lyE = isoDate(addDays(new Date(pb.e), -364));
+          const ly = rows.filter(r => r.date >= lyS && r.date <= lyE).reduce((t2, r) => t2 + toNum(r.revenue_ex_gst), 0);
+          let txt = 'on pace for ' + fmtDollars(proj);
+          if (ly) { const dp = (proj - ly) / ly * 100; txt += ` (${dp >= 0 ? '+' : '\u2212'}${Math.abs(dp).toFixed(1)}% vs LY)`; }
+          sub += ' \u00b7 ' + pill(txt, ly ? (proj >= ly ? 'green' : 'warn') : 'warn');
+        }
+      }
     }
     return { label: 'Revenue (ex-GST)', value: fmtDollars(toNum(day.revenue_ex_gst)), sub, status: 'unknown' };
   },
@@ -953,8 +1150,15 @@ const CARD_DEFS = {
       const d = a.pct - est;
       chip = ' ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + 'pp vs expected', d > 1.5 ? 'red' : 'green');
     }
-    return { label: 'COGS', value: fmtPct(a.pct) + chip,
-      sub: `actual, Xero 4-wk purchases \u00b7 expected ${est !== null ? fmtPct(est) : '\u2014'} (Lightspeed)`, status: 'unknown' };
+    let sub2 = `actual, Xero 4-wk purchases \u00b7 expected ${est !== null ? fmtPct(est) : '\u2014'} (Lightspeed)`;
+    const sp = actualCogsSplit(STATE.currentVenue, winEnd(day));
+    if (sp && (sp.food !== null || sp.bev !== null)) {
+      const bits = [];
+      if (sp.food !== null) bits.push('food ' + fmtPct(sp.food));
+      if (sp.bev !== null) bits.push('bev ' + fmtPct(sp.bev));
+      sub2 += ' \u00b7 ' + bits.join(' / ') + ' actual';
+    }
+    return { label: 'COGS', value: fmtPct(a.pct) + chip, sub: sub2, status: 'unknown' };
   },
   delivery_fees: (day, cfg) => {
     const rev = toNum(day.revenue_ex_gst);
@@ -1211,6 +1415,8 @@ function renderSnapshot() {
     snapshotEl.innerHTML = ghostCards;
     document.getElementById('dollar-strip').innerHTML = '';
     document.getElementById('split-snapshot').innerHTML = '';
+    const waEl0 = document.getElementById('week-ahead'); if (waEl0) waEl0.innerHTML = '';
+    const dhEl0 = document.getElementById('data-health'); if (dhEl0) dhEl0.innerHTML = '';
     document.getElementById('trend-section').classList.add('hidden');
     return;
   }
@@ -1239,8 +1445,12 @@ function renderSnapshot() {
 function renderExtras(day, cfg) {
   const strip = document.getElementById('dollar-strip');
   const splitEl = document.getElementById('split-snapshot');
+  const waEl = document.getElementById('week-ahead');
+  const dhEl = document.getElementById('data-health');
   strip.innerHTML = ''; splitEl.innerHTML = '';
+  if (waEl) waEl.innerHTML = ''; if (dhEl) dhEl.innerHTML = '';
   if (CURRENT_ROLE !== 'admin' || !day) return;
+  renderWeekAhead(); renderDataHealth();
   const w = pnlWindow(day);
   if (w) {
     const rev = w.rev;
@@ -1263,6 +1473,73 @@ function renderExtras(day, cfg) {
       return `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`;
     }).join('');
   }
+}
+
+// Week ahead: Deputy rostered $ (inc super, salaried synthesized) vs the
+// typical revenue for that weekday = projected wage % you can still change.
+function renderWeekAhead() {
+  const el = document.getElementById('week-ahead');
+  if (!el || !STATE.roster || !STATE.roster.days) return;
+  const v = STATE.currentVenue;
+  const todayIso = isoDate(sydneyToday());
+  const days = Object.keys(STATE.roster.days).filter(d => d >= todayIso).sort().slice(0, 7);
+  if (!days.length) return;
+  const t = STATE.baselines[v] || {};
+  const target = t.wages && t.wages.target;
+  const cells = days.map(dIso => {
+    const vens = STATE.roster.days[dIso] || {};
+    let rost = 0;
+    if (v === 'group') { for (const pk of ['stow', 'hg', 'mari']) rost += (vens[pk] || {}).total || 0; }
+    else rost = (vens[v] || {}).total || 0;
+    const dow = new Date(dIso).getDay();
+    const fcst = venueForecast(v, dow);
+    const pct = fcst ? rost / fcst * 100 : null;
+    let cls = '';
+    if (pct !== null && target) cls = pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '';
+    const wd = new Date(dIso).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+    return `<div class="wa-cell ${cls}">
+      <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
+      <p class="wa-pct">${pct !== null ? fmtPct(pct) : '—'}</p>
+      <p class="wa-sub">roster ${fmtDollars(rost)}<br>typical rev ${fcst ? fmtDollars(fcst) : '—'}</p>
+    </div>`;
+  }).join('');
+  const gen = STATE.roster.generated ? new Date(STATE.roster.generated) : null;
+  el.innerHTML = '<p class="strip-label">Week ahead — rostered wage % vs typical revenue (change the roster, change the number)</p>'
+    + '<div class="wa-row">' + cells + '</div>'
+    + `<p style="font-size:11px;opacity:.55;margin:6px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays${target ? ` · target ${fmtPct(target)}` : ''}${gen ? ` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
+}
+
+// Pipeline health: is every number on this page trustworthy right now?
+function dhChip(lbl, cls, detail) {
+  return `<span class="dh-chip ${cls}"><strong>${lbl}</strong> · ${detail}</span>`;
+}
+function renderDataHealth() {
+  const el = document.getElementById('data-health');
+  if (!el) return;
+  const chips = [];
+  const y = isoDate(addDays(sydneyToday(), -1));
+  for (const [pk, lbl] of [['stow', 'Stow'], ['hg', 'HG'], ['mari', 'Mari']]) {
+    const r = (STATE.histories[pk] || []).find(x => x.date === y);
+    if (!r || !toNum(r.revenue_ex_gst)) chips.push(dhChip(lbl, 'bad', 'no sales for yesterday yet'));
+    else if (!hasVal(r.wages_dollars)) chips.push(dhChip(lbl, 'warn', 'sales in · wages pending approval (12:10pm re-pull)'));
+    else chips.push(dhChip(lbl, 'ok', 'yesterday complete'));
+  }
+  const wks = [...new Set(STATE.xeroCogs.map(r => r.week_ending))].sort();
+  if (wks.length) {
+    const age = Math.floor((sydneyToday() - new Date(wks[wks.length - 1])) / 86400000);
+    chips.push(dhChip('Xero purchases', age <= 13 ? 'ok' : 'warn', `to w/e ${wks[wks.length - 1]}` + (age > 13 ? ' — stale, check the Monday pull' : '')));
+  } else chips.push(dhChip('Xero purchases', 'bad', 'feed missing'));
+  const closed = closedMonthsSet();
+  const curMonth = isoDate(sydneyToday()).slice(0, 7);
+  const mos = STATE.xeroOH.map(r => r.month).filter(m => m && m < curMonth).sort();
+  const missing = mos.filter(m => !closed.has(m));
+  if (missing.length) chips.push(dhChip('Stock journals', 'warn', 'missing ' + missing.map(m => new Date(m + '-01').toLocaleDateString('en-AU', { month: 'short' })).join(', ') + ' — chase accounts; Actual Profit unlocks when posted'));
+  else if (mos.length) chips.push(dhChip('Stock journals', 'ok', 'posted through ' + new Date(mos[mos.length - 1] + '-01').toLocaleDateString('en-AU', { month: 'short' })));
+  if (STATE.roster && STATE.roster.generated) {
+    const ageH = (Date.now() - new Date(STATE.roster.generated).getTime()) / 3600000;
+    chips.push(dhChip('Roster feed', ageH < 26 ? 'ok' : 'warn', ageH < 26 ? 'fresh' : Math.round(ageH) + 'h old'));
+  } else chips.push(dhChip('Roster feed', 'warn', 'not pulled yet — first run 6:45am'));
+  el.innerHTML = '<p class="strip-label">Pipeline health</p><div class="dh-row">' + chips.join('') + '</div>';
 }
 
 let CHART_INSTANCE = null;
@@ -1343,6 +1620,13 @@ function renderChart() {
         ];
         if (avg !== null) sets.push({ label: 'Period average', data: keys.map(() => Math.round(avg * 10) / 10), borderColor: tickColor, borderDash: [6, 5], borderWidth: 1.5, pointRadius: 0 });
         if (def.target != null) sets.push({ label: 'Target', data: keys.map(() => def.target), borderColor: '#1D9E75', borderDash: [2, 4], borderWidth: 2, pointRadius: 0 });
+        if (STATE.focusMetric === 'revenue') {
+          const bp = breakevenParts(STATE.currentVenue, endIso);
+          if (bp) {
+            const beOf = k => (dailyBins && sh ? bp.fixedDaily * 7 * sh[new Date(k).getDay()] : bp.fixedDaily * bins[k].days) / (1 - bp.varPct / 100);
+            sets.push({ label: 'Breakeven', data: keys.map(k => Math.round(beOf(k))), borderColor: '#E24B4A', borderDash: [3, 4], borderWidth: 1.8, pointRadius: 0 });
+          }
+        }
         // ---- prior-year overlays: same window shifted -364n days (weekday-
         // aligned), binned onto the SAME axis keys. Rate inputs (Xero fees,
         // OH, corp payroll) stay at today's rates — like-for-like at the
@@ -1526,6 +1810,10 @@ async function bootstrap() {
   try {
     const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
     if (r.ok) STATE.xeroOH = parseCsv(await r.text());
+  } catch (e) {}
+  try {
+    const r = await fetch('data/roster_week.json?t=' + Date.now());
+    if (r.ok) STATE.roster = await r.json();
   } catch (e) {}
   for (const [v, f] of [['mari', 'mari_baseline.json'], ['stow', 'stow_baseline.json'], ['hg', 'hg_baseline.json']]) {
     try {
