@@ -14,6 +14,10 @@ on:
   schedule:
     - cron: '0 20 * * *'   # 6am AEST (winter)
     - cron: '0 19 * * *'   # 6am AEDT (summer)
+    # Midday re-aggregation: the 6am pull races Deputy timesheet approval,
+    # so hourly wages are understated first thing. This re-pulls yesterday
+    # for all venues once approvals are in.
+    - cron: '10 2 * * *'   # 12:10pm AEST / 1:10pm AEDT
 
   # Fired by Pipedream when a venue's Insights email arrives
   repository_dispatch:
