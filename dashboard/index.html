@@ -175,6 +175,9 @@ body {
 .card.clickable { cursor: pointer; }
 .card.clickable:hover { border-color: var(--ink-soft); }
 .card.focused { outline: 2px solid var(--group); outline-offset: -1px; }
+#year-toggles .yt-label { font-size: 12px; opacity: .7; margin-right: 2px; }
+#year-toggles .yt-btn { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .06em; padding: 4px 12px; border-radius: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer; }
+#year-toggles .yt-btn.active { background: var(--group); border-color: var(--group); color: var(--paper); }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -383,6 +386,7 @@ tbody tr:hover { background: var(--group-tint); }
 
     <div class="section" id="trend-section">
       <h2 id="trend-title">30-Day Trailing</h2>
+      <div id="year-toggles" style="display:none; align-items:center; gap:6px; margin: 4px 0 10px; flex-wrap: wrap;"></div>
       <div class="chart-wrap"><canvas id="trend-chart"></canvas></div>
     </div>
 
@@ -498,7 +502,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -1280,6 +1284,8 @@ function renderChart() {
   }
   const titleEl = document.getElementById('trend-title');
   if (titleEl) titleEl.textContent = chartTitle;
+  const ytEl = document.getElementById('year-toggles');
+  if (ytEl && !(CURRENT_ROLE === 'admin' && STATE.focusMetric)) ytEl.style.display = 'none';
   const tickColor = IS_DARK ? '#B7B1A4' : '#5A544C';
   const gridColor = IS_DARK ? 'rgba(120,110,90,0.2)' : 'rgba(232,223,207,0.4)';
   const ctx = document.getElementById('trend-chart').getContext('2d');
@@ -1304,26 +1310,26 @@ function renderChart() {
 
     if (STATE.focusMetric) {
       const sh = dowShares(STATE.currentVenue);
-      const ohOf = k => dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * bins[k].days;
+      const ohOf = (k, B = bins) => dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * B[k].days;
       const t = STATE.baselines[STATE.currentVenue] || {};
       const a = actualCogs(STATE.currentVenue, endIso);
       const FOCUS = {
         revenue:       { label: 'Revenue $', unit: '$', target: null,
-                         fn: k => bins[k].rev },
+                         fn: (k, B = bins) => B[k].rev },
         wages_hero:    { label: 'Wages %', unit: '%', target: t.wages && t.wages.target,
-                         fn: k => bins[k].wageDays && bins[k].rev ? bins[k].wages / bins[k].rev * 100 : null },
+                         fn: (k, B = bins) => B[k].wageDays && B[k].rev ? B[k].wages / B[k].rev * 100 : null },
         cogs_merged:   { label: 'Expected COGS % (Lightspeed)', unit: '%', target: t.cogs && t.cogs.target,
-                         fn: k => bins[k].rev ? bins[k].cogs / bins[k].rev * 100 : null },
+                         fn: (k, B = bins) => B[k].rev ? B[k].cogs / B[k].rev * 100 : null },
         delivery_fees: { label: 'Delivery %', unit: '%', target: t.delivery && t.delivery.target,
-                         fn: k => bins[k].rev ? (bins[k].drv + (dfr ? bins[k].rev * dfr.pct / 100 : 0)) / bins[k].rev * 100 : null },
+                         fn: (k, B = bins) => B[k].rev ? (B[k].drv + (dfr ? B[k].rev * dfr.pct / 100 : 0)) / B[k].rev * 100 : null },
         overheads:     { label: 'Overheads %', unit: '%', target: null,
-                         fn: k => bins[k].rev ? ohOf(k) / bins[k].rev * 100 : null },
+                         fn: (k, B = bins) => B[k].rev ? ohOf(k, B) / B[k].rev * 100 : null },
         profit:        { label: 'Expected profit $', unit: '$', target: null,
-                         fn: k => {
-                           if (!bins[k].wageDays) return null;
-                           const cogsPct = a ? a.pct : (bins[k].rev ? bins[k].cogs / bins[k].rev * 100 : 0);
-                           return bins[k].rev - bins[k].rev * cogsPct / 100 - bins[k].wages - ohOf(k)
-                                  - (dfr ? bins[k].rev * dfr.pct / 100 : 0) - (dailyBins && sh ? cpDaily * 7 * sh[new Date(k).getDay()] : cpDaily * bins[k].days);
+                         fn: (k, B = bins) => {
+                           if (!B[k].wageDays) return null;
+                           const cogsPct = a ? a.pct : (B[k].rev ? B[k].cogs / B[k].rev * 100 : 0);
+                           return B[k].rev - B[k].rev * cogsPct / 100 - B[k].wages - ohOf(k, B)
+                                  - (dfr ? B[k].rev * dfr.pct / 100 : 0) - (dailyBins && sh ? cpDaily * 7 * sh[new Date(k).getDay()] : cpDaily * B[k].days);
                          } },
       };
       const def = FOCUS[STATE.focusMetric];
@@ -1337,6 +1343,40 @@ function renderChart() {
         ];
         if (avg !== null) sets.push({ label: 'Period average', data: keys.map(() => Math.round(avg * 10) / 10), borderColor: tickColor, borderDash: [6, 5], borderWidth: 1.5, pointRadius: 0 });
         if (def.target != null) sets.push({ label: 'Target', data: keys.map(() => def.target), borderColor: '#1D9E75', borderDash: [2, 4], borderWidth: 2, pointRadius: 0 });
+        // ---- prior-year overlays: same window shifted -364n days (weekday-
+        // aligned), binned onto the SAME axis keys. Rate inputs (Xero fees,
+        // OH, corp payroll) stay at today's rates — like-for-like at the
+        // current cost structure.
+        const ytEl2 = document.getElementById('year-toggles');
+        const histMin = rows.length ? rows[0].date : '9999-12-31';
+        const endYear = new Date(endIso).getFullYear();
+        const avail = [];
+        for (let n = 1; n <= 4; n++) {
+          if (isoDate(addDays(new Date(endIso), -364 * n)) >= histMin) avail.push(n);
+        }
+        STATE.focusYears = STATE.focusYears.filter(n => avail.includes(n));
+        if (ytEl2) {
+          ytEl2.style.display = avail.length ? 'flex' : 'none';
+          ytEl2.innerHTML = '<span class="yt-label">Compare:</span>' + avail.map(n =>
+            `<button class="yt-btn${STATE.focusYears.includes(n) ? ' active' : ''}" onclick="toggleYear(${n})">${endYear - n}</button>`).join('');
+        }
+        const YCOLORS = { 1: '#E8A82B', 2: '#D4537E', 3: '#5DCAA5', 4: '#B4B2A9' };
+        for (const n of STATE.focusYears) {
+          const s2 = isoDate(addDays(new Date(keys[0]), -364 * n));
+          const e2 = isoDate(addDays(new Date(endIso), -364 * n));
+          const B2 = {};
+          for (const r of rows) {
+            if (r.date < s2 || r.date > e2) continue;
+            const mapped = dailyBins ? isoDate(addDays(new Date(r.date), 364 * n)) : isoDate(addDays(weekStart(new Date(r.date)), 364 * n));
+            const b = B2[mapped] = B2[mapped] || { rev: 0, cogs: 0, wages: 0, days: 0, wageDays: 0, drv: 0 };
+            b.rev += toNum(r.revenue_ex_gst); b.cogs += toNum(r.cogs_dollars);
+            if (hasVal(r.wages_dollars)) { b.wages += toNum(r.wages_dollars); b.wageDays += 1; }
+            b.drv += toNum(r.delivery_dollars); b.days += 1;
+          }
+          const data2 = keys.map(k => B2[k] ? def.fn(k, B2) : null);
+          sets.push({ label: String(endYear - n), data: data2.map(x => x === null ? null : Math.round(x * 10) / 10),
+            borderColor: YCOLORS[n], backgroundColor: YCOLORS[n] + '20', borderWidth: 1.8, pointRadius: 0, tension: 0.25, spanGaps: true });
+        }
         if (titleEl) titleEl.textContent = def.label + ' \u2014 ' + (dailyBins ? 'daily' : 'weekly') + ' \u00b7 click the card again to return';
         CHART_INSTANCE = new Chart(ctx, {
           type: 'line',
@@ -1442,6 +1482,12 @@ function render() {
 
 function focusMetric(key) {
   STATE.focusMetric = STATE.focusMetric === key ? null : key;
+  STATE.focusYears = [];
+  render();
+}
+function toggleYear(n) {
+  const i = STATE.focusYears.indexOf(n);
+  if (i >= 0) STATE.focusYears.splice(i, 1); else STATE.focusYears.push(n);
   render();
 }
 function switchVenue(venue) {
