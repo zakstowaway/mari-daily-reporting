@@ -1903,7 +1903,6 @@ function renderChart() {
       mk('Corp payroll', '#D4537E', cpArr),
       mk('Overheads', '#888780', ohArr),
       { type: 'line', label: 'Revenue', data: revArr, borderColor: '#378ADD', backgroundColor: '#378ADD20', borderWidth: 2.5, pointRadius: keys.length > 45 ? 0 : 3, pointBackgroundColor: '#378ADD', tension: 0.25 },
-      { type: 'line', label: 'Profit', stack: 'net', data: profArr, borderColor: '#1D9E75', borderWidth: 2, borderDash: [5, 4], pointRadius: 0, tension: 0.25, spanGaps: false },
     ];
     if (titleEl) titleEl.textContent = (dailyBins ? 'Daily' : 'Weekly') + ' costs stacked vs revenue \u2014 the gap is profit';
     CHART_INSTANCE = new Chart(ctx, {
