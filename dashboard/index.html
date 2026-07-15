@@ -1334,7 +1334,7 @@ function renderChart() {
       };
       const def = FOCUS[STATE.focusMetric];
       if (def) {
-        const series = keys.map(def.fn);
+        const series = keys.map(k => def.fn(k));
         const vals = series.filter(x => x !== null && isFinite(x));
         const avg = vals.length ? vals.reduce((x, y) => x + y, 0) / vals.length : null;
         const fmtTick = def.unit === '$' ? (v => '$' + (Math.abs(v) >= 1000 ? (v / 1000).toFixed(0) + 'k' : v)) : (v => v + '%');
