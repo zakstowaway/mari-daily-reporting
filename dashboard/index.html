@@ -192,6 +192,15 @@ body {
 .dh-chip.ok { border-color: rgba(29,158,117,.45); }
 .dh-chip.warn { background: rgba(232,168,43,.13); border-color: rgba(232,168,43,.4); }
 .dh-chip.bad { background: rgba(226,75,74,.15); border-color: rgba(226,75,74,.45); }
+.vb-table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+.vb-table th { font-family: 'Space Grotesk', sans-serif; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; opacity: .6; text-align: right; padding: 6px 10px; font-weight: 600; }
+.vb-table th:first-child, .vb-table td:first-child { text-align: left; }
+.vb-table td { padding: 9px 10px; text-align: right; border-top: 1px solid var(--line); font-size: 14px; }
+.vb-table tbody tr { cursor: pointer; }
+.vb-table tbody tr:hover td { background: rgba(127,119,221,.07); }
+.vb-pos { color: #1D9E75; } .vb-neg { color: #E24B4A; }
+.wa-dept { font-size: 11px; margin: 5px 0 0; line-height: 1.55; border-top: 1px solid var(--line); padding-top: 5px; }
+.wa-dept b { font-weight: 600; }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -396,6 +405,7 @@ tbody tr:hover { background: var(--group-tint); }
     <div class="grid" id="snapshot"></div>
 
     <div id="dollar-strip" style="margin-top: 16px;"></div>
+    <div id="venue-breakdown"></div>
     <div class="grid" id="split-snapshot" style="margin-top: 12px;"></div>
     <div id="week-ahead" style="margin-top: 20px;"></div>
     <div id="data-health" style="margin-top: 20px;"></div>
@@ -628,23 +638,23 @@ function ohFactor(day, venue, wdays) {
 // P&L over the wage-covered slice of the selected window. Long windows can
 // include days before wage data exists (late Nov 2025) — costs and profit
 // are computed only over days with full cost data, and labelled as such.
-function pnlWindow(day) {
+function pnlWindow(day, venue = STATE.currentVenue) {
   const revAll = toNum(day.revenue_ex_gst);
   if (!revAll || !hasVal(day.wages_dollars)) return null;
   const daysAll = day.days_included || 1;
   const wdays = day.wage_days || daysAll;
   const rev = day.rev_wage_days ? toNum(day.rev_wage_days) : revAll;
   const endIso = winEnd(day);
-  const a = actualCogs(STATE.currentVenue, endIso);
+  const a = actualCogs(venue, endIso);
   const estBase = day.cogs_wage_days && rev ? toNum(day.cogs_wage_days) / rev * 100 : toNum(day.cogs_pct);
   const cogsPct = a ? a.pct : estBase;
-  const ohA = overheadsDailyRate(STATE.currentVenue, endIso);
-  const ohf = ohFactor(day, STATE.currentVenue, wdays);
-  const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7) * ohf;
-  const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
-  const fa = feesActualWindow(day);
+  const ohA = overheadsDailyRate(venue, endIso);
+  const ohf = ohFactor(day, venue, wdays);
+  const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) * ohf;
+  const dfr = deliveryFeesPct(venue, endIso);
+  const fa = feesActualWindow(day, venue);
   const df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
-  const cp = corpPayrollDaily(STATE.currentVenue, endIso) * ohf;   // DOW-weighted, same as overheads
+  const cp = corpPayrollDaily(venue, endIso) * ohf;   // DOW-weighted, same as overheads
   const wages = toNum(day.wages_dollars);
   const profit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
   return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, wages, profit, partial: wdays < daysAll };
@@ -747,6 +757,29 @@ function dowForecast(venue, dow) {
   }
   return STATE._fcst[venue][dow];
 }
+// Typical FOOD / BEV revenue by weekday (median of last 8 same-DOW days
+// carrying the dept split) — denominators for Kitchen / FOH wage %.
+function dowDeptForecast(venue, dow) {
+  STATE._dfcst = STATE._dfcst || {};
+  if (!STATE._dfcst[venue]) {
+    const rows = STATE.histories[venue] || [];
+    const f = [[], [], [], [], [], [], []], b = [[], [], [], [], [], [], []];
+    for (let i = rows.length - 1; i >= 0; i--) {
+      const r = rows[i];
+      if (!hasVal(r.food_ex_gst)) continue;
+      const d = new Date(r.date).getDay();
+      if (f[d].length < 8) { f[d].push(toNum(r.food_ex_gst)); b[d].push(toNum(r.bev_ex_gst)); }
+      if (f.every(a2 => a2.length >= 8)) break;
+    }
+    const med = a2 => {
+      if (!a2.length) return 0;
+      const s2 = [...a2].sort((x, y) => x - y);
+      return s2.length % 2 ? s2[(s2.length - 1) / 2] : (s2[s2.length / 2 - 1] + s2[s2.length / 2]) / 2;
+    };
+    STATE._dfcst[venue] = { food: f.map(med), bev: b.map(med) };
+  }
+  return { food: STATE._dfcst[venue].food[dow], bev: STATE._dfcst[venue].bev[dow] };
+}
 function venueForecast(venue, dow) {
   return venue === 'group'
     ? ['stow', 'hg', 'mari'].reduce((t, p) => t + (dowForecast(p, dow) || 0), 0)
@@ -823,7 +856,7 @@ function wholeMonthEdges(sIso, eIso) {
 // Actual booked platform fees for windows made of whole COMPLETED months
 // present in the Xero feed. No stock-journal requirement — fee accounts are
 // reconciled continuously, so a finished month's booking is real.
-function feesActualWindow(day) {
+function feesActualWindow(day, venue = STATE.currentVenue) {
   const t = String((day && day.date) || '');
   if (!t.includes(' — ')) return null;
   const parts = t.split(' — ');
@@ -850,7 +883,7 @@ function feesActualWindow(day) {
   const u = uberSvcWindow(sIso, eIso);
   let portal = false;
   if (u && uberOnly) { mari = u.svc + (mari - uberOnly); portal = true; }
-  const v = STATE.currentVenue;
+  const v = venue;
   let fees;
   if (v === 'mari') fees = mari;
   else if (v === 'group') fees = mari + meu;
@@ -1497,6 +1530,7 @@ function renderSnapshot() {
     document.getElementById('split-snapshot').innerHTML = '';
     const waEl0 = document.getElementById('week-ahead'); if (waEl0) waEl0.innerHTML = '';
     const dhEl0 = document.getElementById('data-health'); if (dhEl0) dhEl0.innerHTML = '';
+    const vbEl0 = document.getElementById('venue-breakdown'); if (vbEl0) vbEl0.innerHTML = '';
     document.getElementById('trend-section').classList.add('hidden');
     return;
   }
@@ -1527,10 +1561,11 @@ function renderExtras(day, cfg) {
   const splitEl = document.getElementById('split-snapshot');
   const waEl = document.getElementById('week-ahead');
   const dhEl = document.getElementById('data-health');
+  const vbEl = document.getElementById('venue-breakdown');
   strip.innerHTML = ''; splitEl.innerHTML = '';
-  if (waEl) waEl.innerHTML = ''; if (dhEl) dhEl.innerHTML = '';
+  if (waEl) waEl.innerHTML = ''; if (dhEl) dhEl.innerHTML = ''; if (vbEl) vbEl.innerHTML = '';
   if (CURRENT_ROLE !== 'admin' || !day) return;
-  renderWeekAhead(); renderDataHealth();
+  renderVenueBreakdown(); renderWeekAhead(); renderDataHealth();
   const w = pnlWindow(day);
   if (w) {
     const rev = w.rev;
@@ -1577,10 +1612,21 @@ function renderWeekAhead() {
     let cls = '';
     if (pct !== null && target) cls = pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '';
     const wd = new Date(dIso).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+    let dept = '';
+    if (v === 'stow' || v === 'hg') {
+      const dd = vens[v] || {};
+      const kit = dd.Kitchen || 0;
+      const foh = dd.FOH || 0;
+      const df2 = dowDeptForecast(v, dow);
+      const kp = df2.food ? kit / df2.food * 100 : null;
+      const fp = df2.bev ? foh / df2.bev * 100 : null;
+      dept = `<p class="wa-dept"><b>Kitchen</b> ${kp !== null ? fmtPct(kp) : '—'} · ${fmtDollars(kit)} vs food ${df2.food ? fmtDollars(df2.food) : '—'}<br><b>FOH</b> ${fp !== null ? fmtPct(fp) : '—'} · ${fmtDollars(foh)} vs bev ${df2.bev ? fmtDollars(df2.bev) : '—'}</p>`;
+    }
     return `<div class="wa-cell ${cls}">
       <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
       <p class="wa-pct">${pct !== null ? fmtPct(pct) : '—'}</p>
       <p class="wa-sub">roster ${fmtDollars(rost)}<br>typical rev ${fcst ? fmtDollars(fcst) : '—'}</p>
+      ${dept}
     </div>`;
   }).join('');
   const gen = STATE.roster.generated ? new Date(STATE.roster.generated) : null;
@@ -1589,13 +1635,52 @@ function renderWeekAhead() {
     + `<p style="font-size:11px;opacity:.55;margin:6px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays${target ? ` · target ${fmtPct(target)}` : ''}${gen ? ` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
 }
 
+// Group view: one table answering "who made the money?" for the selected
+// window. Rows link through to the venue tabs.
+function renderVenueBreakdown() {
+  const el = document.getElementById('venue-breakdown');
+  if (!el) return;
+  el.innerHTML = '';
+  if (STATE.currentVenue !== 'group') return;
+  const body = [['stow', 'Stowaway'], ['hg', 'Harry Gatos'], ['mari', "Marilyna's"]].map(([vk, lbl]) => {
+    const rows = STATE.histories[vk] || [];
+    let anchorDay = STATE.currentDay;
+    if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+    const day = rollup(rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay));
+    if (!day) return '';
+    const rev = toNum(day.revenue_ex_gst);
+    const yoy = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
+    const w = pnlWindow(day, vk);
+    const a = actualCogs(vk, winEnd(day));
+    const yoyCell = yoy !== null
+      ? `<span class="${yoy >= 0 ? 'vb-pos' : 'vb-neg'}">${(yoy >= 0 ? '+' : '−') + Math.abs(yoy).toFixed(1)}%</span>` : '—';
+    const profitCell = w
+      ? `<span class="${w.profit >= 0 ? 'vb-pos' : 'vb-neg'}">${(w.profit < 0 ? '−$' : '$') + Math.round(Math.abs(w.profit)).toLocaleString()}</span>` : '—';
+    return `<tr onclick="switchVenue('${vk}')">
+      <td>${lbl}</td>
+      <td>${fmtDollars(rev)}</td>
+      <td>${yoyCell}</td>
+      <td>${hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—'}</td>
+      <td>${a ? fmtPct(a.pct) : hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—'}</td>
+      <td>${profitCell}</td>
+      <td>${w && w.rev ? fmtPct(w.profit / w.rev * 100) : '—'}</td>
+    </tr>`;
+  }).join('');
+  if (!body) return;
+  el.innerHTML = `<table class="vb-table">
+    <thead><tr><th>Venue</th><th>Revenue</th><th>vs LY</th><th>Wages</th><th>COGS</th><th>Exp. profit</th><th>Margin</th></tr></thead>
+    <tbody>${body}</tbody></table>`;
+}
+
 // Pipeline health: is every number on this page trustworthy right now?
 function dhChip(lbl, cls, detail) {
+  dhChip._cls.push(cls);
   return `<span class="dh-chip ${cls}"><strong>${lbl}</strong> · ${detail}</span>`;
 }
 function renderDataHealth() {
   const el = document.getElementById('data-health');
   if (!el) return;
+  dhChip._cls = [];
   const chips = [];
   const y = isoDate(addDays(sydneyToday(), -1));
   for (const [pk, lbl] of [['stow', 'Stow'], ['hg', 'HG'], ['mari', 'Mari']]) {
@@ -1623,6 +1708,10 @@ function renderDataHealth() {
     const ageH = (Date.now() - new Date(STATE.roster.generated).getTime()) / 3600000;
     chips.push(dhChip('Roster feed', ageH < 26 ? 'ok' : 'warn', ageH < 26 ? 'fresh' : Math.round(ageH) + 'h old'));
   } else chips.push(dhChip('Roster feed', 'warn', 'not pulled yet — first run 6:45am'));
+  if (dhChip._cls.length && dhChip._cls.every(c => c === 'ok')) {
+    el.innerHTML = '<div class="dh-row"><span class="dh-chip ok"><strong>Pipeline healthy</strong> · sales + wages in, Xero fresh, stock journals posted, roster fresh</span></div>';
+    return;
+  }
   el.innerHTML = '<p class="strip-label">Pipeline health</p><div class="dh-row">' + chips.join('') + '</div>';
 }
 
