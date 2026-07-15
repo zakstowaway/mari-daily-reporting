@@ -1042,12 +1042,36 @@ function synthesizeGroupHistory(histories) {
   for (const v of REAL_VENUES) for (const r of histories[v] || []) allDates.add(r.date);
   const rows = [];
   for (const date of Array.from(allDates).sort()) {
-    const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0 };
+    const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0,
+                  food_ex_gst: 0, bev_ex_gst: 0, food_cogs: 0, bev_cogs: 0,
+                  wages_kitchen_dollars: 0, wages_foh_dollars: 0 };
     let venueCount = 0;
     let wagePresent = false;
+    let splitPresent = false, kwPresent = false;
     for (const v of REAL_VENUES) {
       const row = (histories[v] || []).find(r => r.date === date);
       if (!row || !row.revenue_ex_gst) continue;
+      // Group-level food/kitchen slice (Big Chef): Mari is an all-kitchen
+      // venue — its revenue is food, its COGS food COGS, its wages minus
+      // driver = kitchen labour. Stow/HG contribute their split fields.
+      // Presence flags come from Stow/HG only, so pre-split history stays
+      // honestly "awaiting split data" instead of showing Mari-only numbers.
+      if (v === 'mari') {
+        sum.food_ex_gst += toNum(row.revenue_ex_gst);
+        sum.food_cogs += toNum(row.cogs_dollars);
+        if (hasVal(row.wages_dollars)) sum.wages_kitchen_dollars += Math.max(0, toNum(row.wages_dollars) - toNum(row.delivery_dollars));
+      } else if (hasVal(row.food_ex_gst)) {
+        sum.food_ex_gst += toNum(row.food_ex_gst);
+        sum.bev_ex_gst += toNum(row.bev_ex_gst);
+        sum.food_cogs += toNum(row.food_cogs);
+        sum.bev_cogs += toNum(row.bev_cogs);
+        splitPresent = true;
+        if (hasVal(row.wages_kitchen_dollars)) {
+          sum.wages_kitchen_dollars += toNum(row.wages_kitchen_dollars);
+          sum.wages_foh_dollars += toNum(row.wages_foh_dollars);
+          kwPresent = true;
+        }
+      }
       sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
       sum.cogs_dollars     += toNum(row.cogs_dollars);
       if (hasVal(row.wages_dollars)) { sum.wages_dollars += toNum(row.wages_dollars); wagePresent = true; }
@@ -1585,8 +1609,11 @@ function renderSnapshot() {
   }
   staleEl.innerHTML = '';
   if (STATE.currentTimeframe === 'day') {
-    const daysBehind = Math.floor((sydneyToday() - new Date(day.date)) / 86400000);
-    if (daysBehind > 1) staleEl.innerHTML = `<span class="stale">Data ${daysBehind}d behind</span>`;
+    // Staleness = how far the LATEST data is behind — never triggered by
+    // deliberately browsing to an older day with the day pills.
+    const latest = rows.length ? rows[rows.length - 1].date : null;
+    const behind = latest ? Math.floor((sydneyToday() - new Date(latest)) / 86400000) - 1 : 0;
+    if (behind > 0) staleEl.innerHTML = `<span class="stale">Latest data ${behind}d behind</span>`;
   }
   // Act 1: the verdict — one line answering "did we make money?"
   const vEl = document.getElementById('verdict');
