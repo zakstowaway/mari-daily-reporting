@@ -792,6 +792,15 @@ function actualCogsSplit(venue, endIso, nWeeks = 4) {
   if (!fRev && !bRev) return null;
   return { food: fRev ? food / fRev * 100 : null, bev: bRev ? bev / bRev * 100 : null };
 }
+// Whole-month edge test, tolerant of venue closed days: the window's first
+// data day sits in the first 3 days of its month, the last in the final 3
+// (Mari's June starts on the 2nd — Monday closed — and is still "June").
+function wholeMonthEdges(sIso, eIso) {
+  if (Number(sIso.slice(8)) > 3) return false;
+  const eD = new Date(eIso);
+  return new Date(eD.getFullYear(), eD.getMonth() + 1, 0).getDate() - eD.getDate() <= 2;
+}
+
 // Actual booked platform fees for windows made of whole COMPLETED months
 // present in the Xero feed. No stock-journal requirement — fee accounts are
 // reconciled continuously, so a finished month's booking is real.
@@ -800,13 +809,11 @@ function feesActualWindow(day) {
   if (!t.includes(' — ')) return null;
   const parts = t.split(' — ');
   const sIso = parts[0], eIso = parts[1];
-  if (sIso.slice(8) !== '01') return null;
-  const eD = new Date(eIso);
-  if (new Date(eD.getFullYear(), eD.getMonth() + 1, 0).getDate() !== eD.getDate()) return null;
+  if (!wholeMonthEdges(sIso, eIso)) return null;
   const feed = Object.fromEntries(STATE.xeroOH.map(r => [r.month, r]));
   const curMonth = isoDate(sydneyToday()).slice(0, 7);
   const months = [];
-  let cur = new Date(sIso);
+  let cur = new Date(sIso.slice(0, 7) + '-01');
   while (isoDate(cur) <= eIso) {
     months.push(isoDate(cur).slice(0, 7));
     cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
@@ -844,11 +851,9 @@ function actualProfitWindow(day) {
   if (!t.includes(' — ')) return null;
   const parts = t.split(' — ');
   const sIso = parts[0], eIso = parts[1];
-  if (sIso.slice(8) !== '01') return null;
-  const eD = new Date(eIso);
-  if (new Date(eD.getFullYear(), eD.getMonth() + 1, 0).getDate() !== eD.getDate()) return null;
+  if (!wholeMonthEdges(sIso, eIso)) return null;
   const months = [];
-  let cur = new Date(sIso);
+  let cur = new Date(sIso.slice(0, 7) + '-01');
   while (isoDate(cur) <= eIso) {
     months.push(isoDate(cur).slice(0, 7));
     cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
