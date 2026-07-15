@@ -42,13 +42,13 @@
     "timesheet_id": 35322,
     "employee_id": 16,
     "employee_name": "Stephanie Kunde",
-    "ou_name": "Admin",
-    "company": "Stowaway",
-    "dept": "Admin",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
     "start_time": 1784095200,
     "end_time": 1784118600,
-    "hours": 0.6,
-    "cost": 21.0,
+    "hours": 6.5,
+    "cost": 227.5,
     "salaried_synth": true
   },
   {
@@ -74,7 +74,7 @@
     "start_time": 1784098800,
     "end_time": 1784117700,
     "hours": 5.25,
-    "cost": 0.0,
+    "cost": 180.66,
     "salaried_synth": false
   }
 ]

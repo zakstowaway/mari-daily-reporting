@@ -35,7 +35,7 @@
     "start_time": 1784093400,
     "end_time": 1784118600,
     "hours": 6.5,
-    "cost": 0.0,
+    "cost": 240.9,
     "salaried_synth": false
   },
   {
@@ -52,19 +52,6 @@
     "salaried_synth": true
   },
   {
-    "timesheet_id": 35322,
-    "employee_id": 16,
-    "employee_name": "Stephanie Kunde",
-    "ou_name": "Admin",
-    "company": "Stowaway",
-    "dept": "Admin",
-    "start_time": 1784095200,
-    "end_time": 1784118600,
-    "hours": 5.4,
-    "cost": 189.0,
-    "salaried_synth": true
-  },
-  {
     "timesheet_id": 35327,
     "employee_id": 298,
     "employee_name": "Kiana Dettmann",
@@ -74,7 +61,7 @@
     "start_time": 1784098800,
     "end_time": 1784115000,
     "hours": 4.5,
-    "cost": 0.0,
+    "cost": 152.32,
     "salaried_synth": false
   }
 ]
