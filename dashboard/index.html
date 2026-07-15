@@ -1303,11 +1303,18 @@ const CARD_DEFS = {
     const med = wageMedian12wk(STATE.histories[STATE.currentVenue] || []);
     let sub = cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '';
     sub += STATE.currentVenue === 'mari' ? ' incl driver \u00b7 Deputy' : ' \u00b7 Deputy incl super';
+    const tgt = wageTargetFor(day);
+    let status = day.wages_alert;
+    if (tgt !== null && hasVal(day.wages_pct)) {
+      const pv = toNum(day.wages_pct);
+      sub += ` \u00b7 tgt ${fmtPct(tgt)}${String(day.date || '').length === 10 ? ' (' + new Date(day.date).toLocaleDateString('en-AU', { weekday: 'short' }) + ')' : ' wk'}`;
+      status = pv > tgt + 2 ? 'red' : pv < tgt - 2 ? 'green' : 'amber';
+    }
     if (med !== null && hasVal(day.wages_pct)) {
       const d = toNum(day.wages_pct) - med;
       sub += ' \u00b7 ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + 'pp vs 12-wk median', d > 1 ? 'red' : d < -1 ? 'green' : 'warn');
     }
-    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '\u2014', sub, status: day.wages_alert };
+    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '\u2014', sub, status };
   },
   cogs_merged: (day, cfg) => {
     const a = actualCogs(STATE.currentVenue, winEnd(day));
@@ -1362,12 +1369,17 @@ const CARD_DEFS = {
     sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.cogs_dollars)) : '',
     status: day.cogs_alert,
   }),
-  wages: (day, cfg) => ({
-    label: 'Wages',
-    value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—',
-    sub: cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '',
-    status: day.wages_alert,
-  }),
+  wages: (day, cfg) => {
+    const tgt = wageTargetFor(day);
+    let sub = cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '';
+    let status = day.wages_alert;
+    if (tgt !== null && hasVal(day.wages_pct)) {
+      const pv = toNum(day.wages_pct);
+      sub += ` · tgt ${fmtPct(tgt)}${String(day.date || '').length === 10 ? ' (' + new Date(day.date).toLocaleDateString('en-AU', { weekday: 'short' }) + ')' : ' wk'}`;
+      status = pv > tgt + 2 ? 'red' : pv < tgt - 2 ? 'green' : 'amber';
+    }
+    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—', sub, status };
+  },
   delivery: (day, cfg) => {
     // driver wages (history) + REAL platform fees (Xero monthly feed,
     // trailing 3-mo rate applied to this window's revenue).
@@ -1432,22 +1444,40 @@ const CARD_DEFS = {
     const has = hasVal(day.wages_kitchen_dollars);
     const rev = toNum(day.revenue_ex_gst);
     const pct = has && rev ? toNum(day.wages_kitchen_dollars) / rev * 100 : null;
+    const mixK = deptWageShares(STATE.currentVenue);
+    const tK = wageTargetFor(day);
+    const tgtK = tK !== null && mixK ? tK * mixK.k : null;
+    let subK = has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_kitchen_dollars)) + ' vs total rev' : 'awaiting split data';
+    let stK = has ? (day.wages_kitchen_alert || 'unknown') : 'unknown';
+    if (tgtK !== null && pct !== null) {
+      subK += ` · tgt ${fmtPct(tgtK)}`;
+      stK = pct > tgtK + 2 ? 'red' : pct < tgtK - 2 ? 'green' : 'amber';
+    }
     return {
       label: 'Kitchen Wages',
       value: pct !== null ? fmtPct(pct) : '—',
-      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_kitchen_dollars)) + ' vs total rev' : 'awaiting split data',
-      status: has ? (day.wages_kitchen_alert || 'unknown') : 'unknown',
+      sub: subK,
+      status: stK,
     };
   },
   wages_foh: (day, cfg) => {
     const has = hasVal(day.wages_foh_dollars);
     const rev = toNum(day.revenue_ex_gst);
     const pct = has && rev ? toNum(day.wages_foh_dollars) / rev * 100 : null;
+    const mixF = deptWageShares(STATE.currentVenue);
+    const tF = wageTargetFor(day);
+    const tgtF = tF !== null && mixF ? tF * mixF.f : null;
+    let subF = has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_foh_dollars)) + ' vs total rev' : 'awaiting split data';
+    let stF = has ? (day.wages_foh_alert || 'unknown') : 'unknown';
+    if (tgtF !== null && pct !== null) {
+      subF += ` · tgt ${fmtPct(tgtF)}`;
+      stF = pct > tgtF + 2 ? 'red' : pct < tgtF - 2 ? 'green' : 'amber';
+    }
     return {
       label: 'FOH Wages',
       value: pct !== null ? fmtPct(pct) : '—',
-      sub: has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_foh_dollars)) + ' vs total rev' : 'awaiting split data',
-      status: has ? (day.wages_foh_alert || 'unknown') : 'unknown',
+      sub: subF,
+      status: stF,
     };
   },
   gp_food: (day, cfg) => {
@@ -1723,6 +1753,36 @@ function renderExtras(day, cfg) {
   }
 }
 
+// Wage targets: 30% weekly anchor (Zak, 2026-07-15), shaped by weekday.
+// A prep-heavy Tuesday can't run the same % as a Saturday — each weekday's
+// target = 30% x (its share of weekly wages / its share of weekly revenue),
+// trailing 12 weeks. Revenue-weighted across the week = exactly 30%.
+const WAGE_TARGET_PCT = 30;
+function dowWageTarget(venue, dow) {
+  STATE._dwt = STATE._dwt || {};
+  if (STATE._dwt[venue] === undefined) {
+    const rows = (STATE.histories[venue] || []).slice(-84);
+    const wSum = [0, 0, 0, 0, 0, 0, 0], rSum = [0, 0, 0, 0, 0, 0, 0];
+    for (const r of rows) {
+      if (!hasVal(r.wages_dollars) || !toNum(r.revenue_ex_gst)) continue;
+      const d = new Date(r.date).getDay();
+      wSum[d] += toNum(r.wages_dollars);
+      rSum[d] += toNum(r.revenue_ex_gst);
+    }
+    const wT = wSum.reduce((a, b) => a + b, 0), rT = rSum.reduce((a, b) => a + b, 0);
+    STATE._dwt[venue] = wT && rT ? wSum.map((w, i) => rSum[i] ? WAGE_TARGET_PCT * (w / wT) / (rSum[i] / rT) : null) : null;
+  }
+  const t = STATE._dwt[venue];
+  return t ? t[dow] : null;
+}
+// Target for a card's window: single day -> that weekday's shaped target;
+// multi-day -> the flat 30% weekly anchor.
+function wageTargetFor(day, venue = STATE.currentVenue) {
+  const t = String((day && day.date) || '');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return dowWageTarget(venue, new Date(t).getDay());
+  return WAGE_TARGET_PCT;
+}
+
 // Trailing dept wage mix (Kitchen vs FOH share of dept wages, last 12 weeks)
 // — used to split a venue-level wage target across departments.
 function deptWageShares(venue) {
@@ -1742,8 +1802,7 @@ function renderWeekAhead() {
   const todayIso = isoDate(sydneyToday());
   const days = Object.keys(STATE.roster.days).filter(d => d >= todayIso).sort().slice(0, 7);
   if (!days.length) return;
-  const t = STATE.baselines[v] || {};
-  const target = t.wages && t.wages.target;
+  // 30% weekly anchor, shaped per weekday (dowWageTarget).
   const cells = days.map(dIso => {
     const vens = STATE.roster.days[dIso] || {};
     let rost = 0;
@@ -1770,8 +1829,9 @@ function renderWeekAhead() {
       </div>`;
     }
     const pct = fcst ? rost / fcst * 100 : null;
+    const target = dowWageTarget(v, dow);
     let cls = '';
-    if (pct !== null && target) cls = pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '';
+    if (pct !== null && target !== null) cls = pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '';
     let dept = '';
     if (v === 'stow' || v === 'hg') {
       const dd = vens[v] || {};
@@ -1783,8 +1843,8 @@ function renderWeekAhead() {
       // target, so hitting both = hitting the venue number by construction.
       const df2 = dowDeptForecast(v, dow);
       const mix = deptWageShares(v);
-      const kT = target && mix ? target * mix.k : null;
-      const fT = target && mix ? target * mix.f : null;
+      const kT = target !== null && mix ? target * mix.k : null;
+      const fT = target !== null && mix ? target * mix.f : null;
       const kp2 = fcst ? kit / fcst * 100 : null;
       const fp2 = fcst ? foh / fcst * 100 : null;
       const col = (pv, tv) => pv === null || tv === null ? '' : pv > tv + 2 ? ' style="color:#E24B4A;"' : pv < tv - 2 ? ' style="color:#1D9E75;"' : '';
@@ -1799,14 +1859,14 @@ function renderWeekAhead() {
     return `<div class="wa-cell ${cls}">
       <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
       <p class="wa-pct">${pct !== null ? fmtPct(pct) : '—'}</p>
-      <p class="wa-sub">roster ${fmtDollars(rost)}<br>typical rev ${fcst ? fmtDollars(fcst) : '—'}</p>
+      <p class="wa-sub">roster ${fmtDollars(rost)}<br>typical rev ${fcst ? fmtDollars(fcst) : '—'}${target !== null ? ' · tgt ' + fmtPct(target) : ''}</p>
       ${dept}
     </div>`;
   }).join('');
   const gen = STATE.roster.generated ? new Date(STATE.roster.generated) : null;
   el.innerHTML = '<p class="strip-label">Week ahead — rostered wage % vs typical revenue (change the roster, change the number)</p>'
     + '<div class="wa-row">' + cells + '</div>'
-    + `<p style="font-size:11px;opacity:.55;margin:6px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays${target ? ` · target ${fmtPct(target)}, split across depts by trailing wage mix` : ''} · admin wages count at group level only${gen ?` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
+    + `<p style="font-size:11px;opacity:.55;margin:6px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays · target 30% weekly, shaped by weekday (quiet days carry prep, so their day-target runs higher) and split across depts by trailing wage mix · admin wages count at group level only${gen ?` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
 }
 
 // Group view: one table answering "who made the money?" for the selected
@@ -1943,7 +2003,7 @@ function renderChart() {
       const FOCUS = {
         revenue:       { label: 'Revenue $', unit: '$', target: null,
                          fn: (k, B = bins) => B[k].rev },
-        wages_hero:    { label: 'Wages %', unit: '%', target: t.wages && t.wages.target,
+        wages_hero:    { label: 'Wages %', unit: '%', target: WAGE_TARGET_PCT,
                          fn: (k, B = bins) => B[k].wageDays && B[k].rev ? B[k].wages / B[k].rev * 100 : null },
         cogs_merged:   { label: 'Expected COGS % (Lightspeed)', unit: '%', target: t.cogs && t.cogs.target,
                          fn: (k, B = bins) => B[k].rev ? B[k].cogs / B[k].rev * 100 : null },
