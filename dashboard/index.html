@@ -518,7 +518,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -792,6 +792,25 @@ function actualCogsSplit(venue, endIso, nWeeks = 4) {
   if (!fRev && !bRev) return null;
   return { food: fRev ? food / fRev * 100 : null, bev: bRev ? bev / bRev * 100 : null };
 }
+// REAL Uber service fees (merchant portal, ex-marketing) for a window —
+// only when portal weeks fully cover every Sunday week-end in the window.
+// Values in the feed are inc GST (portal basis); returned ex GST.
+function uberSvcWindow(sIso, eIso) {
+  const feed = STATE.uberFees || [];
+  if (!feed.length) return null;
+  const sundays = [];
+  for (let d = new Date(sIso); isoDate(d) <= eIso; d = addDays(d, 1)) {
+    if (d.getDay() === 0) sundays.push(isoDate(d));
+  }
+  if (!sundays.length) return null;
+  const wk = {};
+  for (const r of feed) if (r.venue === 'mari' && hasVal(r.service_fees_inc_gst)) wk[r.week_ending] = r;
+  if (!sundays.every(su => wk[su])) return null;
+  let svc = 0, mkt = 0;
+  for (const su of sundays) { svc += toNum(wk[su].service_fees_inc_gst); mkt += toNum(wk[su].marketing_inc_gst); }
+  return { svc: svc / 1.1, mkt: mkt / 1.1, weeks: sundays.length };
+}
+
 // Whole-month edge test, tolerant of venue closed days: the window's first
 // data day sits in the first 3 days of its month, the last in the final 3
 // (Mari's June starts on the 2nd — Monday closed — and is still "June").
@@ -819,8 +838,18 @@ function feesActualWindow(day) {
     cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
   }
   if (!months.length || !months.every(m => feed[m] && m < curMonth)) return null;
-  let mari = 0, meu = 0;
-  for (const m of months) { mari += toNum(feed[m].mari_uber_fees); meu += toNum(feed[m].meu_fees); }
+  let mari = 0, meu = 0, uberOnly = 0;
+  for (const m of months) {
+    mari += toNum(feed[m].mari_uber_fees);
+    uberOnly += toNum(feed[m].mari_uber_only);
+    meu += toNum(feed[m].meu_fees);
+  }
+  // Portal override: swap the booked UberEats line for REAL portal service
+  // fees (ex-marketing) when portal weeks cover the window. DoorDash +
+  // Uber Direct stay from the books (mari_uber_fees - mari_uber_only).
+  const u = uberSvcWindow(sIso, eIso);
+  let portal = false;
+  if (u && uberOnly) { mari = u.svc + (mari - uberOnly); portal = true; }
   const v = STATE.currentVenue;
   let fees;
   if (v === 'mari') fees = mari;
@@ -830,7 +859,7 @@ function feesActualWindow(day) {
     const rs = revOf('stow'), rh = revOf('hg');
     fees = (rs + rh) ? meu * (v === 'stow' ? rs : rh) / (rs + rh) : 0;
   }
-  return { fees, mari, meu, nMonths: months.length };
+  return { fees, mari, meu, nMonths: months.length, portal, mkt: u ? u.mkt : null };
 }
 
 // Closed months: the Closing Stock Movement journal exists in Xero for that
@@ -1204,10 +1233,11 @@ const CARD_DEFS = {
     const rev = toNum(day.revenue_ex_gst);
     const fa = feesActualWindow(day);
     if (fa && rev) {
+      const uberLbl = fa.portal ? 'Uber svc (portal, ex-mktg)' : 'Uber';
       const src = STATE.currentVenue === 'mari'
-        ? `Uber + DoorDash + Direct ${fmtDollars(fa.mari)}`
+        ? `${uberLbl} + DoorDash + Direct ${fmtDollars(fa.mari)}${fa.portal && fa.mkt ? ` \u00b7 Uber marketing ${fmtDollars(fa.mkt)} excluded` : ''}`
         : STATE.currentVenue === 'group'
-        ? `Uber+DD+Direct ${fmtDollars(fa.mari)} \u00b7 ME&U+Doshii ${fmtDollars(fa.meu)}`
+        ? `${uberLbl}+DD+Direct ${fmtDollars(fa.mari)} \u00b7 ME&U+Doshii ${fmtDollars(fa.meu)}`
         : 'ME&U + Doshii, revenue-share';
       return { label: 'Delivery platforms ' + pill('actual', 'green'), value: fmtPct(fa.fees / rev * 100),
         sub: `${fmtDollars(fa.fees)} booked in Xero, ${fa.nMonths} complete month${fa.nMonths > 1 ? 's' : ''} \u00b7 ${src} \u00b7 driver in wages`, status: 'unknown' };
@@ -1868,6 +1898,10 @@ async function bootstrap() {
   try {
     const r = await fetch('data/roster_week.json?t=' + Date.now());
     if (r.ok) STATE.roster = await r.json();
+  } catch (e) {}
+  try {
+    const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
+    if (r.ok) STATE.uberFees = parseCsv(await r.text());
   } catch (e) {}
   for (const [v, f] of [['mari', 'mari_baseline.json'], ['stow', 'stow_baseline.json'], ['hg', 'hg_baseline.json']]) {
     try {
