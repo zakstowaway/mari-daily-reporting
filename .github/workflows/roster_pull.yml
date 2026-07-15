@@ -1,0 +1,38 @@
+name: Roster Pull
+
+# Pulls the next 7 days of rostered shifts from Deputy so the dashboard can
+# show projected wage % (rostered $ vs DOW revenue forecast) BEFORE shifts
+# happen. Runs each morning after the daily pulls, and again early afternoon
+# to catch same-day roster changes.
+
+concurrency:
+  group: roster-pull
+  cancel-in-progress: false
+
+on:
+  schedule:
+    - cron: '45 20 * * *'   # 6:45am AEST
+    - cron: '30 3 * * *'    # 1:30pm AEST
+  workflow_dispatch:
+
+jobs:
+  roster:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Pull roster
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/roster_pull.py
+      - name: Commit
+        run: |
+          git config user.name "Roster Pull"
+          git config user.email "hello@stowawaybar.com"
+          git add data/roster_week.json
+          git diff --quiet --staged || git commit -m "Roster week refresh"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
