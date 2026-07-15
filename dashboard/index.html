@@ -216,6 +216,7 @@ body {
 .wa-tgt { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; margin: 2px 0 0; opacity: .9; }
 .wa-trim { font-size: 11px; font-weight: 600; margin: 4px 0 0; color: #E24B4A; }
 .wa-room { font-size: 11px; margin: 4px 0 0; color: #1D9E75; opacity: .9; }
+.wa-none { font-size: 11px; font-weight: 600; margin: 4px 0 0; opacity: .7; }
 
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
@@ -1807,11 +1808,20 @@ function wageTargetFor(day, venue = STATE.currentVenue) {
 
 // Trailing dept wage mix (Kitchen vs FOH share of dept wages, last 12 weeks)
 // — used to split a venue-level wage target across departments.
-function deptWageShares(venue) {
+// Pass a `dow` to get that weekday's OWN mix (Zak, 2026-07-15): Stow's kitchen
+// shuts Mondays, so a flat all-week mix hands Monday a kitchen budget for a
+// kitchen that isn't open — the per-weekday mix reads ~0 kitchen and pushes
+// that share to FOH, where the money actually goes. Thin weekdays fall back to
+// the flat mix so a sparse history can't invent a wild split.
+function deptWageShares(venue, dow) {
   const rows = (STATE.histories[venue] || []).slice(-84);
   let k = 0, f = 0;
-  for (const r of rows) { k += toNum(r.wages_kitchen_dollars); f += toNum(r.wages_foh_dollars); }
+  for (const r of rows) {
+    if (dow !== undefined && new Date(r.date).getDay() !== dow) continue;
+    k += toNum(r.wages_kitchen_dollars); f += toNum(r.wages_foh_dollars);
+  }
   const t = k + f;
+  if (dow !== undefined && t < 500) return deptWageShares(venue);
   return t ? { k: k / t, f: f / t } : null;
 }
 
@@ -1829,9 +1839,8 @@ function renderWeekAhead() {
   // of the DOW-shaped target. Admin + pizza see the whole venue.
   const ROLE_DEPT = { stowfood: 'Kitchen', hgfood: 'Kitchen', bigchef: 'Kitchen', bar: 'FOH' };
   const deptOnly = ROLE_DEPT[CURRENT_ROLE] || null;
-  const mixV = deptWageShares(v);
-  const deptShare = deptOnly && mixV ? (deptOnly === 'Kitchen' ? mixV.k : mixV.f) : 1;
-  // 30% weekly anchor, shaped per weekday (dowWageTarget).
+  // 30% weekly anchor, shaped per weekday (dowWageTarget), split by that
+  // weekday's own dept mix (deptShare is per-cell — see below).
   const cells = days.map(dIso => {
     const vens = STATE.roster.days[dIso] || {};
     let rost = 0;
@@ -1869,7 +1878,23 @@ function renderWeekAhead() {
       </div>`;
     }
     const pct = fcst ? rost / fcst * 100 : null;
+    const mixV = deptWageShares(v, dow);
+    const deptShare = deptOnly && mixV ? (deptOnly === 'Kitchen' ? mixV.k : mixV.f) : 1;
     const target = dowWageTarget(v, dow) !== null ? dowWageTarget(v, dow) * deptShare : null;
+    // Nothing rostered on a day that expects real trade = the roster isn't
+    // finished, not a win (Zak, 2026-07-15). The venue/kitchen "Closed" guards
+    // above never fire at group level, so a $0 group kitchen was landing in the
+    // "under budget" branch and reading green. Say it plainly instead, in
+    // neutral — no %, no praise — and show what the day is actually worth so
+    // whoever rosters it knows the number to aim at.
+    if (fcst >= 300 && rost < 25) {
+      return `<div class="wa-cell">
+        <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
+        <p class="wa-pct" style="opacity:.4;">—</p>
+        <p class="wa-none">${deptOnly ? deptOnly.toLowerCase() : 'roster'} not rostered yet</p>
+        <p class="wa-sub">typical rev ${fmtDollars(fcst)}${target !== null ? ` · budget ${fmtDollars(target / 100 * fcst)}` : ''}</p>
+      </div>`;
+    }
     let cls = '';
     if (pct !== null && target !== null) cls = pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '';
     let dept = '';
@@ -1882,7 +1907,7 @@ function renderWeekAhead() {
       // by the trailing dept wage mix — dept targets always sum to the venue
       // target, so hitting both = hitting the venue number by construction.
       const df2 = dowDeptForecast(v, dow);
-      const mix = deptWageShares(v);
+      const mix = deptWageShares(v, dow);
       const kT = target !== null && mix ? target * mix.k : null;
       const fT = target !== null && mix ? target * mix.f : null;
       const kp2 = fcst ? kit / fcst * 100 : null;
