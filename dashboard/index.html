@@ -1520,7 +1520,11 @@ function renderDataHealth() {
   const y = isoDate(addDays(sydneyToday(), -1));
   for (const [pk, lbl] of [['stow', 'Stow'], ['hg', 'HG'], ['mari', 'Mari']]) {
     const r = (STATE.histories[pk] || []).find(x => x.date === y);
-    if (!r || !toNum(r.revenue_ex_gst)) chips.push(dhChip(lbl, 'bad', 'no sales for yesterday yet'));
+    // Closed-day allowance: if this venue's typical take for that weekday is
+    // ~nothing (HG is shut Tuesdays), an empty day is normal, not a failure.
+    const typ = dowForecast(pk, new Date(y).getDay());
+    if ((!r || !toNum(r.revenue_ex_gst)) && typ < 300) chips.push(dhChip(lbl, 'ok', 'closed ' + new Date(y).toLocaleDateString('en-AU', { weekday: 'long' }) + 's'));
+    else if (!r || !toNum(r.revenue_ex_gst)) chips.push(dhChip(lbl, 'bad', 'no sales for yesterday yet'));
     else if (!hasVal(r.wages_dollars)) chips.push(dhChip(lbl, 'warn', 'sales in · wages pending approval (12:10pm re-pull)'));
     else chips.push(dhChip(lbl, 'ok', 'yesterday complete'));
   }
