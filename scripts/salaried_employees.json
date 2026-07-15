@@ -1,15 +1,61 @@
 {
-  "_comment": "Salaried management roster. Annual figures are gross pay (excluding super). Deputy returns Cost=0 for all these employees because they're not on hourly rates in Deputy — this config lets the aggregator synthesize a cost per shift as hours × (annual/52/40).",
+  "_comment": "Salaried management roster. Annual figures are gross pay (excluding super). Deputy returns Cost=0 for all these employees because they're not on hourly rates in Deputy \u2014 this config lets the aggregator cost their shifts. Per Xero payroll (2026-07-15) a salaried employee is paid annual/52 EVERY week regardless of hours logged, so hours decide WHERE the cost lands (pro-rata across logged shifts), not how much it is. See scripts/wage_model.py.",
   "_hours_per_week": 40,
   "_weeks_per_year": 52,
   "employees": {
-    "1":   { "name": "Kris Hegarty",           "annual": 93496 },
-    "3":   { "name": "Zak Britton",            "annual": 78000 },
-    "5":   { "name": "Nicola Bisato",          "annual": 70000 },
-    "15":  { "name": "Marssheel",              "annual": 88000 },
-    "16":  { "name": "Stephanie Kunde",        "annual": 72800 },
-    "133": { "name": "Devon Lukiana",          "annual": 70000 },
-    "142": { "name": "Renan Borba Bagesteiro", "annual": 75000 },
-    "287": { "name": "Herminder (Min) Khera",  "annual": 115000 }
+    "1": {
+      "name": "Kris Hegarty",
+      "annual": 93496,
+      "xero_name": "Kris Hegarty"
+    },
+    "3": {
+      "name": "Zak Britton",
+      "annual": 78000,
+      "xero_name": "Zakaria Britton"
+    },
+    "5": {
+      "name": "Nicola Bisato",
+      "annual": 70000,
+      "xero_name": "Nicola Bisato"
+    },
+    "15": {
+      "name": "Marssheel",
+      "annual": 88000,
+      "xero_name": "Marssheel Marssheel"
+    },
+    "16": {
+      "name": "Stephanie Kunde",
+      "annual": 72800,
+      "xero_name": "Stephanie Kunde"
+    },
+    "133": {
+      "name": "Devon Lukiana",
+      "annual": 70000,
+      "xero_name": "Devon Saputra Lukiana"
+    },
+    "142": {
+      "name": "Renan Borba Bagesteiro",
+      "annual": 75000,
+      "xero_name": "Renan Borba Bagesteiro"
+    },
+    "287": {
+      "name": "Herminder (Min) Khera",
+      "annual": 115000,
+      "xero_name": "Herminder Khera"
+    },
+    "297": {
+      "name": "Pujan Tamang",
+      "xero_name": "Pujan Tamang",
+      "annual": 75000,
+      "_added": "2026-07-15 \u2014 found by Xero reconciliation. Salaried $75k, rosters in Deputy (Stow Kitchen, ~40h/wk), but was absent from this file so every shift costed $0 and his real cost fell into the corp-payroll residual."
+    }
+  },
+  "_source_of_truth": "Xero payroll, not Deputy. Deputy only knows who clocked on. Run scripts/check_salaried_roster.py to detect new salary-earners and salary changes \u2014 a salaried person missing from this file is booked at $0 and their real cost silently lands in the corp-payroll residual instead of on their venue.",
+  "_corp_payroll_only": {
+    "_comment": "Owners. Salaried in Xero, never rostered in Deputy. Their pay belongs in corp payroll \u2014 which happens automatically: corpPayrollDaily() takes the residual of Xero group payroll MINUS Deputy group wages, so anyone absent from Deputy lands there by construction. Do NOT add them to `employees` \u2014 that would move owner salary onto venue wage lines. Listed here so the roster checker stops flagging them as missing.",
+    "names": [
+      "Bryony Proctor",
+      "Oliver Iaccarino"
+    ]
   }
 }
