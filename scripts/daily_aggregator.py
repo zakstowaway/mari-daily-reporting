@@ -540,6 +540,26 @@ if lightspeed_data and split_venue and lightspeed_data.get("dept_sums"):
         "hg_food_out_ex_gst": round(ds["hgf"]["rev"] / 1.1, 2),
         "stow_food_out_ex_gst": round(ds["stf"]["rev"] / 1.1, 2),
     }
+# Marilyna's is a pizza shop: 100% food, and the only non-kitchen labour is the
+# Driver OU (which Deputy tags separately, so it never lands in kitchen_wages).
+# There's no split to CLASSIFY here — but the columns aren't unknowable, they're
+# trivially true: revenue IS food revenue, COGS IS food COGS, bev is zero.
+# Leaving them blank made Mari's own venue tab say "awaiting split data" for
+# numbers we've had since Oct 2024, while the Big Chef group view derived the
+# same thing itself. Emit them properly instead (Zak, 2026-07-15).
+elif venue_key == "marilynas" and lightspeed_data:
+    food_ex = lightspeed_data["revenue_ex"]
+    food_cogs_m = lightspeed_data["cogs"]
+    split = {
+        "food_ex_gst": round(food_ex, 2),
+        "bev_ex_gst": 0.0,
+        "food_cogs": round(food_cogs_m, 2),
+        "bev_cogs": 0.0,
+        "food_cogs_pct": round(food_cogs_m / food_ex * 100, 1) if food_ex else None,
+        "bev_cogs_pct": None,
+        "food_gp_pct": round((food_ex - food_cogs_m) / food_ex * 100, 1) if food_ex else None,
+        "bev_gp_pct": None,
+    }
 
 wages_kitchen_pct = wages_foh_pct = None
 if deputy_data and split:
@@ -680,8 +700,15 @@ nr = {
     "bev_cogs_pct":           (split["bev_cogs_pct"] if split and split["bev_cogs_pct"] is not None else ""),
     "food_gp_pct":            (split["food_gp_pct"] if split and split["food_gp_pct"] is not None else ""),
     "bev_gp_pct":             (split["bev_gp_pct"] if split and split["bev_gp_pct"] is not None else ""),
-    "wages_kitchen_dollars":  record["wages"]["kitchen_dollars"] if deputy_data and split_venue else "",
-    "wages_foh_dollars":      record["wages"]["foh_dollars"] if deputy_data and split_venue else "",
+    # Emitted for EVERY venue, not just the split ones. These are computed from
+    # Deputy's own OU tagging for all three venues — the old `split_venue` gate
+    # threw Mari's away at write time even though the pull had already worked it
+    # out. Driver gets its own column: it's real labour, it is NOT kitchen, and
+    # it must not be inferred from delivery_dollars (which also carries Uber
+    # commission and Uber Direct fees).
+    "wages_kitchen_dollars":  record["wages"]["kitchen_dollars"] if deputy_data else "",
+    "wages_foh_dollars":      record["wages"]["foh_dollars"] if deputy_data else "",
+    "wages_driver_dollars":   record["wages"]["driver_dollars"] if deputy_data else "",
     "wages_kitchen_pct":      wages_kitchen_pct if wages_kitchen_pct is not None else "",
     "wages_foh_pct":          wages_foh_pct if wages_foh_pct is not None else "",
     "cogs_food_alert":        cogs_food_status,

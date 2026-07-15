@@ -1070,9 +1070,16 @@ function synthesizeGroupHistory(histories) {
       // Presence flags come from Stow/HG only, so pre-split history stays
       // honestly "awaiting split data" instead of showing Mari-only numbers.
       if (v === 'mari') {
-        sum.food_ex_gst += toNum(row.revenue_ex_gst);
-        sum.food_cogs += toNum(row.cogs_dollars);
-        if (hasVal(row.wages_dollars)) sum.wages_kitchen_dollars += Math.max(0, toNum(row.wages_dollars) - toNum(row.delivery_dollars));
+        // Mari now emits its split properly (all revenue = food, Kitchen OU =
+        // kitchen labour, Driver in its own column). Prefer those real columns;
+        // fall back to deriving for history not yet backfilled. The fallback
+        // subtracts delivery_dollars, which ALSO carries Uber commission and
+        // Uber Direct fees — it understates kitchen whenever those are non-zero,
+        // which is exactly why the real column is worth having.
+        sum.food_ex_gst += hasVal(row.food_ex_gst) ? toNum(row.food_ex_gst) : toNum(row.revenue_ex_gst);
+        sum.food_cogs += hasVal(row.food_cogs) ? toNum(row.food_cogs) : toNum(row.cogs_dollars);
+        if (hasVal(row.wages_kitchen_dollars)) sum.wages_kitchen_dollars += toNum(row.wages_kitchen_dollars);
+        else if (hasVal(row.wages_dollars)) sum.wages_kitchen_dollars += Math.max(0, toNum(row.wages_dollars) - toNum(row.delivery_dollars));
       } else if (hasVal(row.food_ex_gst)) {
         sum.food_ex_gst += toNum(row.food_ex_gst);
         sum.bev_ex_gst += toNum(row.bev_ex_gst);
