@@ -1694,19 +1694,37 @@ function renderWeekAhead() {
     else rost = (vens[v] || {}).total || 0;
     const dow = new Date(dIso).getDay();
     const fcst = venueForecast(v, dow);
+    // Closed trading days (HG shuts Sundays + Tuesdays): the typical take for
+    // that weekday is ~nothing, so a wage % is meaningless. Say "Closed" —
+    // and go red only if someone has rostered real money onto the day.
+    const closedDay = v !== 'group' && fcst < 300;
+    const wd = new Date(dIso).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+    if (closedDay) {
+      const misrostered = rost > 100;
+      return `<div class="wa-cell ${misrostered ? 'bad' : ''}">
+        <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
+        <p class="wa-pct" style="opacity:.45;">Closed</p>
+        <p class="wa-sub">${misrostered ? 'but ' + fmtDollars(rost) + ' rostered — check Deputy' : 'no trade expected'}</p>
+      </div>`;
+    }
     const pct = fcst ? rost / fcst * 100 : null;
     let cls = '';
     if (pct !== null && target) cls = pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '';
-    const wd = new Date(dIso).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
     let dept = '';
     if (v === 'stow' || v === 'hg') {
       const dd = vens[v] || {};
       const kit = dd.Kitchen || 0;
       const foh = dd.FOH || 0;
       const df2 = dowDeptForecast(v, dow);
-      const kp = df2.food ? kit / df2.food * 100 : null;
-      const fp = df2.bev ? foh / df2.bev * 100 : null;
-      dept = `<p class="wa-dept"><b>Kitchen</b> ${kp !== null ? fmtPct(kp) : '—'} · ${fmtDollars(kit)} vs food ${df2.food ? fmtDollars(df2.food) : '—'}<br><b>FOH</b> ${fp !== null ? fmtPct(fp) : '—'} · ${fmtDollars(foh)} vs bev ${df2.bev ? fmtDollars(df2.bev) : '—'}</p>`;
+      // Dept-level closed days (Stow kitchen shuts Mondays): typical dept
+      // revenue ~nothing -> label instead of a meaningless %.
+      const kLine = df2.food < 150
+        ? `<b>Kitchen</b> closed${kit > 100 ? ' · but ' + fmtDollars(kit) + ' rostered' : ''}`
+        : `<b>Kitchen</b> ${fmtPct(kit / df2.food * 100)} · ${fmtDollars(kit)} vs food ${fmtDollars(df2.food)}`;
+      const fLine = df2.bev < 150
+        ? `<b>FOH</b> closed${foh > 100 ? ' · but ' + fmtDollars(foh) + ' rostered' : ''}`
+        : `<b>FOH</b> ${fmtPct(foh / df2.bev * 100)} · ${fmtDollars(foh)} vs bev ${fmtDollars(df2.bev)}`;
+      dept = `<p class="wa-dept">${kLine}<br>${fLine}</p>`;
     }
     return `<div class="wa-cell ${cls}">
       <p class="wa-day">${wd}${dIso === todayIso ? ' · today' : ''}</p>
