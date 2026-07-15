@@ -623,7 +623,7 @@ function pnlWindow(day) {
   const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7) * ohf;
   const dfr = deliveryFeesPct(STATE.currentVenue, endIso);
   const df = dfr ? rev * dfr.pct / 100 : 0;
-  const cp = corpPayrollDaily(STATE.currentVenue, endIso) * wdays;
+  const cp = corpPayrollDaily(STATE.currentVenue, endIso) * ohf;   // DOW-weighted, same as overheads
   const wages = toNum(day.wages_dollars);
   const profit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
   return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, wages, profit, partial: wdays < daysAll };
@@ -1323,7 +1323,7 @@ function renderChart() {
                            if (!bins[k].wageDays) return null;
                            const cogsPct = a ? a.pct : (bins[k].rev ? bins[k].cogs / bins[k].rev * 100 : 0);
                            return bins[k].rev - bins[k].rev * cogsPct / 100 - bins[k].wages - ohOf(k)
-                                  - (dfr ? bins[k].rev * dfr.pct / 100 : 0) - cpDaily * bins[k].days;
+                                  - (dfr ? bins[k].rev * dfr.pct / 100 : 0) - (dailyBins && sh ? cpDaily * 7 * sh[new Date(k).getDay()] : cpDaily * bins[k].days);
                          } },
       };
       const def = FOCUS[STATE.focusMetric];
@@ -1358,7 +1358,10 @@ function renderChart() {
       mk('COGS', '#D85A30', k => Math.round(bins[k].cogs)),
       mk('Wages', '#7F77DD', k => Math.round(bins[k].wages)),
       mk('Delivery', '#EF9F27', k => Math.round(dfr ? bins[k].rev * dfr.pct / 100 : 0)),
-      mk('Corp payroll', '#D4537E', k => Math.round(cpDaily * bins[k].days)),
+      mk('Corp payroll', '#D4537E', k => {
+        const shc = dowShares(STATE.currentVenue);
+        return Math.round(dailyBins && shc ? cpDaily * 7 * shc[new Date(k).getDay()] : cpDaily * bins[k].days);
+      }),
       mk('Overheads', '#888780', k => {
         const sh = dowShares(STATE.currentVenue);
         return Math.round(dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * bins[k].days);
