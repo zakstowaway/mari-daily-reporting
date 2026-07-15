@@ -1688,6 +1688,16 @@ function renderExtras(day, cfg) {
   }
 }
 
+// Trailing dept wage mix (Kitchen vs FOH share of dept wages, last 12 weeks)
+// — used to split a venue-level wage target across departments.
+function deptWageShares(venue) {
+  const rows = (STATE.histories[venue] || []).slice(-84);
+  let k = 0, f = 0;
+  for (const r of rows) { k += toNum(r.wages_kitchen_dollars); f += toNum(r.wages_foh_dollars); }
+  const t = k + f;
+  return t ? { k: k / t, f: f / t } : null;
+}
+
 // Week ahead: Deputy rostered $ (inc super, salaried synthesized) vs the
 // typical revenue for that weekday = projected wage % you can still change.
 function renderWeekAhead() {
@@ -1731,9 +1741,17 @@ function renderWeekAhead() {
       let kLine, fLine;
       if (v === 'hg') {
         // HG canon (Zak, 2026-07-15): dept wages read against TOTAL venue
-        // revenue — HG's bev take is too small for dept-vs-dept to mean much.
-        kLine = `<b>Kitchen</b> ${fcst ? fmtPct(kit / fcst * 100) : '—'} of total · ${fmtDollars(kit)}`;
-        fLine = `<b>FOH</b> ${fcst ? fmtPct(foh / fcst * 100) : '—'} of total · ${fmtDollars(foh)}`;
+        // revenue, and the venue wage target (30%) splits across depts by the
+        // trailing dept wage mix — the two dept targets always sum to the
+        // venue target, so hitting both = hitting 30% by construction.
+        const mix = deptWageShares('hg');
+        const kT = target && mix ? target * mix.k : null;
+        const fT = target && mix ? target * mix.f : null;
+        const kp2 = fcst ? kit / fcst * 100 : null;
+        const fp2 = fcst ? foh / fcst * 100 : null;
+        const col = (pv, tv) => pv === null || tv === null ? '' : pv > tv + 2 ? ' style="color:#E24B4A;"' : pv < tv - 2 ? ' style="color:#1D9E75;"' : '';
+        kLine = `<b>Kitchen</b> <span${col(kp2, kT)}>${kp2 !== null ? fmtPct(kp2) : '—'}</span> of total · ${fmtDollars(kit)}${kT ? ` · tgt ${fmtPct(kT)}` : ''}`;
+        fLine = `<b>FOH</b> <span${col(fp2, fT)}>${fp2 !== null ? fmtPct(fp2) : '—'}</span> of total · ${fmtDollars(foh)}${fT ? ` · tgt ${fmtPct(fT)}` : ''}`;
       } else {
         // Stow: dept-vs-dept (Kitchen vs food, FOH vs bev), with dept-level
         // closed days (kitchen shuts Mondays) labelled instead of a fake %.
