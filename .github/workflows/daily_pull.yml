@@ -1,9 +1,12 @@
 name: Daily Pull
 
-# Serialized: simultaneous venue dispatches were racing on git push and
-# LOSING the losers' CSV payloads (2026-07-14: stow+hg morning data gone).
+# PER-VENUE concurrency: a single shared queue only holds ONE pending run,
+# so three simultaneous venue dispatches cancelled the middle one (stow,
+# 2026-07-15 morning) and its payload was lost. Each venue now queues
+# independently; cross-venue push collisions are absorbed by the
+# pull-rebase-retry loops in the commit steps.
 concurrency:
-  group: daily-pull
+  group: daily-pull-${{ github.event.client_payload.venue || inputs.venue || github.event.action || 'cron' }}
   cancel-in-progress: false
 
 on:
