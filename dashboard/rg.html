@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Menu Trends — Stowaway Hospitality Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light dark;
+  --paper: #FFFFFF; --parchment: #FBF8F1; --ink: #1A1A1A; --ink-soft: #5A544C;
+  --line: #E8DFCF; --group: #0B0B0B; --pos: #0F6E56; --neg: #A32D2D; --blue: #185FA5;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1D1B17; --parchment: #12100D; --ink: #F2F0EA; --ink-soft: #B7B1A4;
+    --line: #2F2C26; --group: #F2F0EA; --pos: #4CB399; --neg: #E64663; --blue: #6FA8DC;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Inter', -apple-system, sans-serif; background: var(--parchment); color: var(--ink); -webkit-font-smoothing: antialiased; }
+.bar { background: var(--paper); border-bottom: 1px solid var(--line); padding: 12px 24px; position: sticky; top: 0; z-index: 10; }
+.bar-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.bar a { color: var(--ink-soft); text-decoration: none; font-size: 13px; }
+.bar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; letter-spacing: .08em; text-transform: uppercase; margin: 0; }
+.chip { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: .06em; padding: 6px 14px; border-radius: 14px; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer; }
+.chip.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 22px 24px; }
+.layout { display: grid; grid-template-columns: 5fr 7fr; gap: 16px; align-items: start; }
+@media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+.panel { background: var(--paper); border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.panel h2 { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 10px; font-weight: 600; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); text-align: right; padding: 4px 8px; cursor: pointer; user-select: none; }
+th:first-child, td:first-child { text-align: left; }
+td { padding: 6px 8px; text-align: right; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+tbody tr { cursor: pointer; }
+tbody tr:hover td { background: rgba(127,119,221,.08); }
+tbody tr.sel td { background: rgba(127,119,221,.14); }
+.pos { color: var(--pos); } .neg { color: var(--neg); } .dim { color: var(--ink-soft); }
+.chart-box { height: 230px; position: relative; margin-bottom: 18px; }
+.chart-box.small { height: 180px; }
+.note { font-size: 11px; color: var(--ink-soft); margin: 12px 0 0; line-height: 1.6; }
+#detail-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 600; margin: 0 0 2px; }
+#detail-sub { font-size: 12px; color: var(--ink-soft); margin: 0 0 14px; }
+</style>
+</head>
+<body>
+<div class="bar"><div class="bar-inner">
+  <a href="index.html">&larr; Dashboard</a>
+  <h1>Menu Trends</h1>
+  <span id="venue-chips"></span>
+  <span style="margin-left:auto; font-size:11px; color:var(--ink-soft);" id="feed-note"></span>
+</div></div>
+
+<div class="wrap">
+  <div class="layout">
+    <div class="panel">
+      <h2>Reporting groups — momentum <span class="dim" id="sort-note"></span></h2>
+      <table id="movers">
+        <thead><tr>
+          <th data-s="name">Group</th>
+          <th data-s="wk">$/wk (8w)</th>
+          <th data-s="share">Share</th>
+          <th data-s="mom">vs prior 8w</th>
+          <th data-s="yoy">vs LY</th>
+        </tr></thead>
+        <tbody id="movers-body"></tbody>
+      </table>
+      <p class="note">$/wk = avg weekly ex-GST sales over the last 8 complete weeks · share = of venue revenue · vs prior 8w and vs same-8-weeks-last-year compare SHARE (popularity net of overall trade) · sorted by the biggest movers first — those are where the energy goes. Click any group for its story.</p>
+    </div>
+    <div class="panel">
+      <p id="detail-title">—</p>
+      <p id="detail-sub"></p>
+      <div class="chart-box"><canvas id="c-weekly"></canvas></div>
+      <div class="chart-box small"><canvas id="c-season"></canvas></div>
+      <div class="chart-box small"><canvas id="c-share"></canvas></div>
+      <p class="note">Top: weekly sales with the previous year overlaid (52-week shift) — the direct seasonality read for timing menu changes. Middle: seasonal index — average weekly sales by calendar month vs the group's own average (100 = typical); plan changes into the shoulder months before peaks. Bottom: share of venue revenue, 4-week smoothed — the popularity trend independent of how busy the venue was.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
+<script>
+const IS_DARK = matchMedia('(prefers-color-scheme: dark)').matches;
+try {
+  const s = JSON.parse(sessionStorage.getItem('mari_session') || 'null');
+  if (!s || s.role !== 'admin') location.href = 'index.html';
+} catch (e) { location.href = 'index.html'; }
+
+const VEN_LABEL = { all: 'All venues', stow: 'Stowaway', hg: 'Harry Gatos', mari: "Marilyna's" };
+let ROWS = [], VENUE = 'all', SORT = 'mom', SEL = null;
+let charts = {};
+
+const toNum = x => { const n = parseFloat(x); return isFinite(n) ? n : 0; };
+const fmt$ = n => '$' + Math.round(n).toLocaleString();
+const fmtPc = n => (Math.round(n * 10) / 10).toFixed(1) + '%';
+const addDays = (d, n) => { const c = new Date(d); c.setDate(c.getDate() + n); return c; };
+const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
+async function boot() {
+  const r = await fetch('data/rg_weekly.csv?t=' + Date.now());
+  const lines = (await r.text()).trim().split(/\r?\n/);
+  const head = lines[0].split(',');
+  ROWS = lines.slice(1).map(l => {
+    // reporting_group may contain commas? builder writes plain csv — RG names
+    // with commas would be quoted; handle the simple quote case.
+    let parts;
+    if (l.includes('"')) {
+      parts = l.match(/(".*?"|[^,]+)/g).map(x => x.replace(/^"|"$/g, ''));
+    } else parts = l.split(',');
+    return { we: parts[0], venue: parts[1], rg: parts[2], amt: toNum(parts[3]), qty: toNum(parts[4]) };
+  });
+  document.getElementById('venue-chips').innerHTML = Object.keys(VEN_LABEL).map(v =>
+    `<button class="chip${v === VENUE ? ' active' : ''}" onclick="setVenue('${v}')">${VEN_LABEL[v]}</button>`).join(' ');
+  const weeks = allWeeks();
+  document.getElementById('feed-note').textContent = 'weekly ex-GST · ' + weeks[0] + ' → ' + weeks[weeks.length - 1] + (partialLast() ? ' (latest week partial)' : '');
+  render();
+}
+
+function setVenue(v) { VENUE = v; SEL = null; document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.textContent === VEN_LABEL[v])); render(); }
+
+function rowsFor() { return VENUE === 'all' ? ROWS : ROWS.filter(r => r.venue === VENUE); }
+function allWeeks() { return [...new Set(ROWS.map(r => r.we))].sort(); }
+function partialLast() {
+  const w = allWeeks();
+  return w.length && w[w.length - 1] >= iso(new Date());
+}
+function completeWeeks() {
+  let w = allWeeks();
+  if (partialLast()) w = w.slice(0, -1);
+  return w;
+}
+
+function venueTotals(rows) {
+  const t = {};
+  for (const r of rows) t[r.we] = (t[r.we] || 0) + r.amt;
+  return t;
+}
+
+function stats() {
+  const rows = rowsFor();
+  const weeks = completeWeeks();
+  const L8 = new Set(weeks.slice(-8));
+  const P8 = new Set(weeks.slice(-16, -8));
+  const ly8 = new Set(weeks.slice(-8).map(we => iso(addDays(new Date(we), -364))));
+  const tot = venueTotals(rows);
+  const sum = set => [...set].reduce((t2, we) => t2 + (tot[we] || 0), 0);
+  const totL8 = sum(L8), totP8 = sum(P8), totLY = sum(ly8);
+  const by = {};
+  for (const r of rows) {
+    const b = by[r.rg] = by[r.rg] || { l8: 0, p8: 0, ly: 0 };
+    if (L8.has(r.we)) b.l8 += r.amt;
+    else if (P8.has(r.we)) b.p8 += r.amt;
+    if (ly8.has(r.we)) b.ly += r.amt;
+  }
+  const out = [];
+  for (const rg in by) {
+    const b = by[rg];
+    if (b.l8 / 8 < 40 && b.p8 / 8 < 40) continue;   // noise floor
+    const shL = totL8 ? b.l8 / totL8 * 100 : 0;
+    const shP = totP8 ? b.p8 / totP8 * 100 : 0;
+    const shY = totLY ? b.ly / totLY * 100 : 0;
+    out.push({
+      rg, wk: b.l8 / 8, share: shL,
+      mom: shP > 0.05 ? (shL - shP) / shP * 100 : null,
+      yoy: shY > 0.05 ? (shL - shY) / shY * 100 : null,
+    });
+  }
+  return out;
+}
+
+function render() {
+  const st = stats();
+  const key = SORT;
+  st.sort((a, b) => key === 'name' ? a.rg.localeCompare(b.rg)
+    : key === 'mom' || key === 'yoy' ? Math.abs(b[key] ?? 0) - Math.abs(a[key] ?? 0)
+    : (b[key] ?? 0) - (a[key] ?? 0));
+  if (!SEL || !st.some(s => s.rg === SEL)) SEL = (st.slice().sort((a, b) => b.wk - a.wk)[0] || {}).rg || null;
+  const cell = v => v === null ? '<span class="dim">—</span>' :
+    `<span class="${v > 10 ? 'pos' : v < -10 ? 'neg' : 'dim'}">${(v >= 0 ? '+' : '−') + Math.abs(v).toFixed(0)}%</span>`;
+  document.getElementById('movers-body').innerHTML = st.map(s =>
+    `<tr class="${s.rg === SEL ? 'sel' : ''}" onclick="select('${s.rg.replace(/'/g, "\\'")}')">
+      <td>${s.rg}</td><td>${fmt$(s.wk)}</td><td>${fmtPc(s.share)}</td><td>${cell(s.mom)}</td><td>${cell(s.yoy)}</td></tr>`).join('');
+  document.getElementById('sort-note').textContent = '· sorted by ' + { mom: 'movement vs prior 8w', yoy: 'movement vs LY', wk: 'size', share: 'share', name: 'name' }[SORT];
+  document.querySelectorAll('#movers th').forEach(t => t.onclick = () => { SORT = t.dataset.s; render(); });
+  if (SEL) detail(SEL);
+}
+
+function select(rg) { SEL = rg; render(); }
+
+function detail(rg) {
+  const rows = rowsFor().filter(r => r.rg === rg);
+  const tot = venueTotals(rowsFor());
+  const weeks = completeWeeks();
+  const byWe = {};
+  for (const r of rows) byWe[r.we] = (byWe[r.we] || 0) + r.amt;
+
+  document.getElementById('detail-title').textContent = rg;
+  const w8 = weeks.slice(-8).reduce((t2, we) => t2 + (byWe[we] || 0), 0) / 8;
+  document.getElementById('detail-sub').textContent = VEN_LABEL[VENUE] + ' · ' + fmt$(w8) + '/wk over the last 8 complete weeks';
+
+  const tick = IS_DARK ? '#B7B1A4' : '#5A544C';
+  const grid = IS_DARK ? 'rgba(120,110,90,.2)' : 'rgba(232,223,207,.4)';
+  const base = { responsive: true, maintainAspectRatio: false,
+    scales: { y: { ticks: { color: tick, font: { size: 10 } }, grid: { color: grid } },
+              x: { ticks: { color: tick, font: { size: 10 }, maxTicksLimit: 14 }, grid: { display: false } } },
+    plugins: { legend: { labels: { color: tick, boxWidth: 12, boxHeight: 3, usePointStyle: true, pointStyle: 'line', font: { size: 11 } } } } };
+
+  // 1: last 52 weeks + prior year overlay
+  const cur = weeks.slice(-52);
+  const curD = cur.map(we => byWe[we] ?? null);
+  const lyD = cur.map(we => { const p = iso(addDays(new Date(we), -364)); return byWe[p] ?? null; });
+  mkChart('c-weekly', { type: 'line', data: { labels: cur.map(w2 => w2.slice(2)), datasets: [
+    { label: 'This year', data: curD, borderColor: '#378ADD', backgroundColor: '#378ADD22', borderWidth: 2, pointRadius: 0, tension: .3, spanGaps: true, fill: true },
+    { label: 'Previous year (52w shift)', data: lyD, borderColor: '#E8A82B', borderWidth: 1.6, pointRadius: 0, tension: .3, spanGaps: true },
+  ]}, options: base });
+
+  // 2: seasonal index by calendar month (all years pooled)
+  const mSum = Array(12).fill(0), mCnt = Array(12).fill(0);
+  for (const we of weeks) { const m = new Date(we).getMonth(); mSum[m] += byWe[we] || 0; mCnt[m]++; }
+  const mAvg = mSum.map((x, i) => mCnt[i] ? x / mCnt[i] : 0);
+  const g = mAvg.filter(x => x > 0);
+  const gAvg = g.length ? g.reduce((a, b) => a + b, 0) / g.length : 1;
+  const idx = mAvg.map(x => x ? x / gAvg * 100 : null);
+  mkChart('c-season', { type: 'bar', data: { labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], datasets: [
+    { label: 'Seasonal index (100 = typical week)', data: idx.map(x => x === null ? null : Math.round(x)),
+      backgroundColor: idx.map(x => x === null ? '#888' : x >= 115 ? '#1D9E75' : x <= 85 ? '#E24B4A' : '#7F77DD'), borderWidth: 0 },
+  ]}, options: base });
+
+  // 3: share of venue revenue, 4-week smoothed
+  const share = cur.map(we => tot[we] ? (byWe[we] || 0) / tot[we] * 100 : null);
+  const sm = share.map((_, i) => {
+    const win = share.slice(Math.max(0, i - 3), i + 1).filter(x => x !== null);
+    return win.length ? Math.round(win.reduce((a, b) => a + b, 0) / win.length * 100) / 100 : null;
+  });
+  mkChart('c-share', { type: 'line', data: { labels: cur.map(w2 => w2.slice(2)), datasets: [
+    { label: 'Share of venue revenue % (4-wk avg)', data: sm, borderColor: '#D4537E', borderWidth: 2, pointRadius: 0, tension: .3, spanGaps: true },
+  ]}, options: base });
+}
+
+function mkChart(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart(document.getElementById(id).getContext('2d'), cfg);
+}
+
+boot().catch(e => { console.error(e); document.getElementById('detail-title').textContent = 'Failed to load feed'; });
+</script>
+</body>
+</html>
