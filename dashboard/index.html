@@ -213,9 +213,6 @@ body {
 .vb-pos { color: #1D9E75; } .vb-neg { color: #E24B4A; }
 .wa-dept { font-size: 11px; margin: 5px 0 0; line-height: 1.55; border-top: 1px solid var(--line); padding-top: 5px; }
 .wa-dept b { font-weight: 600; }
-.wa-tgt { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; margin: 2px 0 0; opacity: .9; }
-.wa-trim { font-size: 11px; font-weight: 600; margin: 4px 0 0; color: #E24B4A; }
-.wa-room { font-size: 11px; margin: 4px 0 0; color: #1D9E75; opacity: .9; }
 .wa-none { font-size: 11px; font-weight: 600; margin: 4px 0 0; opacity: .7; }
 .wa-week + .wa-week { margin-top: 20px; }
 .wa-wk { font-family: 'Space Grotesk', sans-serif; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .7; margin: 0 0 6px; }
@@ -322,6 +319,11 @@ body {
   margin: 0 0 4px; letter-spacing: -0.03em; line-height: 1; color: var(--ink);
 }
 .grid.six .card .value { font-size: 23px; }
+.card .vs { display: flex; gap: 9px; align-items: baseline; margin: 1px 0 3px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.card .vs .vs-t { opacity: .7; }
+.card .vs .vs-bad  { color: #E24B4A; }
+.card .vs .vs-good { color: #1D9E75; }
+.card .vs .vs-ok   { opacity: .55; }
 .card .sub { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums;
   display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 .card:hover .sub { -webkit-line-clamp: unset; }
@@ -1054,6 +1056,21 @@ function parseCsv(text) {
     return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
   });
 }
+// The target belongs NEXT TO the number, not buried at the end of a sentence
+// (Zak, 2026-07-16: "I need to easily see how my actual is vs what I'm trying to
+// achieve"). Returns the target and the gap in points, so a manager reads the
+// verdict without parsing prose. `invert` for metrics where UNDER is the miss —
+// GP, where 78% against a 78% target is fine but 74% is not.
+function vsTarget(pct, tgt, band = 2, invert = false) {
+  if (pct === null || tgt === null || !isFinite(pct) || !isFinite(tgt)) return '';
+  const d = pct - tgt;
+  const miss = invert ? d < 0 : d > 0;
+  const cls = Math.abs(d) <= band ? 'vs-ok' : miss ? 'vs-bad' : 'vs-good';
+  const word = Math.abs(d) < 0.05 ? 'on target'
+             : `${Math.abs(d).toFixed(1)}pp ${d > 0 ? 'over' : 'under'}`;
+  return `<span class="vs-t">target ${fmtPct(tgt)}</span><span class="${cls}">${word}</span>`;
+}
+
 function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
 function hasVal(x) { return x != null && x !== '' && isFinite(parseFloat(x)); }
 function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
@@ -1363,16 +1380,18 @@ const CARD_DEFS = {
     sub += STATE.currentVenue === 'mari' ? ' incl driver \u00b7 Deputy' : ' \u00b7 Deputy incl super';
     const tgt = wageTargetFor(day);
     let status = day.wages_alert;
+    let vsOut = '';
     if (tgt !== null && hasVal(day.wages_pct)) {
       const pv = toNum(day.wages_pct);
-      sub += ` \u00b7 tgt ${fmtPct(tgt)}${String(day.date || '').length === 10 ? ' (' + new Date(day.date).toLocaleDateString('en-AU', { weekday: 'short' }) + ')' : ' wk'}`;
+      // the weekday matters: a Monday target isn't a Saturday target
+      vsOut = vsTarget(pv, tgt) + `<span class="vs-t">${String(day.date || '').length === 10 ? new Date(day.date).toLocaleDateString('en-AU', { weekday: 'short' }) : 'wk'}</span>`;
       status = pv > tgt + 2 ? 'red' : pv < tgt - 2 ? 'green' : 'amber';
     }
     if (med !== null && hasVal(day.wages_pct)) {
       const d = toNum(day.wages_pct) - med;
       sub += ' \u00b7 ' + pill((d >= 0 ? '+' : '\u2212') + Math.abs(d).toFixed(1) + 'pp vs 12-wk median', d > 1 ? 'red' : d < -1 ? 'green' : 'warn');
     }
-    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '\u2014', sub, status };
+    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '\u2014', vs: vsOut, sub, status };
   },
   cogs_merged: (day, cfg) => {
     const a = actualCogs(STATE.currentVenue, winEnd(day));
@@ -1435,12 +1454,13 @@ const CARD_DEFS = {
     const tgt = wageTargetFor(day);
     let sub = cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '';
     let status = day.wages_alert;
+    let vs2 = '';
     if (tgt !== null && hasVal(day.wages_pct)) {
       const pv = toNum(day.wages_pct);
-      sub += ` · tgt ${fmtPct(tgt)}${String(day.date || '').length === 10 ? ' (' + new Date(day.date).toLocaleDateString('en-AU', { weekday: 'short' }) + ')' : ' wk'}`;
+      vs2 = vsTarget(pv, tgt) + `<span class="vs-t">${String(day.date || '').length === 10 ? new Date(day.date).toLocaleDateString('en-AU', { weekday: 'short' }) : 'wk'}</span>`;
       status = pv > tgt + 2 ? 'red' : pv < tgt - 2 ? 'green' : 'amber';
     }
-    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—', sub, status };
+    return { label: 'Wages', value: hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—', vs: vs2, sub, status };
   },
   delivery: (day, cfg) => {
     // driver wages (history) + REAL platform fees (Xero monthly feed,
@@ -1490,7 +1510,8 @@ const CARD_DEFS = {
     return {
       label: 'Food COGS',
       value: split ? fmtPct(toNum(day.food_cogs_pct)) : hasVal(day.cogs_pct) && !hasVal(day.bev_ex_gst) ? fmtPct(toNum(day.cogs_pct)) : '—',
-      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.food_cogs)) + ' / ' + fmtDollars(toNum(day.food_ex_gst)) + ` food rev · tgt ${fmtPct(COGS_TARGET_PCT)}` : 'awaiting split data',
+      vs: split ? vsTarget(toNum(day.food_cogs_pct), COGS_TARGET_PCT) : '',
+      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.food_cogs)) + ' / ' + fmtDollars(toNum(day.food_ex_gst)) + ` food rev` : 'awaiting split data',
       status: split ? cogsStatus(toNum(day.food_cogs_pct)) : 'unknown',
     };
   },
@@ -1499,7 +1520,8 @@ const CARD_DEFS = {
     return {
       label: 'Bev COGS',
       value: split ? fmtPct(toNum(day.bev_cogs_pct)) : '—',
-      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.bev_cogs)) + ' / ' + fmtDollars(toNum(day.bev_ex_gst)) + ` bev rev · tgt ${fmtPct(COGS_TARGET_PCT)}` : 'awaiting split data',
+      vs: split ? vsTarget(toNum(day.bev_cogs_pct), COGS_TARGET_PCT) : '',
+      sub: split && cfg.show_dollar_amounts ? fmtDollars(toNum(day.bev_cogs)) + ' / ' + fmtDollars(toNum(day.bev_ex_gst)) + ` bev rev` : 'awaiting split data',
       status: split ? cogsStatus(toNum(day.bev_cogs_pct)) : 'unknown',
     };
   },
@@ -1515,12 +1537,12 @@ const CARD_DEFS = {
     let subK = has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_kitchen_dollars)) + ' vs total rev' : 'awaiting split data';
     let stK = has ? (day.wages_kitchen_alert || 'unknown') : 'unknown';
     if (tgtK !== null && pct !== null) {
-      subK += ` · tgt ${fmtPct(tgtK)}`;
       stK = pct > tgtK + 2 ? 'red' : pct < tgtK - 2 ? 'green' : 'amber';
     }
     return {
       label: 'Kitchen Wages',
       value: pct !== null ? fmtPct(pct) : '—',
+      vs: vsTarget(pct, tgtK),
       sub: subK,
       status: stK,
     };
@@ -1535,12 +1557,12 @@ const CARD_DEFS = {
     let subF = has && cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_foh_dollars)) + ' vs total rev' : 'awaiting split data';
     let stF = has ? (day.wages_foh_alert || 'unknown') : 'unknown';
     if (tgtF !== null && pct !== null) {
-      subF += ` · tgt ${fmtPct(tgtF)}`;
       stF = pct > tgtF + 2 ? 'red' : pct < tgtF - 2 ? 'green' : 'amber';
     }
     return {
       label: 'FOH Wages',
       value: pct !== null ? fmtPct(pct) : '—',
+      vs: vsTarget(pct, tgtF),
       sub: subF,
       status: stF,
     };
@@ -1551,7 +1573,8 @@ const CARD_DEFS = {
     return {
       label: split ? 'Food GP' : 'GP',
       value: v2 !== null ? fmtPct(v2) : '—',
-      sub: v2 !== null ? `tgt ${fmtPct(100 - COGS_TARGET_PCT)}` : '',
+      vs: v2 !== null ? vsTarget(v2, 100 - COGS_TARGET_PCT, 2, true) : '',
+      sub: '',
       status: v2 !== null ? cogsStatus(100 - v2) : 'unknown',
     };
   },
@@ -1560,7 +1583,8 @@ const CARD_DEFS = {
     return {
       label: 'Bev GP',
       value: has ? fmtPct(toNum(day.bev_gp_pct)) : '—',
-      sub: has ? `tgt ${fmtPct(100 - COGS_TARGET_PCT)}` : '',
+      vs: has ? vsTarget(toNum(day.bev_gp_pct), 100 - COGS_TARGET_PCT, 2, true) : '',
+      sub: '',
       status: has ? cogsStatus(100 - toNum(day.bev_gp_pct)) : 'unknown',
     };
   },
@@ -1827,7 +1851,7 @@ function renderExtras(day, cfg) {
   if ((STATE.currentVenue === 'stow' || STATE.currentVenue === 'hg') && hasVal(day.food_ex_gst)) {
     splitEl.innerHTML = ['cogs_food', 'cogs_bev', 'wages_kitchen', 'wages_foh'].map(k => {
       const c = CARD_DEFS[k](day, cfg);
-      return `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`;
+      return `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p>${c.vs ? `<p class="vs">${c.vs}</p>` : ''}<p class="sub">${c.sub || ''}</p></div>`;
     }).join('');
   }
 }
@@ -1988,7 +2012,7 @@ function renderWeekAhead() {
   }
   if (!blocks.length) return;
   const gen = STATE.roster.generated ? new Date(STATE.roster.generated) : null;
-  el.innerHTML = `<p class="strip-label">Payroll weeks — ${deptOnly ? deptOnly.toLowerCase() + ' ' : ''}wage % vs revenue (elapsed days are actuals; the rest is roster you can still change)</p>`
+  el.innerHTML = `<p class="strip-label">Payroll weeks — ${deptOnly ? deptOnly.toLowerCase() + ' ' : ''}roster vs target for the WEEK (elapsed days are actuals; the rest you can still change)</p>`
     + blocks.join('')
     + `<p style="font-size:11px;opacity:.55;margin:10px 0 0;">Deputy roster incl 12% super, salaried synthesized · typical rev = median of last 8 same weekdays · target 30% weekly, shaped by weekday (quiet days carry prep, so their day-target runs higher) and split across depts by that weekday's own wage mix · admin wages count at group level only${gen ? ` · roster as at ${gen.toLocaleString('en-AU', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}` : ''}</p>`;
 }
@@ -2093,7 +2117,7 @@ function waCellHtml(D, v, deptOnly, todayIso) {
     return `<div class="wa-cell">${head}
       <p class="wa-pct" style="opacity:.4;">—</p>
       <p class="wa-none">${deptOnly ? deptOnly.toLowerCase() : 'roster'} not rostered yet</p>
-      <p class="wa-sub">typical rev ${fmtDollars(rev)}${budget !== null ? ` · budget ${fmtDollars(budget)}` : ''}</p>
+      <p class="wa-sub">typical rev ${fmtDollars(rev)}</p>
     </div>`;
   }
   // A day missing a dept can still be OVER (that's real — the cut stands), but
@@ -2125,38 +2149,27 @@ function waCellHtml(D, v, deptOnly, todayIso) {
       const kp2 = fcst ? kit / fcst * 100 : null;
       const fp2 = fcst ? foh / fcst * 100 : null;
       const col = (pv, tv) => pv === null || tv === null ? '' : pv > tv + 2 ? ' style="color:#E24B4A;"' : pv < tv - 2 ? ' style="color:#1D9E75;"' : '';
-      // Only a roster can still be cut — don't tell anyone to trim a day that
-      // has already happened.
-      const cut = (amt) => mode === 'roster' && amt > 25 ? ` · <span style="color:#E24B4A;font-weight:600;">cut ${fmtDollars(amt)}</span>` : '';
       const kClosed = v === 'stow' && df2.food < 150;
       const kLine = kClosed
         ? `<b>Kitchen</b> closed${kit > 100 ? ' · but ' + fmtDollars(kit) + ' rostered' : ''}`
-        : `<b>Kitchen</b> <span${col(kp2, kT)}>${kp2 !== null ? fmtPct(kp2) : '—'}</span> of total · ${fmtDollars(kit)}${kT ? ` · tgt ${fmtPct(kT)}` : ''}${kT && fcst ? cut(kit - kT / 100 * fcst) : ''}`;
-      const fLine = `<b>FOH</b> <span${col(fp2, fT)}>${fp2 !== null ? fmtPct(fp2) : '—'}</span> of total · ${fmtDollars(foh)}${fT ? ` · tgt ${fmtPct(fT)}` : ''}${fT && fcst ? cut(foh - fT / 100 * fcst) : ''}`;
+        : `<b>Kitchen</b> <span${col(kp2, kT)}>${kp2 !== null ? fmtPct(kp2) : '—'}</span> of total · ${fmtDollars(kit)}`;
+      const fLine = `<b>FOH</b> <span${col(fp2, fT)}>${fp2 !== null ? fmtPct(fp2) : '—'}</span> of total · ${fmtDollars(foh)}`;
       dept = `<p class="wa-dept">${kLine}<br>${fLine}</p>`;
     }
   }
-  // The actionable line: the day's wage BUDGET and exactly how many dollars to
-  // trim if the roster runs over it. An elapsed day is a fact, not a decision —
-  // it reports the variance instead of demanding a cut.
-  let action = '';
-  if (pct !== null && target !== null && budget !== null) {
-    const diff = wages - budget;
-    if (mode === 'actual') {
-      if (diff > 25) action = `<p class="wa-trim">${fmtDollars(diff)} over budget</p>`;
-      else if (diff < -25) action = `<p class="wa-room">${fmtDollars(-diff)} under budget</p>`;
-    } else if (diff > 25) action = `<p class="wa-trim">cut ${fmtDollars(diff)} to hit target</p>`;
-    // "under budget" is only true if the roster is finished. If a dept is
-    // missing, the headroom is fictional — say what's missing instead.
-    else if (partial) action = '';
-    else if (diff < -100) action = `<p class="wa-room">${fmtDollars(-diff)} under budget</p>`;
-  }
-  if (partial) action += `<p class="wa-none">${D.missing.join(' + ')} not rostered yet</p>`;
+  // No per-day budget, target or cut-$X here any more (Zak, 2026-07-16: "the
+  // daily wage budget is too noisy"). A day's budget was never a real decision
+  // anyway — you don't balance the books on a Tuesday, you balance them over the
+  // payroll week, and a quiet Tuesday against a shaped Tuesday target produced a
+  // lot of red that meant nothing. The week total carries target vs roster; a
+  // cell just shows what's on, and colours so a heavy day still catches the eye.
+  // The one exception is a MISSING dept — that's not budget noise, it's the
+  // roster being unfinished, and it has to stay visible.
+  const gap = partial ? `<p class="wa-none">${D.missing.join(' + ')} not rostered yet</p>` : '';
   return `<div class="wa-cell ${cls}">${head}
     <p class="wa-pct">${pct !== null ? fmtPct(pct) : '—'}</p>
-    ${target !== null ? `<p class="wa-tgt">target ${fmtPct(target)}${budget !== null ? ' · budget ' + fmtDollars(budget) : ''}</p>` : ''}
     <p class="wa-sub">${mode === 'actual' ? 'wages' : 'roster'} ${fmtDollars(wages)}<br>${mode === 'actual' ? 'took' : 'typical rev'} ${rev ? fmtDollars(rev) : '—'}</p>
-    ${action}
+    ${gap}
     ${dept}
   </div>`;
 }
