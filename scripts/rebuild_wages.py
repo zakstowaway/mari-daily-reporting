@@ -206,7 +206,6 @@ while cur <= d_to:
     # Closed weeks are untouched: Xero pays them, and every day has timesheets so
     # there is nothing for the roster to stand in for.
     roster_shifts = []
-    logged_dates = {s["date"] for s in shifts}
     if wk_end >= today:
         for rs in fetch_roster(cur, wk_end + timedelta(days=1)):
             hours = rs.get("TotalTime") or 0
@@ -216,8 +215,18 @@ while cur <= d_to:
             if emp not in SAL:
                 continue          # hourly roster is not cost we can claim yet
             dstr = local_date(rs["StartTime"])
-            if dstr in logged_dates:
-                continue          # the day happened — its timesheets are truth
+            # Strictly FUTURE days only. A day that has happened is judged on its
+            # timesheets, full stop — if someone was rostered and didn't work,
+            # their salary genuinely lands on the days they did.
+            #
+            # Deliberately NOT "days with no timesheets yet": that reads as today
+            # until the first person clocks on, then flips mid-shift, so today's
+            # early starters would absorb a share that silently re-cut itself
+            # every time the rebuild ran. Today keeps its own partial actuals —
+            # stable, and it matches the week strip, where today reads as roster
+            # and only elapsed days read as actual.
+            if dstr <= today.isoformat():
+                continue
             ou = (rs.get("_DPMetaData", {}).get("OperationalUnitInfo", {}) or {}).get("OperationalUnitName", "")
             b = bucket_for(ou, dstr)
             if not b:
