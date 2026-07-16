@@ -2124,8 +2124,14 @@ function waCellHtml(D, v, deptOnly, todayIso) {
   // it can never be "good": the number is only low because the roster is
   // unfinished. Neutralise the green and name the gap.
   const partial = D.missing && D.missing.length > 0;
-  let cls = pct !== null && target !== null ? (pct > target + 2 ? 'bad' : pct < target - 2 ? 'good' : '') : '';
-  if (partial && cls === 'good') cls = '';
+  // A day cell no longer renders a verdict against target (Zak, 2026-07-17).
+  // The colour was the last of the per-day budget: it said "this Wednesday is
+  // over" about a number you settle across the payroll week, not on the day.
+  // It also lies during the OPEN week — a salaried person's whole weekly cost
+  // lands on their first logged shift, so Wed 15 Jul read 185.5% red purely
+  // because Renan hadn't worked the rest of his week yet. Nothing was wrong.
+  // The week total still carries target vs roster; that's the real decision.
+  const cls = '';
   const fcst = rev;
   let dept = '';
   if (!deptOnly && (v === 'stow' || v === 'hg')) {
@@ -2148,7 +2154,8 @@ function waCellHtml(D, v, deptOnly, todayIso) {
       const fT = target !== null && mix ? target * mix.f : null;
       const kp2 = fcst ? kit / fcst * 100 : null;
       const fp2 = fcst ? foh / fcst * 100 : null;
-      const col = (pv, tv) => pv === null || tv === null ? '' : pv > tv + 2 ? ' style="color:#E24B4A;"' : pv < tv - 2 ? ' style="color:#1D9E75;"' : '';
+      // Dept lines are informational too — no target verdict (Zak, 2026-07-17).
+      const col = () => '';
       const kClosed = v === 'stow' && df2.food < 150;
       const kLine = kClosed
         ? `<b>Kitchen</b> closed${kit > 100 ? ' · but ' + fmtDollars(kit) + ' rostered' : ''}`
@@ -2162,9 +2169,12 @@ function waCellHtml(D, v, deptOnly, todayIso) {
   // anyway — you don't balance the books on a Tuesday, you balance them over the
   // payroll week, and a quiet Tuesday against a shaped Tuesday target produced a
   // lot of red that meant nothing. The week total carries target vs roster; a
-  // cell just shows what's on, and colours so a heavy day still catches the eye.
+  // cell just shows what's on. The colour went too (2026-07-17) — same reason,
+  // and because in the open week it flags salaried allocation artefacts as if
+  // they were overspend.
   // The one exception is a MISSING dept — that's not budget noise, it's the
-  // roster being unfinished, and it has to stay visible.
+  // roster being unfinished, and it has to stay visible. Likewise a CLOSED day
+  // with wages rostered on it stays red: that's a Deputy error, not a verdict.
   const gap = partial ? `<p class="wa-none">${D.missing.join(' + ')} not rostered yet</p>` : '';
   return `<div class="wa-cell ${cls}">${head}
     <p class="wa-pct">${pct !== null ? fmtPct(pct) : '—'}</p>
