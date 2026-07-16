@@ -1,0 +1,218 @@
+{
+  "date": "2026-07-16",
+  "generated_at": "2026-07-16T20:12:27.563956Z",
+  "venue": "marilynas",
+  "venue_display": "Marilyna's Pizza",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "delivery"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 1555.34,
+    "revenue_ex_gst": 1405.6,
+    "cogs_dollars": 281.07,
+    "cogs_pct": 20.0,
+    "gp_dollars": 1124.53,
+    "gp_pct": 80.0,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 1405.6,
+    "bev_ex_gst": 0.0,
+    "food_cogs": 281.07,
+    "bev_cogs": 0.0,
+    "food_cogs_pct": 20.0,
+    "bev_cogs_pct": null,
+    "food_gp_pct": 80.0,
+    "bev_gp_pct": null
+  },
+  "wages": {
+    "kitchen_dollars": 386.33,
+    "foh_dollars": 0.0,
+    "driver_dollars": 81.78,
+    "admin_dollars": 0.0,
+    "leave_dollars": 0.0,
+    "total_dollars": 468.12,
+    "wages_pct": 33.3,
+    "net_wage_pct": null,
+    "kitchen_hours": 14.5,
+    "foh_hours": 0,
+    "wages_kitchen_pct": 27.5,
+    "wages_foh_pct": null,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": {
+    "uber_eats_commission_dollars": 0,
+    "own_driver_dollars": 81.78,
+    "uber_direct_dollars": 0.0,
+    "total_dollars": 81.78,
+    "delivery_pct": 5.8,
+    "fees_are_estimate": true
+  },
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "yellow",
+    "wages": "amber",
+    "delivery": "green",
+    "gp": "unknown",
+    "cogs_food": "unknown",
+    "cogs_bev": "unknown",
+    "wages_kitchen": "unknown",
+    "wages_foh": "unknown"
+  },
+  "targets": {
+    "cogs": {
+      "target": 17.6,
+      "amber": 20.6,
+      "red": 22.6,
+      "note": "Recent baseline - 3pt (aspirational, tighten quarterly)"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 32.0,
+      "red": 34.0,
+      "note": "Zak-set: 30% target from cost-structure math"
+    },
+    "delivery": {
+      "target": 6.0,
+      "amber": 8.0,
+      "red": 10.0,
+      "note": "Uber Eats commission + Uber Direct + own driver combined, % of ex-GST rev"
+    },
+    "overheads": {
+      "target": 25.0,
+      "amber": 28.0,
+      "red": 30.0,
+      "note": "Rent + utils + admin + insurance + real marketing (excludes delivery + Uber commission)"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Regular No Chorizo, No Cry",
+      "qty": 5.0,
+      "rev": 115.0,
+      "cost": 14.56
+    },
+    {
+      "name": "Feast Deal Pizzas",
+      "qty": 2.0,
+      "rev": 90.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Large Super House Special",
+      "qty": 3.0,
+      "rev": 89.0,
+      "cost": 22.14
+    },
+    {
+      "name": "Large Pepperoni",
+      "qty": 4.0,
+      "rev": 88.0,
+      "cost": 18.26
+    },
+    {
+      "name": "Regular Little Italy",
+      "qty": 3.0,
+      "rev": 75.0,
+      "cost": 14.41
+    },
+    {
+      "name": "Large Margherita",
+      "qty": 3.0,
+      "rev": 63.0,
+      "cost": 6.89
+    },
+    {
+      "name": "Large Sanchez",
+      "qty": 2.0,
+      "rev": 62.0,
+      "cost": 10.98
+    },
+    {
+      "name": "WINGS DEAL",
+      "qty": 2.0,
+      "rev": 60.0,
+      "cost": 0.0
+    },
+    {
+      "name": "Regular Hail Africa [Dine-in]",
+      "qty": 2.0,
+      "rev": 54.93,
+      "cost": 5.82
+    },
+    {
+      "name": "Large No Chorizo, No Cry",
+      "qty": 2.0,
+      "rev": 54.0,
+      "cost": 12.63
+    },
+    {
+      "name": "Regular Jimmy Jury [Dine-in]",
+      "qty": 2.0,
+      "rev": 49.49,
+      "cost": 6.67
+    },
+    {
+      "name": "Regular Sorrento",
+      "qty": 2.0,
+      "rev": 49.0,
+      "cost": 8.21
+    },
+    {
+      "name": "Regular Hail Africa",
+      "qty": 3.0,
+      "rev": 48.0,
+      "cost": 8.74
+    },
+    {
+      "name": "Regular Uber Margherita [Dine-in]",
+      "qty": 2.0,
+      "rev": 47.52,
+      "cost": 6.39
+    },
+    {
+      "name": "Regular No Chorizo, No Cry [Dine-in]",
+      "qty": 2.0,
+      "rev": 46.8,
+      "cost": 5.82
+    },
+    {
+      "name": "Regular Margherita",
+      "qty": 2.0,
+      "rev": 33.0,
+      "cost": 2.46
+    },
+    {
+      "name": "Large New Yorker",
+      "qty": 1.0,
+      "rev": 30.0,
+      "cost": 5.01
+    },
+    {
+      "name": "Regular Hawaiian",
+      "qty": 2.0,
+      "rev": 28.4,
+      "cost": 2.49
+    },
+    {
+      "name": "Large Meatlovers",
+      "qty": 3.0,
+      "rev": 28.0,
+      "cost": 21.75
+    },
+    {
+      "name": "Large Hawaiian",
+      "qty": 1.0,
+      "rev": 28.0,
+      "cost": 3.26
+    }
+  ]
+}
