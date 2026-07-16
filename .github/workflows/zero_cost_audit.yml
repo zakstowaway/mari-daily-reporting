@@ -1,0 +1,15 @@
+name: Zero Cost Audit
+on:
+  workflow_dispatch:
+    inputs:
+      from_date: { description: 'From', required: true, default: '2024-10-21' }
+      to_date:   { description: 'To',   required: true, default: '2026-07-12' }
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - env: { DEPUTY_TOKEN: "${{ secrets.DEPUTY_TOKEN }}" }
+        run: python scripts/deputy_zero_cost_audit.py "${{ inputs.from_date }}" "${{ inputs.to_date }}"
