@@ -1,6 +1,6 @@
 {
   "date": "2026-07-15",
-  "generated_at": "2026-07-16T09:37:21.471937Z",
+  "generated_at": "2026-07-16T10:07:17.754418Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,21 +15,21 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 867.16,
-    "revenue_ex_gst": 788.37,
-    "cogs_dollars": 192.65,
-    "cogs_pct": 24.4,
-    "gp_dollars": 595.72,
-    "gp_pct": 75.6,
+    "revenue_inc_gst": 1126.13,
+    "revenue_ex_gst": 1024.08,
+    "cogs_dollars": 231.28,
+    "cogs_pct": 22.6,
+    "gp_dollars": 792.8,
+    "gp_pct": 77.4,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 788.37,
+    "food_ex_gst": 1024.08,
     "bev_ex_gst": 0.0,
-    "food_cogs": 192.65,
+    "food_cogs": 231.28,
     "bev_cogs": 0.0,
-    "food_cogs_pct": 24.4,
+    "food_cogs_pct": 22.6,
     "bev_cogs_pct": null,
-    "food_gp_pct": 75.6,
+    "food_gp_pct": 77.4,
     "bev_gp_pct": null
   },
   "wages": {
@@ -39,11 +39,11 @@
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
     "total_dollars": 607.41,
-    "wages_pct": 77.0,
+    "wages_pct": 59.3,
     "net_wage_pct": null,
     "kitchen_hours": 15.5,
     "foh_hours": 0,
-    "wages_kitchen_pct": 77.0,
+    "wages_kitchen_pct": 59.3,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
@@ -58,7 +58,7 @@
   },
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "red",
+    "cogs": "amber",
     "wages": "red",
     "delivery": "green",
     "gp": "unknown",
@@ -95,6 +95,12 @@
   },
   "top_products": [
     {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 6.0,
+      "rev": 161.11,
+      "cost": 28.83
+    },
+    {
       "name": "$45 FEAST",
       "qty": 2.0,
       "rev": 90.0,
@@ -105,6 +111,12 @@
       "qty": 1.0,
       "rev": 90.0,
       "cost": 0.0
+    },
+    {
+      "name": "Regular Truffalo Soldier [Dine-in]",
+      "qty": 3.0,
+      "rev": 77.11,
+      "cost": 9.8
     },
     {
       "name": "Banquet Deal Pizzas",
@@ -201,18 +213,6 @@
       "qty": 1.0,
       "rev": 22.0,
       "cost": 2.13
-    },
-    {
-      "name": "Large Hawaiian",
-      "qty": 3.0,
-      "rev": 20.0,
-      "cost": 9.79
-    },
-    {
-      "name": "Regular Vegetarian",
-      "qty": 1.0,
-      "rev": 16.0,
-      "cost": 2.37
     }
   ]
 }
