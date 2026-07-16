@@ -313,6 +313,31 @@ else:
         if excluded:
             excl_rev = sum(row_rev(r) for r, d in zip(all_rows, row_depts) if d in excl_tags)
             print(f"  Excluded {excluded} cross-venue rows ({sorted(excl_tags)}) from {venue_key} totals (${excl_rev:,.2f} inc)")
+        elif venue_key == "stowaway":
+            # ---- narrowed-report tripwire (2026-07-16) ----
+            # Stow's export is the FULL SITE report on purpose. Marilyna's ('m')
+            # and Harry Gatos food ('hgf') ring through the Stow till, and two
+            # other venues read those rows OUT of this file:
+            #   * Mari  — the coverage guard below compares her report against
+            #             the 'm' rows here; no 'm' rows = the guard goes blind
+            #             and can never fire again.
+            #   * HG    — the reallocation above LIFTS 'hgf' rows out of this
+            #             file (~$585/day, ~$213k/yr, concentrated on Mondays:
+            #             07-06 $3,233, 07-13 $2,544). Not here = reaches no venue.
+            #
+            # Stow's own totals never included these rows — they're stripped
+            # right here — so a "clean up Stow's report to only Stow RGs" change
+            # looks harmless from inside Lightspeed and costs HG six figures a
+            # year in silence. Nearly shipped 2026-07-16.
+            #
+            # Mari rings through the Stow till EVERY trading day (min 2 rows on
+            # the quietest Monday in 10 days sampled), so zero cross-venue rows
+            # means the report got narrowed, not that nobody ordered pizza.
+            print(f"  *** STOW EXPORT LOOKS NARROWED: 0 cross-venue rows in {insights_file.name}.")
+            print(f"      This file is meant to be the FULL SITE report — Mari and Harry Gatos")
+            print(f"      read their revenue out of it. Stow's own totals are unaffected either")
+            print(f"      way, so this will NOT show up as a Stow discrepancy.")
+            print(f"      Check the Lightspeed email report filter includes ALL reporting groups.")
     else:
         rows = all_rows
 

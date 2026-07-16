@@ -40,6 +40,55 @@ Note: git needs a safe.directory exception because the folder is owned by `zak`:
 - `.../local_5ea388ea-.../outputs/repo/`  — Jul 12 snapshot, no git.
 - `../\_daily-reporting-backup-2026-07-15.tgz` — pre-adoption safety snapshot.
 
+## The Lightspeed email reports: what each one must contain
+
+**There is one till.** Stowaway's POS rings up all three brands. Marilyna's has no
+till of its own; Harry Gatos food is rung on the Stow till too. Every venue's
+"own" CSV is a *filter over the same POS data*. That has one consequence people
+keep re-discovering the hard way:
+
+> **Stow's export must stay the FULL SITE report.** It is not "dirty" — two other
+> venues read their revenue out of it.
+
+    Stow's export ──┬── 'm'   rows ──► Marilyna's   (coverage guard cross-checks
+                    │                                her report against these)
+                    └── 'hgf' rows ──► Harry Gatos  (~$585/day, ~$213k/yr,
+                                                     concentrated on MONDAYS:
+                                                     07-06 $3,233, 07-13 $2,544)
+
+`daily_aggregator.py` **strips both off Stow's own totals** (line ~310). So
+narrowing Stow's report to "only Stow RGs" *does not change a single Stow
+number* — it just deletes Harry Gatos' Monday revenue and blinds the Mari guard.
+It looks like a tidy-up from inside Lightspeed and costs six figures a year in
+silence. This was nearly shipped on 2026-07-16. A tripwire now shouts
+`STOW EXPORT LOOKS NARROWED` if the export ever arrives with zero cross-venue
+rows (Mari rings through Stow every trading day, so zero means the filter moved,
+not that nobody ordered pizza).
+
+**Mari's export** (`Mari Daily Sales Auto`) must include `Dine-in Pizza` and
+`Add-ons - Pizza`. When it doesn't, Stow strips those rows and Mari never
+receives them, so the revenue reaches **no venue at all** — $612.70 on 07-14,
+$375.84 on 07-11. The aggregator now recovers them and prints `*** RECOVERED`;
+that is a **net, not a repair** — the filter is the fix. The recovery is derived
+from the gap, so it goes inert on its own once the filter is right.
+
+**Mari's RG set is deliberately wider** than the weekly-report skill's
+`Marilynas-strict` (which excludes Dine-in Pizza). Strict answers "what would we
+lose if Mari closed?"; this answers "whose revenue is it?". Both correct. Don't
+reconcile them.
+
+## Running the aggregator by hand
+
+    python3 scripts/daily_aggregator.py --venue stowaway 2026-07-14
+
+**The `--venue` flag is required.** Venue is NOT positional — `daily_aggregator.py
+stowaway 2026-07-14` silently aggregates *Marilyna's* (the default at line 223)
+and looks like it worked. Some older notes have it wrong.
+
+Re-running the aggregator **rewrites `wages_*` from the daily Deputy JSON using
+the provisional model**, undoing the Xero-actuals rebuild for any day it touches.
+Always follow it with a Rebuild Wages over **whole payroll weeks** (Mon–Sun).
+
 ## Wages: how they're costed (2026-07-15 rebuild)
 
 Deputy knows who clocked on. Only Xero knows what they were paid. So:
