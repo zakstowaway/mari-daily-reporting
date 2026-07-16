@@ -5,3 +5,4 @@ __pycache__/
 setup_github.sh
 data/*.csv.bak
 _archive/
+data/bo_exports/

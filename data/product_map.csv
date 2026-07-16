@@ -1,0 +1,20 @@
+supplier,supplier_code,product_id,product_name,venue,bo_cost,invoice_cost,delta,confidence,source_invoice,invoice_date
+ILG,175-0420,20484285,Antica Formula Rosso Vermouth [Bottle],stowaway,64.0200,64.2700,-0.2500,stale_drift,03729959,2026-07-14
+ILG,395-6785P,20484286,Aperol [Bottle],stowaway,29.0800,29.0817,-0.0017,exact,03729959,2026-07-14
+ILG,305-1949P,20484751,Buffalo Trace Bourbon [Bottle],stowaway,52.9500,53.6100,-0.6600,stale_drift,03729959,2026-07-14
+ILG,360-1310,20483410,Rooster Rojo Blanco Tequila [Bottle],stowaway,51.6617,51.6611,0.0006,exact,03729959,2026-07-14
+ILG,345-5638P,20484932,Sailor Jerry [700ml],stowaway,44.4700,44.7200,-0.2500,stale_drift,03729959,2026-07-14
+ILG,122-2867,20487313,Alehouse Summer Mid [Keg],stowaway,184.9400,184.9400,0.0000,exact,03729959,2026-07-14
+ILG,122-2858,20487298,Alehouse Draught Lager [Keg],stowaway,212.4400,212.4400,0.0000,exact,03729959,2026-07-14
+ILG,115-3762,20445701,Corona,stowaway,2.5713,2.5712,0.0001,exact,03729959,2026-07-14
+ILG,117-4213,20445707,Heaps Normal Tin,stowaway,2.6696,2.6700,-0.0004,exact,03729959,2026-07-14
+ILG,460-1504,20459552,Coke 1.25L,stowaway,3.6900,3.6933,-0.0033,exact,03729959,2026-07-14
+ILG,460-2567,20459560,Coke Can,stowaway,1.8900,1.8900,0.0000,exact,03729959,2026-07-14
+ILG,460-1639,20459553,Coke Zero 1.25L,stowaway,3.0900,3.6933,-0.6033,stale_drift,03729959,2026-07-14
+ILG,450-1293,20445897,San Pellegrino 500ml,stowaway,2.3200,2.3558,-0.0358,stale_drift,03729959,2026-07-14
+ILG,460-3254,20459564,Sprite Can,stowaway,1.4700,1.8896,-0.4196,stale_drift,03729959,2026-07-14
+Lion,1256672,20492637,Stone & Wood [Keg],stowaway,385.1100,383.2350,1.8750,stale_drift,94755729,2026-07-14
+Lion,1200769,23216243,Guinness [Keg],stowaway,416.5800,416.5800,0.0000,exact,94755729,2026-07-14
+Lion,1254690,20786711,Kirin [Keg],stowaway,444.6700,441.5400,3.1300,stale_drift,94755729,2026-07-14
+Paramount,44583,20487328,De Bortoli Gold Seal Dry Red [15L],stowaway,56.4500,55.8950,0.5550,stale_drift,5441124,2026-07-14
+Bacchus,FD2MOTHER 23,20464685,Mother's Milk Shiraz - Bottle,stowaway,16.0817,16.0817,0.0000,exact,INV494857,2026-07-13
