@@ -1,6 +1,6 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-12T13:54:48.940611Z",
+  "generated_at": "2026-07-16T11:26:21.336182Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,41 +15,50 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 2179.5,
-    "revenue_ex_gst": 1981.38,
-    "cogs_dollars": 456.86,
-    "cogs_pct": 23.1,
-    "gp_dollars": 1524.52,
-    "gp_pct": 76.9,
+    "revenue_inc_gst": 2590.46,
+    "revenue_ex_gst": 2357.22,
+    "cogs_dollars": 499.76,
+    "cogs_pct": 21.2,
+    "gp_dollars": 1857.46,
+    "gp_pct": 78.8,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 2357.22,
+    "bev_ex_gst": 0.0,
+    "food_cogs": 499.76,
+    "bev_cogs": 0.0,
+    "food_cogs_pct": 21.2,
+    "bev_cogs_pct": null,
+    "food_gp_pct": 78.8,
+    "bev_gp_pct": null
   },
   "wages": {
-    "kitchen_dollars": 736.19,
+    "kitchen_dollars": 990.27,
     "foh_dollars": 0.0,
-    "driver_dollars": 0.0,
+    "driver_dollars": 122.71,
     "admin_dollars": 0.0,
-    "total_dollars": 736.19,
-    "wages_pct": 37.2,
+    "leave_dollars": 0.0,
+    "total_dollars": 1112.98,
+    "wages_pct": 47.2,
     "net_wage_pct": null,
     "kitchen_hours": 25.0,
     "foh_hours": 0,
-    "wages_kitchen_pct": null,
+    "wages_kitchen_pct": 42.0,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
   },
   "delivery": {
     "uber_eats_commission_dollars": 0,
-    "own_driver_dollars": 0.0,
+    "own_driver_dollars": 122.71,
     "uber_direct_dollars": 0.0,
-    "total_dollars": 0.0,
-    "delivery_pct": 0.0,
+    "total_dollars": 122.71,
+    "delivery_pct": 5.2,
     "fees_are_estimate": true
   },
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "red",
+    "cogs": "amber",
     "wages": "red",
     "delivery": "green",
     "gp": "unknown",
@@ -102,6 +111,12 @@
       "qty": 5.0,
       "rev": 109.0,
       "cost": 11.48
+    },
+    {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 4.0,
+      "rev": 106.55,
+      "cost": 19.22
     },
     {
       "name": "Regular Super House Special",
@@ -194,16 +209,10 @@
       "cost": 13.03
     },
     {
-      "name": "Large Jimmy Jury",
-      "qty": 2.0,
-      "rev": 54.0,
-      "cost": 12.37
-    },
-    {
-      "name": "Large Uber Margherita",
-      "qty": 2.0,
-      "rev": 52.0,
-      "cost": 8.92
+      "name": "Jala Marg Duo (2) - PartyJar [6 serves]",
+      "qty": 1.0,
+      "rev": 55.0,
+      "cost": 0.0
     }
   ]
 }
