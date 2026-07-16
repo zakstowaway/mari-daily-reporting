@@ -55,8 +55,20 @@ OH_EXCLUDE_SUBSTR = ["wages", "salaries", "superannuation", "depreciation", "amo
                      # delivery lane lives on the dashboard separately (canon:
                      # overheads exclude delivery + uber commission):
                      "service & delivery fees", "uber direct", "surcharge fees", "doordash"]
-RENT_MONTHLY = {"stow": 15000.0, "hg": 5245.0, "mari": 0.0}   # direct from Xero rent accounts
+# Rent: Olly's BEP plan basis, NOT Xero actuals (Zak, 2026-07-16 — leave as is).
+# For the record, the 2026-07-16 audit found HG matches Xero to the dollar
+# ($5,245/mo) while Stow's Xero rent runs $12,554/mo against this $15,000. That
+# is intentional: these constants are the plan the breakeven is built on, so
+# don't "correct" them to actuals without Olly.
+RENT_MONTHLY = {"stow": 15000.0, "hg": 5245.0, "mari": 0.0}
 PLAN_OH_SHARE = {"stow": 0.656, "hg": 0.213, "mari": 0.131}   # FIXED_OH_WEEKLY ratios (BEP)
+# Payroll on-costs. Defined once, at module scope: the finance lane has to skip
+# these BEFORE claiming anything matching "interest", or 'Super Guarantee
+# Interest & Admin Fee' lands in both payroll and finance and gets counted twice.
+PAYROLL_SUBSTR = ("wages", "salaries", "superannuation", "super guarantee",
+                  "payroll tax", "workers compensation")
+FINANCE_SUBSTR = ("interest", "depreciation", "amortisation")
+
 # ex-Misc canon: these tracking options never count, anywhere, in any feed.
 # 'To Be Reviewed' is Xero's own holding pen for coding nobody has confirmed —
 # it is miscellaneous by definition and belongs here (2026-07-16 audit: it held
@@ -279,6 +291,26 @@ def main():
         # Total Cost of Sales (ex-Misc) — authoritative actual COGS incl the
         # stock-movement journal, for the closed-period actual-profit view.
         group_cos = net_of_misc("Total Cost of Sales")
+        # Below-the-line: interest + depreciation/amortisation. Deliberately NOT
+        # in overheads — overheads drive breakeven, and breakeven is a trading
+        # decision: you can't roster your way out of a loan. But they're real
+        # money leaving (interest) and real capital consumed (depreciation), and
+        # excluding them entirely made the dashboard's "Profit" an operating
+        # figure that quietly disagreed with the statutory one (Zak, 2026-07-16).
+        # Emitted as their own lane so the admin view can bridge the two without
+        # polluting any operating metric.
+        group_finance = 0.0
+        for acct in rows:
+            a = acct.lower()
+            if acct.startswith("Total") or "operating expenses" not in (sections.get(acct) or "").lower():
+                continue
+            # 'Super Guarantee Interest & Admin Fee' is payroll, not finance —
+            # it's an ATO charge for late super. It matches "interest", so it
+            # must be claimed by payroll first or it lands in both lanes.
+            if any(x in a for x in PAYROLL_SUBSTR):
+                continue
+            if any(x in a for x in FINANCE_SUBSTR):
+                group_finance += net_of_misc(acct)
         # Total payroll (ex-Misc): wages + super + payroll tax + workers comp.
         # Includes owners' salaries and statutory on-costs that Deputy never
         # sees — the dashboard's corporate-payroll share comes from the
@@ -290,8 +322,6 @@ def main():
         # "interest" so OH_EXCLUDE_SUBSTR dropped it from overheads. ~$12.6k a
         # quarter of real payroll on-cost, counted nowhere. It's the ATO's charge
         # for super paid late, so it belongs with payroll — and is worth watching.
-        PAYROLL_SUBSTR = ("wages", "salaries", "superannuation", "super guarantee",
-                          "payroll tax", "workers compensation")
         group_payroll = 0.0
         for acct in rows:
             a = acct.lower()
@@ -328,14 +358,15 @@ def main():
         row = {"month": f"{mstart:%Y-%m}", "group_overheads_ex_rent": round(overheads, 2),
                "mari_uber_fees": round(mari_fees, 2), "mari_uber_only": round(mari_uber_only, 2), "meu_fees": round(meu_fees, 2),
                "stock_movement": round(stock_movement, 2), "leave_provision": round(leave_provision, 2),
-               "group_cos_ex_misc": round(group_cos, 2), "group_payroll": round(group_payroll, 2)}
+               "group_cos_ex_misc": round(group_cos, 2), "group_payroll": round(group_payroll, 2),
+               "group_finance": round(group_finance, 2)}
         for ven in ("stow", "hg", "mari"):
             row[f"{ven}_overheads"] = round(RENT_MONTHLY[ven] * frac + overheads * PLAN_OH_SHARE[ven], 2)
         oh_rows.append(row)
         (WORK_DIR / f"oh_detail_{mstart:%Y-%m}.json").write_text(json.dumps(detail, indent=1))
         print(f"{mstart:%Y-%m}: group OH (ex-rent, ex-misc) ${overheads:,.0f}")
     buf = io.StringIO()
-    w = csv.DictWriter(buf, fieldnames=["month", "group_overheads_ex_rent", "stow_overheads", "hg_overheads", "mari_overheads", "mari_uber_fees", "mari_uber_only", "meu_fees", "stock_movement", "leave_provision", "group_cos_ex_misc", "group_payroll"], lineterminator="\n")
+    w = csv.DictWriter(buf, fieldnames=["month", "group_overheads_ex_rent", "stow_overheads", "hg_overheads", "mari_overheads", "mari_uber_fees", "mari_uber_only", "meu_fees", "stock_movement", "leave_provision", "group_cos_ex_misc", "group_payroll", "group_finance"], lineterminator="\n")
     w.writeheader()
     for r in sorted(oh_rows, key=lambda r: r["month"]): w.writerow(r)
     (WORK_DIR / "xero_overheads_monthly.csv").write_text(buf.getvalue())

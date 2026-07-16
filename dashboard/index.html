@@ -645,6 +645,31 @@ function corpPayrollDaily(venue, endIso) {
   return days ? residual * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
 }
 
+// Interest + depreciation/amortisation, per day, from the Xero monthly feed.
+// Split by the same plan wage/OH share as corp payroll — these are group-level
+// costs and no venue "causes" them, so any split is a convention; use the one
+// the board already agreed rather than invent a second.
+//
+// Kept OUT of overheads on purpose: overheads feed breakeven, and breakeven has
+// to answer "can tonight's trade cover tonight's cost?" — a loan repayment and
+// a depreciating oven don't belong in that question. But they are real, so they
+// bridge operating profit -> net profit in the admin view. (Zak, 2026-07-16)
+function financeDaily(venue, endIso) {
+  const feed = STATE.xeroOH;
+  if (!feed.length) return 0;
+  const endMonth = String(endIso || '').slice(0, 7);
+  const months = feed.filter(r => r.month && r.month < endMonth && hasVal(r.group_finance))
+                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  if (!months.length) return 0;
+  let fin = 0, days = 0;
+  for (const r of months) {
+    fin += toNum(r.group_finance);
+    const [y, m] = r.month.split('-').map(Number);
+    days += new Date(y, m, 0).getDate();
+  }
+  return days ? fin * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
+}
+
 // Typical share of weekly revenue by day-of-week (getDay index, 0=Sun),
 // from the trailing ~12 weeks. Used to apportion overheads: a Saturday
 // carries its typical share of the weekly overhead, not a flat 1/7.
@@ -696,9 +721,14 @@ function pnlWindow(day, venue = STATE.currentVenue) {
   const fa = feesActualWindow(day, venue);
   const df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
   const cp = corpPayrollDaily(venue, endIso) * ohf;   // DOW-weighted, same as overheads
+  const fin = financeDaily(venue, endIso) * ohf;      // interest + depreciation
   const wages = toNum(day.wages_dollars);
-  const profit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
-  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, wages, profit, partial: wdays < daysAll };
+  // Operating profit drives breakeven and every trading decision — it must stay
+  // free of interest/depreciation (you can't roster your way out of a loan).
+  // Net profit is what the accountant sees. Keep both, and never confuse them.
+  const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
+  const profit = opProfit - fin;
+  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
 }
 
 // Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
@@ -981,7 +1011,7 @@ function actualProfitWindow(day) {
     const rs = revOf('stow'), rh = revOf('hg');
     return (rs + rh) ? (v === 'stow' ? rs : rh) / (rs + rh) : 0;
   })() : 1;
-  let cos = 0, wages = 0, oh = 0, df = 0;
+  let cos = 0, wages = 0, oh = 0, df = 0, fin = 0;
   for (const m of months) {
     const r = feed[m];
     cos += toNum(r.group_cos_ex_misc) * cosShare;
@@ -992,9 +1022,15 @@ function actualProfitWindow(day) {
     df += v === 'mari' ? toNum(r.mari_uber_fees)
         : v === 'group' ? toNum(r.mari_uber_fees) + toNum(r.meu_fees)
         : toNum(r.meu_fees) * meuShare;
+    // Interest + depreciation, on the same plan share as payroll. Actual months
+    // are closed months, so this is the statutory figure — and it MUST be here:
+    // the card compares actual profit against pnlWindow's expected profit, and
+    // that one is now net. Two 'profits' with different definitions sitting a
+    // few pixels apart is worse than not showing either.
+    fin += toNum(r.group_finance) * (PLAN_WAGE_SHARE[v] || 1);
   }
-  const profit = rev - cos - wages - oh - df;
-  return { profit, cos, wages, oh, df, rev, nMonths: months.length };
+  const profit = rev - cos - wages - oh - df - fin;
+  return { profit, cos, wages, oh, df, fin, rev, nMonths: months.length };
 }
 // Period boundaries for pacing (current, incomplete periods only).
 function periodBounds(tf, anchorIso) {
@@ -1267,6 +1303,7 @@ const CARD_DEFS = {
         value: fmtP(ap.profit),
         sub: `COS ${fmtPct(ap.cos / ap.rev * 100)} \u00b7 payroll ${fmtPct(ap.wages / ap.rev * 100)} \u00b7 OH ${fmtDollars(ap.oh)}` +
              (ap.df ? ` \u00b7 platform fees ${fmtDollars(ap.df)}` : '') +
+             (ap.fin ? ` \u00b7 interest & dep ${fmtDollars(ap.fin)}` : '') +
              ` \u00b7 ${fmtPct(ap.profit / ap.rev * 100)} margin` +
              (dlt !== null ? ` \u00b7 expected said ${fmtP(w.profit)} (\u0394 ${fmtP(dlt)})` : '') +
              ` \u00b7 ${ap.nMonths} closed month${ap.nMonths > 1 ? 's' : ''}, stock journals posted`,
@@ -1277,7 +1314,8 @@ const CARD_DEFS = {
     let sub = `${w.a ? 'actual' : 'est.'} COGS ${fmtPct(w.cogsPct)} \u00b7 OH ${fmtDollars(w.oh)}` +
            (w.df ? ` \u00b7 delivery ${fmtDollars(w.df)}` : '') +
            (w.cp ? ` \u00b7 corp payroll ${fmtDollars(w.cp)}` : '') +
-           ` \u00b7 ${fmtPct(w.profit / w.rev * 100)} margin`;
+           (w.fin ? ` \u00b7 interest & dep ${fmtDollars(w.fin)}` : '') +
+           ` \u00b7 ${fmtPct(w.profit / w.rev * 100)} net margin`;
     const bp = breakevenParts(STATE.currentVenue, winEnd(day));
     if (bp) {
       const be = bp.fixedDaily * ohFactor(day, STATE.currentVenue, w.wdays) / (1 - bp.varPct / 100);
@@ -1775,6 +1813,10 @@ function renderExtras(day, cfg) {
       ['Delivery', w.df / rev * 100, '#EF9F27'],
       ['Corp payroll', w.cp / rev * 100, '#D4537E'],
       ['Overheads', w.oh / rev * 100, '#888780'],
+      // Interest + depreciation. Last before Profit, so the bar reads down the
+      // P&L in order and the green tail is NET profit, not operating profit —
+      // which is what it used to claim while quietly ignoring ~$70k/yr.
+      ['Interest & dep', w.fin / rev * 100, '#5A5A70'],
     ].filter(sg => sg[1] > 0.05);
     const profitPct = 100 - segs.reduce((t, sg) => t + sg[1], 0);
     segs.push(['Profit', profitPct, profitPct >= 0 ? '#1D9E75' : '#E24B4A']);
