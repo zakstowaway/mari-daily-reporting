@@ -1,6 +1,6 @@
 {
   "date": "2026-07-14",
-  "generated_at": "2026-07-15T06:34:58.056561Z",
+  "generated_at": "2026-07-16T10:06:37.213831Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,14 +15,22 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 863.68,
-    "revenue_ex_gst": 785.17,
-    "cogs_dollars": 175.44,
-    "cogs_pct": 22.3,
-    "gp_dollars": 609.73,
-    "gp_pct": 77.7,
+    "revenue_inc_gst": 1537.35,
+    "revenue_ex_gst": 1397.87,
+    "cogs_dollars": 310.74,
+    "cogs_pct": 22.2,
+    "gp_dollars": 1087.13,
+    "gp_pct": 77.8,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 1397.87,
+    "bev_ex_gst": 0.0,
+    "food_cogs": 310.74,
+    "bev_cogs": 0.0,
+    "food_cogs_pct": 22.2,
+    "bev_cogs_pct": null,
+    "food_gp_pct": 77.8,
+    "bev_gp_pct": null
   },
   "wages": {
     "kitchen_dollars": 476.35,
@@ -31,11 +39,11 @@
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
     "total_dollars": 476.35,
-    "wages_pct": 60.7,
+    "wages_pct": 34.1,
     "net_wage_pct": null,
     "kitchen_hours": 14.8,
     "foh_hours": 0,
-    "wages_kitchen_pct": null,
+    "wages_kitchen_pct": 34.1,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
@@ -99,10 +107,28 @@
       "cost": 16.47
     },
     {
+      "name": "Regular Jimmy Jury [Dine-in]",
+      "qty": 5.0,
+      "rev": 84.0,
+      "cost": 16.68
+    },
+    {
+      "name": "Regular Sanchez [Dine-in]",
+      "qty": 4.0,
+      "rev": 73.2,
+      "cost": 13.57
+    },
+    {
       "name": "Regular Super House Special",
       "qty": 3.0,
       "rev": 72.0,
       "cost": 15.85
+    },
+    {
+      "name": "Regular Tandoori Chicken [Dine-in]",
+      "qty": 4.0,
+      "rev": 62.97,
+      "cost": 9.46
     },
     {
       "name": "Banquet Deal Pizzas",
@@ -115,6 +141,18 @@
       "qty": 1.0,
       "rev": 60.0,
       "cost": 0.0
+    },
+    {
+      "name": "Regular Little Italy [Dine-in]",
+      "qty": 3.0,
+      "rev": 55.17,
+      "cost": 14.41
+    },
+    {
+      "name": "Regular Hail Africa [Dine-in]",
+      "qty": 3.0,
+      "rev": 52.2,
+      "cost": 8.74
     },
     {
       "name": "Large Hawaiian",
@@ -135,76 +173,46 @@
       "cost": 2.49
     },
     {
+      "name": "Regular Truffalo Soldier [Dine-in]",
+      "qty": 2.0,
+      "rev": 37.19,
+      "cost": 6.54
+    },
+    {
       "name": "Axl Rose Pizza",
       "qty": 2.0,
       "rev": 37.18,
       "cost": 0.0
     },
     {
+      "name": "Regular No Chorizo, No Cry [Dine-in]",
+      "qty": 2.0,
+      "rev": 37.18,
+      "cost": 5.82
+    },
+    {
+      "name": "Regular Cosmopolitan [Dine-in]",
+      "qty": 2.0,
+      "rev": 36.0,
+      "cost": 9.68
+    },
+    {
+      "name": "Regular Super House Special [Dine-in]",
+      "qty": 2.0,
+      "rev": 36.0,
+      "cost": 10.57
+    },
+    {
+      "name": "Regular The Paddock [Dine-in]",
+      "qty": 2.0,
+      "rev": 36.0,
+      "cost": 6.56
+    },
+    {
       "name": "Large Bubba Gump",
       "qty": 1.0,
       "rev": 32.0,
       "cost": 5.8
-    },
-    {
-      "name": "Gluten-free Meatlovers",
-      "qty": 1.0,
-      "rev": 31.0,
-      "cost": 9.29
-    },
-    {
-      "name": "Gluten-free Super House Special",
-      "qty": 1.0,
-      "rev": 30.0,
-      "cost": 9.38
-    },
-    {
-      "name": "Large Jimmy Jury",
-      "qty": 1.0,
-      "rev": 27.0,
-      "cost": 6.19
-    },
-    {
-      "name": "Large Sorrento",
-      "qty": 1.0,
-      "rev": 27.0,
-      "cost": 7.17
-    },
-    {
-      "name": "Regular Meatlovers",
-      "qty": 1.0,
-      "rev": 25.0,
-      "cost": 5.19
-    },
-    {
-      "name": "Large Tandoori Chicken",
-      "qty": 1.0,
-      "rev": 25.0,
-      "cost": 3.3
-    },
-    {
-      "name": "Regular BBQ Chicken Pizza",
-      "qty": 1.0,
-      "rev": 24.5,
-      "cost": 3.11
-    },
-    {
-      "name": "Regular New Yorker",
-      "qty": 1.0,
-      "rev": 24.0,
-      "cost": 3.59
-    },
-    {
-      "name": "Large Margherita",
-      "qty": 1.0,
-      "rev": 23.0,
-      "cost": 2.3
-    },
-    {
-      "name": "Regular Vegetarian",
-      "qty": 1.0,
-      "rev": 21.0,
-      "cost": 2.37
     }
   ]
 }
