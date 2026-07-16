@@ -1,0 +1,99 @@
+name: Invoice Pull
+
+# Mirrors daily_pull.yml. Per-supplier concurrency for the same reason: a single
+# shared queue only holds ONE pending run, so simultaneous dispatches drop the
+# middle one and its payload is lost (that bit us on 2026-07-15 with venues).
+concurrency:
+  group: invoice-pull-${{ github.event.client_payload.supplier || github.event.action || 'manual' }}
+  cancel-in-progress: false
+
+on:
+  # Fired by Pipedream when a supplier invoice email arrives.
+  # See PIPEDREAM_BRIDGE.md — same pattern as insights-csv-arrived, different
+  # payload (pdf_base64 rather than csv_base64).
+  repository_dispatch:
+    types:
+      - invoice-arrived
+
+  workflow_dispatch:
+    inputs:
+      pdf_base64:
+        description: 'Base64 PDF (for re-running a single invoice by hand)'
+        required: false
+        default: ''
+      source:
+        description: 'Original filename / email subject'
+        required: false
+        default: 'manual'
+
+jobs:
+  extract-and-validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install anthropic pyyaml
+
+      - name: Write payload
+        id: payload
+        env:
+          # via env, not inline in run: — a base64 blob interpolated straight
+          # into a shell line is a command-injection hole.
+          PDF_B64: ${{ github.event.client_payload.pdf_base64 || inputs.pdf_base64 }}
+          SOURCE: ${{ github.event.client_payload.source_filename || inputs.source }}
+        run: |
+          if [ -z "$PDF_B64" ]; then
+            echo "::error::no pdf_base64 in payload"
+            exit 1
+          fi
+          printf '%s' "$PDF_B64" > payload.b64
+          echo "source=$SOURCE" >> "$GITHUB_OUTPUT"
+          echo "Payload: $(wc -c < payload.b64) bytes of base64"
+
+      - name: Extract + validate
+        id: run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set +e
+          python3 scripts/invoice_run.py \
+            --pdf-base64-file payload.b64 \
+            --source "${{ steps.payload.outputs.source }}"
+          CODE=$?
+          set -e
+          echo "code=$CODE" >> "$GITHUB_OUTPUT"
+          # 0 = PASS, 2 = REVIEW (both are successful runs), 1 = extraction failed
+          if [ "$CODE" -eq 1 ]; then exit 1; fi
+
+      - name: Commit
+        run: |
+          git config user.name  "invoice-bot"
+          git config user.email "invoice-bot@users.noreply.github.com"
+          git add data/invoices data/invoices_review 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          STATUS="PASS"
+          [ "${{ steps.run.outputs.code }}" = "2" ] && STATUS="REVIEW"
+          git commit -m "Invoice [$STATUS]: ${{ steps.payload.outputs.source }}"
+          # Same pull-rebase-retry loop as the other workflows — cross-workflow
+          # push collisions are expected, not exceptional.
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push origin main && exit 0
+            echo "push collision, retry $i"; sleep $((RANDOM % 5 + 2))
+          done
+          exit 1
+
+      - name: Flag review
+        if: steps.run.outputs.code == '2'
+        run: |
+          echo "::warning::Invoice went to REVIEW — see data/invoices_review/"
+          echo "This is the system working. An invoice that fails costs 5 minutes;"
+          echo "one that silently passes wrong costs a wrong margin for ~30 days."

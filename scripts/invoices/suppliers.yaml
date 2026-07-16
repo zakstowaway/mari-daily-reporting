@@ -1,0 +1,918 @@
+# ---------------------------------------------------------------------------
+# Supplier rules — the ONLY layer that changes.
+#
+# Extraction generalises (LLM reads layouts it has never seen).
+# Validation is arithmetic (never changes).
+# This file is where a supplier changing COMMERCIAL TERMS lands.
+#
+# Adding a supplier is NOT required for extraction to work. An unknown supplier
+# still extracts and still gets validated by the arithmetic gate. This file only
+# adds the knowledge that arithmetic alone cannot infer — a 10% discount already
+# baked into a price, a column that already nets WET, an alias.
+#
+# Sourced from dext-lightspeed-invoices SKILL.md Appendix B (v2026-06-18).
+# ---------------------------------------------------------------------------
+
+version: "2026-07-16"
+
+# ---------------------------------------------------------------------------
+# ACTIVITY — checked 16 Jul 2026 against a strict 30-day window (>= 2026-06-16).
+#
+# Zak's directive: "be strict about recent, nothing older than 30 days."
+# Chasing traps in dead suppliers is waste. Several large entries in this file
+# have not traded in months and are retained for HISTORICAL backfill only.
+#
+#   ACTIVE (30d spend):  B&E $16,611 · ILG $11,564 · Lion $6,812 · Foodlink
+#     $5,362 · Gulli $5,285 · Paramount $3,368 · Sun Circle $3,168 · Bacchus
+#     $3,123 · Select Fresh $2,822 · FFT $2,359 · Nelson $2,146 · Viticult
+#     $2,131 · Grifter $1,872 · Combined $1,853 · Jun Pacific $1,644
+#
+#   DEAD — 0 invoices in 30 days:
+#     M & J Chickens      last 2026-02-19  (147 days)
+#     Farmer Joe's        last 2024-11-16
+#     Torino Food Service last 2024-07-29  ($507k lifetime)
+#     Winestock           last 2024-04-15  ($209k lifetime)
+#     Gateway Liquor      last 2023-04-27
+#     Stone & Wood (own)  last 2023-08-22  (now billed via Lion)
+#
+#   COLLAPSED but alive: Andrews Meat — last invoice 2026-07-11 (5 days ago)
+#     but only 2 invoices / $571 in 30 days, vs 1,383 invoices / $338k lifetime.
+#     Catch-weight risk is therefore LOW priority, not high. Do not spend
+#     effort here ahead of live suppliers.
+# ---------------------------------------------------------------------------
+activity_checked: "2026-07-16"
+activity_window_days: 30
+
+# ---------------------------------------------------------------------------
+# Universal: non-stock lines.
+#
+# Standing directive (Zak, generalised 15 Jun 2026): anything on a supplier
+# invoice that is not a STOCK ITEM is skipped on the Lightspeed receive and
+# logged once to price-history.csv as direction=delivery_fee_rolled_in.
+#
+# Consequence: LS receive total < Dext invoice total by exactly sum(extras).
+# The validator asserts that gap rather than treating it as a discrepancy.
+# ---------------------------------------------------------------------------
+# ALL PATTERNS ARE ANCHORED (^...$). This is deliberate and non-negotiable.
+#
+# BUG FOUND 16 Jul 2026: the previous patterns were unanchored substring
+# matches. `(?i)freight` matched "Frenchman's Freight Pale Ale [Keg]" — a REAL
+# PRODUCT would be classified as an extras line and SILENTLY DROPPED from the
+# receive. The guard test was vacuous: it passed line_class=STOCK, and
+# classify_line() returns early on anything already classified, so the patterns
+# were never exercised.
+#
+# An extras line is a fee whose description IS the fee name. Products are not.
+# Anchoring makes the failure mode a FALSE NEGATIVE (-> line_class=unknown ->
+# validator ERROR -> human review, 5 minutes) rather than a FALSE POSITIVE
+# (-> stock silently deleted from the receive). Always fail toward review.
+#
+# If a new fee wording appears it will land in review, not vanish. Add it here.
+extras_patterns:
+  - "(?i)^\\s*fuel\\s*levy\\s*$"
+  - "(?i)^\\s*temporary\\s+fuel\\s+levy(\\s+charge)?\\s*$"
+  - "(?i)^\\s*fuel\\s*surcharge\\s*$"
+  - "(?i)^\\s*freight(\\s+total)?\\s*$"
+  - "(?i)^\\s*carton\\s+freight\\s*$"
+  - "(?i)^\\s*frt\\s+temp\\s+met\\s*$"
+  - "(?i)^\\s*temporary\\s+frt\\s+surcharge(\\s+metro)?\\s*$"
+  - "(?i)^\\s*delivery\\s*fee\\s*$"
+  - "(?i)^\\s*syd\\s+metro\\s+delivery(\\s+fee)?\\s*$"
+  - "(?i)^\\s*standard\\s+delivery\\s*$"        # Gulli DELIVERY_007, often $0.00
+  - "(?i)^\\s*delivery\\s*$"
+  - "(?i)^\\s*minimum\\s+delivery\\s+top-?up(\\s+charge)?\\s*$"
+  - "(?i)^\\s*min(imum)?\\s+order\\s+(charge|top-?up)\\s*$"
+  - "(?i)^\\s*(visa/mastercard|visa|mastercard|credit\\s*card|cc)\\s+surcharge\\s*$"
+  - "(?i)^\\s*handling(\\s+(fee|adjustment))?\\s*$"
+  - "(?i)^\\s*container\\s+deposit\\s*$"
+
+wos_patterns:
+  - "(?i)\\bwos\\b"
+  - "(?i)waiting\\s*on\\s*stock"
+  - "(?i)back\\s*order"
+
+# ---------------------------------------------------------------------------
+# Tolerances. Tightening these raises the review rate; loosening them lets
+# silent errors into COGS. These are the current skill values.
+# ---------------------------------------------------------------------------
+tolerances:
+  line_match_dollars: 0.05      # a line "matches" the PO within this
+  invoice_reconcile_dollars: 0.50  # sum(lines) vs invoice total
+  gst_dollars: 0.10             # GST cross-check slack (rounding per line)
+  unit_price_dollars: 0.02      # qty x unit vs line total
+
+# ---------------------------------------------------------------------------
+# Sanity bounds by cost basis. These catch the SILENT class of error — a case
+# total landing in a per-unit field. Nothing else catches this: the arithmetic
+# reconciles perfectly, the invoice is read correctly, and the number is still
+# 24x wrong for Lightspeed's purposes.
+#
+# Bounds are deliberately wide. They are a smoke alarm, not a thermostat.
+# ---------------------------------------------------------------------------
+sanity_bounds:
+  per_keg:    { min: 100.00, max: 600.00 }   # 50L Lion/MC/Alehouse, 30L Philter
+  per_bottle: { min: 5.00,   max: 400.00 }   # wine $14-25 typical; premium spirits high
+  per_can:    { min: 0.80,   max: 8.00 }     # $2-3 typical
+  per_unit:   { min: 0.10,   max: 500.00 }
+  per_kg:     { min: 1.00,   max: 200.00 }
+
+# ---------------------------------------------------------------------------
+# VENUE RESOLUTION — signals are PER-SUPPLIER. They do NOT transfer.
+#
+# CORRECTED 16 Jul 2026. Appendix A gives one global priority list ending in
+# "Delivery address — Shop 18/1-3 Moore Rd = Stowaway, ... 182096# = Harry
+# Gatos". VERIFIED WRONG for Select Fresh — two invoices, same day:
+#
+#   inv 3084903 (Harry Gatos)      inv 3085647 (Stowaway)
+#   -------------------------      ----------------------
+#   HARRY GATTOS                   STOWAWAY
+#   LVL 1, SHP 18, 1-3 MOORE RD    LVL 1, SHP 18, 1-3 MOORE RD   <- IDENTICAL
+#   182096#                        182096#                        <- IDENTICAL
+#   "BAR AT STOWAWAY"              (none)                         <- says Stowaway
+#   Account Code: HARGAT           Account Code: STOWA            <- ONLY signal
+#
+# Both global rules misfire: the address is identical on BOTH venues, and
+# 182096# is Select Fresh's GROUP account number, present on BOTH. Appendix A's
+# "182096# = Harry Gatos" is an ILG-numbering fact, not a universal one.
+#
+# Worse, the HG invoice literally reads "BAR AT STOWAWAY" (HG is upstairs; the
+# produce drops at the bar). Any text matching on venue names resolves it wrong.
+#
+# Cost of misresolution: stock lands in the wrong venue, and per Appendix A a
+# cost update against the wrong venue's ProductIDs SILENTLY DOES NOTHING.
+# Scale: Select Fresh = $302,013 across 2,852 invoices.
+# ---------------------------------------------------------------------------
+venue_resolution:
+  # Decisive when present, regardless of supplier.
+  global:
+    po_number_prefix:
+      "54361": stowaway
+      "35985": harry_gatos
+    supplier_name_suffix:      # Bacchus only, currently
+      "(SB)": stowaway
+      "(HG)": harry_gatos
+    project_field:
+      "Harry Gato > Kitchen": harry_gatos
+      "Kitchen": stowaway      # no prefix = Stowaway
+
+  # Per-supplier. NEVER apply one supplier's signal to another.
+  by_supplier:
+    ilg:
+      account_codes:           # verified inv 03729959 (2428) / 03721575 (3622)
+        "2428": stowaway       # "STOWAWAY FRESHWATER"
+        "3622": harry_gatos    # "HARRY GATOS"
+    select_fresh:
+      # The ONLY reliable signal. Verified inv 3084903 / 3085647.
+      account_codes:
+        "STOWA": stowaway
+        "HARGAT": harry_gatos
+      # DO NOT use these — identical on both venues:
+      #   address "LVL 1, SHP 18, 1-3 MOORE ROAD"
+      #   delivery code "182096#"
+      # DO NOT text-match "BAR AT STOWAWAY" — it appears on HG invoices.
+      ignore_signals: ["address", "182096#", "delivery_instructions"]
+    gulli:
+      # "Customer Code" field. Verified inv CI-424608 -> STOWO1 = Stowaway.
+      customer_codes:
+        "STOWO1": stowaway
+
+  # Addresses are NOT a reliable venue signal group-wide. Retained only for
+  # suppliers proven to differentiate. Left empty until each is verified.
+  address_fragments_verified_per_supplier: {}
+
+  unresolved_action: block     # NO_VENUE is an ERROR. Never guess.
+
+# ===========================================================================
+# THE UNIT-COST COLUMN IS NEVER TRUSTWORTHY. SEVEN SUPPLIERS, SEVEN MEANINGS.
+#
+# Verified 16 Jul 2026 by reading one real invoice from every active supplier.
+# Every one of them prints a "unit cost" style column. NO TWO MEAN THE SAME
+# THING, and they err in BOTH directions:
+#
+#   Supplier        Column              What it actually is           vs truth
+#   ------------------------------------------------------------------------
+#   ILG             LUC ex GST          varies PER PRODUCT (!)        3.6-5.5x HIGH
+#                                       per-can / per-4pk / per-6pk
+#   Paramount       LUC Ex GST          per CASE                      10.9x HIGH
+#   Lion            UNIT VALUE          pre-DISCOUNT list             15-32% HIGH
+#   Combined Wines  Unit Price          pre-disc, pre-WET, pre-GST    21.7% LOW
+#   Nelson          W/sale Price/Bot    pre-discount                  17% LOW
+#   Bacchus         LUC                 per btl ex-GST INCL WET       ~10% low
+#   Viticult        LUC (Ex GST)        per btl post-disc ex-GST      reliable
+#
+# LOW is more dangerous than HIGH: it makes GP look BETTER than it is.
+#
+# THE ONLY SAFE RULE, for every supplier, always:
+#     unit_cost_incl = line_total_incl / (qty x pack_size)
+# Derive it. Never read it.
+# ===========================================================================
+unit_cost_policy:
+  derive_from_line_total: true
+  trust_supplier_unit_cost_columns: false
+  formula: "line_total_incl / (qty * pack_size)"
+
+# ---------------------------------------------------------------------------
+# TAX MARKING CONVENTIONS — five suppliers, five styles. Never assume.
+#   Gulli        explicit rate column       "0%" / "10%"
+#   Foodlink     a flag in a "GST" column   "GST" or blank
+#   Select Fresh asterisk footnote          "(*) INDICATES TAXABLE ITEM"
+#   Jun Pacific  letter codes               "'G' = GST, 'W' = W.E.T"
+#   Paramount    per-line WET + GST columns with amounts
+# All of them print line amounts EX-GST. Lightspeed needs INCL. Convert only
+# the taxable lines — GST-free lines are identical either way, which is what
+# makes a mistake here selective and hard to spot.
+# ---------------------------------------------------------------------------
+tax_marking_styles:
+  gulli: explicit_rate
+  foodlink: flag_column
+  select_fresh: asterisk_footnote
+  jun_pacific: letter_code       # G = GST, W = WET
+  paramount: per_line_amounts
+
+# ---------------------------------------------------------------------------
+# FREIGHT — three incompatible models. Read the invoice; do not generalise.
+#   ILG        per-line, ALREADY inside TOT incl GST      -> adding = +$44.63
+#   Lion       per-line COLUMN inside LINE VALUE          -> nothing to skip
+#   Viticult   footer line, GST-FREE                      -> skip ($6.60)
+#   Foodlink   real line item, GST-TAXABLE                -> skip ($3.00+GST)
+#   Paramount  real line items, Size=MISC, GST-taxable    -> skip ($17.05)
+#   FFT        footer lines at $0.00                      -> nothing
+#   Bacchus    sometimes absent entirely                  -> $0.00 gap is OK
+# ---------------------------------------------------------------------------
+freight_models:
+  inside_line_total: ["ilg", "lion"]
+  separate_gst_free: ["viticult"]
+  separate_taxable: ["foodlink", "paramount"]
+  footer_zero: ["fresh_fruit_team"]
+  sometimes_absent: ["bacchus"]
+
+# ---------------------------------------------------------------------------
+# PRODUCT RESOLUTION — key on the supplier's ITEM CODE, never the description.
+#
+# Appendix B says "Match on brand + product type + size." VERIFIED BROKEN
+# 16 Jul 2026 against real invoice 03729959 vs PO 54361209:
+#
+#   ILG 122-2867  "ALEHOUSE CRISP KEG"   -> Stowaway "Alehouse Summer Mid [Keg]"
+#   ILG 122-2858  "ALEHOUSE PREMIUM KEG" -> Stowaway "Alehouse Draught Lager [Keg]"
+#   ILG 460-1639  "COKE NO SUGAR 1.25 L" -> Stowaway "Coke Zero 1.25L"
+#
+# "Crisp" vs "Summer Mid" share NOTHING. "Premium" vs "Draught Lager" share
+# NOTHING. Brand+type matching returns no match, or worse, matches the WRONG
+# Alehouse keg — they are different products at different prices.
+#
+# And the SAME ILG code has DIFFERENT names per venue:
+#   122-2858 -> Stowaway "Alehouse Draught Lager [Keg]"
+#            -> Harry Gatos "Alehouse Premium Lager [Keg]"
+#
+# Therefore: resolution requires a supplier_code -> ProductID table, per venue.
+# It cannot be inferred. Fuzzy description matching will silently mis-map.
+# Suppliers known to emit item codes: ILG (123-4567 / 123-4567P),
+# IWI/Inalca (GHEMILL-24), B&E, Foodlink.
+# ---------------------------------------------------------------------------
+product_resolution:
+  strategy: supplier_code_first
+  fuzzy_description_matching: forbidden
+  # Seed mappings verified against invoice 03729959 / PO 54361209 (Stowaway).
+  # ProductIDs still to be filled from a BO export — names alone are ambiguous.
+  ilg_codes:
+    "122-2858": { stowaway: "Alehouse Draught Lager [Keg]", harry_gatos: "Alehouse Premium Lager [Keg]", basis: per_keg }
+    "122-2867": { stowaway: "Alehouse Summer Mid [Keg]", basis: per_keg }
+    "175-0420": { stowaway: "Antica Formula Rosso Vermouth [Bottle]", basis: per_bottle }
+    "395-6785P": { stowaway: "Aperol [Bottle]", pack: 6, basis: per_bottle }
+    "305-1949P": { stowaway: "Buffalo Trace Bourbon [Bottle]", basis: per_bottle }
+    "360-1310": { stowaway: "Rooster Rojo Blanco Tequila [Bottle]", pack: 6, basis: per_bottle }
+    "345-5638P": { stowaway: "Sailor Jerry [700ml]", basis: per_bottle }
+    "115-3762": { stowaway: "Corona", pack: 24, basis: per_can }
+    "117-4213": { stowaway: "Heaps Normal Tin", pack: 24, basis: per_can }
+    "460-1504": { stowaway: "Coke 1.25L", pack: 12, basis: per_unit }
+    "460-2567": { stowaway: "Coke Can", pack: 24, basis: per_can }
+    "460-1639": { stowaway: "Coke Zero 1.25L", pack: 12, basis: per_unit }
+    "450-1293": { stowaway: "San Pellegrino 500ml", pack: 24, basis: per_unit }
+    "460-3254": { stowaway: "Sprite Can", pack: 24, basis: per_can }
+
+# ---------------------------------------------------------------------------
+# Suppliers
+# ---------------------------------------------------------------------------
+suppliers:
+
+  ilg:
+    display_name: "Independent Liquor Group"
+    # ILG carries these brands. They do NOT exist as separate Dext suppliers.
+    aliases: ["ILG", "Independent Liquor Group", "Coopers", "Sapporo"]
+    default_tax: gst
+    # Largest supplier in the business: $821,419 across 475 invoices.
+    # Dext line items: 0/40 sampled across 2021-09-29 -> 2026-03-26. NEVER,
+    # in five years. Everything Appendix B documents about ILG's columns is
+    # read from the PDF image, not from Dext. PDF is the ONLY source.
+    dext_line_items: none
+    # VERIFIED 16 Jul 2026 from PDF inv 03729959 — real column order:
+    #   Code | Description | Pack | Qty | Cost | Total | FRT | LUC | TOT
+    # "REPACK" appears in the FRT column on repack lines (qty "0/1").
+    quirks:
+      # Qty "0/N" = N units as a repack -> qty N. A plain integer = CASES.
+      # Repack lines show "REPACK" in the FRT column. Verified: 0/1 and 0/2 both seen.
+      repack_notation: "0/N"
+      # FRT per case is ALREADY inside TOT incl GST. Adding it again double-counts.
+      # VERIFIED on inv 03729959: sum(TOT incl) = $2,283.21 vs stated $2,283.19
+      # (2c rounding across 14 lines). The TOT column already carries the
+      # $35.70 freight + $8.93 fuel levy. A separate freight line double-counts.
+      freight_already_in_line_total: true
+
+      # ===================================================================
+      # DO NOT USE THE `LUC ex GST` COLUMN. IT IS A TRAP.
+      # ===================================================================
+      # Appendix B calls LUC "Last Unit Cost ex GST" and treats it as per-unit.
+      # ITS UNIT VARIES PER PRODUCT AND IS NOT DERIVABLE FROM THE INVOICE.
+      #
+      # From inv 03729959 — implied units = (Total + FRT x qty) / LUC:
+      #   COCA COLA CAN CUBES     pack 24x375ML   LUC  1.72  -> 24  (per can)
+      #   SPRITE 375ML 24 CUBE    pack 24x375ML   LUC  1.72  -> 24  (per can)
+      #   HEAPS NORMAL QUIET XPA  pack 24x375ML   LUC  9.71  ->  6  (per 4-pack!)
+      #   CORONA MEXICAN 6PK      pack 24x355ML   LUC 14.02  ->  4  (per 6-pack)
+      #
+      # Heaps Normal and Coca Cola Can Cubes carry an IDENTICAL pack string and
+      # have DIFFERENT LUC bases — 6 vs 24. Nothing distinguishes them.
+      # Corona is only inferable because "6PK" is in the name; Heaps is not
+      # inferable at all.
+      #
+      # CONFIRMED BY ZAK 16 Jul 2026: Stowaway/HG do NOT sell 4-packs or
+      # 6-packs. Beer is stocked and sold as SINGLE units out of the case.
+      # So ILG's LUC is measuring THEIR packaging construct (6-pack, 4-pack) —
+      # a number that does not correspond to anything in our inventory under
+      # ANY interpretation. It is not merely ambiguous, it is not our unit.
+      #
+      # Cost of getting this wrong (skill Rule 8 — silent, 30 days):
+      #   Heaps Normal   $9.71 vs $2.67 correct  -> 3.6x high
+      #   Corona        $14.02 vs $2.57 correct  -> 5.5x high
+      luc_column_unit_basis: varies_do_not_use
+
+      # The ONLY correct per-unit source. Verified in-bounds for all 14 lines.
+      unit_price_source: "TOT incl GST / (qty * pack_size)"
+    columns: ["Code", "Description", "Pack", "Qty", "Cost", "Total",
+              "FRT per case", "LUC ex GST", "TOT incl GST"]
+    # Summary box (not line items): Product / Freight / Fuel Levy / GST /
+    # Finance / Total. Product = sum(Total ex) exactly. Freight + Fuel Levy are
+    # ALREADY spread across the TOT column — do NOT add them as separate lines.
+    observed:
+      - { product: "ALEHOUSE CRISP KEG",   incl: 184.94, basis: per_keg, pack: "1xKEG49." }
+      - { product: "ALEHOUSE PREMIUM KEG", incl: 212.44, basis: per_keg, pack: "1xKEG49." }
+
+  combined_wines:
+    display_name: "Combined Wines & Foods"
+    aliases: ["Combined Wines", "Combined Wines & Foods"]
+    default_tax: wet
+    dext_line_items: none
+    # VERIFIED inv SINV203712 (13 Jul 2026, Stowaway). sum(TOTAL) = $583.64
+    # EXACT. Formula: TOTAL = Price x (1-Disc) x 1.29 x 1.1 = Price x 1.2771
+    #   CRITTENDEN GEPPETTO: 165.00 x 0.9 = 148.50 -> WET 43.07 -> GST 19.16
+    #                        -> TOTAL 210.73 -> $17.56/btl
+    quirks:
+      # TOTAL already reflects discount + WET + GST.
+      # Deducting the Disc% again is a real, tempting, wrong move.
+      total_column_is_final: true
+      do_not_reapply_discount: true
+      per_bottle: "TOTAL / pack_size"
+      multi_venue_invoices: true   # often mixes Stowaway + HG lines
+      # *** The "Unit Price" column is PRE-discount, PRE-WET, PRE-GST. ***
+      # Geppetto: column says $13.75; real cost is $17.56/btl -> 21.7% LOW.
+      # LOW is worse than HIGH — it makes GP look BETTER than it is.
+      # COGS = Unit Price x 1.2771, or just TOTAL / CTN QTY.
+      unit_price_column_is_pre_everything: true
+      unit_price_understates_by_pct: 21.7
+    columns: ["Product", "Description", "CTN QTY", "Qty", "Price", "Per",
+              "Unit Price", "Disc", "WET", "GST", "TOTAL"]
+
+  bacchus:
+    display_name: "Bacchus Wine Merchants"
+    aliases: ["Bacchus Wine Merchants", "Bacchus Wine Merchants (SB)",
+              "Bacchus Wine Merchants (HG)", "Bacchus"]
+    default_tax: wet
+    venue_from_name_suffix: true    # (SB) / (HG)
+    dext_line_items: none
+    columns: ["Qty", "Units", "Item Code", "Description", "Disc", "LUC",
+              "Unit Price", "Amount", "WET", "GST", "Gross Amt"]
+    # VERIFIED inv INV494857 (13 Jul 2026, Stowaway, PO 54361210).
+    # sum(Gross Amt) = $384.55 EXACT. Wine formula confirmed:
+    #   WET       = Amount x 0.29
+    #   GST       = (Amount + WET) x 0.10
+    #   Gross Amt = Amount x 1.29 x 1.1  =  Amount x 1.419
+    # First Drop Mothers Milk Shiraz: 136.00 -> 192.98 -> $16.08/btl
+    # NOTE: Bacchus invoices carry the LS PO number (Extracted PO Number
+    # 54361210) — DECISIVE venue signal via the 54361/35985 prefix.
+    carries_ls_po_number: true
+    wine_formula: "Gross = Amount * 1.29 * 1.1"
+    quirks:
+      # One invoice can cover two POs: "PO Number: 35436988 & 35436997".
+      # Process each PO separately, same invoice ref, lines split correctly.
+      may_span_multiple_pos: true
+      # Paper invoices arrive by post, batch-uploaded by Oliver. Documented
+      # exception to Rule 0 — receive at PO price rather than hold the delivery.
+      paper_invoice_delay: true
+      minimum_order: true
+    extras:
+      - { name: "Fuel Levy", typical: 4.95 }
+
+  grifter:
+    display_name: "The Grifter Brewing Co"
+    aliases: ["Grifter", "The Grifter Brewing Co", "Grifter Brewing"]
+    default_tax: gst
+    dext_line_items: reliable       # 4/4 recent, 6/6 lifetime sample
+    quirks:
+      # 10% off invoiced price, THEN GST: unit x 0.9 x 1.1 = incl per unit.
+      discount_pct: 10
+      discount_formula: "unit_price * 0.9 * 1.1"
+    # VERIFIED 16 Jul 2026 from Dext line items (inv 82888 + 82685):
+    #   GRIFTER PALE ALE 50L KEG (KONVOY KEG)  $265.50 ex  ->  $292.05 incl
+    # Appendix B's worked example ("$35.00/keg -> $34.65 incl") is TOY NUMBERS,
+    # 8.4x below reality. Appendix K's $180-450 keg range is the correct one.
+    # Do not reintroduce the $35 figure.
+    observed:
+      - { product: "GRIFTER PALE ALE 50L KEG (KONVOY KEG)", ex: 265.50, incl: 292.05,
+          basis: per_keg, seen: "2026-07-07, 2026-07-14" }
+    extras:
+      # VERIFIED $5.50 incl / $5.00 ex — NOT the $10-11 in Appendix B.
+      - { name: "Freight", typical: 5.50 }
+
+  # Separate entity from `ilg` — NOT an alias. 19 invoices, $182,347,
+  # last seen 2026-03-26. Missing from Appendix B entirely.
+  ilg_distribution_coop:
+    display_name: "ILG Distribution Co-Op Ltd"
+    aliases: ["ILG Distribution Co-Op Ltd", "ILG Distribution"]
+    default_tax: gst
+    dext_line_items: rare          # 1/6
+
+  lion:
+    display_name: "Lion Beer Spirits & Wine"
+    # NOTE: "Stone & Wood" was its OWN Dext supplier (88 inv, $75,271) from
+    # 2021-10-14 to 2023-08-22, then moved under Lion. The alias is correct for
+    # CURRENT invoices but wrong for anything before Aug 2023 — historical
+    # backfills must treat them as distinct.
+    aliases: ["Lion", "Lion Beer Spirits & Wine", "Stone & Wood", "Kirin",
+              "Heaps Normal"]
+    default_tax: gst
+    dext_line_items: none          # 0/6 despite $121,636 spend — read the PDF
+    columns: ["PRODUCT", "PRODUCT DESCRIPTION", "UM", "QTY.", "UNIT VALUE",
+              "PRODUCT VALUE", "DISCOUNT", "CONTAINER DEPOSIT", "WET", "FREIGHT",
+              "FUEL SURCHARGE", "HANDLING ADJUSTMENT", "LUC (Excl.GST)",
+              "LINE VALUE (Excl.GST)"]
+    quirks:
+      # =================================================================
+      # CORRECTED 16 Jul 2026 from real inv 94755729. THREE Appendix B errors.
+      # =================================================================
+      #
+      # 1. Appendix B: "Freight on keg invoices appears as a separate line.
+      #    Note for Zak, don't roll into per-unit pricing."  --> WRONG.
+      #    FREIGHT and FUEL SURCHARGE are PER-LINE COLUMNS, already inside
+      #    LINE VALUE. There is no separate freight line and nothing to skip.
+      #    This is why LS PO 54361219 ($1,624.59) matched inv 94755729
+      #    ($1,624.59) EXACTLY — no extras gap, because extras are per-line.
+      freight_is_separate_line: false
+      freight_already_in_line_total: true
+      #
+      # 2. Appendix B documents Grifter's 10% discount but is SILENT on Lion.
+      #    Lion has a large per-line DISCOUNT column:
+      #      S & W Pacific Ale  PRODUCT VALUE 921.86  DISCOUNT -247.50  (27% off)
+      #    Using UNIT VALUE as the cost is 15-32% HIGH:
+      #      S&W      correct $383.23 incl   vs UNIT VALUE $507.02  -> +32.3%
+      #      Guinness correct $416.58 incl   vs UNIT VALUE $485.92  -> +16.6%
+      #      Kirin    correct $441.54 incl   vs UNIT VALUE $510.88  -> +15.7%
+      has_per_line_discount_column: true
+      #
+      # 3. Kegs are 49.5L, NOT 50L. The skill's GP formula uses
+      #    "50L / 0.425 = 117 pours"; real is 49.5/0.425 = 116.5. ~1% GP error.
+      keg_size_litres: 49.5
+      #
+      # VERIFIED line formula (3/3 on inv 94755729):
+      #   PRODUCT VALUE = QTY x UNIT VALUE
+      #   LINE VALUE    = PRODUCT VALUE + DISCOUNT + CONTAINER DEPOSIT + WET
+      #                   + FREIGHT + FUEL SURCHARGE + HANDLING ADJUSTMENT
+      #   LUC           = LINE VALUE / QTY          (reliable HERE, unlike ILG)
+      # LINE VALUE is EX-GST. Lightspeed needs incl -> x 1.1.
+      line_value_is_ex_gst: true
+      line_value_formula: "PRODUCT_VALUE + DISCOUNT + CONTAINER + WET + FREIGHT + FUEL + HANDLING"
+      unit_price_source: "LINE VALUE / QTY x 1.1"
+      # NOTE: Lion's LUC IS LINE VALUE/QTY and is reliable — but ILG's LUC is
+      # NOT (its unit basis varies). Do not generalise "LUC" across suppliers.
+      luc_column_reliable: true
+      # Lion sometimes distributes via ILG. If not found under Lion, try ILG.
+      may_distribute_via: ["ilg"]
+    observed:
+      - { product: "S & W Pacific Ale 49.5L KEG", ex: 348.40, incl: 383.23, basis: per_keg }
+      - { product: "Guinness 49.5L KEG",          ex: 378.71, incl: 416.58, basis: per_keg }
+      - { product: "Kirin Ichb 5% 49.5L KEG",     ex: 401.40, incl: 441.54, basis: per_keg, premium_exempt: true }
+    product_map:
+      "S & W Pacific Ale 49.5L KEG": { name: "Stone & Wood [Keg]", basis: per_keg }
+      "Guinness 49.5L KEG":          { name: "Guinness [Keg]", basis: per_keg }   # NEW — not previously in config
+      "Kirin Ichb 5% 49.5L KEG":     { name: "Kirin [Keg]", basis: per_keg, premium_exempt: true }
+      "KIRIN LAGER 50.0L KEG":       { name: "Kirin [Keg]", basis: per_keg, premium_exempt: true }
+      "Heaps Normal Another Lager 24x355mL":
+                                     { name: "Heaps Normal Tin", basis: per_can, pack_size: 24 }
+    # NO extras list — freight/fuel are per-line columns, not skippable lines.
+
+  philter:
+    display_name: "Philter Brewing"
+    aliases: ["Philter", "Philter Brewing"]
+    default_tax: gst
+    quirks:
+      keg_size_litres: 30    # NOT 50 — changes pours/keg and therefore GP
+    extras:
+      - { name: "SYD Metro Delivery Fee", typical: 15.40 }
+
+  young_rashleigh:
+    display_name: "Young & Rashleigh"
+    aliases: ["Young & Rashleigh", "Young and Rashleigh", "Y&R"]
+    default_tax: gst
+    extras:
+      - { name: "Temporary Frt Surcharge Metro", typical_min: 1.30, typical_max: 1.43 }
+      - { name: "FRT TEMP MET", typical_min: 1.30, typical_max: 1.43 }
+
+  paramount:
+    display_name: "Paramount Liquor"
+    aliases: ["Paramount", "Paramount Liquor"]
+    default_tax: gst           # per-line; WET on wine/vermouth
+    dext_line_items: none
+    columns: ["Code", "Description", "Size", "Case/Bottle", "Base Cost",
+              "Total Net", "WET", "GST", "LUC Ex GST", "Total Inc GST"]
+    # VERIFIED inv 5441124 (14 Jul 2026, Stowaway). sum(Total Inc GST) =
+    # $254.38 EXACT. GST sums to 23.13 ✓, WET to 27.59 ✓.
+    quirks:
+      # Paramount substitutes products without warning.
+      # Observed: Lost Explorer Espadin -> 400 Conejos Mezcal.
+      # A substitution reconciles arithmetically and is still wrong for COGS.
+      substitutes_products: true
+      # "0/N" REPACK NOTATION — same as ILG. Previously documented as
+      # ILG-only. CARPANO 0/1 = one bottle out of a 6-case.
+      repack_notation: "0/N"
+      # Size = "MISC" is the EXTRAS marker. The extras carry product codes
+      # (9000000 Carton Freight, 10010294 Min Delivery, 9000004 Fuel Levy) and
+      # would resolve as products if you keyed on code alone.
+      extras_marker: "Size == MISC"
+      extras_are_taxable: true
+      # LUC IS PER-CASE. Sprite LUC $46.53 for a case of 12; real unit is
+      # 102.37/(2x12) = $4.27. Using LUC = 10.9x HIGH.
+      luc_column_unit_basis: per_case_do_not_use
+      unit_price_source: "Total Inc GST / (qty * pack_size)"
+    extras:
+      - { name: "Carton Freight" }
+      - { name: "Minimum Delivery Top-Up Charge" }
+      - { name: "Temporary Fuel Levy Charge" }
+      - { name: "VISA/Mastercard surcharge" }
+
+  viticult:
+    display_name: "Viticult"
+    aliases: ["Viticult"]
+    # NOTE: previously `wet`. Inv INV-02634 has NO WET COLUMN — GST = subtotal
+    # x 0.10 exactly. Prices appear WET-inclusive. Unverified which is right;
+    # left as gst until a WET-bearing Viticult invoice turns up.
+    default_tax: gst
+    dext_line_items: none
+    columns: ["QTY", "UNIT", "ITEM NO.", "ITEM DESCRIPTION", "UNIT PRICE (Ex GST)",
+              "DISCOUNT", "SUBTOTAL (Ex GST)", "GST", "GROSS TOTAL", "LUC (Ex GST)"]
+    # VERIFIED inv INV-02634 (13 Jul 2026, Stowaway, PO 54361217).
+    #   sum(GROSS TOTAL) = 458.179  ==  LS PO 54361217 ($458.19) ✓
+    #   Total AUD 464.78 = 416.527 subtotal + 6.600 freight + 41.653 GST
+    #   -> the $6.59 PO gap IS the freight, correctly skipped. Predicted ✓
+    carries_ls_po_number: true
+    quirks:
+      # Freight is a FOOTER line and GST-FREE (GST = subtotal x 0.1 only).
+      # Contrast: ILG/Lion bake freight INTO the line; Foodlink/Paramount
+      # print it as a TAXABLE line. Three incompatible models.
+      freight_is_separate_line: true
+      freight_is_gst_free: true
+      # UNIT PRICE is PRE-discount (19.000 -> 7.5% -> subtotal 210.900).
+      unit_price_is_pre_discount: true
+      # LUC here IS post-discount per-bottle ex-GST -> reliable. Still derive.
+      luc_column_reliable: true
+      decimal_places: 3
+      unit_price_source: "GROSS TOTAL / (qty * pack_size)"
+    observed:
+      - { product: "Padrillos Malbec 24", incl: 19.33, basis: per_bottle, pack: 12 }
+      - { product: "A Rodda Willow Lake Chard 2024", incl: 37.70, basis: per_bottle, pack: 6 }
+    extras:
+      - { name: "Freight Total", typical: 6.60, taxable: false }
+
+  italian_wine_importers:
+    display_name: "Italian Wine Importers [$350 min.]"
+    # Dext extracts the PARENT entity name. There is no "Italian Wine
+    # Importers" supplier in Dext. Search "Inalca".
+    aliases: ["Inalca F&B Australia", "Inalca", "Italian Wine Importers", "IWI"]
+    default_tax: wet
+    quirks:
+      qty_is_bottles: true      # 12 = one case of 12, not 12 cases
+      uom: "PCS"
+      luc_is_per_bottle_ex_gst: true
+      per_bottle_incl: "(line_amount + wet_share + gst_share) / qty"
+      typical_bottle_incl: { min: 16.00, max: 20.00 }
+      # Substitutes vintages: Dext "Millesimato '24" vs PO "'23".
+      substitutes_vintages: true
+    columns: ["Item No.", "Description", "Qty", "UOM", "LUC", "Amount", "GST"]
+
+  lo_fi:
+    display_name: "Lo-Fi Wines"
+    # NOTE: the hyphen matters. A previous skill version claimed Lo Fi was
+    # "sparse / only one invoice" — that was WRONG. ~43 invoices exist under
+    # the hyphenated name. Corrected 2026-06-18.
+    aliases: ["Lo-Fi Wines", "Lo Fi Wines", "Lo-Fi", "Lo Fi"]
+    default_tax: wet
+
+  be_foods:
+    display_name: "B&E Foods"
+    aliases: ["B&E Foods", "B & E Foods", "BE Foods"]
+    default_tax: gst_free      # basic food — most lines GST-free
+    # CORRECTED 16 Jul 2026. Appendix B says "never has, never will".
+    # That was TRUE WHEN WRITTEN and is now stale:
+    #   first invoice        2026-03-03  (new supplier)
+    #   first WITH lineitems 2026-05-12  (Dext trained the template, silently)
+    #   still MISSING on     2026-07-01
+    #   coverage             19/40 sampled — INTERMITTENT, not a clean switch
+    # Never rely on presence. Always be able to fall back to the PDF.
+    dext_line_items: intermittent
+    dext_line_items_since: "2026-05-12"
+    columns: ["Item Code", "Item Description", "Ordered", "Shipped", "UOM",
+              "Ship Doc + Unit UOM", "Item Price", "GST", "Line Total"]
+    multi_page: true          # inv 6969915 is "Page 1 of 2"
+    quirks:
+      # =================================================================
+      # QTY IS IN UOM UNITS, AND UOM VARIES PER LINE. NEVER READ IT AS A COUNT.
+      # =================================================================
+      # VERIFIED inv 6969915 (16 Jul 2026):
+      #   CHICKEN BREAST (F) SLICE 5MM PREMIUM 5KG BAG
+      #     Ordered 5.00 | Shipped 5.00 | UOM KG | Ship Doc 1.00 BAG
+      #     Item Price $12.20 | Line Total $61.00
+      #
+      #   -> That is ONE 5kg bag. The "5.00" is KILOGRAMS.
+      #   -> Read it as a count and you book 5 bags / 25kg of chicken that was
+      #      never delivered. 5x stock, 5x COGS, silent, looks normal.
+      #
+      # One invoice carried UOM = UNIT, KG, BAG and TUB. There is no single
+      # reading of the qty column. `Ship Doc + Unit UOM` carries the actual
+      # physical pack count (e.g. "1.00 BAG").
+      qty_is_in_uom_units: true
+      uom_varies_per_line: true
+      uom_values_seen: ["UNIT", "KG", "BAG", "TUB"]
+      pack_count_column: "Ship Doc + Unit UOM"
+      # Ordered vs Shipped are SEPARATE. Receive SHIPPED, never ORDERED.
+      has_ordered_and_shipped_columns: true
+      receive_column: "Shipped"
+      # Per-KG -> per-unit: cost = invoice_KG_price * pack_weight_kg
+      #   Beef Brisket Diced [5kg]   $13.50/KG -> $67.50
+      #   Chicken Breast Slice [5KG] $9.90/KG  -> $49.50
+      #   Spanish Chorizo [1kg]      $22.70/KG -> $22.70
+      # Bracket "[kg]" with NO number = tracked per kg, do NOT multiply.
+      per_kg_conversion: true
+      pack_weight_from_name_bracket: true
+      # Per-CTN -> per-unit: divide by units per carton, count in parentheses.
+      #   "2KG(3)"     -> / 3
+      #   "1.5KGx6"    -> / 6
+      #   "5X3KG CTN"  -> / 5
+      # Worked: Sweet Potato Chips [1.5KG] $83.00/CTN "1.5KGx6" -> $13.83
+      per_ctn_conversion: true
+      # CONFIRMED on inv 6969915 — the (N) in the description IS units/carton,
+      # cross-checked against the Ship Doc column:
+      #   "ANCHOVY FILLETS 690G(12)"   -> 0.08 CTN   (1/12 = 0.083 ✓)
+      #   "CHORIZO 1KG (15)"           -> 0.07 CTN   (1/15 = 0.067 ✓)
+      #   "ANTIPASTO 2KG TUB (4)"      -> 0.25 CTN   (1/4  = 0.25  ✓)
+      ctn_count_patterns:
+        - "\\((\\d+)\\)"          # 2KG(3), 690G(12), 1KG (15)
+        - "[xX](\\d+)\\s*$"       # 1.5KGx6
+        - "^(\\d+)\\s*[xX]"       # 5X3KG CTN
+
+      # CAUTION — do NOT double-apply the per-KG rule.
+      # Appendix B: "cost_price = invoice_KG_price x pack_weight_kg".
+      # True, but the invoice ALREADY did it: Chicken Breast $12.20/KG x 5kg
+      # = $61.00 = the stated Line Total. Multiplying a Line Total that already
+      # reflects the weight double-counts.
+      # SAFE RULE: Line Total is authoritative.
+      #            units = Shipped / pack_weight_kg;  unit_cost = LineTotal / units
+      line_total_is_authoritative: true
+
+  # CORRECTED 16 Jul 2026 — these are TWO SEPARATE, CONCURRENTLY ACTIVE
+  # suppliers, not a rename. Appendix B says FFT "was previously Select Fresh
+  # Providores"; the archive disagrees:
+  #   Select Fresh Providores  2,852 inv  $302,013  2022-09-16 -> 2026-07-15
+  #   The Fresh Fruit Team     separate            2026-06-19 -> 2026-07-16
+  # Merging their aliases would mis-attribute ~$302k of spend.
+  fresh_fruit_team:
+    display_name: "The Fresh Fruit Team Pty Ltd"
+    aliases: ["Fresh Fruit Team", "The Fresh Fruit Team Pty Ltd", "FFT"]
+    default_tax: gst_free
+    dext_line_items: none          # 0/15 recent
+    quirks:
+      prices_move_weekly: true     # fresh produce — do not flag as price shifts
+
+  select_fresh:
+    display_name: "Select Fresh Providores"
+    aliases: ["Select Fresh Providores", "Select Fresh"]
+    default_tax: gst_free
+    dext_line_items: none          # 0/6 lifetime sample, despite $302k spend
+    quirks:
+      prices_move_weekly: true
+
+  foodlink:
+    display_name: "Foodlink Australia"
+    aliases: ["Foodlink", "Foodlink Australia"]
+    # Largest kitchen supplier: $819,412 across 2,092 invoices.
+    default_tax: gst_free      # per-line — MIXED. See below.
+    # 6/6 recent, but 31/40 across lifetime — first line items 2022-03-30,
+    # still dropping out as late as 2024-01-20. Mostly reliable, not always.
+    dext_line_items: mostly_reliable
+    dext_line_items_since: "2022-03-30"
+    columns: ["No.", "Description", "Country of Origin", "Qty.", "UOM",
+              "Weight", "Price Excl. GST", "Disc %", "GST", "Amount Excl. GST"]
+    quirks:
+      # =================================================================
+      # AMOUNTS ARE EX-GST. DEXT'S LINE ITEMS ARE EX-GST. HEADER IS INCL-GST.
+      # =================================================================
+      # VERIFIED inv SI4467596 (16 Jul 2026, Stowaway):
+      #   columns read "Price Excl. GST" / "Amount Excl. GST"
+      #   footer:  Total AUD Excl. GST   264.60
+      #            GST Amount              4.60
+      #            Total AUD incl. GST   269.20
+      #
+      # Dext's lineItems sum to 264.60 (EX-GST). Dext's header totalAmount is
+      # 269.20 (INCL-GST). DIFFERENT BASES — they can never reconcile, and the
+      # "missing" $4.60 is simply the GST.
+      #
+      # Lightspeed needs GST-INCLUSIVE costs (Rule 2). Taking Dext's line
+      # amounts straight in understates every TAXABLE line by 10%.
+      line_amounts_are_ex_gst: true
+      dext_lineitems_are_ex_gst: true
+      dext_header_is_incl_gst: true
+
+      # Tax is PER LINE, flagged in a dedicated "GST" column.
+      # inv SI4467596: only CORN CHIPS (43.00) + Fuel Levy (3.00) taxable.
+      #   46.00 x 10% = 4.60 ✓  (barramundi/squid/tortillas/camembert GST-free)
+      # 4 lines where ex == incl, 1 where it doesn't. SELECTIVE errors are
+      # harder to spot than total ones.
+      tax_is_per_line: true
+      tax_marker_column: "GST"
+
+      # Unlike ILG, Foodlink's Fuel Levy IS a real separate line item — and it
+      # is GST-taxable. Skip it on the LS receive (extras rule) but do NOT
+      # assume freight is already baked into line amounts here.
+      fuel_levy_is_separate_line: true
+      freight_already_in_line_total: false
+    extras:
+      - { name: "Fuel Levy", typical: 3.00, taxable: true }
+
+  captains_of_trade:
+    display_name: "Captain's of Trade"
+    aliases: ["Captain's of Trade", "Captains of Trade", "Captains of Trade — HG"]
+    default_tax: gst
+    quirks:
+      # Documented paper-only supplier. Never appears in Dext.
+      # Authorised Rule 0 exception: receive at PO price, invoice_ref = PO-{number}.
+      not_in_dext: true
+      paper_only: true
+
+  # -------------------------------------------------------------------------
+  # Suppliers present in the Dext archive but ABSENT from Appendix B.
+  # Added 16 Jul 2026 from the full 21,979-invoice pull. Several are large;
+  # Torino alone is $507k. Rules are unknown — listed so they are recognised
+  # rather than silently unclassified. Fill in quirks as invoices are processed.
+  # -------------------------------------------------------------------------
+
+  torino:
+    status: dead
+    last_seen: "2024-07-29"
+    display_name: "Torino Food Service"
+    aliases: ["Torino Food Service", "Torino"]
+    default_tax: gst_free
+    dext_line_items: reliable       # 6/6
+    status: inactive                # $507,605 lifetime, last seen 2024-07-29
+
+  gulli:
+    display_name: "Gulli Food Distributors Pty Ltd"
+    aliases: ["Gulli Food Distributors Pty Ltd", "Gulli"]
+    default_tax: gst_free           # per-line — MIXED
+    dext_line_items: none           # 0/6 despite $298,130 — read the PDF
+    columns: ["PRODUCT CODE", "DESCRIPTION", "QUANTITY", "UNIT PRICE", "GST", "AMOUNT"]
+    # VERIFIED inv CI-424608 (13 Jul 2026, Stowaway). Cleanest layout seen.
+    #   MANFLOPIZ-U        Pizza Flour 12.5kg      5.000 Unit  13.80000   0%  $ 69.00
+    #   PBLTB13-U          Pizza Boxes x 50        2.000 Unit  29.21000  10%  $ 58.42
+    #   MOZZARELLA2KG-UC4  Shredded Mozzarella 2kg 10.000 Unit 21.00000   0%  $210.00
+    #   VEGD004-UC10       Vegan Mozzarella 500g   1.000 Unit   9.00000   0%  $  9.00
+    #   DELIVERY_007       Standard Delivery       1.000 Unit   0.00000  10%  $  0.00
+    #     Untaxed Amount 346.42 | GST 0% on 288.00 = 0.00 | GST 10% on 58.42 = 5.84
+    #     Total 352.26
+    # All checks: 69+58.42+210+9 = 346.42 ✓ ; 58.42 x 10% = 5.84 ✓ ; sum = 352.26 ✓
+    quirks:
+      # BEST-IN-CLASS tax marking: an explicit per-line RATE column (0% / 10%).
+      # Compare: Foodlink uses a "GST" flag; Select Fresh uses an asterisk
+      # footnote. THREE suppliers, THREE conventions. Never assume.
+      tax_is_per_line: true
+      tax_marker_column: "GST"
+      tax_marker_style: explicit_rate    # "0%" / "10%"
+      # AMOUNT is EX-GST (footer says "Untaxed Amount"). Lightspeed needs incl.
+      # Only the taxable lines convert: pizza boxes 58.42 x 1.1 = 64.26;
+      # the flour stays 69.00. Packaging is taxable, food is not.
+      line_amounts_are_ex_gst: true
+      # QUANTITY embeds the UOM inline ("5.000 Unit"). Unit price carries 5 dp.
+      qty_includes_uom_inline: true
+      # "Standard Delivery" is a ZERO-VALUE extras line. Still classify as
+      # `extra`, not stock — it must never resolve to a product.
+      zero_value_delivery_line: "DELIVERY_007"
+    # Dext records Gulli's tax CORRECTLY ($5.84 = the real figure), unlike
+    # Foodlink ($0.00 vs a real $4.60). Isolates Foodlink as a broken template.
+    dext_tax_correct: true
+    extras:
+      - { name: "Standard Delivery", code: "DELIVERY_007", typical: 0.00, taxable: true }
+
+  andrews_meat:
+    display_name: "Andrews Meat Industry"
+    aliases: ["Andrews Meat Industry", "Andrews Meat"]
+    default_tax: gst_free
+    dext_line_items: reliable       # 6/6, $338,393
+
+  winestock:
+    status: dead
+    last_seen: "2024-04-15"
+    display_name: "Winestock"
+    aliases: ["Winestock"]
+    default_tax: wet
+    dext_line_items: mostly_reliable  # 5/6
+    status: inactive                # $208,641, last seen 2024-04-15
+
+  gateway_liquor:
+    status: dead
+    last_seen: "2023-04-27"
+    display_name: "Gateway Liquor Wholesalers"
+    aliases: ["Gateway Liquor Wholesalers", "Gateway Liquor"]
+    default_tax: gst
+    dext_line_items: mostly_reliable  # 4/6
+    status: inactive                # $99,523, last seen 2023-04-27
+
+  cookers:
+    display_name: "Cookers Bulk Oils"
+    aliases: ["Cookers Bulk Oils", "Cookers"]
+    default_tax: gst
+    dext_line_items: reliable       # 6/6
+
+  aquarius:
+    display_name: "Aquarius Fisheries Pty Ltd"
+    aliases: ["Aquarius Fisheries Pty Ltd", "Aquarius Fisheries"]
+    default_tax: gst_free
+    dext_line_items: reliable       # 6/6
+
+  mj_chickens:
+    status: dead
+    last_seen: "2026-02-19"
+    display_name: "M & J Chickens"
+    aliases: ["M & J Chickens", "M&J Chickens"]
+    default_tax: gst_free
+    dext_line_items: none           # 0/6
+
+  mountain_culture:
+    display_name: "Mountain Culture Pty Ltd"
+    aliases: ["Mountain Culture Pty Ltd", "Mountain Culture"]
+    default_tax: gst
+    quirks:
+      keg_size_litres: 50
+
+  four_pines:
+    display_name: "4 Pines Brewing Company"
+    aliases: ["4 Pines Brewing Company", "4 Pines"]
+    default_tax: gst
+
+  nelson_wine:
+    display_name: "Nelson Wine Company NSW"
+    aliases: ["Nelson Wine Company NSW", "Nelson Wine"]
+    default_tax: wet
+    dext_line_items: none           # 0/6
+    columns: ["Stock Code", "Pack Size", "Description", "Vol", "Bottles",
+              "W/Sale Price/Doz", "W/sale Price/Bot", "%", "WET %", "GST %",
+              "Inc. Price", "L.U.C."]
+    # VERIFIED inv 20039352 (13 Jul 2026, Stowaway, PO 54361216).
+    #   sum(Inc. Price) = $280.89 EXACT == LS PO 54361216 ✓
+    #   KUKU: 145.00 x 0.85 = 123.25 -> WET 35.74 -> GST 15.90 -> 174.89
+    #         -> $14.57/btl  (Appendix K says wines $14-25 ✓)
+    carries_ls_po_number: true
+    quirks:
+      # "%" column is the DISCOUNT. "W/sale Price/Bot" is PRE-discount:
+      # column says $12.08, real cost $14.57/btl -> 17% LOW.
+      unit_price_is_pre_discount: true
+      unit_price_understates_by_pct: 17
+      # L.U.C. = (net + WET) / 12 -> per btl ex-GST but INCL WET. Same basis
+      # as Bacchus, different from everyone else. Derive instead.
+      luc_column_unit_basis: per_bottle_ex_gst_incl_wet
+      unit_price_source: "Inc. Price / pack_size"
+
+  # Harry Gatos cash-receipt suppliers — retail receipts, not invoices.
+  # No PO, no structured document. Photos read visually.
+  gog:
+    display_name: "GOG"
+    aliases: ["GOG"]
+    default_tax: gst_free
+    quirks: { cash_receipt: true, not_in_dext: true }
+
+  miracle_noodle:
+    display_name: "Miracle Noodle"
+    aliases: ["Miracle Noodle"]
+    default_tax: gst_free
+    quirks: { cash_receipt: true, not_in_dext: true }
+
+  yen_yen:
+    display_name: "Yen Yen"
+    aliases: ["Yen Yen"]
+    default_tax: gst_free
+    quirks: { cash_receipt: true, not_in_dext: true }

@@ -1,0 +1,75 @@
+supplier,supplier_code,invoice_description,lightspeed_product,cost_per_unit_incl_gst,basis,pack_size,venue,source_invoice,invoice_date,in_bounds,note
+ILG,175-0420,ANTICA FORMULA,Antica Formula Rosso Vermouth [Bottle],64.2700,per_bottle,1,stowaway,03729959,2026-07-14,yes,0/1 repack
+ILG,395-6785P,APEROL,Aperol [Bottle],29.0817,per_bottle,6,stowaway,03729959,2026-07-14,yes,
+ILG,305-1949P,BUFFALO TRACE BOURBON 40%,Buffalo Trace Bourbon [Bottle],53.6100,per_bottle,1,stowaway,03729959,2026-07-14,yes,0/1 repack
+ILG,360-1310,ROOSTER ROJO TEQUILA BLANCO,Rooster Rojo Blanco Tequila [Bottle],51.6611,per_bottle,6,stowaway,03729959,2026-07-14,yes,
+ILG,345-5638P,SAILOR JERRY SPICED RUM,Sailor Jerry [700ml],44.7200,per_bottle,1,stowaway,03729959,2026-07-14,yes,0/2 repack
+ILG,122-2867,ALEHOUSE CRISP KEG,Alehouse Summer Mid [Keg],184.9400,per_keg,1,stowaway,03729959,2026-07-14,yes,name mismatch
+ILG,122-2858,ALEHOUSE PREMIUM KEG,Alehouse Draught Lager [Keg],212.4400,per_keg,1,stowaway,03729959,2026-07-14,yes,name mismatch
+ILG,115-3762,CORONA MEXICAN 6PK BRW BX R,Corona,2.5712,per_can,24,stowaway,03729959,2026-07-14,yes,singles
+ILG,117-4213,HEAPS NORMAL QUIET XPA NON ALC,Heaps Normal Tin,2.6700,per_can,24,stowaway,03729959,2026-07-14,yes,singles
+ILG,460-1504,COCA COLA,Coke 1.25L,3.6933,per_unit,12,stowaway,03729959,2026-07-14,yes,LS received 44.28 - 4c low
+ILG,460-2567,COCA COLA CAN CUBES,Coke Can,1.8900,per_can,24,stowaway,03729959,2026-07-14,yes,
+ILG,460-1639,COKE NO SUGAR 1.25 LITRE,Coke Zero 1.25L,3.6933,per_unit,12,stowaway,03729959,2026-07-14,yes,
+ILG,450-1293,S.PELLEGRINO SPARKLING WATER,San Pellegrino 500ml,2.3558,per_unit,24,stowaway,03729959,2026-07-14,yes,
+ILG,460-3254,SPRITE 375ML 24 CUBE,Sprite Can,1.8896,per_can,24,stowaway,03729959,2026-07-14,yes,
+Lion,1256672,S & W Pacific Ale 49.5L KEG,Stone & Wood [Keg],383.2350,per_keg,1,stowaway,94755729,2026-07-14,yes,49.5L not 50L; 27% disc
+Lion,1200769,Guinness 49.5L KEG,Guinness [Keg],416.5800,per_keg,1,stowaway,94755729,2026-07-14,yes,NEW product
+Lion,1254690,Kirin Ichb 5% 49.5L KEG,Kirin [Keg],441.5400,per_keg,1,stowaway,94755729,2026-07-14,yes,premium exempt
+Grifter,,GRIFTER PALE ALE 50L KEG (KONVOY KEG),Grifter Pale Ale [Keg],292.0500,per_keg,1,stowaway,82888,2026-07-14,yes,
+Paramount,10015926,CARPANO CLASSICO VERMOUTH : 750ml,Carpano Classico Vermouth [Bottle],23.1700,per_bottle,1,stowaway,5441124,2026-07-14,yes,0/1 repack; WET
+Paramount,44583,DE BORTOLI GOLD SEAL SPECIAL DRY RED 15L,De Bortoli Gold Seal Dry Red [15L],55.8950,per_unit,1,stowaway,5441124,2026-07-14,yes,cask; WET
+Paramount,98541,SPRITE PET : 1250 ml,Sprite PET 1250ml,4.2654,per_unit,12,stowaway,5441124,2026-07-14,yes,LUC would be 10.9x high
+Gulli,MANFLOPIZ-U,Manildra- Gem West Pizza Flour 12.5kg,,13.8000,per_unit,1,stowaway,CI-424608,2026-07-13,yes,GST-free
+Gulli,PBLTB13-U,"B Flute Lock Top 13"" Pizza Boxes x 50",,32.1300,per_unit,1,stowaway,CI-424608,2026-07-13,yes,10% GST applied
+Gulli,MOZZARELLA2KG-UC4,Big Cheese- Shredded Mozzarella 2kg,,21.0000,per_unit,1,stowaway,CI-424608,2026-07-13,yes,GST-free
+Gulli,VEGD004-UC10,Dairy-Free (Vegan) Shredded Mozzarella 500g,,9.0000,per_unit,1,stowaway,CI-424608,2026-07-13,yes,GST-free
+Foodlink,103272,BARRAMUNDI FILLETS IMP 200/300 S/OFF 5KG,,83.0000,per_unit,1,stowaway,SI4467596,2026-07-16,yes,GST-free
+Foodlink,102689,SQUID PINEAPPLE CUT IMP U5 5KG,,57.0000,per_unit,1,stowaway,SI4467596,2026-07-16,yes,GST-free
+Foodlink,101112,FLOUR TORTILLAS 12X63GM 10INCH,,33.0000,per_unit,1,stowaway,SI4467596,2026-07-16,yes,UOM CTN-6; stock unit UNKNOWN
+Foodlink,100487,CHEESE CAMEMBERT 125GM Rosenberg,,45.6000,per_unit,1,stowaway,SI4467596,2026-07-16,yes,UOM CTN-12; stock unit UNKNOWN
+Foodlink,100831,CORN CHIPS ROSITA TRI 6X500GM,,47.3000,per_unit,1,stowaway,SI4467596,2026-07-16,yes,TAXABLE - 43.00 ex x1.1
+B&E,18484,CANNED - ANCHOVY FILLETS IN OIL 690G(12) SELESTA,,18.0000,per_unit,1,stowaway,6969915,2026-07-16,yes,GST-free
+B&E,12776,CHICKEN BREAST (F) SLICE 5MM PREMIUM 5KG BAG,,61.0000,per_unit,1,stowaway,6969915,2026-07-16,yes,5.00 KG = ONE bag
+B&E,19626,SAUSAGE - MILD SPANISH CHORIZO 1KG (15) PENDLE,,13.7000,per_kg,1,stowaway,6969915,2026-07-16,yes,
+B&E,28087,CHILLI - FLAKE / CRUSHED 1KG CSI,,13.7000,per_unit,1,stowaway,6969915,2026-07-16,yes,
+B&E,17723,YOGHURT - GREEK 2KG PROCAL,,14.5000,per_unit,1,stowaway,6969915,2026-07-16,yes,
+B&E,11605,ANTIPASTO - CHARGRILLED EGGPLANT 2KG TUB (4) MEZZAT,,21.9000,per_unit,1,stowaway,6969915,2026-07-16,yes,
+Select Fresh,CARK,CARROT KG,,2.4000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,ONIBK,ONION BROWN KG,,2.4000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,CHOI,CHOI SUM BCH,,2.2000,per_unit,1,harry_gatos,3084903,2026-07-15,yes,bunch
+Select Fresh,LEMK,LEMON KG,,3.6000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,HCHI,HERB CHIVES BCH,,2.3000,per_unit,1,harry_gatos,3084903,2026-07-15,yes,bunch
+Select Fresh,SHAL,SHALLOT BCH,,3.0000,per_unit,1,harry_gatos,3084903,2026-07-15,yes,bunch
+Select Fresh,TBUS100,TOMATO BUSH POWDER 100GM,,16.5000,per_unit,1,harry_gatos,3084903,2026-07-15,yes,pkt
+Select Fresh,PGAR,PROCESS GARLIC PEELED KG,,5.8000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,XSHRCAB,CABBAGE GREEN SHREDDED,,4.2000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,XCSIMIX,CABBAGE RED/GRN SHRD MIX KG,,4.8000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,XDCAR05,CARROT DICED 5MM KG,,3.1000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,XSHRCAR,CARROT SHREDDED,,2.8000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Select Fresh,PRPOTP,POTATO PEELED PROCESSING KG,,3.8000,per_kg,1,harry_gatos,3084903,2026-07-15,yes,
+Sun Circle,,Pork & Parsley Dumpling 600g x 24,,4.5000,per_unit,1,harry_gatos,16961,2026-07-16,yes,HANDWRITTEN
+Sun Circle,,Chicken & Corn Dumpling 600g x 24,,4.5000,per_unit,1,harry_gatos,16961,2026-07-16,yes,HANDWRITTEN
+Sun Circle,,Beef & Cabbage Dumpling 600g x 24,,4.5000,per_unit,1,harry_gatos,16961,2026-07-16,yes,HANDWRITTEN
+Sun Circle,,Prawn Har Gao (Large) 1000g x 15,,32.0000,per_unit,1,harry_gatos,16961,2026-07-16,yes,HANDWRITTEN
+Jun Pacific,HA8204606,"""S&B"" EX (Mild) Torokeru Curry Flake 20/1kg",,9.4500,per_kg,1,stowaway,NB10521714,2026-07-16,yes,
+Jun Pacific,HA8204612,"""S&B"" EX Golden Curry Mid Hot 10/1kg",,12.1000,per_kg,1,stowaway,NB10521714,2026-07-16,yes,
+Jun Pacific,KF8524001,"""Jun"" Frozen Soybean (Edamame) 20/454gm",,2.5000,per_unit,1,stowaway,NB10521714,2026-07-16,yes,
+Jun Pacific,QB8514617,"""Jun"" Marumatsu Vegetable Dumpling 10/800gm",,9.3500,per_unit,1,stowaway,NB10521714,2026-07-16,yes,
+Paramount,10015926,CARPANO CLASSICO VERMOUTH : 750ml,Carpano Classico Vermouth [Bottle],23.1700,per_bottle,1,stowaway,5441124,2026-07-14,yes,0/1 repack; WET 4.74
+Paramount,44583,DE BORTOLI GOLD SEAL SPECIAL DRY RED 15L,De Bortoli Gold Seal Dry Red [15L],55.8950,per_unit,1,stowaway,5441124,2026-07-14,yes,cask; WET 22.85
+Paramount,98541,SPRITE PET : 1250 ml,Sprite PET 1250ml,4.2654,per_unit,12,stowaway,5441124,2026-07-14,yes,LUC per-CASE = 10.9x high
+Bacchus,FD2MOTHER 23,First Drop Mothers Milk Shiraz 2023,Mother's Milk Shiraz - Bottle,16.0817,per_bottle,12,stowaway,INV494857,2026-07-13,yes,15% disc in price; WET 29%
+Bacchus,PETDETROSE 24,Petit Detour Rose 2024,,15.9642,per_bottle,12,stowaway,INV494857,2026-07-13,yes,10% disc in price; WET 29%
+Combined Wines,CGPN750ML,CRITTENDEN GEPPETTO PINOT NOIR 750ML,,17.5608,per_bottle,12,stowaway,SINV203712,2026-07-13,yes,Unit Price col 21.7% LOW
+Combined Wines,CCCPN750ML,CRITTENDEN CRI DE COEUR PINOT NOIR 750ML,,62.1517,per_bottle,6,stowaway,SINV203712,2026-07-13,yes,Unit Price col 21.7% LOW
+Viticult,ECPM24,Padrillos Malbec 24,,19.3324,per_bottle,12,stowaway,INV-02634,2026-07-13,yes,7.5% disc; no WET col
+Viticult,ARWLC24,A Rodda Willow Lake Chard 2024,A. Rodda Chard,37.6983,per_bottle,6,stowaway,INV-02634,2026-07-13,yes,7.5% disc; no WET col
+Nelson,KU25SAB,25 KUKU SAUV BLANC,Kuku Sauv Blanc - Bottle,14.5742,per_bottle,12,stowaway,20039352,2026-07-13,yes,15% disc; WET 29%
+Nelson,HANVSPA,NV VERSION TWO BRUT CUVEE,,8.8333,per_bottle,12,stowaway,20039352,2026-07-13,yes,10% disc; WET 29%
+Fresh Fruit Team,BRL,Broccolini,,33.6000,per_unit,1,stowaway,INB00111435,2026-07-16,yes,Box
+Fresh Fruit Team,KITCFKG,Cauliflower Florets,,7.9000,per_kg,1,stowaway,INB00111435,2026-07-16,yes,
+Fresh Fruit Team,KITCSKG,Coleslaw,,7.9000,per_kg,1,stowaway,INB00111435,2026-07-16,yes,
+Fresh Fruit Team,CELE,Celeriac,,10.8000,per_unit,1,stowaway,INB00111435,2026-07-16,yes,Each
+Fresh Fruit Team,PJEA,Pumpkin Jap,,2.3000,per_unit,1,stowaway,INB00111435,2026-07-16,yes,Each
+Fresh Fruit Team,TCPUN,Tomatoes Cherry,,1.7600,per_unit,1,stowaway,INB00111435,2026-07-16,yes,Punnet
