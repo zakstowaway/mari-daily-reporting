@@ -1,0 +1,21 @@
+name: Employee Map
+# Maps Deputy employee ids -> Xero payroll names. Exact matches only, plus
+# hand-verified aliases; anything unmatched is reported and left alone.
+on:
+  workflow_dispatch:
+jobs:
+  map:
+    runs-on: ubuntu-latest
+    permissions: { contents: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - env: { DEPUTY_TOKEN: "${{ secrets.DEPUTY_TOKEN }}" }
+        run: python scripts/build_employee_map.py
+      - run: |
+          git config user.name "Employee Map"
+          git config user.email "hello@stowawaybar.com"
+          git add data/employee_map.json
+          git diff --quiet --staged || git commit -m "Rebuild Deputy->Xero employee map"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
