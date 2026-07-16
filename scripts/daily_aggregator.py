@@ -348,26 +348,54 @@ else:
     # $612.70 ex on the 14th, $235.71 on the 15th, silently. Before the 14th the
     # two matched to the cent, which is why nobody saw it.
     #
-    # This can't be fixed by pulling the rows in: ~54% of them ARE already in
-    # Mari's file, so that double-counts. The fix is the report filter. This is
-    # the tripwire that catches the next filter change in a day, not a quarter.
+    # RECOVERY (2026-07-16): rather than only warning, Mari now RECEIVES the rows
+    # that reach no venue. This is safe because _lost is DERIVED from the gap:
+    #   _lost = ('m' rows on the Stow till) MINUS (rows already in Mari's file)
+    # so it is self-healing — the day the report filter is fixed, _lost goes to
+    # zero on its own and this adds nothing. Verified: 07-14 +31 rows/$673.67,
+    # 07-15 +13/$258.97, 07-12 +0 (a day the filter worked → inert).
+    #
+    # An earlier attempt DID double-count because it pulled in all 61 'm' rows
+    # blind, including the 30 already in Mari's file. The `not in _own` test is
+    # what makes this different. Do not remove it.
+    #
+    # Dedup is BY PRODUCT NAME, which assumes a product is either wholly in
+    # Mari's file or wholly absent. True on 07-12/14/15 (0 of 118 overlap rows
+    # differ by even a cent). If that ever stops being true we'd silently
+    # UNDER-count, so the mismatch check below shouts rather than guesses.
+    # The report filter is still the real fix; this stops the bleeding.
     if venue_key == "marilynas":
         _sib = resolve(DATA_DIR / f"insights_stow_{target.isoformat()}.csv")
         if _sib is not None:
             _sib_rows, _ = load_product_rows(_sib)
-            _own = {(r.get("Product Name") or r.get("Product") or "").strip() for r in rows}
-            _lost = [r for r in _sib_rows
-                     if classify_product(r, (r.get("Product Name") or r.get("Product") or "").strip(), "stowaway") == 'm'
-                     and (r.get("Product Name") or r.get("Product") or "").strip() not in _own]
+            _nm = lambda r: (r.get("Product Name") or r.get("Product") or "").strip()
+            _own_rev = {_nm(r): row_rev(r) for r in rows}
+            _m_rows = [r for r in _sib_rows
+                       if classify_product(r, _nm(r), "stowaway") == 'm']
+            _lost = [r for r in _m_rows if _nm(r) not in _own_rev]
+
+            # Safety: overlap rows must be identical in both files, or name-based
+            # dedup is unsound and we must not trust either side silently.
+            _mismatch = [(_nm(r), row_rev(r), _own_rev[_nm(r)]) for r in _m_rows
+                         if _nm(r) in _own_rev
+                         and abs(row_rev(r) - _own_rev[_nm(r)]) > 0.005]
+            if _mismatch:
+                print(f"  *** DEDUP UNSOUND: {len(_mismatch)} product(s) appear in BOTH Mari's report and")
+                print(f"      the Stow till at DIFFERENT values. Name-based dedup assumes they match.")
+                print(f"      Mari may now be UNDER-counted. Investigate before trusting this day.")
+                for _n, _a, _b in _mismatch[:6]:
+                    print(f"        {_n[:40]:42} stow ${_a:,.2f}  mari ${_b:,.2f}")
+
             if _lost:
                 _amt = sum(row_rev(r) for r in _lost)
-                print(f"  *** REVENUE LEAK: {len(_lost)} Mari rows on the Stow till (${_amt:,.2f} inc) are NOT in")
-                print(f"      Mari's report. Stow strips them, Mari never receives them -> they reach NO venue.")
-                print(f"      Fix the 'Mari Daily Sales Auto' report filter in Lightspeed to include them.")
+                print(f"  *** RECOVERED: {len(_lost)} Mari rows (${_amt:,.2f} inc) were on the Stow till but NOT")
+                print(f"      in Mari's report. Stow strips them, so they reached NO venue. Added to Mari.")
+                print(f"      This is a patch — fix the 'Mari Daily Sales Auto' filter in Lightspeed.")
                 for r in _lost[:6]:
-                    print(f"        {(r.get('Product Name') or '').strip()[:46]}  ${row_rev(r):,.2f}")
+                    print(f"        {_nm(r)[:46]}  ${row_rev(r):,.2f}")
                 if len(_lost) > 6:
                     print(f"        ... and {len(_lost)-6} more")
+                rows = rows + _lost
 
     revenue_inc = sum(row_rev(r) for r in rows)
     total_tax = sum(parse_num(col(r, "Total Tax", "GST", "Tax")) for r in rows)
