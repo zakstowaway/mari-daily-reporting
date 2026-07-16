@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""Rebuild wages from Deputy for whole PAYROLL WEEKS, using the canonical model.
+
+Replaces the per-day synthesis. Two reasons it must work a week at a time:
+
+1. A salaried employee costs annual/52 per WEEK (verified against Xero payroll).
+   You cannot know Monday's share of that until you know how much of the week
+   they logged — so a per-day pull structurally cannot cost them correctly.
+2. Deputy's Cost lands when a timesheet is APPROVED. The 6am pull reads whatever
+   is approved at 6am; shifts on 2026-06-25 were approved on 2026-06-30 and were
+   never re-read. Rebuilding the week each day picks approvals up for free.
+
+Canon (same as daily_deputy_pull.py / venues.py):
+  - OU -> venue/dept routing, incl Harry's Bar, Driver, Admin 90/10 stow/hg
+  - Monday reallocation: Stow Kitchen -> HarryGatos Kitchen
+  - 12% super gross-up on everything
+  - Leave: hourly leave keeps Deputy's cost (+17.5% AL loading on LeaveRule 1)
+    and lands in stow's leave_dollars. SALARIED leave is already inside the
+    annual/52 (Xero: Kris = 38.5h worked + 1.5h leave = 40 units), so it is
+    allocated out of the weekly salary, never added on top.
+
+Writes wages_dollars, wages_kitchen/foh/driver_dollars and their pcts. Only
+touches days Deputy actually returned shifts for — a day with no Deputy data
+keeps whatever it had, so this can't silently blank pre-Deputy history.
+
+    python scripts/rebuild_wages.py 2024-10-21 2026-07-12            # dry run
+    python scripts/rebuild_wages.py 2024-10-21 2026-07-12 --write
+"""
+import csv, json, os, sys, urllib.request, urllib.error
+from collections import defaultdict
+from datetime import date, datetime, timezone, timedelta
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import venues as V
+from wage_model import allocate_week
+
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
+DATA_DIR = REPO_ROOT / "data"
+DEPUTY_HOST = "https://831d4015123255.au.deputy.com"
+TOKEN = os.environ.get("DEPUTY_TOKEN")
+SUPER_MULT = 1.0 + V.SUPER_RATE
+AL_LOADING = 1.175
+OFFSET_H = 10
+
+WRITE = "--write" in sys.argv
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+if len(args) < 2:
+    sys.exit("usage: rebuild_wages.py <from YYYY-MM-DD> <to YYYY-MM-DD> [--write]")
+if not TOKEN:
+    sys.exit("DEPUTY_TOKEN not set")
+
+cfg = json.loads((Path(__file__).parent / "salaried_employees.json").read_text())
+SAL = {k: v["annual"] for k, v in cfg["employees"].items()}
+WPY = cfg["_weeks_per_year"]
+
+d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
+d_from -= timedelta(days=d_from.weekday())          # back to Monday
+d_to += timedelta(days=6 - d_to.weekday())          # out to Sunday
+print(f"payroll weeks {d_from} .. {d_to}  ({(d_to - d_from).days + 1} days)")
+
+
+def api_post(path, body):
+    r = urllib.request.Request(DEPUTY_HOST + path, data=json.dumps(body).encode(),
+        headers={"Authorization": f"OAuth {TOKEN}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(r) as resp:
+        return json.loads(resp.read())
+
+
+def fetch(start_d, end_d):
+    t0 = int(datetime(start_d.year, start_d.month, start_d.day, tzinfo=timezone(timedelta(hours=OFFSET_H))).timestamp())
+    t1 = int(datetime(end_d.year, end_d.month, end_d.day, tzinfo=timezone(timedelta(hours=OFFSET_H))).timestamp())
+    out, off = [], 0
+    while True:
+        b = api_post("/api/v1/resource/Timesheet/QUERY", {"search": {
+            "s1": {"field": "StartTime", "type": "ge", "data": t0},
+            "s2": {"field": "StartTime", "type": "lt", "data": t1},
+            "s3": {"field": "IsInProgress", "type": "eq", "data": 0},
+            "s4": {"field": "Discarded", "type": "eq", "data": 0}},
+            "join": ["OperationalUnitObject"], "start": off, "max": 500})
+        out.extend(b)
+        if len(b) < 500:
+            return out
+        off += 500
+
+
+def local_date(e):
+    return datetime.fromtimestamp(e, tz=timezone(timedelta(hours=OFFSET_H))).date().isoformat()
+
+
+day = defaultdict(lambda: defaultdict(float))      # day[date][f"{venue}|{dept}"] = ex-super cost
+warnings, weeks = [], 0
+cur = d_from
+while cur <= d_to:
+    wk_end = cur + timedelta(days=6)
+    shifts = []
+    for ts in fetch(cur, wk_end + timedelta(days=1)):
+        dstr = local_date(ts["StartTime"])
+        emp = str(ts.get("Employee"))
+        hours = ts.get("TotalTime") or 0
+        cost = ts.get("Cost") or 0
+        if ts.get("IsLeave"):
+            # Salaried leave is inside annual/52 -> let the model allocate it.
+            # Hourly leave is a real extra cost at Deputy's rate (+AL loading).
+            if emp not in SAL and ts.get("LeaveRule") == 1:
+                cost *= AL_LOADING
+            shifts.append({"employee_id": emp, "hours": hours, "cost": cost,
+                           "date": dstr, "bucket": "leave"})
+            continue
+        ou = (ts.get("_DPMetaData", {}).get("OperationalUnitInfo", {}) or {}).get("OperationalUnitName", "")
+        if ou == V.ADMIN_OU_NAME:
+            bucket = "admin"
+        elif ou == V.MONDAY_REALLOCATED_OU and date.fromisoformat(dstr).weekday() == 0:
+            bucket = "hg|Kitchen"
+        else:
+            bucket = None
+            for vkey, pfx in (("stowaway", "stow"), ("harry", "hg"), ("marilynas", "mari")):
+                dept = V.dept_for_ou(vkey, ou)
+                if dept:
+                    bucket = f"{pfx}|{dept}"
+                    break
+            if not bucket:
+                continue                            # unknown OU (PH Not Worked etc.)
+        shifts.append({"employee_id": emp, "hours": hours, "cost": cost,
+                       "date": dstr, "bucket": bucket})
+
+    costed, warn = allocate_week(shifts, SAL, WPY)
+    warnings.extend(warn)
+    for s in costed:
+        c, b, d = s["cost_final"], s["bucket"], s["date"]
+        if b == "leave":
+            day[d]["stow|Leave"] += c
+        elif b == "admin":
+            day[d]["stow|Admin"] += c * V.ADMIN_SHARES["stowaway"]
+            day[d]["hg|Admin"] += c * V.ADMIN_SHARES["harry"]
+        else:
+            day[d][b] += c
+    weeks += 1
+    cur = wk_end + timedelta(days=1)
+
+print(f"fetched {weeks} weeks, {len(day)} days with shifts")
+
+# ---- write ----
+for pfx in ("stow", "hg", "mari"):
+    f = DATA_DIR / f"{pfx}_daily_history.csv"
+    rows = list(csv.DictReader(f.open()))
+    if not rows:
+        continue
+    fields = list(rows[0].keys())
+    if "wages_driver_dollars" not in fields:
+        fields.insert(fields.index("wages_foh_dollars") + 1, "wages_driver_dollars")
+    touched = 0
+    delta = 0.0
+    for r in rows:
+        d = r["date"]
+        if d not in day or not (args[0] <= d <= args[1]):
+            continue
+        b = day[d]
+        kit = b.get(f"{pfx}|Kitchen", 0) * SUPER_MULT
+        foh = b.get(f"{pfx}|FOH", 0) * SUPER_MULT
+        drv = b.get(f"{pfx}|Driver", 0) * SUPER_MULT
+        adm = b.get(f"{pfx}|Admin", 0) * SUPER_MULT
+        tot = kit + foh + drv + adm
+        if tot <= 0:
+            continue
+        before = float(r.get("wages_dollars") or 0)
+        delta += tot - before
+        rev = float(r.get("revenue_ex_gst") or 0)
+        food = float(r.get("food_ex_gst") or 0)
+        bev = float(r.get("bev_ex_gst") or 0)
+        r["wages_dollars"] = round(tot, 2)
+        r["wages_pct"] = round(tot / rev * 100, 1) if rev else ""
+        r["wages_kitchen_dollars"] = round(kit, 2)
+        r["wages_foh_dollars"] = round(foh, 2)
+        r["wages_driver_dollars"] = round(drv, 2)
+        r["wages_kitchen_pct"] = round(kit / food * 100, 1) if food else ""
+        r["wages_foh_pct"] = round(foh / bev * 100, 1) if bev else ""
+        if pfx == "mari":
+            r["delivery_dollars"] = round(drv, 2)
+            r["delivery_pct"] = round(drv / rev * 100, 1) if rev else ""
+        if pfx == "stow":
+            lv = b.get("stow|Leave", 0) * SUPER_MULT
+            r["leave_dollars"] = round(lv, 2) if lv else ""
+        touched += 1
+    print(f"  {pfx}: {touched} days, wages {delta:+,.0f}")
+    if WRITE:
+        with f.open("w", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n", extrasaction="ignore")
+            w.writeheader()
+            for r in rows:
+                w.writerow({k: r.get(k, "") for k in fields})
+
+zc = [w for w in warnings if w["type"] == "zero_cost_shift"]
+nh = [w for w in warnings if w["type"] == "salaried_no_hours"]
+if zc:
+    agg = defaultdict(lambda: [0.0, 0])
+    for w in zc:
+        agg[w["employee_id"]][0] += w["hours"] or 0
+        agg[w["employee_id"]][1] += 1
+    print(f"\n  {len(zc)} zero-cost shifts (real hours, no rate, not salaried) — labour booked at $0:")
+    for e, (h, n) in sorted(agg.items(), key=lambda kv: -kv[1][0])[:10]:
+        print(f"    employee {e}: {n} shifts, {h:.1f}h")
+if nh:
+    print(f"\n  {len(nh)} salaried-weeks with no logged hours (paid, unattributable):")
+    for w in nh[:10]:
+        print(f"    employee {w['employee_id']}: ${w['week_cost']:,.2f}")
+print("\nDRY RUN — nothing written. Re-run with --write." if not WRITE else "\nwritten")

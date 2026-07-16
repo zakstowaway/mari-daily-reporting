@@ -1,0 +1,64 @@
+name: Rebuild Wages
+
+# Recomputes wages from Deputy for whole payroll weeks using the canonical model
+# (scripts/wage_model.py): salaried staff cost annual/52 per week regardless of
+# hours logged. Defaults to a DRY RUN.
+#
+# The nightly schedule rebuilds the CURRENT and PREVIOUS payroll week every day.
+# That is not belt-and-braces — it is load-bearing:
+#   * salaried cost can only be split across a week once the week is known, so
+#     an in-progress week is provisional and must be restated as it fills;
+#   * Deputy's Cost lands on APPROVAL, often days later (25 Jun was approved
+#     30 Jun), so re-reading the fortnight is the only way approvals ever land.
+
+on:
+  schedule:
+    - cron: '15 21 * * *'   # 7:15am AEST, after the daily pulls
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: 'From (YYYY-MM-DD) — blank = last 2 payroll weeks'
+        required: false
+      to_date:
+        description: 'To (YYYY-MM-DD)'
+        required: false
+      write:
+        description: 'Actually write (unticked = dry run)'
+        type: boolean
+        default: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Resolve window
+        id: win
+        run: |
+          if [ -n "${{ inputs.from_date }}" ]; then
+            echo "from=${{ inputs.from_date }}" >> $GITHUB_OUTPUT
+            echo "to=${{ inputs.to_date }}" >> $GITHUB_OUTPUT
+            echo "write=${{ inputs.write && '--write' || '' }}" >> $GITHUB_OUTPUT
+          else
+            # scheduled: current + previous payroll week, always written
+            TODAY=$(TZ=Australia/Sydney date +%F)
+            MON=$(TZ=Australia/Sydney date -d "$TODAY -$(( ($(TZ=Australia/Sydney date -d "$TODAY" +%u) - 1) )) days" +%F)
+            echo "from=$(date -d "$MON -7 days" +%F)" >> $GITHUB_OUTPUT
+            echo "to=$(date -d "$MON +6 days" +%F)" >> $GITHUB_OUTPUT
+            echo "write=--write" >> $GITHUB_OUTPUT
+          fi
+      - name: Rebuild
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/rebuild_wages.py "${{ steps.win.outputs.from }}" "${{ steps.win.outputs.to }}" ${{ steps.win.outputs.write }}
+      - name: Commit
+        run: |
+          git config user.name "Rebuild Wages"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Wage rebuild ${{ steps.win.outputs.from }}..${{ steps.win.outputs.to }}"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
