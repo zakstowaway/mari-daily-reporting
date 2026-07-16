@@ -206,6 +206,7 @@ while cur <= d_to:
     # Closed weeks are untouched: Xero pays them, and every day has timesheets so
     # there is nothing for the roster to stand in for.
     roster_shifts = []
+    logged_emp_days = {(str(s["employee_id"]), s["date"]) for s in shifts}
     if wk_end >= today:
         for rs in fetch_roster(cur, wk_end + timedelta(days=1)):
             hours = rs.get("TotalTime") or 0
@@ -215,17 +216,25 @@ while cur <= d_to:
             if emp not in SAL:
                 continue          # hourly roster is not cost we can claim yet
             dstr = local_date(rs["StartTime"])
-            # Strictly FUTURE days only. A day that has happened is judged on its
-            # timesheets, full stop — if someone was rostered and didn't work,
-            # their salary genuinely lands on the days they did.
+            # PAST days: timesheets only. If someone was rostered and didn't
+            # work, their salary genuinely lands on the days they did — standing
+            # in for a day that already failed to happen would spread cost onto
+            # it and then drop it, quietly losing part of the week.
+            if dstr < today.isoformat():
+                continue
+            # TODAY and FUTURE: stand in, unless THIS EMPLOYEE has already
+            # clocked that day.
             #
-            # Deliberately NOT "days with no timesheets yet": that reads as today
-            # until the first person clocks on, then flips mid-shift, so today's
-            # early starters would absorb a share that silently re-cut itself
-            # every time the rebuild ran. Today keeps its own partial actuals —
-            # stable, and it matches the week strip, where today reads as roster
-            # and only elapsed days read as actual.
-            if dstr <= today.isoformat():
+            # Keyed on employee+date, not date. Two earlier cuts were both wrong:
+            #   "date has any timesheets" -> today flips the moment ANYONE clocks
+            #      on, taking every stand-in with it, re-cutting mid-shift;
+            #   "date > today"            -> today is in NOBODY's denominator at
+            #      8am (roster excluded, actuals not in yet), so Wed+Thu split
+            #      the week 1/2 each instead of 1/5. Worth +$1,339 across the
+            #      group in the dry run that caught it.
+            # Per-employee is stable across the day: their roster shift drops out
+            # exactly as their timesheet appears, so the denominator never moves.
+            if (emp, dstr) in logged_emp_days:
                 continue
             ou = (rs.get("_DPMetaData", {}).get("OperationalUnitInfo", {}) or {}).get("OperationalUnitName", "")
             b = bucket_for(ou, dstr)
