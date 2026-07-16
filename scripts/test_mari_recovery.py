@@ -132,6 +132,22 @@ write(BT/"data"/f"insights_mari_{d}.csv", [row("Large Sanchez",80.91)])
 out = run(d)
 check("does not crash without the sibling file", "Traceback" not in out)
 
+print("\n9. SIBLING RACE — HG aggregates before Stow's CSV lands")
+fresh(); d="2099-01-09"
+write(BT/"data"/f"insights_hg_{d}.csv", [row("Bao Bun", 18.00)])
+out = run(d, venue="harry")                      # no insights_stow_<d>.csv on disk yet
+check("SIBLING CSV MISSING fires", "SIBLING CSV MISSING" in out)
+check("does not crash", "Traceback" not in out)
+
+print("\n10. SIBLING PRESENT — must stay silent and pull the rows")
+fresh(); d="2099-01-10"
+write(BT/"data"/f"insights_hg_{d}.csv", [row("Bao Bun", 18.00)])
+write(BT/"data"/f"insights_stow_{d}.csv", [row("Unlimited Dumplings", 24.20), row("Pepsi Max Glass", 12.00)])
+out = run(d, venue="harry")
+check("no SIBLING warning when the CSV is there", "SIBLING CSV MISSING" not in out)
+check("pulls the hgf row across", "Pulled 1 reallocated rows" in out,
+      [l for l in out.split("\n") if "Pulled" in l])
+
 print("\n" + "=" * 78)
 print(f"PASSED {len(PASS)}   FAILED {len(FAIL)}")
 if FAIL: print("FAILURES: " + ", ".join(FAIL))

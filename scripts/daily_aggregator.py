@@ -358,6 +358,32 @@ else:
             if cross_rows:
                 cross_rev = sum(row_rev(r) for r in cross_rows)
                 print(f"  Pulled {len(cross_rows)} reallocated rows from {sib_prefix} CSV (${cross_rev:,.2f} inc) -> {venue_key} Kitchen")
+        else:
+            # ---- sibling-race tripwire (2026-07-17) ----
+            # Each venue's pull is fired by Pipedream the moment ITS OWN Insights
+            # email lands, so the venues aggregate in arrival order — not in
+            # dependency order. This venue's Kitchen revenue is partly rung on the
+            # sibling's till and lives in the sibling's CSV. If that CSV has not
+            # arrived yet, we silently record a venue that is missing revenue.
+            #
+            # Observed 2026-07-16: hg-csv-arrived 19:02, stow-csv-arrived 19:30.
+            # Harry Gatos aggregated 28 minutes before Stow's CSV existed, so it
+            # pulled 0 rows and recorded $802.67 instead of $814.88. Only $12.21
+            # that day — but Harry Gatos' food is on the Stow till in VOLUME on
+            # Mondays: 07-06 $3,233.59, 07-13 $2,543.91 (mean ~$533/day overall,
+            # ~$195k/yr). A Monday race costs three grand and looks like a quiet
+            # trading day.
+            #
+            # The 12:10pm re-aggregation cron re-runs every venue and repairs this
+            # incidentally (it exists for Deputy approvals, not for this), so the
+            # damage is normally a wrong number between ~6am and midday. This
+            # shouts so that a race is visible rather than inferred — and so that
+            # a day where the sibling CSV NEVER arrives cannot pass silently.
+            print(f"  *** SIBLING CSV MISSING: insights_{sib_prefix}_{target.isoformat()}.csv not found.")
+            print(f"      {venue_key} Kitchen revenue rung on the {sib_prefix} till CANNOT be reallocated,")
+            print(f"      so this day is UNDERSTATED for {venue_key}. Usually a race — {sib_prefix}'s")
+            print(f"      Insights email had not landed when {venue_key}'s pull fired.")
+            print(f"      The 12:10pm re-aggregation should repair it; if the CSV never arrives, it won't.")
 
     rows = rows + cross_rows
 
