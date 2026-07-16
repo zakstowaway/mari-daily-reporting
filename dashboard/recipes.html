@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipes · Stowaway Hospitality Group</title>
+<link rel="icon" href="favicon.ico">
+<!--
+  Chef recipe builder.
+
+  The ingredient list is NOT a database anyone maintains. It is generated from
+  the supplier invoices you actually received in the last 90 days
+  (scripts/build_ingredients.py <- scripts/invoices/). Buy something, it shows
+  up. Stop buying it, it ages out. That is the thing Lightspeed cannot do --
+  its product DB is hand-curated, which is why 4.6% of Stowaway revenue
+  currently reports $0.00 cost.
+
+  Standalone on purpose, like eatclub.html: prove it here before touching the
+  133KB index.html.
+
+  SAVING: this page does not write to the repo. A static GitHub Pages site
+  cannot, and the client-side login in users.json is not real auth -- it ships
+  the salt to the browser. Save currently emits YAML for review + commit. The
+  wired path is Pipedream -> repository_dispatch, same bridge as
+  PIPEDREAM_BRIDGE.md, with the shared secret held at the endpoint, never here.
+-->
+<style>
+:root{
+  --paper:#FFFFFF; --parchment:#FBF8F1; --ink:#1A1A1A; --ink-soft:#5A544C;
+  --line:#E8DFCF; --accent:#E8A82B; --green:#0F6E56; --amber:#D97706;
+  --red:#A32D2D; --grey:#C9C2B3; --stow:#1B4D3E; --hg:#C8452B;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--parchment);color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:24px}
+h1{font-size:24px;margin:0 0 2px}
+.sub{color:var(--ink-soft);font-size:13px;margin-bottom:18px}
+.card{background:var(--paper);border-radius:12px;padding:15px 17px;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:4px solid var(--grey);margin-bottom:14px}
+.card.stow{border-top-color:var(--stow)} .card.hg{border-top-color:var(--hg)}
+.grid{display:grid;grid-template-columns:1fr 420px;gap:14px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+input,select,button{font:inherit}
+input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
+input:focus,select:focus{outline:none;border-color:var(--ink)}
+button{padding:8px 14px;border:0;border-radius:8px;background:var(--ink);color:#fff;cursor:pointer}
+button:hover{opacity:.85}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin:10px 0 4px}
+.ing{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;background:var(--paper)}
+.ing:hover{border-color:var(--ink)}
+.ing .n{font-size:13px;font-weight:500}
+.ing .m{font-size:11px;color:var(--ink-soft);margin-top:2px}
+.ing .c{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:10px;padding:1px 6px;border-radius:99px;
+  background:var(--amber);color:#fff;margin-left:6px;vertical-align:middle}
+.pill.ok{background:var(--green)}
+.row{display:grid;grid-template-columns:1fr 84px 70px 30px;gap:6px;align-items:center;margin-bottom:6px}
+.row .nm{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .ct{font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+.x{background:transparent;color:var(--red);border:0;cursor:pointer;padding:0;font-size:16px}
+.tot{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-top:1px solid var(--line);margin-top:8px}
+.tot.big{font-size:17px;font-weight:600;border-top:2px solid var(--ink);padding-top:10px}
+.gp{font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.gp.good{color:var(--green)} .gp.warn{color:var(--amber)} .gp.bad{color:var(--red)}
+.warn-box{background:#FEF3E2;border:1px solid var(--amber);border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:8px;color:#7A4A00}
+.muted{color:var(--ink-soft);font-size:12px}
+textarea{width:100%;height:190px;font-family:ui-monospace,Menlo,monospace;font-size:11px;
+  border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--parchment);color:var(--ink)}
+.search{margin-bottom:10px}
+.scroll{max-height:440px;overflow-y:auto;padding-right:4px}
+.hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.hd h2{font-size:15px;margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Recipe builder</h1>
+  <div class="sub" id="sub">Loading ingredients…</div>
+
+  <div class="grid">
+    <!-- ingredient picker -->
+    <div class="card">
+      <div class="hd">
+        <h2>Ingredients you've bought recently</h2>
+        <span class="muted" id="ing-count"></span>
+      </div>
+      <div class="search"><input id="q" placeholder="Search — squid, camembert, chicken…" oninput="render()"></div>
+      <div class="scroll" id="list"></div>
+    </div>
+
+    <!-- the recipe -->
+    <div>
+      <div class="card stow">
+        <div class="hd"><h2>Recipe</h2></div>
+        <label for="dish">Dish</label>
+        <input id="dish" placeholder="e.g. Southern Squid" oninput="calc()">
+        <label for="sell">Sell price (incl GST)</label>
+        <input id="sell" type="number" step="0.01" placeholder="0.00" oninput="calc()">
+
+        <label>Ingredients — tap one on the left to add</label>
+        <div id="lines"><div class="muted">Nothing added yet.</div></div>
+
+        <!--
+          NO WASTE FACTOR. Deliberate (Zak, 2026-07-17).
+
+          Waste belongs in the measurement, not the recipe. The reason to own
+          this data at all is the three-way comparison:
+
+              Xero purchases   what you BOUGHT
+              this recipe      what you ACTUALLY USED
+              the difference   = waste + theft + stock movement
+
+          Bake a 10% guess into the recipe and you have (a) double-counted
+          waste and (b) destroyed the only signal that would have told you the
+          real number. Then the variance just measures your own guess.
+
+          Recipe = what goes in the dish. Trim yield, if it ever matters, is a
+          property of an INGREDIENT (a 5kg box of squid yielding 4.6kg of
+          portions), not a fudge on the dish -- and it should be measured once
+          per ingredient, not guessed per recipe.
+        -->
+        <div class="tot big"><span>Cost per serve</span><span id="c-tot">$0.00</span></div>
+        <div class="tot"><span>Gross profit</span><span class="gp" id="gp">—</span></div>
+        <div class="muted" id="gp-note"></div>
+      </div>
+
+      <div class="card">
+        <div class="hd"><h2>Save</h2></div>
+        <div class="muted" style="margin-bottom:8px">
+          This page can't write to the repo yet — copy the YAML into
+          <code>data/recipes/&lt;venue&gt;.yaml</code> and commit. Wiring the
+          Pipedream write path is the next step.
+        </div>
+        <textarea id="yaml" readonly></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button onclick="copyYaml()">Copy YAML</button>
+          <button class="ghost" onclick="reset()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let ING = [], LINES = [];
+
+fetch('../data/ingredients.json?t=' + Date.now())
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(d => {
+    ING = d.ingredients || [];
+    const rev = ING.filter(i => i.needs_pack_review).length;
+    document.getElementById('sub').innerHTML =
+      `${ING.length} ingredients from real supplier invoices, last ${d.window_days} days. ` +
+      `Nobody maintains this list — it's whatever you bought. ` +
+      (rev ? `<b>${rev}</b> need their pack size confirmed before use.` : '');
+    render();
+  })
+  .catch(e => document.getElementById('sub').textContent =
+    'Could not load data/ingredients.json (' + e + '). Run scripts/build_ingredients.py.');
+
+const money = n => '$' + (Math.round(n * 100) / 100).toFixed(2);
+
+function render() {
+  const q = document.getElementById('q').value.toLowerCase().trim();
+  const hits = ING.filter(i => !q || i.description.toLowerCase().includes(q)
+                             || (i.supplier || '').toLowerCase().includes(q));
+  document.getElementById('ing-count').textContent = hits.length + ' shown';
+  document.getElementById('list').innerHTML = hits.map(i => {
+    const ok = !i.needs_pack_review;
+    const cost = ok
+      ? `${money(i.cost_per_base_unit * (i.pack_unit === 'g' || i.pack_unit === 'ml' ? 1000 : 1))}
+         <span class="muted">/${i.pack_unit === 'g' ? 'kg' : i.pack_unit === 'ml' ? 'L' : i.pack_unit}</span>`
+      : `<span class="muted">pack?</span>`;
+    return `<div class="ing" onclick="add('${i.id}')">
+      <div>
+        <div class="n">${i.description}${ok ? '' : '<span class="pill">confirm pack</span>'}</div>
+        <div class="m">${i.supplier} · ${money(i.pack_cost_incl)} per ${i.pack_parsed_as || 'pack'} · inv ${i.source_invoice} · ${i.last_seen}</div>
+      </div>
+      <div class="c">${cost}</div>
+    </div>`;
+  }).join('') || '<div class="muted">No match.</div>';
+}
+
+function add(id) {
+  const i = ING.find(x => x.id === id);
+  if (!i) return;
+  if (i.needs_pack_review) {
+    // Never let an unconfirmed pack into a recipe. It silently scales every
+    // serve. Camembert parsed to $364/kg on the first run -- that is the bug
+    // class this refuses.
+    const g = prompt(
+      `Pack size needs confirming before this can be costed.\n\n` +
+      `${i.description}\n${money(i.pack_cost_incl)} per pack\n\n` +
+      `${i.review_reason}\n\n` +
+      `How much is in ONE pack, in grams (or mL)?`, '');
+    if (!g || isNaN(+g) || +g <= 0) return;
+    i.pack_qty = +g;
+    i.pack_unit = i.pack_unit || 'g';
+    i.cost_per_base_unit = +i.pack_cost_incl / +g;
+    i.needs_pack_review = false;
+    i.confirmed_by_chef = true;
+    render();
+  }
+  if (LINES.some(l => l.id === id)) return;
+  LINES.push({ id, qty: 0 });
+  calc();
+}
+
+function setQty(id, v) { const l = LINES.find(x => x.id === id); if (l) l.qty = +v || 0; calc(); }
+function del(id) { LINES = LINES.filter(l => l.id !== id); calc(); }
+
+function calc() {
+  const box = document.getElementById('lines');
+  if (!LINES.length) {
+    box.innerHTML = '<div class="muted">Nothing added yet.</div>';
+  } else {
+    box.innerHTML = LINES.map(l => {
+      const i = ING.find(x => x.id === l.id);
+      const unit = i.pack_unit === 'g' ? 'g' : i.pack_unit === 'ml' ? 'mL' : i.pack_unit;
+      const c = (+i.cost_per_base_unit) * l.qty;
+      return `<div class="row">
+        <div class="nm" title="${i.description}">${i.description}</div>
+        <div><input type="number" step="any" value="${l.qty || ''}" placeholder="0"
+             oninput="setQty('${l.id}',this.value)"></div>
+        <div class="ct">${unit} · ${money(c)}</div>
+        <button class="x" onclick="del('${l.id}')" title="remove">×</button>
+      </div>`;
+    }).join('');
+  }
+
+  let ing = 0;
+  for (const l of LINES) {
+    const i = ING.find(x => x.id === l.id);
+    if (i && !i.needs_pack_review) ing += (+i.cost_per_base_unit) * l.qty;
+  }
+  const tot = ing;   // no waste factor -- see the comment in the markup
+  document.getElementById('c-tot').textContent = money(tot);
+
+  const sell = +document.getElementById('sell').value || 0;
+  const el = document.getElementById('gp'), note = document.getElementById('gp-note');
+  if (sell > 0 && tot > 0) {
+    const exGst = sell / 1.1;                    // GP is computed ex-GST
+    const gp = 100 * (exGst - tot) / exGst;
+    el.textContent = gp.toFixed(1) + '%';
+
+    // A GP that is too HIGH is a warning, not a win. It means ingredients are
+    // missing -- which is exactly how Lightspeed currently reports Beef Cheek
+    // at 100% and Jalapeno Marg at 96.6%. Painting that green tells the chef
+    // "done" at the moment they should keep typing. Errors that flatter you
+    // are the dangerous ones; nobody investigates good news.
+    const TOO_HIGH = 85;
+    el.className = 'gp ' + (gp > TOO_HIGH ? 'warn' : gp < 55 ? 'bad' : gp < 65 ? 'warn' : 'good');
+    let msg = `on ${money(exGst)} ex-GST · ${money(exGst - tot)} margin per serve`;
+    if (gp > TOO_HIGH) msg += ` — ${gp.toFixed(0)}% is too good to be true. What's missing? `
+      + `Oil, batter, sauce, garnish, lemon?`;
+    else if (gp < 55) msg += ` — thin. Check the portion or the price.`;
+    note.textContent = msg;
+  } else { el.textContent = '—'; el.className = 'gp'; note.textContent = ''; }
+
+  yaml();
+}
+
+function yaml() {
+  const dish = document.getElementById('dish').value.trim();
+  if (!dish || !LINES.length) { document.getElementById('yaml').value = ''; return; }
+  const sell = +document.getElementById('sell').value || 0;
+  let s = `# generated by dashboard/recipes.html — review before committing\n`;
+  s += `# What goes IN the dish. No waste factor: waste is measured as\n`;
+  s += `# (purchases - consumption), not guessed in here.\n`;
+  s += `- product: "${dish}"\n`;
+  if (sell) s += `  sell_incl_gst: ${sell.toFixed(2)}\n`;
+  s += `  ingredients:\n`;
+  for (const l of LINES) {
+    const i = ING.find(x => x.id === l.id);
+    s += `    - id: ${i.id}\n`;
+    s += `      desc: "${i.description}"      # ${i.supplier}, inv ${i.source_invoice} ${i.last_seen}\n`;
+    s += `      qty: ${l.qty}\n      unit: ${i.pack_unit}\n`;
+    s += `      unit_cost_incl: ${(+i.cost_per_base_unit).toFixed(6)}`;
+    s += i.confirmed_by_chef ? `   # pack confirmed by chef, not parsed\n` : `\n`;
+  }
+  document.getElementById('yaml').value = s;
+}
+
+function copyYaml() {
+  const t = document.getElementById('yaml');
+  if (!t.value) return;
+  navigator.clipboard.writeText(t.value);
+  const b = event.target; const o = b.textContent;
+  b.textContent = 'Copied'; setTimeout(() => b.textContent = o, 1200);
+}
+function reset() {
+  LINES = [];
+  document.getElementById('dish').value = '';
+  document.getElementById('sell').value = '';
+  calc();
+}
+</script>
+</body>
+</html>
