@@ -1,0 +1,14 @@
+# Pinned deliberately. This repo runs unattended at 6am and commits to main.
+# An unpinned dep means an upstream release can silently change the numbers on
+# app.stowawaybar.com overnight, with no code change and no failing test.
+#
+# Bump on purpose, in a commit, with CI green. Never drift.
+#
+#   pip install -r requirements.txt
+
+pyyaml==6.0.2          # suppliers.yaml, recipes
+anthropic==0.40.0      # scripts/invoices/extract.py — PDF -> line items
+requests==2.32.3       # xero_pull, deputy pulls
+
+# dev / CI
+pytest==8.3.4

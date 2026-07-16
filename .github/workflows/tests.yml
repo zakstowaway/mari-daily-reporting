@@ -1,0 +1,83 @@
+name: Tests
+
+# Until this existed (2026-07-17) the repo had 196 tests and NOTHING ran them.
+# Every guarantee in scripts/invoices/ -- the cost guard, the sanity bounds,
+# the Alehouse check -- was enforced by nobody. A regression would have shipped
+# green, because there was no green.
+#
+# This workflow is the only thing standing between a bad number and
+# app.stowawaybar.com. Keep it fast so it never becomes the thing people skip.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Tests (pytest)
+        run: python3 -m pytest
+
+      - name: Tests (script-shaped)
+        # test_mari_recovery.py is a real test that runs as a script and signals
+        # via exit code. pytest cannot collect it (it sys.exits at import), so
+        # run it the way it was built to run rather than rewrite a working test
+        # to suit a runner. See pyproject.toml.
+        #
+        # scripts/test_pipeline.py is deliberately NOT here: it needs
+        # .drive-staging CSVs that are not in the repo, so it cannot run on a
+        # clean checkout. It is superseded by test_mari_recovery.py. See its
+        # docstring.
+        run: python3 scripts/test_mari_recovery.py
+
+      - name: Data feeds must rebuild from source
+        # The committed CSV/JSON feeds are DERIVED. If a generator no longer
+        # reproduces them, the committed file is a fossil and every downstream
+        # number is quietly built on it. Rebuild and diff.
+        run: |
+          set -e
+          cp data/ingredients.json /tmp/ingredients.before.json
+          python3 scripts/build_ingredients.py >/dev/null
+          if ! diff -q <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
+                       <(jq -S 'del(.generated_at)' data/ingredients.json) >/dev/null; then
+            echo "::error::data/ingredients.json is stale — rerun scripts/build_ingredients.py and commit"
+            diff <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
+                 <(jq -S 'del(.generated_at)' data/ingredients.json) | head -40
+            exit 1
+          fi
+          echo "ingredients.json reproduces from source"
+
+      - name: Guard rails still guard
+        # Cheap, blunt, and aimed at the exact bugs that actually shipped this
+        # week. If someone reintroduces max() in the cost guard, fail loudly
+        # rather than wait for a wrong cost to reach a dish.
+        run: |
+          set -e
+          if grep -rn "max(DRIFT_ABS\|max(SUSPECT_ABS" scripts/ ; then
+            echo "::error::cost guard is using max() (OR). It must be AND — see scripts/invoices/resolve.py"
+            exit 1
+          fi
+          python3 - <<'PY'
+          import sys; sys.path.insert(0,'scripts')
+          from decimal import Decimal
+          from invoices.resolve import is_suspect
+          assert is_suspect(Decimal("212.44"), Decimal("184.94")), "Alehouse swap must be caught"
+          assert not is_suspect(Decimal("1.47"), Decimal("1.8896")), "Sprite drift must pass"
+          print("guards OK")
+          PY

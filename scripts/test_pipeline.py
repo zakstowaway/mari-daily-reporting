@@ -1,26 +1,37 @@
 """
-End-to-end pipeline test using existing CSV data (no APIs needed).
+SUPERSEDED / NOT IN CI — see .github/workflows/tests.yml
 
-Simulates what happens each morning:
-1. Reads yesterday's data from the existing Marilynas_daily_*.csv
-2. Fakes an Insights CSV for that date
-3. Fakes Deputy wages by pro-rating the weekly wages
-4. Runs the aggregator
-5. Confirms output looks sensible
+Broken since some earlier session: it hardcoded three absolute paths into a
+sandbox that no longer exists (/sessions/sweet-adoring-albattani/...). Nobody
+noticed, because until 2026-07-17 nothing in this repo ran any tests. That is
+the argument for CI in one file.
 
-Usage: python scripts/test_pipeline.py [YYYY-MM-DD]
+Two further problems:
+  * DATA_DIR pointed at the REAL data/ directory — it wrote into live data.
+  * It needs Marilynas_daily_2026-H2.csv + wages_weekly.csv from .drive-staging,
+    which are not in the repo. So it cannot run on a clean checkout, which is
+    exactly what CI is.
+
+Paths are now env-driven rather than dead, so this is no longer a landmine:
+    REPO_ROOT=/tmp/x DRIVE_STAGING=/path/to/staging python3 scripts/test_pipeline.py
+
+scripts/test_mari_recovery.py supersedes it and does the same job correctly —
+real aggregator, synthetic fixtures, temp REPO_ROOT, never touches data/. This
+file is a candidate for _archive/.
 """
+
 import csv, json, os, sys, subprocess
+import os
 from pathlib import Path
 from datetime import date, timedelta
 
-REPO_ROOT = Path("/sessions/sweet-adoring-albattani/mnt/Sales Reports/Daily Reporting")
+REPO_ROOT = Path(os.environ.get("REPO_ROOT", Path(__file__).resolve().parent.parent))
 DATA_DIR = REPO_ROOT / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 target = date.fromisoformat(sys.argv[1] if len(sys.argv) > 1 else "2026-07-05")
 
-source_daily = Path("/sessions/sweet-adoring-albattani/mnt/Daily Sales/.drive-staging/Marilynas_daily_2026-H2.csv")
+source_daily = Path(os.environ.get("DRIVE_STAGING", "")) / "Marilynas_daily_2026-H2.csv"
 row_found = None
 with source_daily.open() as f:
     for row in csv.DictReader(f):
@@ -48,7 +59,7 @@ with insights_file.open("w", newline="") as f:
         w.writerow([target.isoformat(), cat, round(cat_inc,2),0,round(cat_ex,2),round(cat_cogs,2),round(cat_gp,2),round(cat_gp/cat_ex*100,1) if cat_ex else 0,round(qty*pct,0),pay])
 print(f"Wrote {insights_file}")
 
-wages_file = Path("/sessions/sweet-adoring-albattani/mnt/Daily Sales/.drive-staging/wages_weekly.csv")
+wages_file = Path(os.environ.get("DRIVE_STAGING", "")) / "wages_weekly.csv"
 week_kitchen = 0
 week_driver = 0
 with wages_file.open() as f:

@@ -1,0 +1,21 @@
+[tool.pytest.ini_options]
+# WHY testpaths IS PINNED HERE
+#
+# Bare `pytest` from the repo root CRASHES:
+#
+#     INTERNALERROR>  sys.exit(1 if FAIL else 0)
+#     no tests ran
+#
+# scripts/test_pipeline.py and scripts/test_mari_recovery.py match test_*.py,
+# so pytest IMPORTS them during collection -- and they are standalone scripts
+# that call sys.exit() at module level. Collection dies before a single test
+# runs.
+#
+# They are good tests (test_mari_recovery.py is the adversarial suite for the
+# Mari recovery + narrowed-export tripwire). They are simply script-shaped, not
+# pytest-shaped. So: point pytest at the pytest tests, and let CI run the two
+# scripts as scripts, checking their exit code. Do not rewrite working tests to
+# please a runner.
+testpaths = ["scripts/invoices/tests"]
+pythonpath = ["scripts"]
+addopts = "-q --strict-markers"
