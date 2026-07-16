@@ -39,3 +39,31 @@ Note: git needs a safe.directory exception because the folder is owned by `zak`:
   of v16.4/v16.5 work until 2026-07-15. Now redundant.
 - `.../local_5ea388ea-.../outputs/repo/`  — Jul 12 snapshot, no git.
 - `../\_daily-reporting-backup-2026-07-15.tgz` — pre-adoption safety snapshot.
+
+## Wages: how they're costed (2026-07-15 rebuild)
+
+Deputy knows who clocked on. Only Xero knows what they were paid. So:
+
+  * **Closed weeks** — costed from `data/xero_pay_weekly.json` (what payroll
+    actually paid), allocated pro-rata across the shifts each person logged.
+    Hours decide WHERE the money lands; Xero decides how much.
+  * **The open week** — estimated via `scripts/wage_model.py`: a salaried person
+    costs annual/52 per week regardless of hours logged. This is an estimate
+    standing in for Xero until the pay run posts.
+
+`rebuild_wages.py` runs nightly over the current + previous payroll week. That's
+load-bearing, not belt-and-braces: salaried cost is only knowable once a week is
+known, and Deputy's Cost lands on APPROVAL (often days later), so re-reading the
+fortnight is the only way approvals ever land.
+
+Refresh the Xero side on the Mac (the token rotates, so Actions would burn it):
+
+    python3 scripts/pull_xero_pay_weekly.py     # -> data/xero_pay_weekly.json
+    # then dispatch the Employee Map + Rebuild Wages workflows
+
+**Do not** use `backfill_wages_deputy.py` or `backfill_dept_split.py` — both are
+deprecated and exit immediately. They cost salaried staff at hours x rate.
+
+New salary-earners are caught by `check_salaried_roster.py` (launchd:
+com.stowaway.salariedcheck, Mondays 10:40). Owners live in `_corp_payroll_only`
+and reach the P&L via the residual precisely because they're absent from Deputy.
