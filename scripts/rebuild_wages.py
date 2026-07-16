@@ -301,6 +301,15 @@ for pfx in ("stow", "hg", "mari"):
     fields = list(rows[0].keys())
     if "wages_driver_dollars" not in fields:
         fields.insert(fields.index("wages_foh_dollars") + 1, "wages_driver_dollars")
+    # Admin was only ever implied — wages_dollars folds it in (tot = kit+foh+
+    # drv+adm) and the parts are stored separately, so the dashboard could only
+    # recover it as total-minus-parts. That silently absorbs every rounding
+    # error and breaks the moment a new bucket appears. Store it (2026-07-17):
+    # venues must be able to strip admin off their own wage line, because it is
+    # not cost they can roster against — Stow carried $16,080.78 of it from
+    # 1 Jun alone, up to $2,211 in a single day.
+    if "wages_admin_dollars" not in fields:
+        fields.insert(fields.index("wages_driver_dollars") + 1, "wages_admin_dollars")
     touched = 0
     delta = 0.0
     for r in rows:
@@ -325,6 +334,7 @@ for pfx in ("stow", "hg", "mari"):
         r["wages_kitchen_dollars"] = round(kit, 2)
         r["wages_foh_dollars"] = round(foh, 2)
         r["wages_driver_dollars"] = round(drv, 2)
+        r["wages_admin_dollars"] = round(adm, 2)
         r["wages_kitchen_pct"] = round(kit / food * 100, 1) if food else ""
         r["wages_foh_pct"] = round(foh / bev * 100, 1) if bev else ""
         if pfx == "mari":

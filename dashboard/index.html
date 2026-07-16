@@ -224,6 +224,14 @@ body {
 .wa-tot .wa-under { color: #1D9E75; }
 .wa-tot-note { opacity: .55; }
 
+    .oh-wrap { display:flex; align-items:center; gap:10px; margin:0 0 10px; flex-wrap:wrap; }
+    .oh-lab { display:flex; align-items:center; gap:7px; cursor:pointer; font-size:12px;
+              letter-spacing:.04em; text-transform:uppercase; color:var(--muted, #9aa0a6); user-select:none; }
+    .oh-lab input { accent-color:#1D9E75; cursor:pointer; width:14px; height:14px; }
+    .oh-lab:hover { color:var(--fg, #e8eaed); }
+    .oh-note { font-size:12px; color:var(--muted, #6b7075); }
+
+
 .venue-strip { height: 4px; background: var(--grey); }
 .venue-strip.mari { background: var(--mari); }
 .venue-strip.stow { background: var(--stow); }
@@ -426,6 +434,14 @@ tbody tr:hover { background: var(--group-tint); }
     </div>
   </div>
 
+  <!-- Group only: venue wage lines are operational by definition. -->
+  <div id="oh-toggle-wrap" class="oh-wrap" style="display:none;">
+    <label class="oh-lab">
+      <input type="checkbox" id="oh-toggle" onchange="toggleOverhead()">
+      <span>Include admin &amp; leave</span>
+    </label>
+    <span class="oh-note" id="oh-note"></span>
+  </div>
   <div class="venue-strip" id="venue-strip"></div>
 
   <div class="wrap">
@@ -571,7 +587,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [] };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], inclOverhead: false };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -1082,6 +1098,32 @@ function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Da
 function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
 function weekStart(d) { const day = d.getDay(); const offset = day === 0 ? -6 : 1 - day; return addDays(d, offset); }
 
+// A venue's wage line is what that venue can ROSTER (Zak, 2026-07-17). Admin and
+// leave are neither: nobody rosters against them, and no venue decision changes
+// them. They're group overhead that happens to be tagged to a venue.
+//
+// rebuild_wages folds admin INTO wages_dollars (tot = kit+foh+drv+adm), so every
+// venue has been carrying it — Stow $16,080.78 since 1 Jun alone, up to $2,211 in
+// a single day, straight onto a wage % measured against a ~30% target.
+//
+// Stripped HERE, at the single point every venue row enters the app, rather than
+// in each renderer. There are three card renderers plus the week strip plus the
+// group synthesiser; patching them one by one is how you ship a fix that's only
+// half applied (see handoff 6.3 — that exact mistake, this exact file). Anything
+// downstream that reads wages_dollars is now automatically operational-only.
+// wages_admin_dollars survives on the row so the GROUP view can add it back.
+function stripOverhead(rows) {
+  for (const r of rows) {
+    const adm = toNum(r.wages_admin_dollars);
+    if (!adm || !hasVal(r.wages_dollars)) continue;
+    const w = toNum(r.wages_dollars) - adm;
+    const rev = toNum(r.revenue_ex_gst);
+    r.wages_dollars = w;
+    r.wages_pct = rev ? w / rev * 100 : '';
+  }
+  return rows;
+}
+
 async function loadHistory(venue) {
   const cfg = VENUE_CONFIG[venue];
   if (!cfg.historyFile) return [];
@@ -1089,7 +1131,7 @@ async function loadHistory(venue) {
     const res = await fetch(cfg.historyFile + '?t=' + Date.now());
     if (!res.ok) return [];
     const text = await res.text();
-    return parseCsv(text);
+    return stripOverhead(parseCsv(text));
   } catch (e) { return []; }
 }
 async function loadAllHistories(role) {
@@ -1148,10 +1190,15 @@ function synthesizeGroupHistory(histories) {
       sum.revenue_ex_gst   += toNum(row.revenue_ex_gst);
       sum.cogs_dollars     += toNum(row.cogs_dollars);
       if (hasVal(row.wages_dollars)) { sum.wages_dollars += toNum(row.wages_dollars); wagePresent = true; }
-      // Group/Leave (weekly canon): group-level overhead carried on the stow
-      // rows' leave_dollars — excluded from venue wage %, included here so
-      // the Group wage figure reflects the TRUE total wage cost.
-      sum.wages_dollars    += toNum(row.leave_dollars);
+      // Venue rows arrive operational-only (stripOverhead took admin off at
+      // load, and leave was never in them). Group can put both back — that's
+      // the toggle, and it's the ONLY place the two bases differ, so group and
+      // venues reconcile exactly when it's off. Default off (Zak, 2026-07-17):
+      // the overhead answers "what does payroll cost?", not "how did we trade?".
+      if (STATE.inclOverhead) {
+        sum.wages_dollars += toNum(row.wages_admin_dollars);
+        sum.wages_dollars += toNum(row.leave_dollars);
+      }
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
       venueCount++;
@@ -2481,9 +2528,33 @@ async function fetchLastUpdate() {
   }
 }
 
+// Show the switch on group only, and say what it's worth for the window in
+// view — a checkbox that silently moves a headline number is worse than no
+// checkbox. The $ is the admin+leave actually in scope, not a global constant.
+function renderOverheadToggle() {
+  const wrap = document.getElementById('oh-toggle-wrap');
+  if (!wrap) return;
+  const isGroup = STATE.currentVenue === 'group';
+  wrap.style.display = isGroup ? 'flex' : 'none';
+  if (!isGroup) return;
+  const box = document.getElementById('oh-toggle');
+  if (box) box.checked = STATE.inclOverhead;
+  let oh = 0;
+  for (const v of REAL_VENUES) {
+    for (const r of rowsForTimeframe(STATE.histories[v] || [], STATE.currentTimeframe, STATE.currentDay)) {
+      oh += toNum(r.wages_admin_dollars) + toNum(r.leave_dollars);
+    }
+  }
+  const note = document.getElementById('oh-note');
+  if (note) note.textContent = oh
+    ? `${STATE.inclOverhead ? 'including' : 'excluding'} ${fmtDollars(oh)} — not rostered against trade`
+    : 'no admin or leave in this window';
+}
+
 function render() {
   renderVenueTabs();
   renderVenueStrip();
+  renderOverheadToggle();
   renderTimeframeToggle();
   renderDayPicker();
   renderSnapshot();
@@ -2506,6 +2577,16 @@ function switchVenue(venue) {
   STATE.focusMetric = null;
   const rows = STATE.histories[venue] || [];
   STATE.currentDay = rows.length ? rows[rows.length - 1].date : null;
+  render();
+}
+// Group only. Venue views never include admin/leave — there's nothing to toggle:
+// no venue decision moves them, so offering the switch there would only invite
+// the question "which of these two numbers is my wage bill?".
+// The group rows are SYNTHESISED from the venue rows, so flipping this has to
+// rebuild them — nothing is cached from the raw CSVs.
+function toggleOverhead() {
+  STATE.inclOverhead = !STATE.inclOverhead;
+  STATE.histories.group = synthesizeGroupHistory(STATE.histories);
   render();
 }
 function switchTimeframe(tf) {

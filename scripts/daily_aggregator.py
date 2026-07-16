@@ -829,6 +829,12 @@ nr = {
     "wages_kitchen_dollars":  record["wages"]["kitchen_dollars"] if deputy_data else "",
     "wages_foh_dollars":      record["wages"]["foh_dollars"] if deputy_data else "",
     "wages_driver_dollars":   record["wages"]["driver_dollars"] if deputy_data else "",
+    # Admin is inside wages_dollars but is NOT cost the venue can roster against,
+    # so venue views strip it (2026-07-17). It has to be written here as well as
+    # in rebuild_wages: the aggregator rewrites these rows every morning, and a
+    # column it doesn't emit gets blanked — the venue split would silently fall
+    # back to total-minus-parts and quietly re-absorb admin.
+    "wages_admin_dollars":    record["wages"]["admin_dollars"] if deputy_data else "",
     "wages_kitchen_pct":      wages_kitchen_pct if wages_kitchen_pct is not None else "",
     "wages_foh_pct":          wages_foh_pct if wages_foh_pct is not None else "",
     "cogs_food_alert":        cogs_food_status,
