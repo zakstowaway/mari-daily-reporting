@@ -74,6 +74,51 @@ def test_cost_guard_tolerates_reference_price_drift(R):
     assert ok.product_id == r0.product_id
 
 
+def test_guard_bands_overlap_in_percentage_space():
+    """
+    THE BUG THAT SHIPPED, 2026-07-16 -> caught 2026-07-17.
+
+    Real measured pairs. A percentage-only rule CANNOT separate them, and the
+    original max($5, 10%) rule -- max being OR -- passed everything cheap
+    because the $5 floor exceeded the 10% band. Every mapping in the first cut
+    was liquor, so nothing caught it.
+    """
+    from invoices.resolve import is_suspect
+
+    # real drift, must PASS despite being huge in percentage terms
+    assert not is_suspect(Decimal("3.09"), Decimal("3.6933")), "Sprite/Coke 16-22% drift is real"
+    assert not is_suspect(Decimal("1.47"), Decimal("1.8896")), "22.2% on 42c is drift, not error"
+    assert not is_suspect(Decimal("444.67"), Decimal("441.54")), "$3.13 on a $441 keg is drift"
+
+    # real error, must FAIL despite being SMALLER in percentage terms than Sprite
+    assert is_suspect(Decimal("212.44"), Decimal("184.94")), "Alehouse swap: $27.50 = 14.9%"
+
+    # the old max($5,10%) rule would have waved this through: $3.60 < $5 floor
+    assert is_suspect(Decimal("60.00"), Decimal("30.00")), "100% and $30 is not drift"
+
+
+def test_guard_needs_BOTH_percent_and_dollars():
+    from invoices.resolve import is_suspect
+    assert not is_suspect(Decimal("100.00"), Decimal("96.00"))   # 4.2%, $4 -> neither
+    assert not is_suspect(Decimal("2.00"), Decimal("1.50"))      # 33% but only 50c
+    assert not is_suspect(Decimal("400.00"), Decimal("394.00"))  # $6 but only 1.5%
+    assert is_suspect(Decimal("400.00"), Decimal("300.00"))      # 33% AND $100
+
+
+def test_cost_is_blind_to_similarly_priced_products():
+    """
+    HONEST LIMIT, not a wish. Tomato powder $16.50 vs chilli powder $16.00 --
+    a cost-led matcher resolved one to the other and the guard passed it,
+    correctly by its own logic. This asserts the blindness so nobody later
+    mistakes the guard for a matcher.
+    """
+    from invoices.resolve import is_suspect
+    assert not is_suspect(Decimal("16.00"), Decimal("16.50")), (
+        "cost CANNOT distinguish tomato powder from chilli powder -- "
+        "which is exactly why cost must never SELECT a product, only check one"
+    )
+
+
 def test_every_mapping_passes_its_own_guard():
     """No row in the shipped table may contradict the cost guard."""
     import csv

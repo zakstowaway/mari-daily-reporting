@@ -34,16 +34,49 @@ THE TABLE
 data/product_map.csv -- every row derived from a REAL invoice line matched to
 a REAL export row, never from a guess. Built by scripts/build_product_map.py.
 
-THE GUARD
----------
-Cost price is NOT a key -- Back Office CostPriceIncTax is a manually-set
-reference that drifts (measured: 9/19 mappings are 0.04-3.13 stale). But it
-IS a guard: a wrong product is off by a LOT (Alehouse: $27.50), while drift
-is small. So we accept small deltas and refuse large ones.
+THE GUARD -- and its limits
+---------------------------
+Cost price is NOT a key. Back Office CostPriceIncTax is a manually-set
+reference that drifts. It is only ever a CHECK on a match that name or SKU
+already established. It must never itself pick the product. Two reasons,
+both measured on real data 2026-07-17:
 
-    |delta| <= $0.02                      -> exact
-    |delta| <= max($5.00, 10% of cost)    -> stale_drift  (fine, warn)
-    otherwise                             -> SUSPECT      (refuse to resolve)
+1. THE BANDS OVERLAP IN PERCENTAGE SPACE.
+
+       Sprite Can   drift  22.2%  ($0.42  on $1.89)    <- real drift, must PASS
+       Alehouse     error  14.9%  ($27.50 on $184.94)  <- real error, must FAIL
+
+   No percentage threshold separates those. Cheap items drift hugely in
+   relative terms; expensive items err hugely in absolute terms. The first
+   version of this guard used max($5.00, 10%) -- and max() is OR, so either
+   condition alone passed a row. On a $3 bunch of shallots the $5 floor was
+   167% and silently disabled the guard entirely. Every mapping in the first
+   cut was liquor, so no test caught it.
+
+   The fix is AND, not max: a delta must be material BOTH proportionally AND
+   in dollars before we call it suspect.
+
+       |d| <= $0.02                        -> exact
+       |d|/cost > 10%  AND  |d| > $5.00    -> SUSPECT   (refuse)
+       otherwise                           -> stale_drift (accept)
+
+   Checked against every measured row: Sprite 22.2%/$0.42 passes, Coke Zero
+   16.3%/$0.60 passes, Kirin 0.7%/$3.13 passes, Alehouse 14.9%/$27.50 fires.
+
+2. IT IS STRUCTURALLY BLIND TO SIMILARLY-PRICED PRODUCTS.
+
+       Select Fresh "TOMATO BUSH POWDER 100GM"  $16.50
+       Lightspeed   "Chilli Powder Korean Coarse [kg]"  $16.00
+
+   A cost-led matcher resolved tomato powder to chilli powder on the single
+   shared token "powder", and the guard passed it -- correctly, by its own
+   logic, because $0.50 apart is not material. NO cost threshold catches
+   this. The information is not in the price.
+
+   Hence: cost NEVER selects. Name (exact) or SKU selects; cost checks.
+   Where neither is available -- as for all 17 Harry Gatos COGS rows, which
+   have no recorded Lightspeed name -- the answer is Unresolved and a human,
+   NOT a clever heuristic.
 
 Failing toward "unresolved" is correct: an unresolved line goes to human
 review and costs five minutes. A line resolved to the WRONG product writes a
@@ -61,8 +94,20 @@ from typing import Optional
 MAP_CSV = Path(__file__).resolve().parents[2] / "data" / "product_map.csv"
 
 EXACT_TOL = Decimal("0.02")
-DRIFT_ABS = Decimal("5.00")
-DRIFT_PCT = Decimal("0.10")
+# Suspect requires BOTH. See module docstring -- using max() here (i.e. OR) was
+# a real bug: on cheap items the absolute floor exceeded the percentage band
+# and disabled the guard.
+SUSPECT_PCT = Decimal("0.10")     # material proportionally
+SUSPECT_ABS = Decimal("5.00")     # AND material in dollars
+
+
+def is_suspect(bo: Decimal, invoice_cost: Decimal) -> bool:
+    """True only if the gap is material BOTH proportionally and in dollars."""
+    d = abs(bo - invoice_cost)
+    if d <= EXACT_TOL:
+        return False
+    pct = (d / invoice_cost) if invoice_cost else Decimal(0)
+    return pct > SUSPECT_PCT and d > SUSPECT_ABS
 
 
 @dataclass(frozen=True)
@@ -108,17 +153,16 @@ class Resolver:
             )
 
         bo = Decimal(r["bo_cost"]) if r.get("bo_cost") else None
-        if invoice_cost is not None and bo:
+        if invoice_cost is not None and bo and is_suspect(bo, invoice_cost):
             d = abs(bo - invoice_cost)
-            limit = max(DRIFT_ABS, invoice_cost * DRIFT_PCT)
-            if d > limit:
-                raise Unresolved(
-                    f"{supplier} {supplier_code} -> {r['product_name']}: cost guard FAILED. "
-                    f"Back Office ${bo} vs invoice ${invoice_cost} (off by ${d}). "
-                    f"Too far apart to be reference-price drift -- this is likely the "
-                    f"WRONG PRODUCT (cf. Alehouse Crisp/Premium, $27.50 apart). "
-                    f"Refusing to resolve."
-                )
+            raise Unresolved(
+                f"{supplier} {supplier_code} -> {r['product_name']}: cost guard FAILED. "
+                f"Back Office ${bo} vs invoice ${invoice_cost} (off by ${d}, "
+                f"{100*d/invoice_cost:.1f}%). Material in BOTH dollars and percent -- "
+                f"too far apart to be reference-price drift, so this is likely the "
+                f"WRONG PRODUCT (cf. Alehouse Crisp/Premium, $27.50 apart). "
+                f"Refusing to resolve."
+            )
         return Resolution(
             product_id=r["product_id"], product_name=r["product_name"],
             confidence=r.get("confidence", ""), bo_cost=bo,

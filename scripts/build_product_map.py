@@ -33,8 +33,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 EXACT_TOL = Decimal("0.02")
-DRIFT_ABS = Decimal("5.00")
-DRIFT_PCT = Decimal("0.10")
+# SUSPECT requires BOTH material percent AND material dollars. Using max()
+# (i.e. OR) was a real bug -- see scripts/invoices/resolve.py docstring.
+SUSPECT_PCT = Decimal("0.10")
+SUSPECT_ABS = Decimal("5.00")
 
 
 def classify(bo: Decimal | None, inv: Decimal) -> tuple[str, Decimal | None]:
@@ -43,9 +45,10 @@ def classify(bo: Decimal | None, inv: Decimal) -> tuple[str, Decimal | None]:
     d = bo - inv
     if abs(d) <= EXACT_TOL:
         return "exact", d
-    if abs(d) <= max(DRIFT_ABS, inv * DRIFT_PCT):
-        return "stale_drift", d
-    return "SUSPECT", d
+    pct = (abs(d) / inv) if inv else Decimal(0)
+    if pct > SUSPECT_PCT and abs(d) > SUSPECT_ABS:
+        return "SUSPECT", d
+    return "stale_drift", d
 
 
 def main() -> int:
