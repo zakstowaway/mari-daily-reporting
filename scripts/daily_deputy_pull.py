@@ -270,8 +270,17 @@ for ts in results:
     hours = ts.get("TotalTime") or 0
     cost = ts.get("Cost") or 0
 
-    # Salaried synthesis: Deputy costs salaried staff at $0. Use the weekly
-    # canon model: hours × (annual / 52 / 40).
+    # Salaried synthesis: Deputy costs salaried staff at $0.
+    #
+    # PROVISIONAL ONLY. hours × (annual/52/40) is NOT what a salaried employee
+    # costs — they're paid annual/52 whatever they log (verified against Xero;
+    # see wage_model.py). But this job runs one day at a time and the true
+    # figure needs the whole payroll week, so a day in isolation cannot get it
+    # right. rebuild_wages.py restates the current + previous payroll week every
+    # morning at 7:15 and is what the history CSV ends up holding.
+    #
+    # Kept rather than zeroed so this JSON stays a plausible same-day estimate;
+    # treat `cost` on a salaried shift as an estimate, not a fact.
     sal = salaried.get(str(emp_id))
     if sal and not cost:
         cost = hours * sal["hourly"]

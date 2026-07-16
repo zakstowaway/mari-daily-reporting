@@ -31,6 +31,19 @@ Runs on GitHub Actions (DEPUTY_TOKEN secret). CLI:
   python scripts/backfill_dept_split.py 2024-10-20 2026-07-14            # dry run
   python scripts/backfill_dept_split.py 2024-10-20 2026-07-14 --write    # publish
 """
+import sys as _sys
+_sys.exit(
+    "DEPRECATED (2026-07-15) — use scripts/rebuild_wages.py instead.\n\n"
+    "This script costs salaried staff as hours_logged x (annual/52/40). That is\n"
+    "wrong: Xero payroll shows a salaried employee is paid annual/52 every week\n"
+    "regardless of hours logged, so this both understates under-loggers and\n"
+    "overstates over-loggers. Running it would write those numbers back into the\n"
+    "history CSVs and undo the rebuild.\n\n"
+    "rebuild_wages.py does what both of these did (fill missing totals, fill\n"
+    "missing splits) and does it a payroll week at a time, which is the only way\n"
+    "the salaried figure is knowable. See scripts/wage_model.py.\n"
+)
+
 import json, os, sys, csv, urllib.request, urllib.error
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
