@@ -54,6 +54,26 @@ cfg = json.loads((Path(__file__).parent / "salaried_employees.json").read_text()
 SAL = {k: v["annual"] for k, v in cfg["employees"].items()}
 WPY = cfg["_weeks_per_year"]
 
+# Xero is truth for any week payroll has posted. The salaried model is only an
+# ESTIMATE standing in for it — good for the open week, unnecessary for a closed
+# one. Using the real figure also fixes what no config could:
+#   * staff who moved between hourly and salaried mid-tenure (Gabriel Choi ran
+#     hourly for 5 weeks, then $75k salaried for 11, then part weeks — a flat
+#     annual would have overstated him ~15%);
+#   * 13 departed staff (5,232 hours) whose cost was missing entirely because
+#     Xero's Employees endpoint only lists ACTIVE people;
+#   * part weeks, leave, loading and allowances, for free.
+XERO_PAY = {}
+EMP_MAP = {}
+_xp = DATA_DIR / "xero_pay_weekly.json"
+_em = DATA_DIR / "employee_map.json"
+if _xp.exists() and _em.exists():
+    XERO_PAY = json.loads(_xp.read_text())
+    EMP_MAP = json.loads(_em.read_text())
+    print(f"Xero pay: {len(XERO_PAY)} employees, map: {len(EMP_MAP)} Deputy ids")
+else:
+    print("WARNING: no Xero pay data — falling back to the salaried estimate everywhere")
+
 d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
 d_from -= timedelta(days=d_from.weekday())          # back to Monday
 d_to += timedelta(days=6 - d_to.weekday())          # out to Sunday
@@ -90,6 +110,7 @@ def local_date(e):
 
 day = defaultdict(lambda: defaultdict(float))      # day[date][f"{venue}|{dept}"] = ex-super cost
 warnings, weeks = [], 0
+xero_weeks = est_weeks = 0
 cur = d_from
 while cur <= d_to:
     wk_end = cur + timedelta(days=6)
@@ -124,7 +145,38 @@ while cur <= d_to:
         shifts.append({"employee_id": emp, "hours": hours, "cost": cost,
                        "date": dstr, "bucket": bucket})
 
-    costed, warn = allocate_week(shifts, SAL, WPY)
+    # Prefer what payroll actually paid for this week over any estimate.
+    # Allocated pro-rata across the shifts the person logged, so hours still
+    # decide WHERE the money lands — Xero decides how much.
+    wk_key = wk_end.isoformat()
+    paid_this_week = {}
+    if XERO_PAY:
+        for s in shifts:
+            eid = str(s["employee_id"])
+            xn = EMP_MAP.get(eid)
+            if xn and wk_key in XERO_PAY.get(xn, {}):
+                paid_this_week[eid] = XERO_PAY[xn][wk_key]
+    if paid_this_week:
+        by_emp = defaultdict(list)
+        for s in shifts:
+            by_emp[str(s["employee_id"])].append(s)
+        costed, warn = [], []
+        rest = []
+        for eid, group in by_emp.items():
+            if eid not in paid_this_week:
+                rest.extend(group)
+                continue
+            th = sum((g.get("hours") or 0) for g in group)
+            if th <= 0:
+                continue                     # paid, but clocked nothing to attribute
+            for g in group:
+                costed.append({**g, "cost_final": paid_this_week[eid] * (g.get("hours") or 0) / th})
+        c2, warn = allocate_week(rest, SAL, WPY)
+        costed.extend(c2)
+        xero_weeks += len(paid_this_week)
+    else:
+        costed, warn = allocate_week(shifts, SAL, WPY)
+    est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
     warnings.extend(warn)
     for s in costed:
         c, b, d = s["cost_final"], s["bucket"], s["date"]
@@ -139,6 +191,7 @@ while cur <= d_to:
     cur = wk_end + timedelta(days=1)
 
 print(f"fetched {weeks} weeks, {len(day)} days with shifts")
+print(f"employee-weeks costed from XERO actuals: {xero_weeks} | from the estimate: {est_weeks}")
 
 # ---- write ----
 for pfx in ("stow", "hg", "mari"):
