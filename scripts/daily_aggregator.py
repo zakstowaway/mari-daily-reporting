@@ -156,9 +156,17 @@ MARILYNAS_RGS = {
     "marilyna's pizza", "marilynas pizza",
     "marilyna's soft drinks", "marilynas soft drinks",
     "add-ons - pizza", "dine-in pizza",
-    "delivery alcohol", "delivery cocktails",
+    "delivery alcohol",
     # 'delivery kitchen' REMOVED 2026-05-13 — it's Stow Kitchen food on Uber.
+    # 'delivery cocktails' REMOVED 2026-07-16 (Zak) — it's STOW revenue. Alcohol
+    # on delivery is Mari's, cocktails on delivery are the bar's. They sat in the
+    # same line here purely because both had "delivery" in the name.
 }
+# NOTE — this set is P&L ATTRIBUTION: whose till-line is this? It is deliberately
+# WIDER than the weekly-report skill's "Marilynas-strict" set
+# (references/reporting-groups.md), which excludes Dine-in Pizza as
+# "substitutable, not incremental". Both are right: strict answers "what would we
+# lose if Mari closed?", this answers "whose revenue is it?". Don't reconcile them.
 FOOD_RGS = {'big plates','small plates','kitchen specials','salads','desserts','kids meals','kids',
             'add-ons - kitchen','delivery kitchen','sides','mains','snacks','yum cha','staff dinners'}
 HG_FOOD_RG = 'harry gatos food'
