@@ -34,6 +34,8 @@ ALIASES = {
     "Marssheel": "Marssheel Marssheel",
     "Devon Lukiana": "Devon Saputra Lukiana",
     "Maria Flor Da Silva Quelhas Campinos Pocas": "Maria Flor Da Silva Quelhas Campinos Pocas",
+    "Emily": "Emily Duncan",
+    "Aleisha": "Aleisha Armitage",
 }
 
 xero = json.loads((ROOT / "data" / "xero_pay_weekly.json").read_text())
