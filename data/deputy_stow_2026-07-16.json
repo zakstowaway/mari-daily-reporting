@@ -1,0 +1,80 @@
+[
+  {
+    "timesheet_id": 35334,
+    "employee_id": 5,
+    "employee_name": "Nicola Bisato",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784167200,
+    "end_time": 1784196000,
+    "hours": 7.5,
+    "cost": 252.4,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35335,
+    "employee_id": 297,
+    "employee_name": "Pujan Tamang",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784169000,
+    "end_time": 1784204100,
+    "hours": 9.25,
+    "cost": 333.53,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35336,
+    "employee_id": 287,
+    "employee_name": "Min",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784175300,
+    "end_time": 1784204100,
+    "hours": 7.5,
+    "cost": 414.66,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35338,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784179800,
+    "end_time": 1784205000,
+    "hours": 6.5,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35341,
+    "employee_id": 118,
+    "employee_name": "Jack Colbran",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784185200,
+    "end_time": 1784202300,
+    "hours": 4.75,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35342,
+    "employee_id": 145,
+    "employee_name": "Rhys Taylor",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784185200,
+    "end_time": 1784205000,
+    "hours": 5.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]
