@@ -1794,7 +1794,7 @@ function renderSnapshot() {
   snapshotEl.innerHTML = cardEls.map(c =>
     `<div class="card ${c.status || 'unknown'}${clickable ? ' clickable' : ''}${STATE.focusMetric === c.key ? ' focused' : ''}"` +
     (clickable ? ` onclick="focusMetric('${c.key}')" title="Click to focus the chart on this metric"` : '') +
-    `>${spark[c.key] ? sparkline(spark[c.key]) : ''}<p class="label">${c.label}</p><p class="value">${c.value}</p><p class="sub">${c.sub || ''}</p></div>`).join('');
+    `>${spark[c.key] ? sparkline(spark[c.key]) : ''}<p class="label">${c.label}</p><p class="value">${c.value}</p>${c.vs ? `<p class="vs">${c.vs}</p>` : ''}<p class="sub">${c.sub || ''}</p></div>`).join('');
   renderExtras(day, cfg);
 }
 
