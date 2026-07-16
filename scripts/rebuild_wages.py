@@ -104,9 +104,43 @@ def fetch(start_d, end_d):
         off += 500
 
 
+def fetch_roster(start_d, end_d):
+    """Rostered (planned) shifts — same shape as fetch(), different endpoint."""
+    t0 = int(datetime(start_d.year, start_d.month, start_d.day, tzinfo=timezone(timedelta(hours=OFFSET_H))).timestamp())
+    t1 = int(datetime(end_d.year, end_d.month, end_d.day, tzinfo=timezone(timedelta(hours=OFFSET_H))).timestamp())
+    out, off = [], 0
+    while True:
+        b = api_post("/api/v1/resource/Roster/QUERY", {"search": {
+            "s1": {"field": "StartTime", "type": "ge", "data": t0},
+            "s2": {"field": "StartTime", "type": "lt", "data": t1}},
+            "join": ["OperationalUnitObject"], "start": off, "max": 500})
+        out.extend(b)
+        if len(b) < 500:
+            return out
+        off += 500
+
+
 def local_date(e):
     return datetime.fromtimestamp(e, tz=timezone(timedelta(hours=OFFSET_H))).date().isoformat()
 
+
+def bucket_for(ou, dstr):
+    """OU -> "<venue>|<dept>" / "admin". None = not ours (PH Not Worked etc.)."""
+    if ou == V.ADMIN_OU_NAME:
+        return "admin"
+    if ou == V.MONDAY_REALLOCATED_OU and date.fromisoformat(dstr).weekday() == 0:
+        return "hg|Kitchen"
+    for vkey, pfx in (("stowaway", "stow"), ("harry", "hg"), ("marilynas", "mari")):
+        dept = V.dept_for_ou(vkey, ou)
+        if dept:
+            return f"{pfx}|{dept}"
+    return None
+
+
+# Sydney's today, not the runner's. Actions runs in UTC, where "today" is
+# yesterday for most of our trading day — a UTC date here would treat the live
+# week as closed every morning and skip the roster stand-in entirely.
+today = datetime.now(timezone(timedelta(hours=OFFSET_H))).date()
 
 day = defaultdict(lambda: defaultdict(float))      # day[date][f"{venue}|{dept}"] = ex-super cost
 warnings, weeks = [], 0
@@ -145,6 +179,56 @@ while cur <= d_to:
         shifts.append({"employee_id": emp, "hours": hours, "cost": cost,
                        "date": dstr, "bucket": bucket})
 
+    # ---- open week: fill the rest of the week from the ROSTER (2026-07-17) ----
+    # A salaried person costs annual/52 for the WHOLE week, and allocate_week
+    # spreads that across the shifts we hand it. Hand it only the shifts logged
+    # SO FAR and the whole week's salary lands on them:
+    #
+    #   Mon 13 Jul — Steph Kunde logged one 6.25h shift. Stow took $1,578 that
+    #   day. Her entire $1,568 week was booked against it. Read ~99% wages.
+    #   Wed 15 Jul — Renan's only logged shift was 8h at Mari; $1,615 of his
+    #   $1,442 week landed there. Mari read 185.5%.
+    #
+    # Neither was overspend — the week just hadn't happened yet. It self-corrects
+    # as shifts land, and closed weeks are re-costed from Xero anyway, so the
+    # artefact never reaches history: it lives only in the live view, Mon->Sat.
+    # That's why it went unnoticed. It is not cosmetic — the day feeds the week
+    # strip, where elapsed days read as actuals and future days read as roster,
+    # so a salaried person was ALSO counted again in the roster half.
+    #
+    # Fix: for any day of this week we have no timesheets for, take the ROSTER as
+    # a stand-in so the denominator is the whole week. The rostered days are only
+    # there to size the shares — they are dropped before anything is written
+    # (`_roster`), so we never book cost against a day that hasn't happened.
+    # Elapsed days then carry their true share from the first night, and the
+    # actual/roster seam sums to exactly annual/52 instead of overlapping.
+    #
+    # Closed weeks are untouched: Xero pays them, and every day has timesheets so
+    # there is nothing for the roster to stand in for.
+    roster_shifts = []
+    logged_dates = {s["date"] for s in shifts}
+    if wk_end >= today:
+        for rs in fetch_roster(cur, wk_end + timedelta(days=1)):
+            hours = rs.get("TotalTime") or 0
+            if not hours:
+                continue
+            emp = str(rs.get("Employee"))
+            if emp not in SAL:
+                continue          # hourly roster is not cost we can claim yet
+            dstr = local_date(rs["StartTime"])
+            if dstr in logged_dates:
+                continue          # the day happened — its timesheets are truth
+            ou = (rs.get("_DPMetaData", {}).get("OperationalUnitInfo", {}) or {}).get("OperationalUnitName", "")
+            b = bucket_for(ou, dstr)
+            if not b:
+                continue
+            roster_shifts.append({"employee_id": emp, "hours": hours, "cost": 0,
+                                  "date": dstr, "bucket": b, "_roster": True})
+        if roster_shifts:
+            rd = sorted({s["date"] for s in roster_shifts})
+            print(f"  open week {cur}..{wk_end}: {len(roster_shifts)} rostered salaried shifts "
+                  f"stand in for {len(rd)} unworked day(s) ({rd[0]}..{rd[-1]}) to size the split")
+
     # Prefer what payroll actually paid for this week over any estimate.
     # Allocated pro-rata across the shifts the person logged, so hours still
     # decide WHERE the money lands — Xero decides how much.
@@ -171,14 +255,20 @@ while cur <= d_to:
                 continue                     # paid, but clocked nothing to attribute
             for g in group:
                 costed.append({**g, "cost_final": paid_this_week[eid] * (g.get("hours") or 0) / th})
+        # Roster stand-ins only help the ESTIMATE. Anyone Xero has paid is costed
+        # from the payslip across the shifts they actually logged — a planned
+        # shift must never absorb a share of real money.
+        rest.extend(r for r in roster_shifts if r["employee_id"] not in paid_this_week)
         c2, warn = allocate_week(rest, SAL, WPY)
         costed.extend(c2)
         xero_weeks += len(paid_this_week)
     else:
-        costed, warn = allocate_week(shifts, SAL, WPY)
+        costed, warn = allocate_week(shifts + roster_shifts, SAL, WPY)
     est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
     warnings.extend(warn)
     for s in costed:
+        if s.get("_roster"):
+            continue          # sized the split; the day hasn't happened. Never booked.
         c, b, d = s["cost_final"], s["bucket"], s["date"]
         if b == "leave":
             day[d]["stow|Leave"] += c
