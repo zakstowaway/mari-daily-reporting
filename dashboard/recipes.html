@@ -24,60 +24,42 @@
   wired path is Pipedream -> repository_dispatch, same bridge as
   PIPEDREAM_BRIDGE.md, with the shared secret held at the endpoint, never here.
 -->
+<link rel="stylesheet" href="_shared/tokens.css">
 <style>
-:root{
-  --paper:#FFFFFF; --parchment:#FBF8F1; --ink:#1A1A1A; --ink-soft:#5A544C;
-  --line:#E8DFCF; --accent:#E8A82B; --green:#0F6E56; --amber:#D97706;
-  --red:#A32D2D; --grey:#C9C2B3; --stow:#1B4D3E; --hg:#C8452B;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
-  background:var(--parchment);color:var(--ink);-webkit-font-smoothing:antialiased}
-.wrap{max-width:1200px;margin:0 auto;padding:24px}
-h1{font-size:24px;margin:0 0 2px}
-.sub{color:var(--ink-soft);font-size:13px;margin-bottom:18px}
-.card{background:var(--paper);border-radius:12px;padding:15px 17px;
-  box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:4px solid var(--grey);margin-bottom:14px}
-.card.stow{border-top-color:var(--stow)} .card.hg{border-top-color:var(--hg)}
+/* Page-specific only. Tokens, base, .card, .hd, login → _shared/tokens.css.
+   If a rule here would help a third page, it belongs in tokens.css instead. */
 .grid{display:grid;grid-template-columns:1fr 420px;gap:14px;align-items:start}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
-input,select,button{font:inherit}
-input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
-input:focus,select:focus{outline:none;border-color:var(--ink)}
-button{padding:8px 14px;border:0;border-radius:8px;background:var(--ink);color:#fff;cursor:pointer}
-button:hover{opacity:.85}
-button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin:10px 0 4px}
+.search{margin-bottom:10px}
+.scroll{max-height:440px;overflow-y:auto;padding-right:4px}
 .ing{display:flex;justify-content:space-between;align-items:center;gap:10px;
-  padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;background:var(--paper)}
+  padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;
+  cursor:pointer;background:var(--paper)}
 .ing:hover{border-color:var(--ink)}
 .ing .n{font-size:13px;font-weight:500}
 .ing .m{font-size:11px;color:var(--ink-soft);margin-top:2px}
 .ing .c{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
 .pill{display:inline-block;font-size:10px;padding:1px 6px;border-radius:99px;
   background:var(--amber);color:#fff;margin-left:6px;vertical-align:middle}
-.pill.ok{background:var(--green)}
 .row{display:grid;grid-template-columns:1fr 84px 70px 30px;gap:6px;align-items:center;margin-bottom:6px}
 .row .nm{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row .ct{font-size:12px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
 .x{background:transparent;color:var(--red);border:0;cursor:pointer;padding:0;font-size:16px}
-.tot{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-top:1px solid var(--line);margin-top:8px}
+.tot{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;
+  border-top:1px solid var(--line);margin-top:8px}
 .tot.big{font-size:17px;font-weight:600;border-top:2px solid var(--ink);padding-top:10px}
 .gp{font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
 .gp.good{color:var(--green)} .gp.warn{color:var(--amber)} .gp.bad{color:var(--red)}
-.warn-box{background:#FEF3E2;border:1px solid var(--amber);border-radius:8px;padding:9px 11px;font-size:12px;margin-bottom:8px;color:#7A4A00}
-.muted{color:var(--ink-soft);font-size:12px}
 textarea{width:100%;height:190px;font-family:ui-monospace,Menlo,monospace;font-size:11px;
-  border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--parchment);color:var(--ink)}
-.search{margin-bottom:10px}
-.scroll{max-height:440px;overflow-y:auto;padding-right:4px}
-.hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.hd h2{font-size:15px;margin:0}
+  border:1px solid var(--line);border-radius:8px;padding:10px;
+  background:var(--parchment);color:var(--ink)}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="gate"></div>
+<div class="wrap" id="app" style="display:none">
   <h1>Recipe builder</h1>
+  <div class="muted" style="float:right;margin-top:-28px"><span id="who"></span> · <a href="#" onclick="Auth.logout();location.reload()">sign out</a></div>
   <div class="sub" id="sub">Loading ingredients…</div>
 
   <div class="grid">
@@ -144,12 +126,32 @@ textarea{width:100%;height:190px;font-family:ui-monospace,Menlo,monospace;font-s
   </div>
 </div>
 
-<script>
+<script type="module">
+import { Auth } from './_shared/auth.js';
+import { Feed } from './_shared/feed.js';
+
 let ING = [], LINES = [];
 
-fetch('../data/ingredients.json?t=' + Date.now())
-  .then(r => r.ok ? r.json() : Promise.reject(r.status))
-  .then(d => {
+// Kitchen roles only. NOTE this is a cupboard lock, not a vault -- users.json
+// ships the salt to the browser. Fine for gating a read-only page; the SAVE
+// path must authenticate at the endpoint. See _shared/auth.js.
+Auth.gate(document.getElementById('gate'), {
+  roles: Auth.KITCHEN_ROLES,
+  onOk: (user) => {
+    document.getElementById('app').style.display = '';
+    document.getElementById('who').textContent = user.display;
+    boot();
+  }
+});
+
+async function boot() {
+  const d = await Feed.load('../data/ingredients.json');
+  if (!d) {
+    document.getElementById('sub').textContent =
+      'data/ingredients.json not available — run scripts/build_ingredients.py.';
+    return;
+  }
+  {
     ING = d.ingredients || [];
     const rev = ING.filter(i => i.needs_pack_review).length;
     document.getElementById('sub').innerHTML =
@@ -157,9 +159,8 @@ fetch('../data/ingredients.json?t=' + Date.now())
       `Nobody maintains this list — it's whatever you bought. ` +
       (rev ? `<b>${rev}</b> need their pack size confirmed before use.` : '');
     render();
-  })
-  .catch(e => document.getElementById('sub').textContent =
-    'Could not load data/ingredients.json (' + e + '). Run scripts/build_ingredients.py.');
+  }
+}
 
 const money = n => '$' + (Math.round(n * 100) / 100).toFixed(2);
 
@@ -297,6 +298,8 @@ function reset() {
   document.getElementById('sell').value = '';
   calc();
 }
+
+Object.assign(window, { render, add, setQty, del, calc, copyYaml, reset });
 </script>
 </body>
 </html>

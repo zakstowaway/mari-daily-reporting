@@ -1,0 +1,42 @@
+/* The design system. One source of truth for --stow, --hg, --ink, .card.
+   index.html and recipes.html had already diverged copies; a prep timer would
+   have been the third. Extracted 2026-07-17 (MODULES.md phase 1).
+   index.html still carries its own copy — it is live and 138KB, and churning a
+   working page for tidiness is how 6am things break. It adopts this when it is
+   next opened for a real reason. */
+:root{
+  --group:#0B0B0B; --group-tint:#F2F0EA;
+  --stow:#1B4D3E;  --stow-tint:#E7EEEB;
+  --hg:#C8452B;    --hg-tint:#FBE9E3;
+  --mari:#C8102E;  --mari-tint:#FCE9EB;
+  --paper:#FFFFFF; --parchment:#FBF8F1;
+  --ink:#1A1A1A;   --ink-soft:#5A544C;
+  --line:#E8DFCF;  --accent:#E8A82B;
+  --green:#0F6E56; --amber:#D97706; --red:#A32D2D; --grey:#C9C2B3;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  background:var(--parchment);color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:24px}
+h1{font-size:24px;margin:0 0 2px}
+.sub{color:var(--ink-soft);font-size:13px;margin-bottom:18px}
+.muted{color:var(--ink-soft);font-size:12px}
+.card{background:var(--paper);border-radius:12px;padding:15px 17px;
+  box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:4px solid var(--grey);margin-bottom:14px}
+.card.stow{border-top-color:var(--stow)} .card.hg{border-top-color:var(--hg)}
+.card.mari{border-top-color:var(--mari)}
+input,select,button,textarea{font:inherit}
+input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--paper);color:var(--ink);width:100%}
+input:focus,select:focus{outline:none;border-color:var(--ink)}
+button{padding:8px 14px;border:0;border-radius:8px;background:var(--ink);color:#fff;cursor:pointer}
+button:hover{opacity:.85}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+  color:var(--ink-soft);margin:10px 0 4px}
+.hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.hd h2{font-size:15px;margin:0}
+.login-wrap{max-width:420px;margin:60px auto;padding:0 20px}
+.login-card{background:var(--paper);border-radius:12px;padding:28px;
+  box-shadow:0 14px 44px rgba(0,0,0,.12)}
+.login-card .err{color:var(--red);font-size:12px;margin-top:8px;min-height:16px}
