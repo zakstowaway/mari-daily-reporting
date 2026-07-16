@@ -328,6 +328,39 @@ else:
 
     rows = rows + cross_rows
 
+    # ---- Mari coverage guard (2026-07-16) ----
+    # Marilyna's has no till of its own — it's a brand running through the Stow
+    # POS, and its "own" CSV is just a FILTERED EXTRACT of that same POS. Stow
+    # strips every 'm' row from its totals (line ~302) on the assumption Mari's
+    # report picks them up. Nothing ever checked that assumption.
+    #
+    # On 2026-07-14 the 'Mari Daily Sales Auto' report filter changed and
+    # 'Dine-in Pizza' fell out of it. Those rows were still stripped off Stow and
+    # were no longer in Mari's report, so the revenue left the group entirely —
+    # $612.70 ex on the 14th, $235.71 on the 15th, silently. Before the 14th the
+    # two matched to the cent, which is why nobody saw it.
+    #
+    # This can't be fixed by pulling the rows in: ~54% of them ARE already in
+    # Mari's file, so that double-counts. The fix is the report filter. This is
+    # the tripwire that catches the next filter change in a day, not a quarter.
+    if venue_key == "marilynas":
+        _sib = resolve(DATA_DIR / f"insights_stow_{target.isoformat()}.csv")
+        if _sib is not None:
+            _sib_rows, _ = load_product_rows(_sib)
+            _own = {(r.get("Product Name") or r.get("Product") or "").strip() for r in rows}
+            _lost = [r for r in _sib_rows
+                     if classify_product(r, (r.get("Product Name") or r.get("Product") or "").strip(), "stowaway") == 'm'
+                     and (r.get("Product Name") or r.get("Product") or "").strip() not in _own]
+            if _lost:
+                _amt = sum(row_rev(r) for r in _lost)
+                print(f"  *** REVENUE LEAK: {len(_lost)} Mari rows on the Stow till (${_amt:,.2f} inc) are NOT in")
+                print(f"      Mari's report. Stow strips them, Mari never receives them -> they reach NO venue.")
+                print(f"      Fix the 'Mari Daily Sales Auto' report filter in Lightspeed to include them.")
+                for r in _lost[:6]:
+                    print(f"        {(r.get('Product Name') or '').strip()[:46]}  ${row_rev(r):,.2f}")
+                if len(_lost) > 6:
+                    print(f"        ... and {len(_lost)-6} more")
+
     revenue_inc = sum(row_rev(r) for r in rows)
     total_tax = sum(parse_num(col(r, "Total Tax", "GST", "Tax")) for r in rows)
     revenue_net_explicit = sum(parse_num(col(r, "Revenue_net", "NetRevenue", "Net Sales")) for r in rows)
