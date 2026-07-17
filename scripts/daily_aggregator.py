@@ -71,9 +71,9 @@ from datetime import date, timedelta, datetime
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/, modules/
 
 
-def _load_our_costs(venue_key, target_date):
+def _load_our_costs(venue_key, target):
     """
-    product name -> our cost per serve on target_date, from our own recipes.
+    product name -> our cost per serve on `target`, from our own recipes.
 
     Returns {} and carries on if there are no recipes yet, or if anything in
     the recipe module is unhappy. This runs unattended at 6am and its job is
@@ -96,16 +96,16 @@ def _load_our_costs(venue_key, target_date):
         costs = CostSeries(load_cost_observations())
         out = {}
         for product in {r.product for r in recipes}:
-            r = recipe_as_of(recipes, product, target_date)
+            r = recipe_as_of(recipes, product, target)
             if not r:
                 continue
             try:
-                out[product] = float(cost_on(r, costs, target_date))
+                out[product] = float(cost_on(r, costs, target))
             except MissingCost as e:
                 # Refusing to cost one dish is correct; it must not stop the pull.
                 print(f"  recipe cost skipped: {e}")
         if out:
-            print(f"  our recipes cost {len(out)} product(s) on {target_date}")
+            print(f"  our recipes cost {len(out)} product(s) on {target}")
         return out
     except Exception as e:                                  # noqa: BLE001
         print(f"  recipe costing unavailable ({e}) — using Lightspeed's cost")
@@ -523,7 +523,7 @@ else:
     # So: use our own cost where we have a recipe, keep LS's where we don't,
     # and ALWAYS emit both so they can be compared rather than trusted.
     # See COGS_ARCHITECTURE.md.
-    our_costs = _load_our_costs(venue_key, target_date)
+    our_costs = _load_our_costs(venue_key, target)
 
     product_breakdown = []
     for r in rows:
