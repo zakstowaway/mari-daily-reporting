@@ -574,10 +574,38 @@ for pfx in ("stow", "hg", "mari"):
         if _t > 0.005:
             _orph.append((_d, _t))
     if _orph:
-        print(f"  *** {pfx}: {len(_orph)} day(s) have Deputy cost but NO history row —")
-        print(f"      the cost is computed and DROPPED. Days will not sum to the week.")
+        # CREATE the row. If Deputy paid someone, the day happened — a venue that
+        # didn't trade still bought the labour. HG is shut Sun/Tue, which is
+        # exactly when a stocktake, delivery or deep clean gets rostered, so its
+        # non-trading labour was landing nowhere at all.
+        #
+        # Revenue stays empty, not zero: we genuinely don't know it (no Insights
+        # export exists for a day with no sales), and a literal 0 would be a
+        # claim. wages_pct is left blank for the same reason — dividing real
+        # wages by an assumed zero invents an infinity. The DOLLARS are real and
+        # now sum; the percentage is honestly absent.
+        print(f"  *** {pfx}: {len(_orph)} day(s) had Deputy cost but no history row —")
+        print(f"      creating them (venue paid staff on a day it did not trade):")
         for _d, _t in sorted(_orph):
             print(f"        {_d}  ${_t:,.2f} inc super")
+            _b = day[_d]
+            _kit = _b.get(f"{pfx}|Kitchen", 0) * SUPER_MULT
+            _foh = _b.get(f"{pfx}|FOH", 0) * SUPER_MULT
+            _drv = _b.get(f"{pfx}|Driver", 0) * SUPER_MULT
+            _adm = _b.get(f"{pfx}|Admin", 0) * SUPER_MULT
+            _nr = {k: "" for k in fields}
+            _nr["date"] = _d
+            _nr["wages_dollars"] = round(_kit + _foh + _drv + _adm, 2)
+            _nr["wages_kitchen_dollars"] = round(_kit, 2)
+            _nr["wages_foh_dollars"] = round(_foh, 2)
+            _nr["wages_driver_dollars"] = round(_drv, 2)
+            _nr["wages_admin_dollars"] = round(_adm, 2)
+            if pfx == "stow":
+                _nr["leave_dollars"] = round(_b.get("stow|Leave", 0) * SUPER_MULT, 2)
+            rows.append(_nr)
+            delta += _nr["wages_dollars"]
+            touched += 1
+        rows.sort(key=lambda r: r["date"])
 
     if WRITE:
         with f.open("w", newline="") as fh:
