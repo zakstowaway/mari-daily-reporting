@@ -1,6 +1,6 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-16T11:26:21.336182Z",
+  "generated_at": "2026-07-17T11:39:28.471183Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -98,121 +98,141 @@
       "name": "Large Super House Special",
       "qty": 6.0,
       "rev": 149.0,
-      "cost": 44.28
+      "cost": 44.28,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Little Italy",
       "qty": 4.0,
       "rev": 120.0,
-      "cost": 34.33
+      "cost": 34.33,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Margherita",
       "qty": 5.0,
       "rev": 109.0,
-      "cost": 11.48
+      "cost": 11.48,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Little Italy [Dine-in]",
       "qty": 4.0,
       "rev": 106.55,
-      "cost": 19.22
+      "cost": 19.22,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Super House Special",
       "qty": 4.0,
       "rev": 94.0,
-      "cost": 21.14
+      "cost": 21.14,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Meatlovers",
       "qty": 4.0,
       "rev": 90.0,
-      "cost": 29.0
+      "cost": 29.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$45 FEAST",
       "qty": 2.0,
       "rev": 90.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Cosmopolitan",
       "qty": 4.0,
       "rev": 89.0,
-      "cost": 19.36
+      "cost": 19.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Hawaiian",
       "qty": 3.0,
       "rev": 76.0,
-      "cost": 9.79
+      "cost": 9.79,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Cosmopolitan",
       "qty": 4.0,
       "rev": 75.0,
-      "cost": 27.04
+      "cost": 27.04,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Meatlovers",
       "qty": 3.0,
       "rev": 75.0,
-      "cost": 15.57
+      "cost": 15.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Tandoori Chicken",
       "qty": 3.0,
       "rev": 75.0,
-      "cost": 9.91
+      "cost": 9.91,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Little Italy",
       "qty": 3.0,
       "rev": 73.0,
-      "cost": 14.41
+      "cost": 14.41,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular New Yorker",
       "qty": 3.0,
       "rev": 69.75,
-      "cost": 10.76
+      "cost": 10.76,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Pepperoni",
       "qty": 5.0,
       "rev": 68.0,
-      "cost": 22.82
+      "cost": 22.82,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Gluten-free Little Italy",
       "qty": 2.0,
       "rev": 62.0,
-      "cost": 20.49
+      "cost": 20.49,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$60 BANQUET",
       "qty": 1.0,
       "rev": 60.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Sorrento",
       "qty": 2.0,
       "rev": 57.0,
-      "cost": 14.34
+      "cost": 14.34,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large BBQ Chicken Pizza",
       "qty": 3.0,
       "rev": 55.5,
-      "cost": 13.03
+      "cost": 13.03,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Jala Marg Duo (2) - PartyJar [6 serves]",
       "qty": 1.0,
       "rev": 55.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     }
   ]
 }
