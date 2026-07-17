@@ -1,6 +1,6 @@
 {
   "date": "2026-07-08",
-  "generated_at": "2026-07-12T22:39:06.523514Z",
+  "generated_at": "2026-07-17T22:17:18.176246Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -15,38 +15,39 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 4560.95,
-    "revenue_ex_gst": 4146.32,
+    "revenue_inc_gst": 4500.95,
+    "revenue_ex_gst": 4091.77,
     "cogs_dollars": 940.97,
-    "cogs_pct": 22.7,
-    "gp_dollars": 3205.35,
-    "gp_pct": 77.3,
+    "cogs_pct": 23.0,
+    "gp_dollars": 3150.8,
+    "gp_pct": 77.0,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
     "food_ex_gst": 1404.47,
-    "bev_ex_gst": 2741.85,
+    "bev_ex_gst": 2687.3,
     "food_cogs": 268.18,
     "bev_cogs": 672.79,
     "food_cogs_pct": 19.1,
-    "bev_cogs_pct": 24.5,
+    "bev_cogs_pct": 25.0,
     "food_gp_pct": 80.9,
-    "bev_gp_pct": 75.5,
-    "mari_rideon_ex_gst": 1443.49,
+    "bev_gp_pct": 75.0,
+    "mari_rideon_ex_gst": 1498.04,
     "hg_food_out_ex_gst": 0.0,
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
-    "kitchen_dollars": 666.43,
-    "foh_dollars": 529.23,
+    "kitchen_dollars": 1039.99,
+    "foh_dollars": 513.58,
     "driver_dollars": 0.0,
     "admin_dollars": 399.72,
-    "total_dollars": 1595.38,
-    "wages_pct": 38.5,
+    "leave_dollars": 0.0,
+    "total_dollars": 1953.28,
+    "wages_pct": 47.7,
     "net_wage_pct": null,
     "kitchen_hours": 22.2,
     "foh_hours": 13.5,
-    "wages_kitchen_pct": 47.5,
-    "wages_foh_pct": 19.3,
+    "wages_kitchen_pct": 74.0,
+    "wages_foh_pct": 19.1,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -58,7 +59,7 @@
     "delivery": "n/a",
     "gp": "green",
     "cogs_food": "green",
-    "cogs_bev": "yellow",
+    "cogs_bev": "amber",
     "wages_kitchen": "red",
     "wages_foh": "yellow"
   },
@@ -109,121 +110,141 @@
       "name": "Stone & Wood - Pint",
       "qty": 26.0,
       "rev": 426.7,
-      "cost": 113.01
+      "cost": 113.01,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fancy Pants Parmy - Classic",
       "qty": 10.0,
       "rev": 224.7,
-      "cost": 81.06
+      "cost": 81.06,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stow Schnitty",
       "qty": 10.0,
       "rev": 212.07,
-      "cost": 53.26
+      "cost": 53.26,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Beef Burger D",
       "qty": 10.0,
       "rev": 206.69,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Villa Fresco Sangiovese - Regular",
       "qty": 17.0,
       "rev": 190.0,
-      "cost": 41.12
+      "cost": 41.12,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Schooner",
       "qty": 14.0,
       "rev": 180.25,
-      "cost": 45.37
+      "cost": 45.37,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Geppetto Pinot Noir - Regular",
       "qty": 13.0,
       "rev": 164.48,
-      "cost": 45.95
+      "cost": 45.95,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Guinness Draught - Pint",
       "qty": 9.0,
       "rev": 150.5,
-      "cost": 42.32
+      "cost": 42.32,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Version Two Pinot Grigio - Regular",
       "qty": 12.0,
       "rev": 124.0,
-      "cost": 21.2
+      "cost": 21.2,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fancy Pants Parmy - Mexicali",
       "qty": 4.0,
       "rev": 122.98,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Pint",
       "qty": 10.0,
       "rev": 116.23,
-      "cost": 24.46
+      "cost": 24.46,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Burrito",
       "qty": 4.0,
       "rev": 98.26,
-      "cost": 27.19
+      "cost": 27.19,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mulled Wine",
       "qty": 6.0,
       "rev": 89.48,
-      "cost": 12.34
+      "cost": 12.34,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Lychee Martini",
       "qty": 4.0,
       "rev": 82.62,
-      "cost": 14.49
+      "cost": 14.49,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Sigurd GSM Red Blend - Regular",
       "qty": 4.0,
       "rev": 72.0,
-      "cost": 18.48
+      "cost": 18.48,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Kuku Sauvignon Blanc - Regular",
       "qty": 5.0,
       "rev": 70.0,
-      "cost": 14.57
+      "cost": 14.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Schooner",
       "qty": 8.0,
       "rev": 69.1,
-      "cost": 14.59
+      "cost": 14.59,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Schooner",
       "qty": 6.0,
       "rev": 69.0,
-      "cost": 14.94
+      "cost": 14.94,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Jameson Irish Whiskey",
       "qty": 6.0,
       "rev": 64.8,
-      "cost": 13.58
+      "cost": 13.58,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Cri De Couer Pinot Noir - Regular",
       "qty": 2.0,
       "rev": 62.02,
-      "cost": 24.86
+      "cost": 24.86,
+      "cost_source": "lightspeed"
     }
   ]
 }
