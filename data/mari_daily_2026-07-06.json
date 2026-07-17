@@ -1,6 +1,6 @@
 {
   "date": "2026-07-06",
-  "generated_at": "2026-07-12T22:38:18.295877Z",
+  "generated_at": "2026-07-17T22:16:39.382066Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -22,19 +22,28 @@
     "gp_dollars": 13.58,
     "gp_pct": 100.0,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 13.58,
+    "bev_ex_gst": 0.0,
+    "food_cogs": 0.0,
+    "bev_cogs": 0.0,
+    "food_cogs_pct": 0.0,
+    "bev_cogs_pct": null,
+    "food_gp_pct": 100.0,
+    "bev_gp_pct": null
   },
   "wages": {
     "kitchen_dollars": 0.0,
     "foh_dollars": 0.0,
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
+    "leave_dollars": 0.0,
     "total_dollars": 0.0,
     "wages_pct": 0.0,
     "net_wage_pct": null,
     "kitchen_hours": 0,
     "foh_hours": 0,
-    "wages_kitchen_pct": null,
+    "wages_kitchen_pct": 0.0,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
@@ -89,13 +98,15 @@
       "name": "Chicken",
       "qty": 3.0,
       "rev": 8.8,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken.",
       "qty": 3.0,
       "rev": 6.14,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     }
   ]
 }
