@@ -1,6 +1,6 @@
 {
   "date": "2026-07-10",
-  "generated_at": "2026-07-12T22:40:27.568066Z",
+  "generated_at": "2026-07-17T22:18:02.186729Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,26 +15,35 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 3531.73,
-    "revenue_ex_gst": 3210.66,
+    "revenue_inc_gst": 3591.73,
+    "revenue_ex_gst": 3265.21,
     "cogs_dollars": 741.33,
-    "cogs_pct": 23.1,
-    "gp_dollars": 2469.33,
-    "gp_pct": 76.9,
+    "cogs_pct": 22.7,
+    "gp_dollars": 2523.88,
+    "gp_pct": 77.3,
     "uber_eats_revenue": 0,
-    "net_takings_ex_gst": null
+    "net_takings_ex_gst": null,
+    "food_ex_gst": 3265.21,
+    "bev_ex_gst": 0.0,
+    "food_cogs": 741.33,
+    "bev_cogs": 0.0,
+    "food_cogs_pct": 22.7,
+    "bev_cogs_pct": null,
+    "food_gp_pct": 77.3,
+    "bev_gp_pct": null
   },
   "wages": {
     "kitchen_dollars": 929.29,
     "foh_dollars": 0.0,
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
+    "leave_dollars": 0.0,
     "total_dollars": 929.29,
-    "wages_pct": 28.9,
+    "wages_pct": 28.5,
     "net_wage_pct": null,
     "kitchen_hours": 26.8,
     "foh_hours": 0,
-    "wages_kitchen_pct": null,
+    "wages_kitchen_pct": 28.5,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
@@ -89,121 +98,141 @@
       "name": "$90 PIZZA PARTY",
       "qty": 2.0,
       "rev": 180.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Super House Special",
       "qty": 6.0,
       "rev": 179.0,
-      "cost": 44.28
+      "cost": 44.28,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Little Italy [Dine-in]",
       "qty": 6.0,
       "rev": 160.29,
-      "cost": 28.83
+      "cost": 28.83,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Cosmopolitan",
       "qty": 6.0,
       "rev": 139.0,
-      "cost": 40.57
+      "cost": 40.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$45 FEAST",
       "qty": 3.0,
       "rev": 135.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular BBQ Chicken Pizza",
       "qty": 5.0,
       "rev": 118.5,
-      "cost": 15.55
+      "cost": 15.55,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Super House Special",
       "qty": 5.0,
       "rev": 118.0,
-      "cost": 26.42
+      "cost": 26.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Meatlovers",
       "qty": 4.0,
       "rev": 115.0,
-      "cost": 29.0
+      "cost": 29.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Sanchez [Dine-in]",
       "qty": 4.0,
       "rev": 107.42,
-      "cost": 13.57
+      "cost": 13.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Little Italy",
       "qty": 5.0,
       "rev": 89.0,
-      "cost": 42.91
+      "cost": 42.91,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Pepperoni",
       "qty": 4.0,
       "rev": 88.0,
-      "cost": 8.51
+      "cost": 8.51,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Sorrento",
       "qty": 3.0,
       "rev": 84.0,
-      "cost": 21.52
+      "cost": 21.52,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hawaiian",
       "qty": 4.0,
       "rev": 82.0,
-      "cost": 4.99
+      "cost": 4.99,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular New Yorker [Dine-in]",
       "qty": 3.0,
       "rev": 73.57,
-      "cost": 10.76
+      "cost": 10.76,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Hawaiian",
       "qty": 3.0,
       "rev": 68.0,
-      "cost": 9.79
+      "cost": 9.79,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Meatlovers",
       "qty": 3.0,
       "rev": 67.0,
-      "cost": 15.57
+      "cost": 15.57,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "$60 BANQUET",
+      "qty": 1.0,
+      "rev": 60.0,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large New Yorker",
       "qty": 3.0,
       "rev": 57.0,
-      "cost": 15.03
+      "cost": 15.03,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hail Africa [Dine-in]",
       "qty": 2.0,
       "rev": 55.8,
-      "cost": 5.82
+      "cost": 5.82,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Roma Special",
       "qty": 2.0,
       "rev": 55.0,
-      "cost": 12.44
-    },
-    {
-      "name": "Large Sanchez",
-      "qty": 5.0,
-      "rev": 54.89,
-      "cost": 27.45
+      "cost": 12.44,
+      "cost_source": "lightspeed"
     }
   ]
 }
