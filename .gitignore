@@ -9,3 +9,4 @@ data/bo_exports/
 _site/
 .secrets/
 data/ingredients.json
+data/_backups/
