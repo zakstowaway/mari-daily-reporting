@@ -859,6 +859,10 @@ history_rows = []
 if history_file.exists():
     with history_file.open() as f:
         history_rows = list(csv.DictReader(f))
+# Keep the row we're about to replace: it carries fields this script doesn't own
+# (rebuild_wages writes the assumed pass from the roster, which we never fetch)
+# and history is rewritten from nr.keys(), so anything not carried is deleted.
+prev_row = next((r for r in history_rows if r["date"] == target.isoformat()), None)
 history_rows = [r for r in history_rows if r["date"] != target.isoformat()]
 
 nr = {
@@ -899,6 +903,16 @@ nr = {
     # column it doesn't emit gets blanked — the venue split would silently fall
     # back to total-minus-parts and quietly re-absorb admin.
     "wages_admin_dollars":    record["wages"]["admin_dollars"] if deputy_data else "",
+    # The assumed first pass belongs to rebuild_wages — it needs the ROSTER, which
+    # this script never fetches. But history is rewritten here every morning from
+    # nr.keys(), so a column this dict doesn't name is DELETED from the CSV. Carry
+    # the existing value through untouched: rebuild_wages runs after the pull
+    # (7:15am, and again at 12:10pm) and refills it. Without these two lines the
+    # 6am pull silently drops the column and the card falls back to the raw,
+    # half-clocked number with nothing saying so — the exact 14.7% problem the
+    # assumed pass exists to solve.
+    "wages_assumed_dollars":  (prev_row or {}).get("wages_assumed_dollars", ""),
+    "wages_assumed_shifts":   (prev_row or {}).get("wages_assumed_shifts", ""),
     "wages_kitchen_pct":      wages_kitchen_pct if wages_kitchen_pct is not None else "",
     "wages_foh_pct":          wages_foh_pct if wages_foh_pct is not None else "",
     "cogs_food_alert":        cogs_food_status,
