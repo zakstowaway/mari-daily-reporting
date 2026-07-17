@@ -24,10 +24,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))  # repo root
 
-from invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
-from invoices.validator import Status, Validator
+from modules.invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
+from modules.invoices.validator import Status, Validator
 
 # Columns, verbatim: Code | Description | Pack | Qty | Cost | Total | FRT per case
 #                    | LUC ex GST | TOT inc GST

@@ -16,6 +16,6 @@
 # pytest-shaped. So: point pytest at the pytest tests, and let CI run the two
 # scripts as scripts, checking their exit code. Do not rewrite working tests to
 # please a runner.
-testpaths = ["scripts/invoices/tests"]
-pythonpath = ["scripts"]
+testpaths = ["modules"]
+pythonpath = ["."]   # repo root: core/ and modules/ are packages
 addopts = "-q --strict-markers"

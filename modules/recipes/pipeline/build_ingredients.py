@@ -48,7 +48,7 @@ from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[3]
 COGS = ROOT / "data" / "cogs_list.csv"
 OUT = ROOT / "data" / "ingredients.json"
 

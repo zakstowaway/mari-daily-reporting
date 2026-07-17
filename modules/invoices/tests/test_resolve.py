@@ -12,9 +12,9 @@ from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))  # repo root
 
-from invoices.resolve import MAP_CSV, Resolution, Resolver, Unresolved  # noqa: E402
+from modules.invoices.resolve import MAP_CSV, Resolution, Resolver, Unresolved  # noqa: E402
 
 pytestmark = pytest.mark.skipif(not MAP_CSV.exists(), reason="product_map.csv not built")
 
@@ -83,7 +83,7 @@ def test_guard_bands_overlap_in_percentage_space():
     because the $5 floor exceeded the 10% band. Every mapping in the first cut
     was liquor, so nothing caught it.
     """
-    from invoices.resolve import is_suspect
+    from modules.invoices.resolve import is_suspect
 
     # real drift, must PASS despite being huge in percentage terms
     assert not is_suspect(Decimal("3.09"), Decimal("3.6933")), "Sprite/Coke 16-22% drift is real"
@@ -98,7 +98,7 @@ def test_guard_bands_overlap_in_percentage_space():
 
 
 def test_guard_needs_BOTH_percent_and_dollars():
-    from invoices.resolve import is_suspect
+    from modules.invoices.resolve import is_suspect
     assert not is_suspect(Decimal("100.00"), Decimal("96.00"))   # 4.2%, $4 -> neither
     assert not is_suspect(Decimal("2.00"), Decimal("1.50"))      # 33% but only 50c
     assert not is_suspect(Decimal("400.00"), Decimal("394.00"))  # $6 but only 1.5%
@@ -112,7 +112,7 @@ def test_cost_is_blind_to_similarly_priced_products():
     correctly by its own logic. This asserts the blindness so nobody later
     mistakes the guard for a matcher.
     """
-    from invoices.resolve import is_suspect
+    from modules.invoices.resolve import is_suspect
     assert not is_suspect(Decimal("16.00"), Decimal("16.50")), (
         "cost CANNOT distinguish tomato powder from chilli powder -- "
         "which is exactly why cost must never SELECT a product, only check one"

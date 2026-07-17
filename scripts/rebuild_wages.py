@@ -31,8 +31,8 @@ from collections import defaultdict
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
-import venues as V
+sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
+from core import venues as V
 from wage_model import allocate_week
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))

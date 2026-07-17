@@ -10,8 +10,8 @@ cost, and the approval/timestamp fields that would reveal a late approval.
 import json, os, sys
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent))
-import venues as V, urllib.request
+sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
+from core import venues as V, urllib.request
 
 TOKEN = os.environ.get("DEPUTY_TOKEN")
 if not TOKEN: sys.exit("DEPUTY_TOKEN not set")

@@ -19,10 +19,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))  # repo root
 
-from invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
-from invoices.validator import Severity, Status, Validator
+from modules.invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
+from modules.invoices.validator import Severity, Status, Validator
 
 D = Decimal
 

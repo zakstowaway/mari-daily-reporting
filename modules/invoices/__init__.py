@@ -28,8 +28,8 @@ Layout:
     docs/           evidence for every rule in suppliers.yaml
 """
 
-from .models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
-from .validator import Finding, Severity, Status, ValidationResult, Validator
+from modules.invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
+from modules.invoices.validator import Finding, Severity, Status, ValidationResult, Validator
 
 __all__ = [
     "Invoice", "InvoiceLine", "Venue", "LineClass", "TaxTreatment", "CostBasis",

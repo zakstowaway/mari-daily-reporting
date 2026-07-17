@@ -48,8 +48,8 @@ from pathlib import Path
 from collections import Counter
 
 # scripts/ dir is on sys.path when invoked as `python scripts/daily_deputy_pull.py`
-sys.path.insert(0, str(Path(__file__).parent))
-import venues as V
+sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
+from core import venues as V
 
 # On GitHub Actions runner, CWD is the repo checkout root.
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))

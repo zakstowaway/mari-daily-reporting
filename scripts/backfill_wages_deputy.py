@@ -38,8 +38,8 @@ import json, os, sys, csv, urllib.request, urllib.error
 from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent))
-import venues as V
+sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
+from core import venues as V
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"

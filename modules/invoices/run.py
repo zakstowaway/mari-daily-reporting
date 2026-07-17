@@ -44,10 +44,10 @@ from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))   # repo root
 
-from invoices.extract import ExtractionError, extract, parse          # noqa: E402
-from invoices.validator import Status, Validator                       # noqa: E402
+from modules.invoices.extract import ExtractionError, extract, parse          # noqa: E402
+from modules.invoices.validator import Status, Validator                       # noqa: E402
 
 ROOT = Path(__file__).parent.parent
 CONFIG = Path(__file__).parent / "invoices" / "suppliers.yaml"

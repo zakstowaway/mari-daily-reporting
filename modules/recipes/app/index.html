@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Recipes · Stowaway Hospitality Group</title>
-<link rel="icon" href="favicon.ico">
+<link rel="icon" href="/favicon.ico">
 <!--
   Chef recipe builder.
 
@@ -24,7 +24,7 @@
   wired path is Pipedream -> repository_dispatch, same bridge as
   PIPEDREAM_BRIDGE.md, with the shared secret held at the endpoint, never here.
 -->
-<link rel="stylesheet" href="_shared/tokens.css">
+<link rel="stylesheet" href="/_shared/tokens.css">
 <style>
 /* Page-specific only. Tokens, base, .card, .hd, login → _shared/tokens.css.
    If a rule here would help a third page, it belongs in tokens.css instead. */
@@ -127,8 +127,8 @@ textarea{width:100%;height:190px;font-family:ui-monospace,Menlo,monospace;font-s
 </div>
 
 <script type="module">
-import { Auth } from './_shared/auth.js';
-import { Feed } from './_shared/feed.js';
+import { Auth } from '/_shared/auth.js';
+import { Feed } from '/_shared/feed.js';
 
 let ING = [], LINES = [];
 
@@ -145,7 +145,7 @@ Auth.gate(document.getElementById('gate'), {
 });
 
 async function boot() {
-  const d = await Feed.load('../data/ingredients.json');
+  const d = await Feed.load('/data/ingredients.json');
   if (!d) {
     document.getElementById('sub').textContent =
       'data/ingredients.json not available — run scripts/build_ingredients.py.';

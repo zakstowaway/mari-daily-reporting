@@ -53,7 +53,7 @@ jobs:
         run: |
           set -e
           cp data/ingredients.json /tmp/ingredients.before.json
-          python3 scripts/build_ingredients.py >/dev/null
+          python3 modules/recipes/pipeline/build_ingredients.py >/dev/null
           if ! diff -q <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
                        <(jq -S 'del(.generated_at)' data/ingredients.json) >/dev/null; then
             echo "::error::data/ingredients.json is stale — rerun scripts/build_ingredients.py and commit"
@@ -63,20 +63,26 @@ jobs:
           fi
           echo "ingredients.json reproduces from source"
 
+      - name: Site must build and every reference must resolve
+        # The repo layout and the deployed layout differ. A broken path fails
+        # no test and no deploy — it shows up as a chef saying "the page is
+        # blank". build_site.py resolves every href/src/import/fetch.
+        run: python3 scripts/build_site.py
+
       - name: Guard rails still guard
         # Cheap, blunt, and aimed at the exact bugs that actually shipped this
         # week. If someone reintroduces max() in the cost guard, fail loudly
         # rather than wait for a wrong cost to reach a dish.
         run: |
           set -e
-          if grep -rn "max(DRIFT_ABS\|max(SUSPECT_ABS" scripts/ ; then
-            echo "::error::cost guard is using max() (OR). It must be AND — see scripts/invoices/resolve.py"
+          if grep -rn "max(DRIFT_ABS\|max(SUSPECT_ABS" core/ modules/ scripts/ ; then
+            echo "::error::cost guard is using max() (OR). It must be AND — see modules/invoices/resolve.py"
             exit 1
           fi
           python3 - <<'PY'
-          import sys; sys.path.insert(0,'scripts')
+          import sys; sys.path.insert(0,'.')
           from decimal import Decimal
-          from invoices.resolve import is_suspect
+          from modules.invoices.resolve import is_suspect
           assert is_suspect(Decimal("212.44"), Decimal("184.94")), "Alehouse swap must be caught"
           assert not is_suspect(Decimal("1.47"), Decimal("1.8896")), "Sprite drift must pass"
           print("guards OK")

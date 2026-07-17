@@ -31,7 +31,7 @@ from decimal import Decimal
 from enum import Enum
 from typing import Any, Optional
 
-from .models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment
+from modules.invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment
 
 # GST in Australia is 10%, so the GST component of a GST-inclusive figure is
 # total/11. This holds for wine too: WET is applied first, then GST on

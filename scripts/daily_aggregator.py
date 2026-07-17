@@ -68,8 +68,8 @@ import csv, io, json, os, sys, zipfile
 from pathlib import Path
 from datetime import date, timedelta, datetime
 
-sys.path.insert(0, str(Path(__file__).parent))
-import venues as V
+sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
+from core import venues as V
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"

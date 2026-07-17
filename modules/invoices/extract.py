@@ -24,7 +24,7 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Optional
 
-from .models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
+from modules.invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
 
 HERE = Path(__file__).parent
 MODEL = os.environ.get("INVOICE_MODEL", "claude-sonnet-5")
