@@ -1,0 +1,93 @@
+[
+  {
+    "timesheet_id": 35350,
+    "employee_id": 287,
+    "employee_name": "Min",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784261700,
+    "end_time": 1784294100,
+    "hours": 8.5,
+    "cost": 469.95,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35355,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784268000,
+    "end_time": 1784296800,
+    "hours": 7.5,
+    "cost": 262.5,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35356,
+    "employee_id": 145,
+    "employee_name": "Rhys Taylor",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784268900,
+    "end_time": 1784296800,
+    "hours": 7.25,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35357,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784269800,
+    "end_time": 1784286900,
+    "hours": 4.75,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35360,
+    "employee_id": 251,
+    "employee_name": "Emily",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784271600,
+    "end_time": 1784286900,
+    "hours": 4.25,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35361,
+    "employee_id": 298,
+    "employee_name": "Kiana Dettmann",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784271600,
+    "end_time": 1784289600,
+    "hours": 5.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35363,
+    "employee_id": 292,
+    "employee_name": "Sophie Campbell",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784273400,
+    "end_time": 1784287800,
+    "hours": 4.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]
