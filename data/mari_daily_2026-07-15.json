@@ -1,6 +1,6 @@
 {
   "date": "2026-07-15",
-  "generated_at": "2026-07-16T10:07:17.754418Z",
+  "generated_at": "2026-07-17T23:30:21.750835Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -98,121 +98,141 @@
       "name": "Regular Little Italy [Dine-in]",
       "qty": 6.0,
       "rev": 161.11,
-      "cost": 28.83
+      "cost": 28.83,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$45 FEAST",
       "qty": 2.0,
       "rev": 90.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$90 PIZZA PARTY",
       "qty": 1.0,
       "rev": 90.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Truffalo Soldier [Dine-in]",
       "qty": 3.0,
       "rev": 77.11,
-      "cost": 9.8
+      "cost": 9.8,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Banquet Deal Pizzas",
       "qty": 1.0,
       "rev": 60.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Sorrento",
       "qty": 2.0,
       "rev": 57.0,
-      "cost": 14.34
+      "cost": 14.34,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Pepperoni",
       "qty": 2.0,
       "rev": 56.0,
-      "cost": 9.13
+      "cost": 9.13,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large BBQ Chicken Pizza",
       "qty": 2.0,
       "rev": 55.5,
-      "cost": 8.69
+      "cost": 8.69,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Paddock",
       "qty": 2.0,
       "rev": 54.0,
-      "cost": 10.56
+      "cost": 10.56,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Little Italy",
       "qty": 2.0,
       "rev": 54.0,
-      "cost": 17.16
+      "cost": 17.16,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Cosmopolitan",
       "qty": 1.0,
       "rev": 32.0,
-      "cost": 6.76
+      "cost": 6.76,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Super House Special",
       "qty": 2.0,
       "rev": 30.0,
-      "cost": 14.76
+      "cost": 14.76,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Tandoori Chicken",
       "qty": 1.0,
       "rev": 30.0,
-      "cost": 3.3
+      "cost": 3.3,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Sanchez",
       "qty": 1.0,
       "rev": 27.0,
-      "cost": 5.49
+      "cost": 5.49,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Little Italy",
       "qty": 1.0,
       "rev": 25.0,
-      "cost": 4.8
+      "cost": 4.8,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Truffalo Soldier",
       "qty": 1.0,
       "rev": 25.0,
-      "cost": 4.56
+      "cost": 4.56,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Garlic Bread",
       "qty": 8.0,
       "rev": 24.5,
-      "cost": 11.36
+      "cost": 11.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Tandoori Chicken",
       "qty": 1.0,
       "rev": 24.0,
-      "cost": 2.36
+      "cost": 2.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Super House Special",
       "qty": 1.0,
       "rev": 24.0,
-      "cost": 5.28
+      "cost": 5.28,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Pepperoni",
       "qty": 1.0,
       "rev": 22.0,
-      "cost": 2.13
+      "cost": 2.13,
+      "cost_source": "lightspeed"
     }
   ]
 }
