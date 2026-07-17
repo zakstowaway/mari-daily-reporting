@@ -483,10 +483,12 @@ for pfx in ("stow", "hg", "mari"):
             fields.insert(fields.index("wages_admin_dollars") + 1, c)
     touched = 0
     delta = 0.0
+    seen_dates = set()
     for r in rows:
         d = r["date"]
         if d not in day or not (args[0] <= d <= args[1]):
             continue
+        seen_dates.add(d)
         b = day[d]
         kit = b.get(f"{pfx}|Kitchen", 0) * SUPER_MULT
         foh = b.get(f"{pfx}|FOH", 0) * SUPER_MULT
@@ -535,6 +537,27 @@ for pfx in ("stow", "hg", "mari"):
             r["leave_dollars"] = round(lv, 2) if lv else ""
         touched += 1
     print(f"  {pfx}: {touched} days, wages {delta:+,.0f}")
+    # ---- orphan check (2026-07-17) ----
+    # This loop only ever UPDATES rows that already exist in the history CSV. If
+    # Deputy has shifts on a date the CSV has no row for, that cost is computed
+    # and then silently dropped — the venue's days would not sum to the week that
+    # ties to Xero, and nothing would say why. HG has no row on days it doesn't
+    # trade (Sun/Tue), which is exactly when a stocktake or a deep-clean shift
+    # would be logged.
+    _orph = []
+    for _d, _b in day.items():
+        if not (args[0] <= _d <= args[1]) or _d in seen_dates:
+            continue
+        _t = ((_b.get(f"{pfx}|Kitchen", 0) + _b.get(f"{pfx}|FOH", 0)
+               + _b.get(f"{pfx}|Driver", 0) + _b.get(f"{pfx}|Admin", 0)) * SUPER_MULT)
+        if _t > 0.005:
+            _orph.append((_d, _t))
+    if _orph:
+        print(f"  *** {pfx}: {len(_orph)} day(s) have Deputy cost but NO history row —")
+        print(f"      the cost is computed and DROPPED. Days will not sum to the week.")
+        for _d, _t in sorted(_orph):
+            print(f"        {_d}  ${_t:,.2f} inc super")
+
     if WRITE:
         with f.open("w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n", extrasaction="ignore")
