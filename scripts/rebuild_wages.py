@@ -254,7 +254,15 @@ while cur <= d_to:
             # Gap-fill for the ASSUMED pass: a day that has happened, rostered,
             # nothing clocked. Hourly roster carries its own Cost; salaried is
             # left to allocate_week like any other shift of theirs.
-            if do_assumed and dstr_a <= today.isoformat() and (emp, dstr_a) not in logged_emp_days:
+            # Window is per DAY, not per week. Gating on wk_end let a whole
+            # settled week through: on a Monday the previous payroll week ends
+            # yesterday, so every day of it — including the Tuesday 6 days back,
+            # long approved — would get assumed and tagged "shifts not clocked".
+            # The week check below is only an optimisation (don't fetch roster
+            # for weeks that can't contain an assumable day); THIS is the rule.
+            assume_from = (today - timedelta(days=ASSUME_DAYS)).isoformat()
+            if (do_assumed and assume_from <= dstr_a <= today.isoformat()
+                    and (emp, dstr_a) not in logged_emp_days):
                 ou_a = (rs.get("_DPMetaData", {}).get("OperationalUnitInfo", {}) or {}).get("OperationalUnitName", "")
                 b_a = bucket_for(ou_a, dstr_a)
                 if b_a:
