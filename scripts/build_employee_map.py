@@ -44,13 +44,25 @@ ALIASES = {
                                            # Corroborated: id 296 works Stow Kitchen +
                                            # Harry's Kitchen. NOT id 205 Olivia Giuliano,
                                            # who is a different person and already mapped.
-    # NOT added, deliberately:
-    #   "Olly" (id 284) -> "Olliver Case"? The name fits, and Xero paid Olliver
-    #     Case $533.10 that week with no other candidate. But there is ALSO a
-    #     casual 'Oliver' (id 24) AND an owner 'Oliver Iaccarino' in
-    #     _corp_payroll_only. Three near-identical names, and the one mistake
-    #     this file exists to prevent is exactly this: mapping an owner onto a
-    #     venue wage line. Needs Zak, not inference.
+    # Zak, 2026-07-17: "olly that works in the kitchen is olliver case. oliver on
+    # deputy is oliver iaccarino owner." Deputy has THREE similar names and they
+    # are three different people. Getting this wrong costs ~$325/wk one way, or
+    # puts owner salary on a venue wage line the other.
+    #   id 284 "Olly"   = Olliver Case, kitchen casual   -> map (below)
+    #   id  24 "Oliver" = Oliver Iaccarino, OWNER        -> NEVER map. See below.
+    "Olly": "Olliver Case",
+    # ⚠️ DO NOT add "Oliver" (id 24). He is Oliver Iaccarino, an owner, and lives
+    # in _corp_payroll_only. His pay reaches corp payroll via the residual (Xero
+    # group payroll MINUS Deputy group wages), so mapping him would move owner
+    # salary onto a venue.
+    #
+    # That residual assumes owners are "never rostered in Deputy" — but he HAS a
+    # Deputy account, so the assumption is one clocked shift away from being
+    # false. Verified 2026-07-17: id 24 has never logged a shift in any Deputy
+    # data we hold, and Xero has paid him in 86 weeks. It holds by luck, not by
+    # construction. If he ever clocks on, his Deputy cost lands on a venue AND
+    # his salary stays in the residual — counted twice, silently.
+    #
     #   "pedro f" (id 261) -> ? Worked 17.50h in the week ending 12 Jul and Xero
     #     paid him NOTHING. Either a payroll miss or a name we can't see. Do not
     #     invent a mapping to make the numbers tie.
