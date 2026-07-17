@@ -13,7 +13,15 @@ name: Rebuild Wages
 
 on:
   schedule:
-    - cron: '15 21 * * *'   # 7:15am AEST, after the daily pulls
+    # 6:30am AEST (Zak, 2026-07-17) — he reads the reports around 9am and wants
+    # the wage number settled well before then. Must run AFTER the daily pulls:
+    # the aggregator rewrites wages_* from the Deputy JSON using the provisional
+    # model, so a pull landing after this run undoes it for any day it touches.
+    # Margin is thinner than the old 7:15am — last night's Insights emails landed
+    # 5:02 / 5:30 / 6:12am AEST, so Mari cleared with ~18 min to spare. A late
+    # email now means Zak's 9am number is provisional until the 12:10pm
+    # re-aggregation. If that starts happening, move this later, not earlier.
+    - cron: '30 20 * * *'   # 6:30am AEST, after the daily pulls
   workflow_dispatch:
     inputs:
       from_date:
