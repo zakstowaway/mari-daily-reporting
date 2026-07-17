@@ -1,6 +1,6 @@
 {
   "date": "2026-07-09",
-  "generated_at": "2026-07-12T22:39:36.913417Z",
+  "generated_at": "2026-07-17T22:17:38.078641Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -36,17 +36,18 @@
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
-    "kitchen_dollars": 464.42,
-    "foh_dollars": 529.01,
+    "kitchen_dollars": 848.08,
+    "foh_dollars": 506.07,
     "driver_dollars": 0.0,
-    "admin_dollars": 203.9,
-    "total_dollars": 1197.32,
-    "wages_pct": 22.6,
+    "admin_dollars": 226.55,
+    "leave_dollars": 0.0,
+    "total_dollars": 1580.7,
+    "wages_pct": 29.8,
     "net_wage_pct": null,
     "kitchen_hours": 17.0,
     "foh_hours": 13.0,
-    "wages_kitchen_pct": 28.6,
-    "wages_foh_pct": 14.4,
+    "wages_kitchen_pct": 52.3,
+    "wages_foh_pct": 13.7,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -109,121 +110,141 @@
       "name": "Guinness Draught - Pint",
       "qty": 27.0,
       "rev": 474.79,
-      "cost": 126.95
+      "cost": 126.95,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Pint",
       "qty": 20.0,
       "rev": 247.58,
-      "cost": 48.93
+      "cost": 48.93,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 15.0,
       "rev": 223.99,
-      "cost": 59.44
+      "cost": 59.44,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Pint",
       "qty": 11.0,
       "rev": 190.86,
-      "cost": 47.81
+      "cost": 47.81,
+      "cost_source": "lightspeed"
     },
     {
       "name": "American Standard Burger",
       "qty": 6.0,
       "rev": 164.91,
-      "cost": 35.06
+      "cost": 35.06,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fish Tacos",
       "qty": 8.0,
       "rev": 163.94,
-      "cost": 17.48
+      "cost": 17.48,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Beef Burrito",
       "qty": 6.0,
       "rev": 147.34,
-      "cost": 40.63
+      "cost": 40.63,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Version Two Pinot Grigio - Regular",
       "qty": 13.0,
       "rev": 147.18,
-      "cost": 22.97
+      "cost": 22.97,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Geppetto Pinot Noir - Bottle",
       "qty": 2.0,
       "rev": 120.0,
-      "cost": 35.35
+      "cost": 35.35,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fancy Pants Parmy - Classic",
       "qty": 4.0,
       "rev": 118.85,
-      "cost": 32.42
+      "cost": 32.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stow Schnitty",
       "qty": 4.0,
       "rev": 109.36,
-      "cost": 21.3
+      "cost": 21.3,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Pint",
       "qty": 8.0,
       "rev": 108.49,
-      "cost": 26.72
+      "cost": 26.72,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Villa Fresco Sangiovese - Regular",
       "qty": 10.0,
       "rev": 105.2,
-      "cost": 24.19
+      "cost": 24.19,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Rosemary Salted Fries",
       "qty": 8.0,
       "rev": 104.91,
-      "cost": 14.84
+      "cost": 14.84,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Schooner",
       "qty": 7.0,
       "rev": 93.12,
-      "cost": 22.69
+      "cost": 22.69,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Schooner",
       "qty": 8.0,
       "rev": 92.38,
-      "cost": 19.92
+      "cost": 19.92,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Negroni",
       "qty": 6.0,
       "rev": 89.91,
-      "cost": 23.19
+      "cost": 23.19,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Coconut Margarita",
       "qty": 5.0,
       "rev": 87.21,
-      "cost": 20.2
+      "cost": 20.2,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Kirin - Schooner",
       "qty": 6.0,
       "rev": 84.0,
-      "cost": 22.68
+      "cost": 22.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Southern Squid",
       "qty": 3.0,
       "rev": 79.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     }
   ]
 }
