@@ -227,7 +227,19 @@ while cur <= d_to:
     # is touched by a guess. Only worth computing near the present — older weeks
     # are approved and complete, and fetching 90 weeks of roster to discover
     # there are no gaps is a slow way to learn nothing.
-    ASSUME_DAYS = 14
+    # Only the last few days. The gap between roster and timesheets means two
+    # different things depending on age, and NOTHING in the data tells them
+    # apart — "rostered, hasn't clocked yet" and "rostered, didn't work" are the
+    # same absence:
+    #   recent  -> almost always paperwork. Worth assuming.
+    #   settled -> almost always a real no-show/roster change. Assuming it
+    #              INVENTS wages. At 14 days this added $704 to Thu 09 Jul
+    #              (25.4% -> 38.6%) on a week that was already approved and
+    #              correct, and tagged it "2 shifts not clocked". Crying wolf on
+    #              good data is worse than no tag at all.
+    # 3 days covers the actual use case — Zak reads yesterday at midday — and
+    # keeps the assumption where it's still likely to be true.
+    ASSUME_DAYS = 3
     do_assumed = wk_end >= today - timedelta(days=ASSUME_DAYS)
 
     roster_shifts, assumed_extra = [], []
@@ -423,11 +435,22 @@ for pfx in ("stow", "hg", "mari"):
         # Assumed: same shape, gaps filled. Operational only (no admin) — it
         # exists to answer "what did last night really cost me", and admin is
         # not last night's decision.
-        a = day_assumed.get(d, {})
-        tot_a = ((a.get(f"{pfx}|Kitchen", 0) + a.get(f"{pfx}|FOH", 0)
-                  + a.get(f"{pfx}|Driver", 0)) * SUPER_MULT)
+        n_a = assumed_n.get(d, {}).get(pfx, 0)
+        if n_a:
+            a = day_assumed.get(d, {})
+            tot_a = ((a.get(f"{pfx}|Kitchen", 0) + a.get(f"{pfx}|FOH", 0)
+                      + a.get(f"{pfx}|Driver", 0)) * SUPER_MULT)
+        else:
+            # Nothing was assumed FOR THIS VENUE, so assumed must equal actual.
+            # It didn't, before: the pass also fills unclocked ADMIN shifts, and
+            # a salaried person's week then re-cuts across more shifts, shrinking
+            # their venue slice. Stow 06 Jul read $149 LOWER assumed than actual
+            # with nothing assumed against it — a number moving for a reason the
+            # card had no way to explain. Admin still belongs in the pass (it
+            # sizes the split correctly); it just can't silently move a venue.
+            tot_a = kit + foh + drv
         r["wages_assumed_dollars"] = round(tot_a, 2) if tot_a > 0 else ""
-        r["wages_assumed_shifts"] = assumed_n.get(d, {}).get(pfx, 0)
+        r["wages_assumed_shifts"] = n_a
         r["wages_kitchen_pct"] = round(kit / food * 100, 1) if food else ""
         r["wages_foh_pct"] = round(foh / bev * 100, 1) if bev else ""
         if pfx == "mari":
