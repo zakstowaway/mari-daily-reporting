@@ -1,6 +1,6 @@
 {
   "date": "2026-07-07",
-  "generated_at": "2026-07-12T22:38:33.775179Z",
+  "generated_at": "2026-07-17T22:16:57.588679Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -40,6 +40,7 @@
     "foh_dollars": 566.84,
     "driver_dollars": 0.0,
     "admin_dollars": 79.39,
+    "leave_dollars": 0.0,
     "total_dollars": 786.23,
     "wages_pct": 34.0,
     "net_wage_pct": null,
@@ -109,121 +110,141 @@
       "name": "Jalape\u00f1o Marg",
       "qty": 7.0,
       "rev": 162.52,
-      "cost": 5.15
+      "cost": 5.15,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Schooner",
       "qty": 12.0,
       "rev": 157.72,
-      "cost": 38.89
+      "cost": 38.89,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mother's Milk Shiraz - Regular",
       "qty": 10.0,
       "rev": 152.95,
-      "cost": 32.16
+      "cost": 32.16,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mulled Wine",
       "qty": 8.0,
       "rev": 122.96,
-      "cost": 16.45
+      "cost": 16.45,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Guinness Draught - Pint",
       "qty": 7.0,
       "rev": 119.0,
-      "cost": 32.91
+      "cost": 32.91,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Aperol Spritz",
       "qty": 5.0,
       "rev": 97.1,
-      "cost": 17.76
+      "cost": 17.76,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 5.0,
       "rev": 94.0,
-      "cost": 19.81
+      "cost": 19.81,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Schooner",
       "qty": 9.0,
       "rev": 77.96,
-      "cost": 16.42
+      "cost": 16.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Philter Red - Schooner",
       "qty": 7.0,
       "rev": 77.0,
-      "cost": 17.74
+      "cost": 17.74,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Pint",
       "qty": 6.0,
       "rev": 72.5,
-      "cost": 14.68
+      "cost": 14.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Villa Fresco Sangiovese - Regular",
       "qty": 7.0,
       "rev": 69.2,
-      "cost": 16.93
+      "cost": 16.93,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Island Time",
       "qty": 3.0,
       "rev": 64.0,
-      "cost": 13.29
+      "cost": 13.29,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Beetle Juice",
       "qty": 3.0,
       "rev": 60.0,
-      "cost": 10.97
+      "cost": 10.97,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dormilona Chenin Blanc - Regular",
       "qty": 3.0,
       "rev": 58.8,
-      "cost": 13.43
+      "cost": 13.43,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Negroni",
       "qty": 3.0,
       "rev": 58.0,
-      "cost": 11.6
+      "cost": 11.6,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Geppetto Pinot Noir - Regular",
       "qty": 4.0,
       "rev": 57.0,
-      "cost": 14.14
+      "cost": 14.14,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Espresso Martini",
       "qty": 3.0,
       "rev": 54.0,
-      "cost": 9.7
+      "cost": 9.7,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Rosemary Salted Fries",
       "qty": 4.0,
       "rev": 52.86,
-      "cost": 7.42
+      "cost": 7.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Version Two Sparkling - Regular",
       "qty": 6.0,
       "rev": 52.0,
-      "cost": 10.6
+      "cost": 10.6,
+      "cost_source": "lightspeed"
     },
     {
       "name": "White Light Pure Vodka [House]",
       "qty": 5.0,
       "rev": 49.75,
-      "cost": 7.6
+      "cost": 7.6,
+      "cost_source": "lightspeed"
     }
   ]
 }
