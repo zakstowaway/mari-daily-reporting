@@ -141,3 +141,50 @@ def test_people_json_never_contains_a_secret():
             f"every browser. Secrets belong in .secrets/passwords.json (gitignored) "
             f"and from there only into the Worker."
         )
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="node not installed")
+def test_pipedream_component_verifies_python_hashes(tmp_path):
+    """
+    Same proof as the Worker test, different crypto library.
+
+    The Worker uses Web Crypto (crypto.subtle); Pipedream runs Node and uses
+    node:crypto pbkdf2Sync. Same format, two independent implementations. If
+    either drifts from passwords.py, every login fails at once and it looks
+    like a password problem rather than a code problem.
+    """
+    password = "kitchen-password-123"
+    stored = hash_password(password)
+
+    src = (Path(__file__).resolve().parents[1] / "pipedream" / "auth_component.js").read_text()
+    start = src.index("function verifyPassword")
+    end = src.index("// ── tokens")
+    fn = src[start:end]
+
+    script = tmp_path / "t.mjs"
+    script.write_text(
+        'import { pbkdf2Sync, timingSafeEqual } from "crypto";\n'
+        + fn +
+        f"const ok = verifyPassword({json.dumps(password)}, {json.dumps(stored)});\n"
+        f"const bad = verifyPassword('wrong-password', {json.dumps(stored)});\n"
+        "console.log(JSON.stringify({ok, bad}));\n"
+    )
+    out = subprocess.run([shutil.which("node"), str(script)], capture_output=True, text=True, timeout=120)
+    assert out.returncode == 0, out.stderr
+    r = json.loads(out.stdout.strip().splitlines()[-1])
+    assert r["ok"] is True, "Pipedream component could not verify a hash Python made"
+    assert r["bad"] is False, "Pipedream component accepted a wrong password"
+
+
+# NOTE: there is no test_both_backends_agree, on purpose.
+#
+# The Worker (Web Crypto) and the Pipedream component (node:crypto) are each
+# tested against a hash Python made. If both verify the same Python hash, they
+# agree with each other by transitivity — a third test comparing them directly
+# proves nothing new and needed a fragile harness that stitched two files
+# together and renamed their internals. It failed on its own scaffolding, not
+# on the code. Deleted rather than nursed.
+#
+# What matters and IS covered: hashes are PORTABLE. Whichever backend gets
+# deployed, .secrets/passwords.json works unchanged — so picking a host is not
+# a migration.
