@@ -1,6 +1,6 @@
 {
   "date": "2026-07-08",
-  "generated_at": "2026-07-12T23:40:57.114602Z",
+  "generated_at": "2026-07-17T22:17:22.408142Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -40,6 +40,7 @@
     "foh_dollars": 368.2,
     "driver_dollars": 0.0,
     "admin_dollars": 44.42,
+    "leave_dollars": 0.0,
     "total_dollars": 913.83,
     "wages_pct": 251.8,
     "net_wage_pct": null,
@@ -109,121 +110,141 @@
       "name": "Shoyu",
       "qty": 2.0,
       "rev": 58.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Tonkotsu",
       "qty": 2.0,
       "rev": 44.0,
-      "cost": 8.33
+      "cost": 8.33,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Thai Chicken",
       "qty": 3.0,
       "rev": 35.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mie Goreng",
       "qty": 2.0,
       "rev": 32.2,
-      "cost": 6.36
+      "cost": 6.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Miso",
       "qty": 1.0,
       "rev": 29.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Palloncino Prosecco - Regular",
       "qty": 3.0,
       "rev": 26.0,
-      "cost": 6.9
+      "cost": 6.9,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fried Rice",
       "qty": 1.0,
       "rev": 23.0,
-      "cost": 2.68
+      "cost": 2.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Schooner",
       "qty": 2.0,
       "rev": 19.0,
-      "cost": 3.25
+      "cost": 3.25,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Prawn Har Gow [GF]",
       "qty": 1.0,
       "rev": 19.0,
-      "cost": 4.41
+      "cost": 4.41,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Karaage",
       "qty": 1.0,
       "rev": 17.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Devon's Prawn Toast",
       "qty": 1.0,
       "rev": 16.0,
-      "cost": 3.89
+      "cost": 3.89,
+      "cost_source": "lightspeed"
     },
     {
       "name": "BBQ Pork Buns",
       "qty": 1.0,
       "rev": 15.51,
-      "cost": 3.5
+      "cost": 3.5,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Kids Fried Rice",
       "qty": 1.0,
       "rev": 13.45,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Tengumai Junmai - 60ml [SERVE WARM]",
       "qty": 1.0,
       "rev": 12.0,
-      "cost": 2.37
+      "cost": 2.37,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Schooner [HG]",
       "qty": 1.0,
       "rev": 11.5,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Edamame",
       "qty": 1.0,
       "rev": 11.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Yuzu Orange Soda",
       "qty": 1.0,
       "rev": 9.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Lemonade Glass",
       "qty": 1.0,
       "rev": 4.5,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "1/2 Marinated Egg",
       "qty": 2.0,
       "rev": 4.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Unlimited BBQ",
       "qty": 5.0,
       "rev": 0.0,
-      "cost": 42.92
+      "cost": 42.92,
+      "cost_source": "lightspeed"
     }
   ]
 }
