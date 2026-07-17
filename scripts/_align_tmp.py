@@ -21,8 +21,9 @@ dw={}
 for t in ts:
     dw.setdefault(str(t.get("Employee")),set()).add(wk(t["StartTime"]))
 emps={str(e["Id"]):e["DisplayName"] for e in post("/api/v1/resource/Employee/QUERY",{"search":{},"max":500})}
-cands={'283':'Olivia Allen-Hall','276':'Daniel Biesty','294':'Mikel Martin','269':'Zach Davis',
-       '232':'Hugh Yiend','166':'Rei Ikeda','302':'Archie Humphries','225':'Long Long','261':'pedro f'}
+cands={'69':'Samuel Hall'}
+print("WHO IS id 69?  deputy name:", emps.get('69'))
+print()
 print(f"{'id':>4} {'deputy':16} {'xero':22} {'D wks':>6} {'X wks':>6} {'both':>5} {'D only':>7} {'X only':>7}  verdict")
 for eid,xn in cands.items():
     d=dw.get(eid,set()); x={w for w,v in XP.get(xn,{}).items() if v}
@@ -33,9 +34,8 @@ for eid,xn in cands.items():
     elif both: v=f"partial ({len(both)}/{len(d)})"
     else: v="NO OVERLAP -> different people"
     print(f"{eid:>4} {emps.get(eid,'?')[:16]:16} {xn[:22]:22} {len(d):>6} {len(x):>6} {len(both):>5} {len(do):>7} {len(xo):>7}  {v}")
-# who is Samuel Hall?
-print("\nSamuel Hall — which Deputy account has hours in his paid weeks?")
+print("\nEvery unmapped Deputy account with hours since March, vs Samuel Hall's paid weeks:")
 sh={w for w,v in XP.get('Samuel Hall',{}).items() if v}
-for eid,ws in sorted(dw.items(), key=lambda k:-len(k[1]&sh))[:4]:
+for eid,ws in sorted(dw.items(), key=lambda k:-len(k[1]&sh)):
     if eid in EM: continue
-    print(f"    id {eid:>4} {emps.get(eid,'?')[:20]:20} overlap {len(ws&sh)}/{len(sh)} of his paid weeks")
+    print(f"    id {eid:>4} {emps.get(eid,'?')[:22]:22} D wks {len(ws):>3}  overlap {len(ws&sh):>3}/{len(sh)}  D-only {len(ws-sh):>3}")
