@@ -389,6 +389,12 @@ while cur <= d_to:
                 target[d][b] += c
 
     costed, warn, paid_this_week = cost_week(shifts, roster_shifts)
+    xero_weeks += len(paid_this_week)
+    est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
+    warnings.extend(warn)
+    book(costed, day)          # <- records the week. Without this, `day` is empty
+                               #    and the writer silently touches 0 rows.
+
     # Hours, but no Xero payslip, and not a known exception -> tell someone.
     for _e in {str(x["employee_id"]) for x in shifts}:
         if _e in paid_this_week or _e in XERO_EXEMPT or _e in SAL:
