@@ -384,30 +384,40 @@ while cur <= d_to:
 
     costed, warn, paid_this_week = cost_week(shifts, roster_shifts)
     if AUDIT:
-        _by = defaultdict(float); _h = defaultdict(float); _nm2 = {}
+        # Compare each person against the yardstick they are actually COSTED by,
+        # not against Xero regardless (Zak, 2026-07-17: "match pedro to his
+        # deputy rates"). Xero is truth for anyone payroll has paid; for anyone
+        # it hasn't, Deputy's own Cost IS the basis by design — that is what the
+        # fallback is for. Measuring pedro f against a $0 Xero figure reported a
+        # $473.75 hole every week that was never a hole, and a permanent false
+        # positive is how a report gets ignored.
+        _by = defaultdict(float); _h = defaultdict(float); _dep = defaultdict(float)
         for s_ in costed:
-            if s_.get("_roster"): continue
-            _by[str(s_["employee_id"])] += s_["cost_final"]
-            _h[str(s_["employee_id"])] += s_.get("hours") or 0
-        _drop = defaultdict(float)
+            if s_.get("_roster"):
+                continue
+            e_ = str(s_["employee_id"])
+            _by[e_] += s_["cost_final"]; _h[e_] += s_.get("hours") or 0
         for s_ in shifts:
-            _nm2[str(s_["employee_id"])] = 1
+            _dep[str(s_["employee_id"])] += s_.get("cost") or 0
         print(f"  AUDIT week ending {wk_end}:")
-        print(f"    {'id':>5} {'hrs':>6} {'booked':>10} {'xero':>10} {'diff':>9}  note")
+        print(f"    {'id':>5} {'hrs':>6} {'booked':>10} {'expected':>10} {'diff':>9}  basis")
         _tb = _tx = 0.0
         for e in sorted(set(list(_by) + list(paid_this_week)), key=lambda x: -_by.get(x, 0)):
-            b = _by.get(e, 0.0); x = paid_this_week.get(e, 0.0)
-            _tb += b; _tx += x
-            note = ""
-            if e in paid_this_week and e not in _by: note = "XERO PAID, NOTHING BOOKED"
-            elif e not in paid_this_week: note = "no xero -> deputy/model"
-            elif abs(b - x) > 0.01: note = "BOOKED != XERO"
-            print(f"    {e:>5} {_h.get(e,0):>6.2f} {b:>10,.2f} {x:>10,.2f} {b-x:>9,.2f}  {note}")
+            b = _by.get(e, 0.0)
+            if e in paid_this_week:
+                exp, basis = paid_this_week[e], "xero"
+            elif str(e) in SAL:
+                exp, basis = b, "salaried model (no xero yet)"
+            else:
+                exp, basis = _dep.get(e, 0.0), "deputy rate (not in xero)"
+            _tb += b; _tx += exp
+            note = basis
+            if e in paid_this_week and e not in _by:
+                note = "XERO PAID, NOTHING BOOKED"
+            elif abs(b - exp) > 0.01:
+                note = basis + "  <-- MISMATCH"
+            print(f"    {e:>5} {_h.get(e,0):>6.2f} {b:>10,.2f} {exp:>10,.2f} {b-exp:>9,.2f}  {note}")
         print(f"    {'TOTAL':>5} {'':>6} {_tb:>10,.2f} {_tx:>10,.2f} {_tb-_tx:>9,.2f}")
-    xero_weeks += len(paid_this_week)
-    est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
-    warnings.extend(warn)
-    book(costed, day)
 
     # The ASSUMED pass: same week, same model, plus the rostered shifts nobody
     # clocked. Warnings are dropped — they'd be duplicates of the real pass, and
