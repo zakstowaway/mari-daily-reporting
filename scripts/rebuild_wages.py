@@ -58,6 +58,12 @@ if not TOKEN:
 cfg = json.loads((Path(__file__).parent / "salaried_employees.json").read_text())
 SAL = {k: v["annual"] for k, v in cfg["employees"].items()}
 WPY = cfg["_weeks_per_year"]
+# Deputy ids Zak has confirmed Xero does not pay, so Deputy's own Cost IS their
+# basis (pedro f, Long Long). Anyone else with hours and no Xero payslip is
+# REPORTED at the end of the run — the fallback is meant to be a safety net, not
+# a place people vanish into. pedro f worked 14 weeks unpaid before anyone
+# noticed, and only because a total refused to reconcile.
+XERO_EXEMPT = set(cfg.get("_xero_exempt", {}).get("ids", {}))
 
 # Xero is truth for any week payroll has posted. The salaried model is only an
 # ESTIMATE standing in for it — good for the open week, unnecessary for a closed
@@ -383,6 +389,16 @@ while cur <= d_to:
                 target[d][b] += c
 
     costed, warn, paid_this_week = cost_week(shifts, roster_shifts)
+    # Hours, but no Xero payslip, and not a known exception -> tell someone.
+    for _e in {str(x["employee_id"]) for x in shifts}:
+        if _e in paid_this_week or _e in XERO_EXEMPT or _e in SAL:
+            continue
+        _hh = sum(x.get("hours") or 0 for x in shifts if str(x["employee_id"]) == _e)
+        _cc = sum(x.get("cost") or 0 for x in shifts if str(x["employee_id"]) == _e)
+        if _hh > 0:
+            warnings.append({"type": "not_in_xero", "employee_id": _e,
+                             "week": wk_end.isoformat(), "hours": round(_hh, 2),
+                             "deputy_cost": round(_cc, 2)})
     if AUDIT:
         # Compare each person against the yardstick they are actually COSTED by,
         # not against Xero regardless (Zak, 2026-07-17: "match pedro to his
@@ -525,6 +541,17 @@ for pfx in ("stow", "hg", "mari"):
             w.writeheader()
             for r in rows:
                 w.writerow({k: r.get(k, "") for k in fields})
+
+nx = [w for w in warnings if w["type"] == "not_in_xero"]
+if nx:
+    agg = defaultdict(lambda: [0.0, 0.0, 0])
+    for w in nx:
+        a = agg[w["employee_id"]]; a[0] += w["hours"]; a[1] += w["deputy_cost"]; a[2] += 1
+    print(f"\n  *** NOT IN XERO: {len(agg)} person(s) worked but payroll has no payslip.")
+    print(f"      Costed at Deputy's rate as a fallback. Ask Zak whether each is an")
+    print(f"      exception (-> scripts/salaried_employees.json _xero_exempt) or unpaid.")
+    for e, (h, c, n) in sorted(agg.items(), key=lambda kv: -kv[1][1]):
+        print(f"        deputy id {e}: {h:.2f}h over {n} week(s), ${c:,.2f} ex")
 
 zc = [w for w in warnings if w["type"] == "zero_cost_shift"]
 nh = [w for w in warnings if w["type"] == "salaried_no_hours"]
