@@ -1,6 +1,6 @@
 {
   "date": "2026-07-10",
-  "generated_at": "2026-07-12T23:41:28.986954Z",
+  "generated_at": "2026-07-17T22:18:02.107363Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -23,14 +23,14 @@
     "gp_pct": 85.1,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 2476.64,
-    "bev_ex_gst": 1156.18,
+    "food_ex_gst": 2423.45,
+    "bev_ex_gst": 1209.36,
     "food_cogs": 311.45,
     "bev_cogs": 228.34,
-    "food_cogs_pct": 12.6,
-    "bev_cogs_pct": 19.7,
-    "food_gp_pct": 87.4,
-    "bev_gp_pct": 80.3,
+    "food_cogs_pct": 12.9,
+    "bev_cogs_pct": 18.9,
+    "food_gp_pct": 87.1,
+    "bev_gp_pct": 81.1,
     "mari_rideon_ex_gst": 0.0,
     "hg_food_out_ex_gst": 0.0,
     "stow_food_out_ex_gst": 0.0
@@ -39,14 +39,15 @@
     "kitchen_dollars": 786.7,
     "foh_dollars": 230.78,
     "driver_dollars": 0.0,
-    "admin_dollars": 22.66,
-    "total_dollars": 1040.13,
-    "wages_pct": 28.6,
+    "admin_dollars": 25.18,
+    "leave_dollars": 0.0,
+    "total_dollars": 1042.65,
+    "wages_pct": 28.7,
     "net_wage_pct": null,
     "kitchen_hours": 18.8,
     "foh_hours": 6.5,
-    "wages_kitchen_pct": 31.8,
-    "wages_foh_pct": 20.0,
+    "wages_kitchen_pct": 32.5,
+    "wages_foh_pct": 19.1,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -60,7 +61,7 @@
     "cogs_food": "green",
     "cogs_bev": "green",
     "wages_kitchen": "red",
-    "wages_foh": "amber"
+    "wages_foh": "yellow"
   },
   "targets": {
     "cogs": {
@@ -109,121 +110,141 @@
       "name": "Tonkotsu",
       "qty": 15.0,
       "rev": 406.0,
-      "cost": 62.46
+      "cost": 62.46,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mie Goreng",
       "qty": 16.0,
       "rev": 372.0,
-      "cost": 50.92
+      "cost": 50.92,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Katsu Curry",
       "qty": 12.0,
       "rev": 324.0,
-      "cost": 34.28
+      "cost": 34.28,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Sapporo - 500ml",
       "qty": 15.0,
       "rev": 217.5,
-      "cost": 55.65
+      "cost": 55.65,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Prawn Har Gow [GF]",
       "qty": 10.0,
       "rev": 188.0,
-      "cost": 44.14
+      "cost": 44.14,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fried Rice",
       "qty": 8.0,
       "rev": 186.0,
-      "cost": 21.44
+      "cost": 21.44,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Shredded Beef",
       "qty": 7.0,
       "rev": 182.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Karaage",
       "qty": 8.0,
       "rev": 134.3,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "BBQ Pork Buns",
       "qty": 9.0,
       "rev": 133.5,
-      "cost": 31.5
+      "cost": 31.5,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Schooner",
       "qty": 12.0,
       "rev": 114.0,
-      "cost": 19.5
+      "cost": 19.5,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Devon's Prawn Toast",
       "qty": 7.0,
       "rev": 110.4,
-      "cost": 27.22
+      "cost": 27.22,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Miso",
       "qty": 4.0,
       "rev": 98.6,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Pint",
       "qty": 7.0,
       "rev": 87.5,
-      "cost": 15.26
+      "cost": 15.26,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Veg Gyoza",
       "qty": 6.0,
       "rev": 84.0,
-      "cost": 11.77
+      "cost": 11.77,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Old Fashioned",
       "qty": 4.0,
       "rev": 80.0,
-      "cost": 17.36
+      "cost": 17.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Margato",
       "qty": 4.0,
       "rev": 80.0,
-      "cost": 15.38
+      "cost": 15.38,
+      "cost_source": "lightspeed"
     },
     {
       "name": "BBQ Meat Platter",
       "qty": 2.0,
       "rev": 80.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "White Light Pure Vodka [House]",
       "qty": 7.0,
       "rev": 77.0,
-      "cost": 10.63
+      "cost": 10.63,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 4.0,
       "rev": 66.0,
-      "cost": 13.06
+      "cost": 13.06,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Duck Spring Roll",
       "qty": 4.0,
       "rev": 62.4,
-      "cost": 14.29
+      "cost": 14.29,
+      "cost_source": "lightspeed"
     }
   ]
 }
