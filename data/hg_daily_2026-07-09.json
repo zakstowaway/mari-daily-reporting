@@ -1,6 +1,6 @@
 {
   "date": "2026-07-09",
-  "generated_at": "2026-07-12T23:41:13.163782Z",
+  "generated_at": "2026-07-17T22:17:41.292330Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -23,30 +23,31 @@
     "gp_pct": 86.0,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 1075.73,
-    "bev_ex_gst": 334.55,
+    "food_ex_gst": 1072.55,
+    "bev_ex_gst": 337.73,
     "food_cogs": 129.88,
     "bev_cogs": 68.02,
     "food_cogs_pct": 12.1,
-    "bev_cogs_pct": 20.3,
+    "bev_cogs_pct": 20.1,
     "food_gp_pct": 87.9,
-    "bev_gp_pct": 79.7,
+    "bev_gp_pct": 79.9,
     "mari_rideon_ex_gst": 0.0,
     "hg_food_out_ex_gst": 0.0,
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
     "kitchen_dollars": 667.45,
-    "foh_dollars": 394.21,
+    "foh_dollars": 416.95,
     "driver_dollars": 0.0,
-    "admin_dollars": 22.66,
-    "total_dollars": 1084.32,
-    "wages_pct": 76.9,
+    "admin_dollars": 25.18,
+    "leave_dollars": 0.0,
+    "total_dollars": 1109.58,
+    "wages_pct": 78.7,
     "net_wage_pct": null,
     "kitchen_hours": 14.8,
     "foh_hours": 9.8,
-    "wages_kitchen_pct": 62.0,
-    "wages_foh_pct": 117.8,
+    "wages_kitchen_pct": 62.2,
+    "wages_foh_pct": 123.5,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -109,121 +110,141 @@
       "name": "Shredded Beef",
       "qty": 7.0,
       "rev": 182.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Miso",
       "qty": 6.0,
       "rev": 127.6,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Tonkotsu",
       "qty": 4.0,
       "rev": 116.0,
-      "cost": 16.66
+      "cost": 16.66,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fried Rice",
       "qty": 4.0,
       "rev": 96.0,
-      "cost": 10.72
+      "cost": 10.72,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Unlimited BBQ",
       "qty": 2.0,
       "rev": 90.0,
-      "cost": 17.17
+      "cost": 17.17,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Devon's Prawn Toast",
       "qty": 5.0,
       "rev": 80.0,
-      "cost": 19.44
+      "cost": 19.44,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Prawn Har Gow [GF]",
       "qty": 4.0,
       "rev": 76.0,
-      "cost": 17.65
+      "cost": 17.65,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Sapporo - 500ml",
       "qty": 5.0,
       "rev": 75.0,
-      "cost": 18.55
+      "cost": 18.55,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Duck Spring Roll",
       "qty": 4.0,
       "rev": 64.0,
-      "cost": 14.29
+      "cost": 14.29,
+      "cost_source": "lightspeed"
     },
     {
       "name": "BBQ Pork Buns",
       "qty": 4.0,
       "rev": 60.0,
-      "cost": 14.0
+      "cost": 14.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 3.0,
       "rev": 57.0,
-      "cost": 9.79
+      "cost": 9.79,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Veg Gyoza",
       "qty": 4.0,
       "rev": 56.0,
-      "cost": 7.84
+      "cost": 7.84,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Angas & Bremer Ros\u00e9 - Bottle",
       "qty": 1.0,
       "rev": 49.0,
-      "cost": 9.65
+      "cost": 9.65,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mie Goreng",
       "qty": 2.0,
       "rev": 47.0,
-      "cost": 6.36
+      "cost": 6.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Karaage",
       "qty": 2.0,
       "rev": 34.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "From Sundays Shiraz - Regular",
       "qty": 2.0,
       "rev": 30.0,
-      "cost": 5.6
+      "cost": 5.6,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Big Sur IPA Can [HG]",
       "qty": 2.0,
       "rev": 28.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Vegetarian Spring Rolls",
       "qty": 2.0,
       "rev": 28.0,
-      "cost": 3.3
+      "cost": 3.3,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Pint",
       "qty": 2.0,
       "rev": 25.0,
-      "cost": 4.36
+      "cost": 4.36,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Corona",
       "qty": 2.0,
       "rev": 22.0,
-      "cost": 5.31
+      "cost": 5.31,
+      "cost_source": "lightspeed"
     }
   ]
 }

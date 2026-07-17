@@ -8,8 +8,8 @@
     "dept": "Admin",
     "start_time": 1783562400,
     "end_time": 1783580400,
-    "hours": 0.45,
-    "cost": 20.23,
+    "hours": 0.5,
+    "cost": 22.48,
     "salaried_synth": true
   },
   {
@@ -35,7 +35,7 @@
     "start_time": 1783575000,
     "end_time": 1783597500,
     "hours": 6.25,
-    "cost": 194.64,
+    "cost": 214.95,
     "salaried_synth": false
   },
   {
