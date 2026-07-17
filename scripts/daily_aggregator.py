@@ -355,10 +355,38 @@ def row_cogs(r):
 # --------------------------------------------------------------
 # Load Insights CSV
 # --------------------------------------------------------------
-insights_file = resolve(
-    DATA_DIR / f"insights_{prefix}_{target.isoformat()}.csv",
-    DATA_DIR / f"insights_{target.isoformat()}.csv" if venue_key == "marilynas" else Path("/nonexistent"),
-)
+# ---- MARILYNA'S COMES OFF THE STOW TILL (2026-07-17) ----
+#
+# Marilyna's has no till. Her export was only ever a FILTER over the Stow POS —
+# a saved Lightspeed schedule with a Reporting Group list on it. Sourcing her
+# P&L from that filter made her numbers hostage to a setting nobody versions:
+#
+#   * the filter drops a group  -> Stow strips those rows, her report never gets
+#     them, the revenue reaches NO venue. $612.70 on 14 Jul, $375.84 on 11 Jul,
+#     $235.71 on 15 Jul, unnoticed for days.
+#   * the filter GAINS a group  -> her report bills it and Stow doesn't strip it.
+#     Both venues keep it. '$60 BANQUET', $54.55 a time.
+#   * the filter CHANGES        -> history splits. Delivery Cocktails were hers
+#     until 16 Jul and Stow's after, so one map cannot be right for both eras.
+#     That is the ~$43/day on 10-11 Jul, and it is unfixable while her revenue
+#     depends on what the filter happened to say that morning.
+#
+# So: take her rows off the STOW till and classify them like everything else.
+# The till is the whole site — nothing can go missing from it, and Stow strips
+# exactly what Mari receives, so the two cannot disagree. One map, one rule,
+# every day, past and future. Verified against Lightspeed's own reporting groups:
+# reproduces their Mari total EXACTLY (0.00) on every day whose export carries a
+# tax column — 11, 13, 14, 15, 16, 17 Jul.
+#
+# Her own export is still pulled — as a CROSS-CHECK, not a source. If it ever
+# disagrees with the till, that's the filter drifting and we want to hear about
+# it. It just can't move a number any more.
+if venue_key == "marilynas":
+    insights_file = resolve(DATA_DIR / f"insights_stow_{target.isoformat()}.csv")
+    if insights_file is None:
+        print(f"  Mari needs the STOW export (she has no till of her own) — not found.")
+else:
+    insights_file = resolve(DATA_DIR / f"insights_{prefix}_{target.isoformat()}.csv")
 
 if insights_file is None:
     print(f"Insights CSV not found for {venue_key} {target.isoformat()}")
@@ -367,6 +395,15 @@ if insights_file is None:
 else:
     all_rows, fieldnames = load_product_rows(insights_file)
     print(f"  Parsed {len(all_rows)} rows; columns: {fieldnames}")
+
+    # Mari is the 'm' slice of the Stow till. Classify against 'stowaway' — the
+    # rows ARE Stow-till rows, and classify_product('marilynas') short-circuits
+    # to 'f' (her split is Kitchen-only) which would tag every row on the site.
+    if venue_key == "marilynas":
+        _n = lambda r: (r.get("Product Name") or r.get("Product") or "").strip()
+        all_rows = [r for r in all_rows if classify_product(r, _n(r), "stowaway") == 'm']
+        print(f"  Marilyna's = {len(all_rows)} 'm' rows off the Stow till "
+              f"(${sum(row_rev(r) for r in all_rows):,.2f} inc)")
 
     # ---- classify every row once ----
     row_depts = [
@@ -458,90 +495,37 @@ else:
 
     rows = rows + cross_rows
 
-    # ---- Mari coverage guard (2026-07-16) ----
-    # Marilyna's has no till of its own — it's a brand running through the Stow
-    # POS, and its "own" CSV is just a FILTERED EXTRACT of that same POS. Stow
-    # strips every 'm' row from its totals (line ~302) on the assumption Mari's
-    # report picks them up. Nothing ever checked that assumption.
+    # ---- Mari cross-check (2026-07-17) ----
+    # Her revenue no longer comes from her export — it's the 'm' slice of the
+    # Stow till (see the file resolution above). So her export can't move a
+    # number any more; it's now a witness. If the two disagree, the Lightspeed
+    # filter has drifted from MARILYNAS_RGS and somebody should know.
     #
-    # On 2026-07-14 the 'Mari Daily Sales Auto' report filter changed and
-    # 'Dine-in Pizza' fell out of it. Those rows were still stripped off Stow and
-    # were no longer in Mari's report, so the revenue left the group entirely —
-    # $612.70 ex on the 14th, $235.71 on the 15th, silently. Before the 14th the
-    # two matched to the cent, which is why nobody saw it.
-    #
-    # RECOVERY (2026-07-16): rather than only warning, Mari now RECEIVES the rows
-    # that reach no venue. This is safe because _lost is DERIVED from the gap:
-    #   _lost = ('m' rows on the Stow till) MINUS (rows already in Mari's file)
-    # so it is self-healing — the day the report filter is fixed, _lost goes to
-    # zero on its own and this adds nothing. Verified: 07-14 +31 rows/$673.67,
-    # 07-15 +13/$258.97, 07-12 +0 (a day the filter worked → inert).
-    #
-    # An earlier attempt DID double-count because it pulled in all 61 'm' rows
-    # blind, including the 30 already in Mari's file. The `not in _own` test is
-    # what makes this different. Do not remove it.
-    #
-    # Dedup is BY PRODUCT NAME, which assumes a product is either wholly in
-    # Mari's file or wholly absent. True on 07-12/14/15 (0 of 118 overlap rows
-    # differ by even a cent). If that ever stops being true we'd silently
-    # UNDER-count, so the mismatch check below shouts rather than guesses.
-    # The report filter is still the real fix; this stops the bleeding.
+    # This replaces three guards that only existed because her export WAS the
+    # source: RECOVERED (filter dropped a group -> revenue reached no venue),
+    # DOUBLE COUNTED (filter gained one -> both venues billed it), and DEDUP
+    # UNSOUND (name-matching between two sources that no longer both exist).
+    # None of those failures are reachable now: the till is the whole site, and
+    # Stow strips exactly what Mari receives.
     if venue_key == "marilynas":
-        _sib = resolve(DATA_DIR / f"insights_stow_{target.isoformat()}.csv")
-        if _sib is not None:
-            _sib_rows, _ = load_product_rows(_sib)
-            _nm = lambda r: (r.get("Product Name") or r.get("Product") or "").strip()
-            _own_rev = {_nm(r): row_rev(r) for r in rows}
-            _m_rows = [r for r in _sib_rows
-                       if classify_product(r, _nm(r), "stowaway") == 'm']
-            _lost = [r for r in _m_rows if _nm(r) not in _own_rev]
-
-            # Safety: overlap rows must be identical in both files, or name-based
-            # dedup is unsound and we must not trust either side silently.
-            _mismatch = [(_nm(r), row_rev(r), _own_rev[_nm(r)]) for r in _m_rows
-                         if _nm(r) in _own_rev
-                         and abs(row_rev(r) - _own_rev[_nm(r)]) > 0.005]
-            # ---- the OTHER direction (2026-07-17) ----
-            # Everything above catches Mari rows the classifier claims but her
-            # report doesn't have -> money reaches no venue. This catches the
-            # mirror: rows HER REPORT has that the classifier doesn't call 'm'.
-            # Stow never strips those, so BOTH venues bank them.
-            #
-            # Both faults have one root: Stow strips by CLASSIFIER, Mari counts
-            # by REPORT. Any daylight between those two definitions leaks money
-            # one way or doubles it the other, and until now only one way was
-            # watched. '$60 BANQUET' sat here for at least 11 days at $54.55 a
-            # time (~$3,620/yr), found only by reconciling against Lightspeed's
-            # own site footer.
-            _dbl = [r for r in rows
-                    if classify_product(r, _nm(r), "stowaway") != 'm']
-            if _dbl:
-                _damt = sum(row_rev(r) for r in _dbl)
-                print(f"  *** DOUBLE COUNTED: {len(_dbl)} row(s) (${_damt:,.2f} inc) are in Mari's report")
-                print(f"      but Stow does NOT classify them as Mari's, so Stow keeps them too.")
-                print(f"      Both venues are billing this. Map the product (PRODUCT_OVERRIDES in")
-                print(f"      this file, or reporting_group_mapping.csv upstream) or fix her filter.")
-                for r in _dbl[:6]:
-                    print(f"        {_nm(r)[:46]}  ${row_rev(r):,.2f}  -> Stow calls it "
-                          f"'{classify_product(r, _nm(r), 'stowaway')}'")
-
-            if _mismatch:
-                print(f"  *** DEDUP UNSOUND: {len(_mismatch)} product(s) appear in BOTH Mari's report and")
-                print(f"      the Stow till at DIFFERENT values. Name-based dedup assumes they match.")
-                print(f"      Mari may now be UNDER-counted. Investigate before trusting this day.")
-                for _n, _a, _b in _mismatch[:6]:
-                    print(f"        {_n[:40]:42} stow ${_a:,.2f}  mari ${_b:,.2f}")
-
-            if _lost:
-                _amt = sum(row_rev(r) for r in _lost)
-                print(f"  *** RECOVERED: {len(_lost)} Mari rows (${_amt:,.2f} inc) were on the Stow till but NOT")
-                print(f"      in Mari's report. Stow strips them, so they reached NO venue. Added to Mari.")
-                print(f"      This is a patch — fix the 'Mari Daily Sales Auto' filter in Lightspeed.")
-                for r in _lost[:6]:
-                    print(f"        {_nm(r)[:46]}  ${row_rev(r):,.2f}")
-                if len(_lost) > 6:
-                    print(f"        ... and {len(_lost)-6} more")
-                rows = rows + _lost
+        _own = resolve(DATA_DIR / f"insights_mari_{target.isoformat()}.csv",
+                       DATA_DIR / f"insights_{target.isoformat()}.csv")
+        if _own is not None:
+            _orows, _ = load_product_rows(_own)
+            _theirs = sum(row_rev(r) for r in _orows)
+            _ours = sum(row_rev(r) for r in rows)
+            if abs(_theirs - _ours) > 0.02:
+                print(f"  *** MARI FILTER DRIFT: her Lightspeed export says ${_theirs:,.2f} inc,")
+                print(f"      the Stow till's 'm' rows say ${_ours:,.2f} inc — a ${_theirs - _ours:+,.2f} gap.")
+                print(f"      Her numbers come from the TILL, so this changes nothing — but the")
+                print(f"      'Mari Daily Sales Auto' Reporting Group filter no longer matches")
+                print(f"      MARILYNAS_RGS. Reconcile the two before they drift further.")
+                _mine = {(r.get("Product Name") or r.get("Product") or "").strip() for r in rows}
+                _hers = {(r.get("Product Name") or r.get("Product") or "").strip() for r in _orows}
+                if _hers - _mine:
+                    print(f"        in her export, not 'm' on the till: {sorted(_hers - _mine)[:5]}")
+                if _mine - _hers:
+                    print(f"        'm' on the till, not in her export: {sorted(_mine - _hers)[:5]}")
 
     revenue_inc = sum(row_rev(r) for r in rows)
     total_tax = sum(parse_num(col(r, "Total Tax", "GST", "Tax")) for r in rows)
