@@ -44,6 +44,11 @@ AL_LOADING = 1.175
 OFFSET_H = 10
 
 WRITE = "--write" in sys.argv
+# --audit: dump per-employee booked-vs-Xero for each week. Reconciling the
+# TOTAL only tells you there is a hole, never where. Week ending 12 Jul tied to
+# +$516.86 while pedro f alone was worth $921.20 -- so ~$404 of mapped staff was
+# light and no amount of staring at the total could say whose.
+AUDIT = "--audit" in sys.argv
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 if len(args) < 2:
     sys.exit("usage: rebuild_wages.py <from YYYY-MM-DD> <to YYYY-MM-DD> [--write]")
@@ -378,6 +383,27 @@ while cur <= d_to:
                 target[d][b] += c
 
     costed, warn, paid_this_week = cost_week(shifts, roster_shifts)
+    if AUDIT:
+        _by = defaultdict(float); _h = defaultdict(float); _nm2 = {}
+        for s_ in costed:
+            if s_.get("_roster"): continue
+            _by[str(s_["employee_id"])] += s_["cost_final"]
+            _h[str(s_["employee_id"])] += s_.get("hours") or 0
+        _drop = defaultdict(float)
+        for s_ in shifts:
+            _nm2[str(s_["employee_id"])] = 1
+        print(f"  AUDIT week ending {wk_end}:")
+        print(f"    {'id':>5} {'hrs':>6} {'booked':>10} {'xero':>10} {'diff':>9}  note")
+        _tb = _tx = 0.0
+        for e in sorted(set(list(_by) + list(paid_this_week)), key=lambda x: -_by.get(x, 0)):
+            b = _by.get(e, 0.0); x = paid_this_week.get(e, 0.0)
+            _tb += b; _tx += x
+            note = ""
+            if e in paid_this_week and e not in _by: note = "XERO PAID, NOTHING BOOKED"
+            elif e not in paid_this_week: note = "no xero -> deputy/model"
+            elif abs(b - x) > 0.01: note = "BOOKED != XERO"
+            print(f"    {e:>5} {_h.get(e,0):>6.2f} {b:>10,.2f} {x:>10,.2f} {b-x:>9,.2f}  {note}")
+        print(f"    {'TOTAL':>5} {'':>6} {_tb:>10,.2f} {_tx:>10,.2f} {_tb-_tx:>9,.2f}")
     xero_weeks += len(paid_this_week)
     est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
     warnings.extend(warn)
