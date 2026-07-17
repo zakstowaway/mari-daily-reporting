@@ -7,3 +7,4 @@ data/*.csv.bak
 _archive/
 data/bo_exports/
 _site/
+.secrets/

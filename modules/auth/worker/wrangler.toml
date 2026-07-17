@@ -1,0 +1,14 @@
+name = "shg-auth"
+main = "index.js"
+compatibility_date = "2026-01-01"
+
+# Secrets are NOT set here — they are set with `wrangler secret put` so they
+# never touch the repo. See ../README.md.
+#   PASSWORDS     username -> pbkdf2 hash   (from .secrets/passwords.json)
+#   PEOPLE        username -> name, role    (from data/people.json)
+#   JWT_SECRET    token signing key         (openssl rand -base64 32)
+#   GITHUB_TOKEN  fine-grained PAT, this repo, Contents: read/write
+
+[vars]
+ALLOWED_ORIGIN = "https://app.stowawaybar.com"
+GITHUB_REPO = "zakstowaway/mari-daily-reporting"
