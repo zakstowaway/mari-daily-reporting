@@ -51,6 +51,29 @@ ALIASES = {
     #   id 284 "Olly"   = Olliver Case, kitchen casual   -> map (below)
     #   id  24 "Oliver" = Oliver Iaccarino, OWNER        -> NEVER map. See below.
     "Olly": "Olliver Case",
+    # 2026-07-17 — Deputy stores a first name / nickname, Xero the legal name, so
+    # none of these ever matched and rebuild_wages fell back to Deputy's rate.
+    # Each one VERIFIED by week-alignment over Mar–Jul: every week they logged
+    # hours is a week Xero paid them (D-only = 0). That is a far stronger test
+    # than name similarity, and it is the only reason these are here — a fuzzy
+    # match on 'Hugh' would happily have taken 'Maisie Hughes'.
+    #
+    #   id   deputy       xero                 D wks  both  D-only
+    #   283  liv          Olivia Allen-Hall      12     12     0
+    #   276  Daniel       Daniel Biesty          14     14     0
+    #   294  Mikel        Mikel Martin            7      7     0    (perfect both ways)
+    #   269  Zach         Zach Davis             14     14     0
+    #   232  Hugh         Hugh Yiend             13     13     0
+    #   166  Rei          Rei Ikeda               9      9     0
+    #   302  Archie       Archie Humphries        1      1     0    (thin — one week only.
+    #        NOT id 55 'Archie Warneford', who is a different person.)
+    "liv": "Olivia Allen-Hall",
+    "Daniel": "Daniel Biesty",
+    "Mikel": "Mikel Martin",
+    "Zach": "Zach Davis",
+    "Hugh": "Hugh Yiend",
+    "Rei": "Rei Ikeda",
+    "Archie": "Archie Humphries",
     # ⚠️ DO NOT add "Oliver" (id 24). He is Oliver Iaccarino, an owner, and lives
     # in _corp_payroll_only. His pay reaches corp payroll via the residual (Xero
     # group payroll MINUS Deputy group wages), so mapping him would move owner
@@ -63,9 +86,13 @@ ALIASES = {
     # construction. If he ever clocks on, his Deputy cost lands on a venue AND
     # his salary stays in the residual — counted twice, silently.
     #
-    #   "pedro f" (id 261) -> ? Worked 17.50h in the week ending 12 Jul and Xero
-    #     paid him NOTHING. Either a payroll miss or a name we can't see. Do not
-    #     invent a mapping to make the numbers tie.
+    # NOT MAPPED — because Xero has never paid them, under any name:
+    #   "pedro f"   (id 261): hours in 14 separate weeks, Xero pay in ZERO.
+    #   "Long Long" (id 225): hours in 4 weeks, Xero pay in ZERO.
+    # Verified by week-alignment Mar–Jul and by name search across all 122 people
+    # in the pay history. This is not a mapping gap — it is a person and a
+    # payroll that have never met. Do NOT invent an alias to make the totals
+    # tie; that would bury it. Needs Zak.
 }
 
 xero = json.loads((ROOT / "data" / "xero_pay_weekly.json").read_text())
