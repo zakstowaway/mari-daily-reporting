@@ -136,6 +136,16 @@ for wk, wk_shifts in by_week.items():
         if b == "admin":
             add(dstr, "stow", "Admin", c * V.ADMIN_SHARES["stowaway"])
             add(dstr, "hg", "Admin", c * V.ADMIN_SHARES["harry"])
+        elif b == "leave":
+            # allocate_week now books a salaried person's under-40 shortfall to
+            # leave (Zak, 2026-07-17). This feed is the OPERATIONAL roster — what
+            # a manager can still change — and leave is neither rosterable nor
+            # theirs to move, so it's dropped here rather than inflating a venue.
+            # It is not lost: rebuild_wages books it against stow|Leave, which is
+            # where the group view reads it from.
+            # (Without this branch the split("|") below raises ValueError and the
+            # whole roster feed dies — taking the week strip with it.)
+            continue
         else:
             ven, dept = b.split("|")
             add(dstr, ven, dept, c)

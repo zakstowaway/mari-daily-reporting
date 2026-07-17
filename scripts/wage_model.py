@@ -39,15 +39,42 @@ def salaried_week_cost(annual, weeks_per_year=52):
     return annual / weeks_per_year
 
 
-def allocate_week(shifts, salaried, weeks_per_year=52):
+CONTRACT_HOURS = 40.0
+
+
+def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None):
     """Assign an ex-super cost to every shift in ONE payroll week.
 
     shifts:   [{"employee_id","hours","cost","date","bucket", ...}] — `bucket` is
               whatever the caller wants the cost attributed to (venue/dept/leave).
     salaried: {employee_id: annual}
+    week_days: optional [iso dates] of the payroll week, for spreading leave.
 
     Returns (costed_shifts, warnings). Hourly shifts keep Deputy's own Cost.
-    Salaried shifts share out annual/52 pro-rata by logged hours.
+
+    SALARIED SHORTFALL IS LEAVE (Zak, 2026-07-17)
+      A salaried person is contracted to 40 hours. If they aren't on for 40, the
+      shortfall is leave — which is exactly what Xero shows: leave sits INSIDE
+      the 40 (Kris: 38.5 worked + 1.5 leave = 40).
+
+      So the denominator is 40, not "whatever they logged", and the shortfall's
+      share of annual/52 goes to the `leave` bucket. The weekly total is
+      unchanged; only where it lands changes:
+
+        Kris, 14 Jul: $2,013.76/week, 6.075h logged, nothing else.
+          before  6.075/6.075 = 100%  -> $2,013.76 onto ONE Stow shift.
+                  Stow took $2,148 that Tuesday. Read 100.9% wages.
+          after   6.075/40 = 15.2%    -> $306 Stow, $1,708 leave.
+
+      This is NOT the old `hours x rate` model. That one LOST the money — Kris's
+      16h week costed at $719 against $1,798 actually paid, and $268k of real
+      labour went missing across 90 weeks. Here the money is conserved to the
+      cent; it just stops pretending a manager's whole salary was earned on the
+      one Tuesday he happened to clock in.
+
+      Over 40 the denominator is the hours themselves: you're still paid 40 units
+      (Xero), so there's no leave to book and nothing to cap — the salary simply
+      spreads across everything worked.
     """
     out, warn = [], []
     by_emp = defaultdict(list)
@@ -76,7 +103,27 @@ def allocate_week(shifts, salaried, weeks_per_year=52):
             for s in group:
                 out.append({**s, "cost_final": 0.0})
             continue
+        # Contracted to 40. Anything short of it is leave, not a heavier shift.
+        denom = max(total_h, CONTRACT_HOURS)
         for s in group:
-            share = (s.get("hours") or 0) / total_h
+            share = (s.get("hours") or 0) / denom
             out.append({**s, "cost_final": week_cost * share})
+
+        short_h = CONTRACT_HOURS - total_h
+        if short_h > 0.01:
+            leave_cost = week_cost * (short_h / denom)
+            # Leave is a weekly quantity — it didn't happen on a day. Spread it
+            # across the week so the group view doesn't grow a spike on whichever
+            # day the person happened to clock in. Falls back to their own shift
+            # dates when the caller doesn't say what the week's days are.
+            days = week_days or sorted({s.get("date") for s in group if s.get("date")})
+            if days:
+                for d in days:
+                    out.append({"employee_id": eid, "hours": short_h / len(days),
+                                "cost": 0, "date": d, "bucket": "leave",
+                                "_leave_fill": True,
+                                "cost_final": leave_cost / len(days)})
+            warn.append({"type": "salaried_shortfall_leave", "employee_id": eid,
+                         "logged_h": round(total_h, 2), "leave_h": round(short_h, 2),
+                         "leave_cost": round(leave_cost, 2)})
     return out, warn

@@ -33,7 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
 from core import venues as V
-from wage_model import allocate_week
+from wage_model import allocate_week, CONTRACT_HOURS as WM_CONTRACT_HOURS
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -340,8 +340,22 @@ while cur <= d_to:
             th = sum((g.get("hours") or 0) for g in group)
             if th <= 0:
                 continue                     # paid, but clocked nothing to attribute
+            # Same shortfall-is-leave rule as the model (Zak, 2026-07-17). Xero
+            # says what they were PAID; it doesn't say the whole of it was earned
+            # on the days they clocked. Leave sits inside the 40, so a salaried
+            # person short of 40 has the balance booked to leave rather than
+            # loaded onto their one Tuesday shift. Total from Xero is unchanged.
+            sal_here = str(eid) in SAL
+            denom = max(th, WM_CONTRACT_HOURS) if sal_here else th
             for g in group:
-                costed.append({**g, "cost_final": paid[eid] * (g.get("hours") or 0) / th})
+                costed.append({**g, "cost_final": paid[eid] * (g.get("hours") or 0) / denom})
+            if sal_here and denom > th:
+                short = denom - th
+                days_wk = [(cur + timedelta(days=i)).isoformat() for i in range(7)]
+                for dd in days_wk:
+                    costed.append({"employee_id": eid, "hours": short / 7, "cost": 0,
+                                   "date": dd, "bucket": "leave", "_leave_fill": True,
+                                   "cost_final": paid[eid] * (short / denom) / 7})
         # Roster stand-ins only help the ESTIMATE. Anyone Xero has paid is costed
         # from the payslip across the shifts they actually logged — a planned
         # shift must never absorb a share of real money.
