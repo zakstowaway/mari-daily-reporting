@@ -238,6 +238,34 @@ def _rg_dept(rg: str, venue_key: str) -> str | None:
     return 'b'   # FOH catch-all — matches classify_rg_to_dept in the weekly report
 
 
+# Products the generated map has never heard of (2026-07-17).
+#
+# product_dept_map.json is built from the weekly report's
+# reporting_group_mapping.csv — a HISTORICAL aggregate. A product missing from
+# it falls through to the 'b' FOH catch-all, and for a Marilyna's product that
+# is silently a DOUBLE COUNT: her report contains it, so she banks it, and Stow
+# doesn't recognise it as 'm', so Stow never strips it. Both venues bill it.
+#
+# '$60 BANQUET' — Mari's (Zak, 2026-07-17). $54.55 ex every time it sells;
+# caught reconciling against Lightspeed's own site footer, which is the only
+# number in this pipeline that isn't derived from our own code. Found on 2 of
+# the 11 days we hold — ~$3,620/yr. Its sibling '$45 FEAST' IS mapped to 'm',
+# which is exactly why nobody noticed the gap.
+#
+# This is the mirror of the Mari coverage leak: that one had the classifier
+# saying "Mari's" when her report didn't have it; this has her report saying
+# "Mari's" when the classifier doesn't. Same root — Stow strips by CLASSIFIER
+# while Mari counts by REPORT, and any daylight between the two definitions
+# leaks money one way or doubles it the other.
+#
+# Proper fix is upstream in reporting_group_mapping.csv, which lives in the
+# weekly-report skill and is read-only from here. This overlay survives a map
+# regeneration; delete an entry once the source knows about it.
+PRODUCT_OVERRIDES = {
+    "$60 BANQUET": "m",
+}
+
+
 def classify_product(row: dict, product_name: str, venue_key: str) -> str:
     """-> 'f' | 'b' | 'm' | 'hgf' | 'stf'.
 
@@ -255,6 +283,8 @@ def classify_product(row: dict, product_name: str, venue_key: str) -> str:
     if vkey is None:
         return 'f'   # Mari: everything is Kitchen; split not used
     pn = (product_name or '').strip()
+    if pn in PRODUCT_OVERRIDES:
+        return PRODUCT_OVERRIDES[pn]
     return m.get(vkey, {}).get(pn) or m.get("*", {}).get(pn) or 'b'
 
 
@@ -471,6 +501,30 @@ else:
             _mismatch = [(_nm(r), row_rev(r), _own_rev[_nm(r)]) for r in _m_rows
                          if _nm(r) in _own_rev
                          and abs(row_rev(r) - _own_rev[_nm(r)]) > 0.005]
+            # ---- the OTHER direction (2026-07-17) ----
+            # Everything above catches Mari rows the classifier claims but her
+            # report doesn't have -> money reaches no venue. This catches the
+            # mirror: rows HER REPORT has that the classifier doesn't call 'm'.
+            # Stow never strips those, so BOTH venues bank them.
+            #
+            # Both faults have one root: Stow strips by CLASSIFIER, Mari counts
+            # by REPORT. Any daylight between those two definitions leaks money
+            # one way or doubles it the other, and until now only one way was
+            # watched. '$60 BANQUET' sat here for at least 11 days at $54.55 a
+            # time (~$3,620/yr), found only by reconciling against Lightspeed's
+            # own site footer.
+            _dbl = [r for r in rows
+                    if classify_product(r, _nm(r), "stowaway") != 'm']
+            if _dbl:
+                _damt = sum(row_rev(r) for r in _dbl)
+                print(f"  *** DOUBLE COUNTED: {len(_dbl)} row(s) (${_damt:,.2f} inc) are in Mari's report")
+                print(f"      but Stow does NOT classify them as Mari's, so Stow keeps them too.")
+                print(f"      Both venues are billing this. Map the product (PRODUCT_OVERRIDES in")
+                print(f"      this file, or reporting_group_mapping.csv upstream) or fix her filter.")
+                for r in _dbl[:6]:
+                    print(f"        {_nm(r)[:46]}  ${row_rev(r):,.2f}  -> Stow calls it "
+                          f"'{classify_product(r, _nm(r), 'stowaway')}'")
+
             if _mismatch:
                 print(f"  *** DEDUP UNSOUND: {len(_mismatch)} product(s) appear in BOTH Mari's report and")
                 print(f"      the Stow till at DIFFERENT values. Name-based dedup assumes they match.")
