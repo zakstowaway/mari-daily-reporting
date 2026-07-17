@@ -36,6 +36,24 @@ ALIASES = {
     "Maria Flor Da Silva Quelhas Campinos Pocas": "Maria Flor Da Silva Quelhas Campinos Pocas",
     "Emily": "Emily Duncan",
     "Aleisha": "Aleisha Armitage",
+    # 2026-07-17 — both cost ~$501/wk of real wages that were falling to Deputy's
+    # rate instead of Xero's figure, because Deputy holds a first name and Xero
+    # holds the legal one.
+    "denis": "denis ferreira rodrigues",   # proven: Deputy $233.56 == Xero $233.56, wk 07-12
+    "Olivia": "Pongnapa Chonkaew",         # Zak: "pongnapa is likely olivia chef".
+                                           # Corroborated: id 296 works Stow Kitchen +
+                                           # Harry's Kitchen. NOT id 205 Olivia Giuliano,
+                                           # who is a different person and already mapped.
+    # NOT added, deliberately:
+    #   "Olly" (id 284) -> "Olliver Case"? The name fits, and Xero paid Olliver
+    #     Case $533.10 that week with no other candidate. But there is ALSO a
+    #     casual 'Oliver' (id 24) AND an owner 'Oliver Iaccarino' in
+    #     _corp_payroll_only. Three near-identical names, and the one mistake
+    #     this file exists to prevent is exactly this: mapping an owner onto a
+    #     venue wage line. Needs Zak, not inference.
+    #   "pedro f" (id 261) -> ? Worked 17.50h in the week ending 12 Jul and Xero
+    #     paid him NOTHING. Either a payroll miss or a name we can't see. Do not
+    #     invent a mapping to make the numbers tie.
 }
 
 xero = json.loads((ROOT / "data" / "xero_pay_weekly.json").read_text())
