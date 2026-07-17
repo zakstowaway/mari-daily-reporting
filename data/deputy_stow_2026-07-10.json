@@ -9,8 +9,8 @@
     "start_time": 1783645200,
     "end_time": 1783686600,
     "hours": 11.0,
-    "cost": 0.0,
-    "salaried_synth": false
+    "cost": 396.63,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35225,
@@ -21,8 +21,8 @@
     "dept": "Admin",
     "start_time": 1783648800,
     "end_time": 1783666800,
-    "hours": 4.05,
-    "cost": 182.05,
+    "hours": 4.5,
+    "cost": 202.28,
     "salaried_synth": true
   },
   {
@@ -113,7 +113,7 @@
     "start_time": 1783666800,
     "end_time": 1783685700,
     "hours": 4.75,
-    "cost": 0.0,
+    "cost": 173.67,
     "salaried_synth": false
   },
   {
@@ -125,8 +125,8 @@
     "dept": "FOH",
     "start_time": 1783666800,
     "end_time": 1783681200,
-    "hours": 3.5,
-    "cost": 157.33,
+    "hours": 4.0,
+    "cost": 179.8,
     "salaried_synth": true
   },
   {

@@ -1,6 +1,6 @@
 {
   "date": "2026-07-10",
-  "generated_at": "2026-07-12T22:40:08.599484Z",
+  "generated_at": "2026-07-17T22:18:03.045883Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -15,38 +15,39 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 10765.84,
-    "revenue_ex_gst": 9787.13,
-    "cogs_dollars": 2092.41,
-    "cogs_pct": 21.4,
-    "gp_dollars": 7694.72,
-    "gp_pct": 78.6,
+    "revenue_inc_gst": 10755.84,
+    "revenue_ex_gst": 9778.04,
+    "cogs_dollars": 2117.72,
+    "cogs_pct": 21.7,
+    "gp_dollars": 7660.32,
+    "gp_pct": 78.3,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
     "food_ex_gst": 2074.33,
-    "bev_ex_gst": 7712.8,
+    "bev_ex_gst": 7703.71,
     "food_cogs": 287.87,
-    "bev_cogs": 1804.54,
+    "bev_cogs": 1829.85,
     "food_cogs_pct": 13.9,
-    "bev_cogs_pct": 23.4,
+    "bev_cogs_pct": 23.8,
     "food_gp_pct": 86.1,
-    "bev_gp_pct": 76.6,
-    "mari_rideon_ex_gst": 3210.66,
+    "bev_gp_pct": 76.2,
+    "mari_rideon_ex_gst": 3219.75,
     "hg_food_out_ex_gst": 7.27,
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
-    "kitchen_dollars": 495.39,
-    "foh_dollars": 1430.88,
+    "kitchen_dollars": 1134.12,
+    "foh_dollars": 1456.04,
     "driver_dollars": 0.0,
-    "admin_dollars": 203.9,
-    "total_dollars": 2130.16,
-    "wages_pct": 21.8,
+    "admin_dollars": 226.55,
+    "leave_dollars": 0.0,
+    "total_dollars": 2816.72,
+    "wages_pct": 28.8,
     "net_wage_pct": null,
     "kitchen_hours": 23.8,
-    "foh_hours": 37.2,
-    "wages_kitchen_pct": 23.9,
-    "wages_foh_pct": 18.6,
+    "foh_hours": 37.8,
+    "wages_kitchen_pct": 54.7,
+    "wages_foh_pct": 18.9,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -109,121 +110,141 @@
       "name": "Classic Margarita",
       "qty": 40.0,
       "rev": 724.65,
-      "cost": 159.16
+      "cost": 159.16,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Guinness Draught - Pint",
       "qty": 38.0,
       "rev": 652.13,
-      "cost": 178.89
+      "cost": 178.89,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Pint",
       "qty": 33.0,
       "rev": 351.03,
-      "cost": 80.73
+      "cost": 80.73,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Schooner",
       "qty": 24.0,
       "rev": 317.97,
-      "cost": 77.75
+      "cost": 77.75,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Aperol Spritz",
       "qty": 16.0,
       "rev": 291.47,
-      "cost": 56.84
+      "cost": 56.84,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Beef Cheek",
       "qty": 7.0,
       "rev": 287.14,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Villa Fresco Sangiovese - Regular",
       "qty": 28.7,
       "rev": 274.45,
-      "cost": 69.41
+      "cost": 69.41,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mulled Wine",
       "qty": 17.0,
       "rev": 255.0,
-      "cost": 34.96
+      "cost": 34.96,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Jalape\u00f1o Marg",
       "qty": 11.0,
       "rev": 234.26,
-      "cost": 8.27
+      "cost": 8.27,
+      "cost_source": "lightspeed"
     },
     {
       "name": "White Light Pure Vodka [House]",
       "qty": 21.0,
       "rev": 223.0,
-      "cost": 31.9
+      "cost": 31.9,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Philter XPA - Schooner",
       "qty": 18.0,
       "rev": 201.8,
-      "cost": 41.48
+      "cost": 41.48,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mother's Milk Shiraz - Bottle",
       "qty": 3.0,
       "rev": 196.18,
-      "cost": 48.25
+      "cost": 48.25,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Schooner",
       "qty": 21.7,
       "rev": 196.08,
-      "cost": 39.58
+      "cost": 39.58,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Rosemary Salted Fries",
       "qty": 15.0,
       "rev": 195.57,
-      "cost": 27.83
+      "cost": 27.83,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Lychee Martini",
       "qty": 11.0,
       "rev": 192.03,
-      "cost": 39.85
+      "cost": 39.85,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Pint",
       "qty": 11.0,
       "rev": 185.86,
-      "cost": 47.8
+      "cost": 47.8,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mother's Milk Shiraz - Regular",
       "qty": 12.0,
       "rev": 179.48,
-      "cost": 38.6
+      "cost": 38.6,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Version Two Pinot Grigio - Regular",
       "qty": 19.7,
       "rev": 173.54,
-      "cost": 34.8
+      "cost": 34.8,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Pint",
       "qty": 13.0,
       "rev": 162.6,
-      "cost": 43.42
+      "cost": 43.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Status Quo - Pint",
       "qty": 8.0,
       "rev": 140.57,
-      "cost": 32.92
+      "cost": 32.92,
+      "cost_source": "lightspeed"
     }
   ]
 }
