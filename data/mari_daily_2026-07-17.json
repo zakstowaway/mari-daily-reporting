@@ -1,6 +1,6 @@
 {
   "date": "2026-07-17",
-  "generated_at": "2026-07-17T22:34:31.374419Z",
+  "generated_at": "2026-07-17T23:31:14.222109Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -137,17 +137,17 @@
       "cost_source": "lightspeed"
     },
     {
-      "name": "Regular Meatlovers",
-      "qty": 6.0,
-      "rev": 150.0,
-      "cost": 31.15,
-      "cost_source": "lightspeed"
-    },
-    {
       "name": "Large Tandoori Chicken",
       "qty": 6.0,
       "rev": 150.0,
       "cost": 19.81,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Regular Meatlovers",
+      "qty": 6.0,
+      "rev": 150.0,
+      "cost": 31.15,
       "cost_source": "lightspeed"
     },
     {
@@ -200,17 +200,17 @@
       "cost_source": "lightspeed"
     },
     {
-      "name": "Large El Patron",
-      "qty": 3.0,
-      "rev": 85.0,
-      "cost": 17.56,
-      "cost_source": "lightspeed"
-    },
-    {
       "name": "Large Jimmy Jury",
       "qty": 3.0,
       "rev": 85.0,
       "cost": 18.56,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Large El Patron",
+      "qty": 3.0,
+      "rev": 85.0,
+      "cost": 17.56,
       "cost_source": "lightspeed"
     },
     {
