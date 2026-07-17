@@ -495,8 +495,23 @@ for pfx in ("stow", "hg", "mari"):
         drv = b.get(f"{pfx}|Driver", 0) * SUPER_MULT
         adm = b.get(f"{pfx}|Admin", 0) * SUPER_MULT
         tot = kit + foh + drv + adm
-        if tot <= 0:
-            continue
+        # NO `if tot <= 0: continue` (removed 2026-07-17).
+        #
+        # `day` only holds dates Deputy actually returned shifts for, and the
+        # `d not in day` test above already skips everything else — which is what
+        # protects pre-Deputy history from being blanked. So by the time we reach
+        # here the date IS covered by Deputy, and this venue's number for it is
+        # authoritative INCLUDING ZERO.
+        #
+        # Skipping on tot<=0 left a STALE figure on any day a venue didn't trade:
+        # `day` is keyed by DATE, not venue, so on a day Stow trades and HG
+        # doesn't, the date is present, HG's tot is 0, the skip fired, and HG's
+        # row kept whatever it last had — forever. HG is shut Sundays and
+        # Tuesdays, so it wore a phantom wage on every one of them. That is why
+        # the days did not sum to the week that ties to Xero: -$46.41 on the week
+        # ending 28 Jun, +$23.08 on 14 Jun.
+        #
+        # A venue that did not trade on a Deputy-covered day cost $0. Say so.
         before = float(r.get("wages_dollars") or 0)
         delta += tot - before
         rev = float(r.get("revenue_ex_gst") or 0)
