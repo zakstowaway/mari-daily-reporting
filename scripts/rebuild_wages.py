@@ -143,6 +143,8 @@ def bucket_for(ou, dstr):
 today = datetime.now(timezone(timedelta(hours=OFFSET_H))).date()
 
 day = defaultdict(lambda: defaultdict(float))      # day[date][f"{venue}|{dept}"] = ex-super cost
+day_assumed = defaultdict(lambda: defaultdict(float))   # same, with unclocked rostered shifts filled in
+assumed_n = defaultdict(lambda: defaultdict(int))       # assumed_n[date][venue_prefix] = shifts filled
 warnings, weeks = [], 0
 xero_weeks = est_weeks = 0
 cur = d_from
@@ -205,14 +207,54 @@ while cur <= d_to:
     #
     # Closed weeks are untouched: Xero pays them, and every day has timesheets so
     # there is nothing for the roster to stand in for.
-    roster_shifts = []
+    # ---- ASSUMED first pass (2026-07-17) ----
+    # Deputy only has a timesheet once someone clocks on, and rebuild filters
+    # IsInProgress=0, so anyone still on shift is absent — not costed at zero,
+    # ABSENT. Approvals then land days later. So a day reads far too cheap until
+    # the paperwork catches up, and nothing says so:
+    #
+    #   Wed 15 Jul — Stow: 5 shifts, 25.12h logged against $5,413 of trade.
+    #   The Wednesday before: 8 shifts, 44.98h on LESS revenue. Read 14.7%.
+    #
+    # Zak clocks on at 12pm and wants yesterday to be roughly right. So: for any
+    # employee ROSTERED on a day that has happened but with NO timesheet, assume
+    # they worked it as rostered. A logged shift ALWAYS wins — this only ever
+    # fills silence. It self-heals: as sheets are approved the assumption drops
+    # out on its own, exactly like the Mari recovery and for the same reason.
+    #
+    # Kept in its OWN column. wages_dollars stays what actually happened; nothing
+    # downstream that trusts actuals (weekly totals, trends, Xero reconciliation)
+    # is touched by a guess. Only worth computing near the present — older weeks
+    # are approved and complete, and fetching 90 weeks of roster to discover
+    # there are no gaps is a slow way to learn nothing.
+    ASSUME_DAYS = 14
+    do_assumed = wk_end >= today - timedelta(days=ASSUME_DAYS)
+
+    roster_shifts, assumed_extra = [], []
     logged_emp_days = {(str(s["employee_id"]), s["date"]) for s in shifts}
-    if wk_end >= today:
+    if wk_end >= today or do_assumed:
         for rs in fetch_roster(cur, wk_end + timedelta(days=1)):
             hours = rs.get("TotalTime") or 0
             if not hours:
                 continue
             emp = str(rs.get("Employee"))
+            dstr_a = local_date(rs["StartTime"])
+            # Gap-fill for the ASSUMED pass: a day that has happened, rostered,
+            # nothing clocked. Hourly roster carries its own Cost; salaried is
+            # left to allocate_week like any other shift of theirs.
+            if do_assumed and dstr_a <= today.isoformat() and (emp, dstr_a) not in logged_emp_days:
+                ou_a = (rs.get("_DPMetaData", {}).get("OperationalUnitInfo", {}) or {}).get("OperationalUnitName", "")
+                b_a = bucket_for(ou_a, dstr_a)
+                if b_a:
+                    assumed_extra.append({"employee_id": emp, "hours": hours,
+                                          "cost": rs.get("Cost") or 0, "date": dstr_a,
+                                          "bucket": b_a, "_assumed": True})
+                    # Count per venue so the card can say WHY it's assumed. Admin
+                    # and leave don't count — they're off the venue line anyway,
+                    # so an unclocked admin shift isn't something the card is
+                    # allowed to explain itself with.
+                    if "|" in b_a:
+                        assumed_n[dstr_a][b_a.split("|")[0]] += 1
             if emp not in SAL:
                 continue          # hourly roster is not cost we can claim yet
             dstr = local_date(rs["StartTime"])
@@ -251,50 +293,77 @@ while cur <= d_to:
     # Allocated pro-rata across the shifts the person logged, so hours still
     # decide WHERE the money lands — Xero decides how much.
     wk_key = wk_end.isoformat()
-    paid_this_week = {}
-    if XERO_PAY:
-        for s in shifts:
-            eid = str(s["employee_id"])
-            xn = EMP_MAP.get(eid)
-            if xn and wk_key in XERO_PAY.get(xn, {}):
-                paid_this_week[eid] = XERO_PAY[xn][wk_key]
-    if paid_this_week:
+
+    def cost_week(base_shifts, stand_ins):
+        """Cost one payroll week. Xero for whoever payroll has paid, the salaried
+        model for everyone else. Both the real and the ASSUMED pass go through
+        here — two copies of this would drift, and the day they disagreed you'd
+        have no way to tell which one was lying."""
+        paid = {}
+        if XERO_PAY:
+            for s in base_shifts:
+                eid = str(s["employee_id"])
+                xn = EMP_MAP.get(eid)
+                if xn and wk_key in XERO_PAY.get(xn, {}):
+                    paid[eid] = XERO_PAY[xn][wk_key]
+        if not paid:
+            c, w = allocate_week(base_shifts + stand_ins, SAL, WPY)
+            return c, w, paid
         by_emp = defaultdict(list)
-        for s in shifts:
+        for s in base_shifts:
             by_emp[str(s["employee_id"])].append(s)
-        costed, warn = [], []
-        rest = []
+        costed, rest = [], []
         for eid, group in by_emp.items():
-            if eid not in paid_this_week:
+            if eid not in paid:
                 rest.extend(group)
                 continue
             th = sum((g.get("hours") or 0) for g in group)
             if th <= 0:
                 continue                     # paid, but clocked nothing to attribute
             for g in group:
-                costed.append({**g, "cost_final": paid_this_week[eid] * (g.get("hours") or 0) / th})
+                costed.append({**g, "cost_final": paid[eid] * (g.get("hours") or 0) / th})
         # Roster stand-ins only help the ESTIMATE. Anyone Xero has paid is costed
         # from the payslip across the shifts they actually logged — a planned
         # shift must never absorb a share of real money.
-        rest.extend(r for r in roster_shifts if r["employee_id"] not in paid_this_week)
-        c2, warn = allocate_week(rest, SAL, WPY)
+        rest.extend(r for r in stand_ins if r["employee_id"] not in paid)
+        c2, w = allocate_week(rest, SAL, WPY)
         costed.extend(c2)
-        xero_weeks += len(paid_this_week)
-    else:
-        costed, warn = allocate_week(shifts + roster_shifts, SAL, WPY)
+        return costed, w, paid
+
+    def book(costed, target):
+        for s in costed:
+            if s.get("_roster"):
+                continue      # sized the split; the day hasn't happened. Never booked.
+            c, b, d = s["cost_final"], s["bucket"], s["date"]
+            if b == "leave":
+                target[d]["stow|Leave"] += c
+            elif b == "admin":
+                target[d]["stow|Admin"] += c * V.ADMIN_SHARES["stowaway"]
+                target[d]["hg|Admin"] += c * V.ADMIN_SHARES["harry"]
+            else:
+                target[d][b] += c
+
+    costed, warn, paid_this_week = cost_week(shifts, roster_shifts)
+    xero_weeks += len(paid_this_week)
     est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
     warnings.extend(warn)
-    for s in costed:
-        if s.get("_roster"):
-            continue          # sized the split; the day hasn't happened. Never booked.
-        c, b, d = s["cost_final"], s["bucket"], s["date"]
-        if b == "leave":
-            day[d]["stow|Leave"] += c
-        elif b == "admin":
-            day[d]["stow|Admin"] += c * V.ADMIN_SHARES["stowaway"]
-            day[d]["hg|Admin"] += c * V.ADMIN_SHARES["harry"]
-        else:
-            day[d][b] += c
+    book(costed, day)
+
+    # The ASSUMED pass: same week, same model, plus the rostered shifts nobody
+    # clocked. Warnings are dropped — they'd be duplicates of the real pass, and
+    # a zero-cost warning about a shift we invented is noise.
+    if do_assumed:
+        c_a, _, _ = cost_week(shifts + assumed_extra, roster_shifts)
+        book(c_a, day_assumed)
+        if assumed_extra:
+            ad = sorted({s["date"] for s in assumed_extra})
+            print(f"  assumed: filled {len(assumed_extra)} rostered shift(s) nobody clocked "
+                  f"across {len(ad)} day(s) ({ad[0]}..{ad[-1]})")
+    else:
+        # Outside the assume window every sheet is in — assumed IS actual, and
+        # saying so beats leaving the column empty and making the dashboard guess.
+        book(costed, day_assumed)
+
     weeks += 1
     cur = wk_end + timedelta(days=1)
 
@@ -319,6 +388,13 @@ for pfx in ("stow", "hg", "mari"):
     # 1 Jun alone, up to $2,211 in a single day.
     if "wages_admin_dollars" not in fields:
         fields.insert(fields.index("wages_driver_dollars") + 1, "wages_admin_dollars")
+    # The ASSUMED first pass (2026-07-17). Its own column, never replacing
+    # wages_dollars: everything that trusts actuals — weekly totals, trends, the
+    # Xero reconciliation — must not silently inherit a guess. Equals actual on
+    # any day with no gaps, so the dashboard can read it unconditionally.
+    for c in ("wages_assumed_dollars", "wages_assumed_shifts"):
+        if c not in fields:
+            fields.insert(fields.index("wages_admin_dollars") + 1, c)
     touched = 0
     delta = 0.0
     for r in rows:
@@ -344,6 +420,14 @@ for pfx in ("stow", "hg", "mari"):
         r["wages_foh_dollars"] = round(foh, 2)
         r["wages_driver_dollars"] = round(drv, 2)
         r["wages_admin_dollars"] = round(adm, 2)
+        # Assumed: same shape, gaps filled. Operational only (no admin) — it
+        # exists to answer "what did last night really cost me", and admin is
+        # not last night's decision.
+        a = day_assumed.get(d, {})
+        tot_a = ((a.get(f"{pfx}|Kitchen", 0) + a.get(f"{pfx}|FOH", 0)
+                  + a.get(f"{pfx}|Driver", 0)) * SUPER_MULT)
+        r["wages_assumed_dollars"] = round(tot_a, 2) if tot_a > 0 else ""
+        r["wages_assumed_shifts"] = assumed_n.get(d, {}).get(pfx, 0)
         r["wages_kitchen_pct"] = round(kit / food * 100, 1) if food else ""
         r["wages_foh_pct"] = round(foh / bev * 100, 1) if bev else ""
         if pfx == "mari":

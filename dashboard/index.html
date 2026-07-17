@@ -1124,6 +1124,33 @@ function stripOverhead(rows) {
   return rows;
 }
 
+// The ASSUMED first pass (Zak, 2026-07-17): "I clock on at 12pm, revenue and
+// COGS are in, I want to see something mostly correct for wages."
+//
+// Deputy has no timesheet until someone clocks on, and cost only lands on
+// APPROVAL — days later. So a day reads far too cheap until the paperwork
+// catches up: Wed 15 Jul showed Stow at 14.7% off 25.12 logged hours against
+// $5,413 of trade, when the Wednesday before took LESS on 44.98 hours.
+// rebuild_wages fills the unclocked rostered shifts into wages_assumed_dollars.
+//
+// applyAssumed puts that number in the headline and records what it is. It
+// NEVER overwrites the real one — trends, weekly totals and anything reconciling
+// to Xero keep reading actuals. A day with no gaps has assumed == actual, so
+// this is a no-op on any complete day and there's no basis to get confused about.
+function applyAssumed(rows) {
+  for (const r of rows) {
+    const n = toNum(r.wages_assumed_shifts);
+    const a = toNum(r.wages_assumed_dollars);
+    if (!n || !a || !hasVal(r.wages_dollars)) continue;
+    const rev = toNum(r.revenue_ex_gst);
+    r.wages_actual_dollars = toNum(r.wages_dollars);   // keep the truth reachable
+    r.wages_assumed_n = n;
+    r.wages_dollars = a;
+    r.wages_pct = rev ? a / rev * 100 : '';
+  }
+  return rows;
+}
+
 async function loadHistory(venue) {
   const cfg = VENUE_CONFIG[venue];
   if (!cfg.historyFile) return [];
@@ -1131,7 +1158,7 @@ async function loadHistory(venue) {
     const res = await fetch(cfg.historyFile + '?t=' + Date.now());
     if (!res.ok) return [];
     const text = await res.text();
-    return stripOverhead(parseCsv(text));
+    return applyAssumed(stripOverhead(parseCsv(text)));
   } catch (e) { return []; }
 }
 async function loadAllHistories(role) {
@@ -1425,6 +1452,15 @@ const CARD_DEFS = {
     const med = wageMedian12wk(STATE.histories[STATE.currentVenue] || []);
     let sub = cfg.show_dollar_amounts ? fmtDollars(toNum(day.wages_dollars)) : '';
     sub += STATE.currentVenue === 'mari' ? ' incl driver \u00b7 Deputy' : ' \u00b7 Deputy incl super';
+    // If this day is standing on assumed shifts, say so ON the number. The whole
+    // point is a usable figure by midday \u2014 but an estimate that doesn't announce
+    // itself is how you end up trusting 14.7% for two days.
+    const aN = toNum(day.wages_assumed_n);
+    if (aN) {
+      const act = toNum(day.wages_actual_dollars);
+      sub += ' \u00b7 ' + pill(`assumed \u00b7 ${aN} shift${aN > 1 ? 's' : ''} not clocked`, 'warn');
+      if (cfg.show_dollar_amounts && act) sub += `<span class="vs-t">clocked so far ${fmtDollars(act)}</span>`;
+    }
     const tgt = wageTargetFor(day);
     let status = day.wages_alert;
     let vsOut = '';
