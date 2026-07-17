@@ -1,6 +1,6 @@
 {
   "date": "2026-07-14",
-  "generated_at": "2026-07-16T10:06:37.213831Z",
+  "generated_at": "2026-07-17T11:40:16.711931Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -98,121 +98,141 @@
       "name": "Large Super House Special",
       "qty": 5.0,
       "rev": 89.0,
-      "cost": 36.9
+      "cost": 36.9,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Sanchez",
       "qty": 3.0,
       "rev": 89.0,
-      "cost": 16.47
+      "cost": 16.47,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Jimmy Jury [Dine-in]",
       "qty": 5.0,
       "rev": 84.0,
-      "cost": 16.68
+      "cost": 16.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Sanchez [Dine-in]",
       "qty": 4.0,
       "rev": 73.2,
-      "cost": 13.57
+      "cost": 13.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Super House Special",
       "qty": 3.0,
       "rev": 72.0,
-      "cost": 15.85
+      "cost": 15.85,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Tandoori Chicken [Dine-in]",
       "qty": 4.0,
       "rev": 62.97,
-      "cost": 9.46
+      "cost": 9.46,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Banquet Deal Pizzas",
       "qty": 1.0,
       "rev": 60.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$60 BANQUET",
       "qty": 1.0,
       "rev": 60.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Little Italy [Dine-in]",
       "qty": 3.0,
       "rev": 55.17,
-      "cost": 14.41
+      "cost": 14.41,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hail Africa [Dine-in]",
       "qty": 3.0,
       "rev": 52.2,
-      "cost": 8.74
+      "cost": 8.74,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Hawaiian",
       "qty": 2.0,
       "rev": 48.0,
-      "cost": 6.53
+      "cost": 6.53,
+      "cost_source": "lightspeed"
     },
     {
       "name": "$45 FEAST",
       "qty": 1.0,
       "rev": 45.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hawaiian",
       "qty": 2.0,
       "rev": 38.0,
-      "cost": 2.49
+      "cost": 2.49,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Truffalo Soldier [Dine-in]",
       "qty": 2.0,
       "rev": 37.19,
-      "cost": 6.54
+      "cost": 6.54,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Axl Rose Pizza",
       "qty": 2.0,
       "rev": 37.18,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular No Chorizo, No Cry [Dine-in]",
       "qty": 2.0,
       "rev": 37.18,
-      "cost": 5.82
+      "cost": 5.82,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Cosmopolitan [Dine-in]",
       "qty": 2.0,
       "rev": 36.0,
-      "cost": 9.68
+      "cost": 9.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Super House Special [Dine-in]",
       "qty": 2.0,
       "rev": 36.0,
-      "cost": 10.57
+      "cost": 10.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular The Paddock [Dine-in]",
       "qty": 2.0,
       "rev": 36.0,
-      "cost": 6.56
+      "cost": 6.56,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Bubba Gump",
       "qty": 1.0,
       "rev": 32.0,
-      "cost": 5.8
+      "cost": 5.8,
+      "cost_source": "lightspeed"
     }
   ]
 }
