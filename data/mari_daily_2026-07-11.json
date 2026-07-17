@@ -1,6 +1,6 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-17T11:39:28.471183Z",
+  "generated_at": "2026-07-17T23:29:26.789684Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,21 +15,21 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 2590.46,
-    "revenue_ex_gst": 2357.22,
-    "cogs_dollars": 499.76,
-    "cogs_pct": 21.2,
-    "gp_dollars": 1857.46,
-    "gp_pct": 78.8,
+    "revenue_inc_gst": 2543.46,
+    "revenue_ex_gst": 2314.49,
+    "cogs_dollars": 503.42,
+    "cogs_pct": 21.8,
+    "gp_dollars": 1811.07,
+    "gp_pct": 78.2,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 2357.22,
+    "food_ex_gst": 2314.49,
     "bev_ex_gst": 0.0,
-    "food_cogs": 499.76,
+    "food_cogs": 503.42,
     "bev_cogs": 0.0,
-    "food_cogs_pct": 21.2,
+    "food_cogs_pct": 21.8,
     "bev_cogs_pct": null,
-    "food_gp_pct": 78.8,
+    "food_gp_pct": 78.2,
     "bev_gp_pct": null
   },
   "wages": {
@@ -39,11 +39,11 @@
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
     "total_dollars": 1112.98,
-    "wages_pct": 47.2,
+    "wages_pct": 48.1,
     "net_wage_pct": null,
     "kitchen_hours": 25.0,
     "foh_hours": 0,
-    "wages_kitchen_pct": 42.0,
+    "wages_kitchen_pct": 42.8,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
@@ -53,7 +53,7 @@
     "own_driver_dollars": 122.71,
     "uber_direct_dollars": 0.0,
     "total_dollars": 122.71,
-    "delivery_pct": 5.2,
+    "delivery_pct": 5.3,
     "fees_are_estimate": true
   },
   "payments_breakdown": null,
@@ -165,17 +165,17 @@
       "cost_source": "lightspeed"
     },
     {
-      "name": "Regular Meatlovers",
-      "qty": 3.0,
-      "rev": 75.0,
-      "cost": 15.57,
-      "cost_source": "lightspeed"
-    },
-    {
       "name": "Large Tandoori Chicken",
       "qty": 3.0,
       "rev": 75.0,
       "cost": 9.91,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Regular Meatlovers",
+      "qty": 3.0,
+      "rev": 75.0,
+      "cost": 15.57,
       "cost_source": "lightspeed"
     },
     {
@@ -228,10 +228,10 @@
       "cost_source": "lightspeed"
     },
     {
-      "name": "Jala Marg Duo (2) - PartyJar [6 serves]",
-      "qty": 1.0,
-      "rev": 55.0,
-      "cost": 0.0,
+      "name": "Large Jimmy Jury",
+      "qty": 2.0,
+      "rev": 54.0,
+      "cost": 12.37,
       "cost_source": "lightspeed"
     }
   ]
