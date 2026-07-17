@@ -1,0 +1,14 @@
+# Recipes: what actually goes in the dish.
+# No waste factor — waste is measured as (purchases - consumption), not guessed.
+# Effective-dated: editing writes a NEW version so old COGS stays reproducible.
+
+- product: "Southern Squid"
+  sell_incl_gst: 26.33
+  effective_from: "2026-07-17"
+  entered_by: "seed — replace with the real recipe"
+  ingredients:
+    - id: foodlink:102689
+      desc: "SQUID PINEAPPLE CUT IMP U5 5KG"
+      qty: 200
+      unit: g
+      unit_cost_incl: 0.011400

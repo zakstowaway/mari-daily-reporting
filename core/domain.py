@@ -163,32 +163,41 @@ class CostSeries:
 
 # ------------------------------------------------------------------- load ----
 
-def load_cost_observations(path: Path = ROOT / "data" / "cogs_list.csv",
+def load_cost_observations(path: Path = ROOT / "data" / "costs.csv",
                            purchasable_to_ingredient: Optional[dict[str, str]] = None
                            ) -> list[CostObservation]:
     """
-    Read the fact log.
+    Read the cost fact table: data/costs.csv.
 
-    NOTE: data/cogs_list.csv already IS an observation log -- every row carries
-    supplier, supplier_code, cost and invoice_date. It has simply been consumed
-    as a snapshot. Keep the log; derive snapshots from it.
+    Prices are IN THE UNIT A RECIPE USES (per g / ml / ea / bottle / keg),
+    because that is the consumer. Built by
+    modules/recipes/pipeline/build_costs.py, which converts pack prices and
+    REFUSES rather than guessing when a pack can't be read.
+
+    THIS USED TO READ data/cogs_list.csv DIRECTLY AND IT WAS WRONG. That file
+    quotes per PACK ($57.00 for a 5kg box of squid, basis 'unit'). A recipe says
+    "200 g". Multiplying gave $11,400 per serve -- arithmetically perfect,
+    physically absurd, the same class of error the invoice validator exists to
+    stop. A feed must publish the unit its consumer uses; no amount of care
+    downstream fixes a pack price masquerading as a gram price.
 
     Until data/purchasable_map.csv exists, a purchasable maps to itself as its
     own ingredient. That is a placeholder, not the design: it means "switch
     supplier, break the recipe" is still true today. The map is Decision 1.
     """
+    if not path.exists():
+        raise FileNotFoundError(
+            f"{path} missing — run: python3 modules/recipes/pipeline/build_costs.py"
+        )
     out = []
     for r in csv.DictReader(path.open(encoding="utf-8-sig")):
-        code = (r.get("supplier_code") or "").strip()
-        if not code:
-            continue                     # no natural key -> no identity. Skip, don't guess.
-        pid = purchasable_id(r["supplier"], code)
+        pid = r["ingredient"]
         ing = (purchasable_to_ingredient or {}).get(pid, pid)
         out.append(CostObservation(
             ingredient=ing,
-            observed_on=date.fromisoformat(r["invoice_date"]),
-            cost_per_unit=Decimal(r["cost_per_unit_incl_gst"]),
-            unit=(r.get("basis") or "per_unit").replace("per_", ""),
+            observed_on=date.fromisoformat(r["observed_on"]),
+            cost_per_unit=Decimal(r["cost_per_unit"]),
+            unit=r["unit"],
             venue=r.get("venue") or None,
             source_invoice=r.get("source_invoice", ""),
             purchasable=pid,

@@ -53,10 +53,14 @@ jobs:
         run: |
           set -e
           cp data/ingredients.json /tmp/ingredients.before.json
+          cp data/costs.csv /tmp/costs.before.csv
           python3 modules/recipes/pipeline/build_ingredients.py >/dev/null
+          python3 modules/recipes/pipeline/build_costs.py >/dev/null
+          diff -q /tmp/costs.before.csv data/costs.csv || {
+            echo "::error::data/costs.csv is stale — rerun build_costs.py and commit"; exit 1; }
           if ! diff -q <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
                        <(jq -S 'del(.generated_at)' data/ingredients.json) >/dev/null; then
-            echo "::error::data/ingredients.json is stale — rerun scripts/build_ingredients.py and commit"
+            echo "::error::data/ingredients.json is stale — rerun modules/recipes/pipeline/build_ingredients.py and commit"
             diff <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
                  <(jq -S 'del(.generated_at)' data/ingredients.json) | head -40
             exit 1

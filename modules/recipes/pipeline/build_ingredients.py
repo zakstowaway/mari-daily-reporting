@@ -142,6 +142,16 @@ def parse_pack(desc: str) -> tuple[Decimal | None, str | None, str]:
         if re.search(rf"\b{word}\b", desc, re.I):
             return Decimal(1), unit, word.lower()
 
+    # BARE UNIT = PRICED BY THAT UNIT. "ONION BROWN KG" is not a missing pack
+    # size; it is how produce is sold -- $2.40 per kg, buy what you like.
+    # Missed on the first run and it skipped half of Select Fresh (onion,
+    # carrot, lemon, garlic), which is most of what a kitchen actually cooks.
+    m = re.search(r"(?:^|\s)(?:/\s*)?(KG|LT|L|ML|GM|G)\s*$", desc, re.I)
+    if m:
+        u = m.group(1).upper()
+        mult, base = _TO_BASE[u]
+        return Decimal(mult), base, f"per {u.lower()}"
+
     return None, None, "no pack found in description"
 
 

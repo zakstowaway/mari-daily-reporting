@@ -68,7 +68,48 @@ import csv, io, json, os, sys, zipfile
 from pathlib import Path
 from datetime import date, timedelta, datetime
 
-sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
+sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/, modules/
+
+
+def _load_our_costs(venue_key, target_date):
+    """
+    product name -> our cost per serve on target_date, from our own recipes.
+
+    Returns {} and carries on if there are no recipes yet, or if anything in
+    the recipe module is unhappy. This runs unattended at 6am and its job is
+    the daily numbers -- a recipe problem must not take the whole pull down.
+    Falling back to Lightspeed's cost is a known, visible state
+    (cost_source='lightspeed'), not a silent one.
+
+    AS-OF, not current: costing 16 July uses 16 July's prices, whenever it runs.
+    See ARCHITECTURE.md decision 2.
+    """
+    try:
+        from core.domain import CostSeries, load_cost_observations
+        from modules.recipes.cost import MissingCost, cost_on, load_recipes, recipe_as_of
+
+        venue_file = {"stowaway": "stowaway", "harry": "harry_gatos",
+                      "marilynas": "marilynas"}.get(venue_key, venue_key)
+        recipes = load_recipes(venue_file)
+        if not recipes:
+            return {}
+        costs = CostSeries(load_cost_observations())
+        out = {}
+        for product in {r.product for r in recipes}:
+            r = recipe_as_of(recipes, product, target_date)
+            if not r:
+                continue
+            try:
+                out[product] = float(cost_on(r, costs, target_date))
+            except MissingCost as e:
+                # Refusing to cost one dish is correct; it must not stop the pull.
+                print(f"  recipe cost skipped: {e}")
+        if out:
+            print(f"  our recipes cost {len(out)} product(s) on {target_date}")
+        return out
+    except Exception as e:                                  # noqa: BLE001
+        print(f"  recipe costing unavailable ({e}) — using Lightspeed's cost")
+        return {}
 from core import venues as V
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
@@ -470,17 +511,40 @@ else:
             category_breakdown[cat]["cogs"] += row_cogs(r)
             category_breakdown[cat]["qty"] += parse_num(col(r, "Qty", "Product Quantity", "Quantity"))
 
+    # ---- Product breakdown, with OUR cost where we have a recipe ----
+    #
+    # 'cost' has always been read verbatim from the Insights CSV, i.e. whatever
+    # Lightspeed computed as (Produce recipe x Average Cost Price). Measured
+    # 2026-07-16 on Stowaway: 11 products report $0.00 cost -- $1,530 of
+    # $33,460 revenue (4.6%) booked at 100% GP because LS has no recipe. They
+    # are all food; the food menu changed supplier and the recipes never
+    # followed. Jalapeno Marg reports 96.6% GP.
+    #
+    # So: use our own cost where we have a recipe, keep LS's where we don't,
+    # and ALWAYS emit both so they can be compared rather than trusted.
+    # See COGS_ARCHITECTURE.md.
+    our_costs = _load_our_costs(venue_key, target_date)
+
     product_breakdown = []
     for r in rows:
         name = (r.get("Product Name") or r.get("Product") or "").strip()
         if not name:
             continue
-        product_breakdown.append({
+        qty = parse_num(col(r, "Product Quantity", "Qty", "Quantity"))
+        ls_cost = row_cogs(r)
+        entry = {
             "name": name,
-            "qty": parse_num(col(r, "Product Quantity", "Qty", "Quantity")),
+            "qty": qty,
             "rev": row_rev(r),
-            "cost": row_cogs(r),
-        })
+            "cost": ls_cost,
+            "cost_source": "lightspeed",
+        }
+        ours = our_costs.get(name)
+        if ours is not None:
+            entry["cost"] = round(ours * qty, 4)      # per-serve x units sold
+            entry["cost_source"] = "recipe"
+            entry["cost_lightspeed"] = ls_cost        # keep LS as a second opinion
+        product_breakdown.append(entry)
     product_breakdown.sort(key=lambda p: p["rev"], reverse=True)
 
     # ---- Kitchen / FOH split (Stow + HG only) ----
