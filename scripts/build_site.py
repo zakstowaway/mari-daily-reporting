@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -46,6 +47,23 @@ def build() -> int:
     if SITE.exists():
         shutil.rmtree(SITE)
     SITE.mkdir(parents=True)
+
+    # Rolling feeds are GENERATED at build time, never committed.
+    #
+    # data/ingredients.json is a 90-day window off date.today(). A committed
+    # copy goes stale by the passage of time alone -- no code change, no commit,
+    # just a Tuesday. Generating it here means the chef always sees a current
+    # window and there is no stale-file class of bug at all.
+    #
+    # data/costs.csv is different: deterministic from cogs_list.csv, so it IS
+    # committed and CI proves it reproduces. Two kinds of derived file; only one
+    # of them can be checked byte-for-byte.
+    for gen in ("modules/recipes/pipeline/build_ingredients.py",):
+        r = subprocess.run([sys.executable, str(ROOT / gen)], capture_output=True, text=True, cwd=ROOT)
+        if r.returncode:
+            print(f"  FAILED {gen}\n{r.stderr}")
+            return 1
+        print(f"  generated via {gen.split('/')[-1]}")
 
     for src_rel, dst_rel in LAYOUT:
         src = ROOT / src_rel

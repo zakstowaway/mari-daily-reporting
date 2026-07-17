@@ -46,26 +46,27 @@ jobs:
         # docstring.
         run: python3 scripts/test_mari_recovery.py
 
-      - name: Data feeds must rebuild from source
-        # The committed CSV/JSON feeds are DERIVED. If a generator no longer
-        # reproduces them, the committed file is a fossil and every downstream
-        # number is quietly built on it. Rebuild and diff.
+      - name: Deterministic feeds must rebuild identically
+        # data/costs.csv is derived from data/cogs_list.csv with no clock in the
+        # loop, so it must reproduce exactly. A derived file that has stopped
+        # reproducing is a fossil and every number built on it is quietly wrong.
+        #
+        # NOT checked here: data/ingredients.json. It is a 90-day window off
+        # date.today(), so it changes with the calendar and cannot be diffed
+        # against a committed copy -- the first version of this step did exactly
+        # that and was a time bomb: green today, red on whatever Tuesday an
+        # invoice crossed the 90-day line, with no code change. It is now
+        # generated at build time and not committed at all.
         run: |
           set -e
-          cp data/ingredients.json /tmp/ingredients.before.json
           cp data/costs.csv /tmp/costs.before.csv
-          python3 modules/recipes/pipeline/build_ingredients.py >/dev/null
           python3 modules/recipes/pipeline/build_costs.py >/dev/null
-          diff -q /tmp/costs.before.csv data/costs.csv || {
-            echo "::error::data/costs.csv is stale — rerun build_costs.py and commit"; exit 1; }
-          if ! diff -q <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
-                       <(jq -S 'del(.generated_at)' data/ingredients.json) >/dev/null; then
-            echo "::error::data/ingredients.json is stale — rerun modules/recipes/pipeline/build_ingredients.py and commit"
-            diff <(jq -S 'del(.generated_at)' /tmp/ingredients.before.json) \
-                 <(jq -S 'del(.generated_at)' data/ingredients.json) | head -40
+          if ! diff -q /tmp/costs.before.csv data/costs.csv >/dev/null; then
+            echo "::error::data/costs.csv is stale — rerun modules/recipes/pipeline/build_costs.py and commit"
+            diff /tmp/costs.before.csv data/costs.csv | head -20
             exit 1
           fi
-          echo "ingredients.json reproduces from source"
+          echo "costs.csv reproduces from source"
 
       - name: Site must build and every reference must resolve
         # The repo layout and the deployed layout differ. A broken path fails
