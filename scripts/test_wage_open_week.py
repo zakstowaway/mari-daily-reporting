@@ -57,7 +57,7 @@ KW, RW = 93496/52, 75000/52
 
 print("=" * 78)
 print("1. KRIS — one 6.075h shift, nothing else. The 100.9% Tuesday.")
-c, w = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=6.075)], KRIS, WPY, week_days=WEEK)
+c, w = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=6.075)], KRIS, WPY, week_days=WEEK, shortfall_leave=True)
 ven, lv, _ = split(c)
 check("venue gets 6.075/40, not 100%", abs(ven - KW * 6.075/40) < 0.01, f"${ven:,.2f}")
 check("shortfall goes to LEAVE", abs(lv - KW * (40-6.075)/40) < 0.01, f"${lv:,.2f}")
@@ -71,21 +71,21 @@ check("nothing is lost", abs(ven + lv - KW) < 0.01)
 check("leave is REAL money, not zero", lv > 1000, f"${lv:,.2f}")
 
 print("\n3. OVER 40 — no leave, no cap")
-c, w = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=45)], KRIS, WPY, week_days=WEEK)
+c, w = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=45)], KRIS, WPY, week_days=WEEK, shortfall_leave=True)
 ven, lv, _ = split(c)
 check("all of it to the venue", abs(ven - KW) < 0.01, f"${ven:,.2f}")
 check("no leave row", lv == 0)
 check("no shortfall warning", not any(x["type"] == "salaried_shortfall_leave" for x in w))
 
 print("\n4. EXACTLY 40 — the boundary")
-c, _ = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=40)], KRIS, WPY, week_days=WEEK)
+c, _ = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=40)], KRIS, WPY, week_days=WEEK, shortfall_leave=True)
 ven, lv, _ = split(c)
 check("all venue, no leave", abs(ven - KW) < 0.01 and lv == 0, f"venue ${ven:,.2f} leave ${lv:,.2f}")
 
 print("\n5. ROSTER STAND-INS count toward the 40")
 logged = [shift("142", "2026-07-15", "mari|Kitchen")]
 roster = [shift("142", d, "stow|Kitchen", roster=True) for d in ["2026-07-17","2026-07-18","2026-07-19"]]
-c, _ = allocate_week(logged + roster, RENAN, WPY, week_days=WEEK)
+c, _ = allocate_week(logged + roster, RENAN, WPY, week_days=WEEK, shortfall_leave=True)
 ven, lv, ros = split(c)
 check("the worked day books 8/40, not 8/8", abs(ven - RW * 8/40) < 0.01, f"${ven:,.2f}")
 check("rostered days sized but NOT booked", abs(ros - RW * 24/40) < 0.01, f"${ros:,.2f}")
@@ -97,25 +97,50 @@ seen = []
 for n in (1, 2, 3, 4):
     lg = [shift("142", f"2026-07-{13+i}", "mari|Kitchen") for i in range(n)]
     rs = [shift("142", f"2026-07-{13+i}", "stow|Kitchen", roster=True) for i in range(n, 4)]
-    c, _ = allocate_week(lg + rs, RENAN, WPY, week_days=WEEK)
+    c, _ = allocate_week(lg + rs, RENAN, WPY, week_days=WEEK, shortfall_leave=True)
     per_day = sum(s["cost_final"] for s in c
                   if s["bucket"] == "mari|Kitchen" and not s.get("_roster")) / n
     seen.append(round(per_day, 6))
 check("1,2,3,4 days worked -> identical per-day cost", len(set(seen)) == 1, f"{seen[0]:.2f}/day")
 
 print("\n7. HOURLY staff are untouched by any of this")
-c, _ = allocate_week([shift("999", "2026-07-15", "stow|FOH", hours=8, cost=210.0)], {}, WPY, week_days=WEEK)
+c, _ = allocate_week([shift("999", "2026-07-15", "stow|FOH", hours=8, cost=210.0)], {}, WPY, week_days=WEEK, shortfall_leave=True)
 ven, lv, _ = split(c)
 check("keeps Deputy's own Cost", abs(ven - 210.0) < 0.01, f"${ven:,.2f}")
 check("no leave invented for casuals", lv == 0)
 
 print("\n8. TWO VENUES — leave comes out before the split, not after")
 c, _ = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=10),
-                      shift("1", "2026-07-15", "hg|Bar", hours=10)], KRIS, WPY, week_days=WEEK)
+                      shift("1", "2026-07-15", "hg|Bar", hours=10)], KRIS, WPY, week_days=WEEK, shortfall_leave=True)
 ven, lv, _ = split(c)
 check("20h of 40 -> half to venues, half to leave",
       abs(ven - KW/2) < 0.01 and abs(lv - KW/2) < 0.01, f"venue ${ven:,.2f} leave ${lv:,.2f}")
 check("still conserved", abs(ven + lv - KW) < 0.01)
+
+print("\n9. CLOSED WEEKS ARE INERT — the rule is for the OPEN week only")
+# Zak, 2026-07-17: "closed weeks leave gets stated, and should be logged as a
+# timesheet. i'm talking about unapproved timesheets and dealing with a current
+# roster." A closed week's leave arrives as a real IsLeave timesheet and already
+# counts toward the 40. Synthesising more relabels sloppy clock-offs as annual
+# leave: across 90 weeks it moved $219,008 off the venue lines (HG 59.8% ->
+# 53.7%). Default MUST be off, or history silently restates.
+c, w = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=6.075)], KRIS, WPY)
+ven, lv, _ = split(c)
+check("default books NO synthetic leave", lv == 0, f"${lv:,.2f}")
+check("default leaves the old allocation alone", abs(ven - KW) < 0.01, f"${ven:,.2f}")
+check("default raises no shortfall warning",
+      not any(x["type"] == "salaried_shortfall_leave" for x in w))
+
+print("\n10. REAL leave timesheets already satisfy the 40 — no double-count")
+c, w = allocate_week([shift("1", "2026-07-14", "stow|FOH", hours=6.075),
+                      shift("1", "2026-07-15", "leave", hours=33.925)],
+                     KRIS, WPY, week_days=WEEK, shortfall_leave=True)
+ven, lv, _ = split(c)
+check("stated leave counts toward the 40 -> nothing synthesised",
+      not any(x["type"] == "salaried_shortfall_leave" for x in w))
+check("venue still 6.075/40", abs(ven - KW * 6.075/40) < 0.01, f"${ven:,.2f}")
+check("leave is the REAL row, not doubled", abs(lv - KW * 33.925/40) < 0.01, f"${lv:,.2f}")
+check("conserved", abs(ven + lv - KW) < 0.01)
 
 print("\n" + "=" * 78)
 print(f"PASSED {len(PASS)}   FAILED {len(FAIL)}")

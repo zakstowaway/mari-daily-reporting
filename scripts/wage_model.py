@@ -42,7 +42,8 @@ def salaried_week_cost(annual, weeks_per_year=52):
 CONTRACT_HOURS = 40.0
 
 
-def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None):
+def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None,
+                  shortfall_leave=False):
     """Assign an ex-super cost to every shift in ONE payroll week.
 
     shifts:   [{"employee_id","hours","cost","date","bucket", ...}] — `bucket` is
@@ -104,12 +105,21 @@ def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None):
                 out.append({**s, "cost_final": 0.0})
             continue
         # Contracted to 40. Anything short of it is leave, not a heavier shift.
-        denom = max(total_h, CONTRACT_HOURS)
+        #
+        # OPEN WEEK ONLY (shortfall_leave=True). A CLOSED week already states its
+        # leave as real Deputy timesheets — they arrive via IsLeave, they're in
+        # `group`, they count toward total_h, and the shortfall correctly
+        # computes to nothing. Synthesising leave there too would relabel every
+        # sloppy clock-off as annual leave: measured across 90 weeks it moved
+        # $219,008 off the venue lines (HG 59.8% -> 53.7%) purely because
+        # salaried staff log a little under their contract. This rule exists for
+        # unapproved timesheets and a live roster, not for restating history.
+        denom = max(total_h, CONTRACT_HOURS) if shortfall_leave else total_h
         for s in group:
             share = (s.get("hours") or 0) / denom
             out.append({**s, "cost_final": week_cost * share})
 
-        short_h = CONTRACT_HOURS - total_h
+        short_h = (CONTRACT_HOURS - total_h) if shortfall_leave else 0
         if short_h > 0.01:
             leave_cost = week_cost * (short_h / denom)
             # Leave is a weekly quantity — it didn't happen on a day. Spread it

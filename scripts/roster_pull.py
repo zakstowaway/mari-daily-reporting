@@ -128,7 +128,13 @@ for s in shifts:
         {"employee_id": emp, "hours": hours, "cost": cost, "date": dstr, "bucket": bucket})
 
 for wk, wk_shifts in by_week.items():
-    costed, warn = allocate_week(wk_shifts, SAL_ANNUAL, WPY)
+    # This feed is ALWAYS the live roster, so the shortfall-is-leave rule
+    # applies: a salaried person rostered under 40 is on leave for the rest
+    # (Zak, 2026-07-17). Must match rebuild_wages or the week strip's
+    # actual/roster seam compares two different definitions of a wage.
+    wk_days = [(date.fromisoformat(wk) + timedelta(days=i)).isoformat() for i in range(7)]
+    costed, warn = allocate_week(wk_shifts, SAL_ANNUAL, WPY,
+                                 week_days=wk_days, shortfall_leave=True)
     for w in warn:
         print(f"  warn {w}")
     for s in costed:

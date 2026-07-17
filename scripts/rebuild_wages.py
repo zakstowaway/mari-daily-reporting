@@ -33,7 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
 from core import venues as V
-from wage_model import allocate_week, CONTRACT_HOURS as WM_CONTRACT_HOURS
+from wage_model import allocate_week
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -313,6 +313,10 @@ while cur <= d_to:
     # Allocated pro-rata across the shifts the person logged, so hours still
     # decide WHERE the money lands — Xero decides how much.
     wk_key = wk_end.isoformat()
+    # The shortfall-is-leave rule is for the OPEN week only: unapproved sheets
+    # and a live roster. A closed week states its leave as real timesheets.
+    is_open = wk_end >= today
+    week_days = [(cur + timedelta(days=i)).isoformat() for i in range(7)]
 
     def cost_week(base_shifts, stand_ins):
         """Cost one payroll week. Xero for whoever payroll has paid, the salaried
@@ -327,7 +331,8 @@ while cur <= d_to:
                 if xn and wk_key in XERO_PAY.get(xn, {}):
                     paid[eid] = XERO_PAY[xn][wk_key]
         if not paid:
-            c, w = allocate_week(base_shifts + stand_ins, SAL, WPY)
+            c, w = allocate_week(base_shifts + stand_ins, SAL, WPY,
+                                 week_days=week_days, shortfall_leave=is_open)
             return c, w, paid
         by_emp = defaultdict(list)
         for s in base_shifts:
@@ -340,27 +345,22 @@ while cur <= d_to:
             th = sum((g.get("hours") or 0) for g in group)
             if th <= 0:
                 continue                     # paid, but clocked nothing to attribute
-            # Same shortfall-is-leave rule as the model (Zak, 2026-07-17). Xero
-            # says what they were PAID; it doesn't say the whole of it was earned
-            # on the days they clocked. Leave sits inside the 40, so a salaried
-            # person short of 40 has the balance booked to leave rather than
-            # loaded onto their one Tuesday shift. Total from Xero is unchanged.
-            sal_here = str(eid) in SAL
-            denom = max(th, WM_CONTRACT_HOURS) if sal_here else th
+            # NO shortfall-is-leave here. This path only runs for weeks Xero has
+            # PAID — i.e. closed ones — and a closed week states its leave as
+            # real Deputy timesheets, which are already in `group` and already
+            # counted. Synthesising more would relabel sloppy clock-offs as
+            # annual leave: across 90 weeks that moved $219,008 off the venue
+            # lines (HG 59.8% -> 53.7%) for no reason. The rule is for unapproved
+            # timesheets and a live roster (Zak, 2026-07-17) — see the open-week
+            # call to allocate_week below.
             for g in group:
-                costed.append({**g, "cost_final": paid[eid] * (g.get("hours") or 0) / denom})
-            if sal_here and denom > th:
-                short = denom - th
-                days_wk = [(cur + timedelta(days=i)).isoformat() for i in range(7)]
-                for dd in days_wk:
-                    costed.append({"employee_id": eid, "hours": short / 7, "cost": 0,
-                                   "date": dd, "bucket": "leave", "_leave_fill": True,
-                                   "cost_final": paid[eid] * (short / denom) / 7})
+                costed.append({**g, "cost_final": paid[eid] * (g.get("hours") or 0) / th})
         # Roster stand-ins only help the ESTIMATE. Anyone Xero has paid is costed
         # from the payslip across the shifts they actually logged — a planned
         # shift must never absorb a share of real money.
         rest.extend(r for r in stand_ins if r["employee_id"] not in paid)
-        c2, w = allocate_week(rest, SAL, WPY)
+        c2, w = allocate_week(rest, SAL, WPY,
+                              week_days=week_days, shortfall_leave=is_open)
         costed.extend(c2)
         return costed, w, paid
 
