@@ -1,6 +1,6 @@
 {
   "date": "2026-07-10",
-  "generated_at": "2026-07-17T22:18:02.186729Z",
+  "generated_at": "2026-07-17T23:29:11.786793Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -15,21 +15,21 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 3591.73,
-    "revenue_ex_gst": 3265.21,
-    "cogs_dollars": 741.33,
-    "cogs_pct": 22.7,
-    "gp_dollars": 2523.88,
-    "gp_pct": 77.3,
+    "revenue_inc_gst": 3541.73,
+    "revenue_ex_gst": 3219.75,
+    "cogs_dollars": 716.02,
+    "cogs_pct": 22.2,
+    "gp_dollars": 2503.73,
+    "gp_pct": 77.8,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 3265.21,
+    "food_ex_gst": 3219.75,
     "bev_ex_gst": 0.0,
-    "food_cogs": 741.33,
+    "food_cogs": 716.02,
     "bev_cogs": 0.0,
-    "food_cogs_pct": 22.7,
+    "food_cogs_pct": 22.2,
     "bev_cogs_pct": null,
-    "food_gp_pct": 77.3,
+    "food_gp_pct": 77.8,
     "bev_gp_pct": null
   },
   "wages": {
@@ -39,11 +39,11 @@
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
     "total_dollars": 929.29,
-    "wages_pct": 28.5,
+    "wages_pct": 28.9,
     "net_wage_pct": null,
     "kitchen_hours": 26.8,
     "foh_hours": 0,
-    "wages_kitchen_pct": 28.5,
+    "wages_kitchen_pct": 28.9,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true
@@ -58,7 +58,7 @@
   },
   "payments_breakdown": null,
   "alerts": {
-    "cogs": "red",
+    "cogs": "amber",
     "wages": "green",
     "delivery": "green",
     "gp": "unknown",
