@@ -154,6 +154,13 @@ def bucket_for(ou, dstr):
 today = datetime.now(timezone(timedelta(hours=OFFSET_H))).date()
 
 day = defaultdict(lambda: defaultdict(float))      # day[date][f"{venue}|{dept}"] = ex-super cost
+# Every date belonging to a week Deputy returned ANY shifts for. This — not
+# `d in day` — is what "Deputy covers this day" means. `day` only holds dates
+# somebody actually worked, so a day nobody worked at any venue is absent from
+# it, every venue skips, and all three keep their last figure. That is the
+# +$17.71 on the week ending 14 Jun. A week Deputy knows about is authoritative
+# for all seven of its days, including the ones nobody clocked on.
+covered = set()
 day_assumed = defaultdict(lambda: defaultdict(float))   # same, with unclocked rostered shifts filled in
 assumed_n = defaultdict(lambda: defaultdict(int))       # assumed_n[date][venue_prefix] = shifts filled
 warnings, weeks = [], 0
@@ -388,6 +395,9 @@ while cur <= d_to:
             else:
                 target[d][b] += c
 
+    if shifts:
+        covered.update((cur + timedelta(days=i)).isoformat() for i in range(7))
+
     costed, warn, paid_this_week = cost_week(shifts, roster_shifts)
     xero_weeks += len(paid_this_week)
     est_weeks += len({str(s["employee_id"]) for s in shifts}) - len(paid_this_week)
@@ -492,10 +502,14 @@ for pfx in ("stow", "hg", "mari"):
     seen_dates = set()
     for r in rows:
         d = r["date"]
-        if d not in day or not (args[0] <= d <= args[1]):
+        # `covered`, not `day`: a day nobody worked is still a day Deputy knows
+        # about, and its wage is $0 — not last week's number. Weeks Deputy has no
+        # data for at all (pre-Deputy history) never enter `covered`, so the
+        # backfill stays protected. That was the real intent of the old guard.
+        if d not in covered or not (args[0] <= d <= args[1]):
             continue
         seen_dates.add(d)
-        b = day[d]
+        b = day.get(d, {})
         kit = b.get(f"{pfx}|Kitchen", 0) * SUPER_MULT
         foh = b.get(f"{pfx}|FOH", 0) * SUPER_MULT
         drv = b.get(f"{pfx}|Driver", 0) * SUPER_MULT
