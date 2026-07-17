@@ -1,0 +1,95 @@
+Product Name,Product Quantity,$ Sales,Total Tax,Cost,% of Quantity,% of Sale Amount,Gross Profit %
+Online Surcharge,16,$23.52,$0.00,$0.00,6%,1%,0%
+Garlic Bread,14,$55.50,$5.03,$19.88,5%,1%,64%
+Large Pepperoni,11,$268.00,$24.39,$50.21,4%,6%,81%
+Large Margherita,10,$132.00,$12.00,$22.97,4%,3%,83%
+Regular Little Italy [Dine-in],10,$255.58,$23.21,$48.05,4%,6%,81%
+Large Hawaiian,10,$220.00,$20.03,$32.63,4%,5%,85%
+Regular Sanchez [Dine-in],9,$240.86,$21.87,$30.53,3%,5%,87%
+Regular Super House Special,7,$159.00,$14.44,$36.99,3%,4%,77%
+Large Super House Special,7,$149.00,$13.56,$51.66,3%,3%,65%
+Large BBQ Chicken Pizza,7,$136.00,$12.35,$30.41,3%,3%,78%
+Regular Meatlovers,6,$150.00,$13.62,$31.15,2%,3%,79%
+Cheesy Garlic Bread,6,$44.00,$4.02,$10.64,2%,1%,76%
+Large Tandoori Chicken,6,$150.00,$13.64,$19.81,2%,3%,87%
+Delivery Fee - Freshwater / Queenscliff,5,$25.00,$2.25,$0.00,2%,1%,0%
+Add Prawns,5,$20.26,$1.82,$0.00,2%,0%,0%
+Large Sanchez,5,$112.00,$10.17,$27.45,2%,3%,75%
+Add Pepperoni,5,$15.00,$1.35,$0.00,2%,0%,0%
+Coke 1.25L,4,$20.00,$1.83,$14.76,1%,0%,26%
+Regular Little Italy,4,$89.00,$8.08,$19.22,1%,2%,78%
+$45 FEAST,4,$180.00,$16.36,$0.00,1%,4%,0%
+Large Meatlovers,4,$90.00,$8.19,$29.00,1%,2%,68%
+Add Chilli,4,$4.03,$0.36,$0.00,1%,0%,0%
+BBQ Wings [Wings Deal],3,$0.00,$0.00,$0.00,1%,0%,0%
+Garlic  Bread.,3,$0.00,$0.00,$0.00,1%,0%,0%
+Large Paddock,3,$31.00,$2.82,$15.84,1%,1%,49%
+Sprite Can,3,$12.00,$1.08,$5.69,1%,0%,53%
+Regular El Patron [Dine-in],3,$80.55,$7.30,$10.92,1%,2%,86%
+Under the Bridge Pizza,3,$80.56,$7.33,$12.77,1%,2%,84%
+"Regular No Chorizo, No Cry [Dine-in]",3,$80.56,$7.32,$8.73,1%,2%,89%
+Large El Patron,3,$85.00,$7.72,$17.56,1%,2%,79%
+Add Mushrooms,3,$4.50,$0.42,$0.00,1%,0%,0%
+Less Cheese,3,$0.00,$0.00,$0.00,1%,0%,0%
+Regular Roma Special,3,$55.50,$5.04,$13.36,1%,1%,76%
+Regular New Yorker [Dine-in],3,$74.37,$6.78,$10.76,1%,2%,86%
+Large Jimmy Jury,3,$85.00,$7.72,$18.56,1%,2%,78%
+Regular Hail Africa [Dine-in],3,$83.71,$7.59,$8.74,1%,2%,90%
+Large Uber Margherita,2,$52.00,$4.72,$8.92,1%,1%,83%
+Regular Tandoori Chicken,2,$44.50,$4.04,$4.73,1%,1%,89%
+Large Hail Africa,2,$54.00,$4.90,$12.49,1%,1%,77%
+Add Capsicum,2,$3.05,$0.28,$0.00,1%,0%,0%
+Coke Zero Can,2,$8.00,$0.72,$3.78,1%,0%,53%
+Regular Meatlovers [Dine-in],2,$52.00,$4.72,$10.38,1%,1%,80%
+Regular Hail Africa,2,$20.00,$1.81,$5.82,1%,0%,71%
+Add Garlic,2,$3.00,$0.28,$0.00,1%,0%,0%
+Regular Pepperoni,2,$37.00,$3.36,$4.26,1%,1%,88%
+Regular Bubba Gump,2,$52.00,$4.72,$8.31,1%,1%,84%
+Large Bubba Gump,2,$31.00,$2.82,$11.60,1%,1%,63%
+"Regular No Chorizo, No Cry",2,$39.00,$3.54,$5.82,1%,1%,85%
+Sprite 1.25L,2,$0.00,$0.00,$8.53,1%,0%,
+Regular El Patron,2,$44.50,$4.04,$7.28,1%,1%,84%
+"Large No Chorizo, No Cry",1,$0.00,$0.00,$6.31,0%,0%,
+Bundaberg Ginger Beer D,1,$8.00,$0.73,$3.59,0%,0%,55%
+Large Margherita Wings Deal,1,$30.00,$2.73,$2.30,0%,1%,92%
+Btl Fever-Tree Mediterannean Tonic D,1,$7.00,$0.64,$4.31,0%,0%,38%
+VB Can D,1,$6.00,$0.55,$2.34,0%,0%,61%
+Large Super House Special Wings Deal,1,$30.00,$2.73,$7.38,0%,1%,75%
+Extra Mozzarella,1,$2.50,$0.23,$0.00,0%,0%,0%
+Gluten-free Truffalo Soldier,1,$24.00,$2.18,$7.37,0%,1%,69%
+Regular Hawaiian,1,$22.00,$2.00,$1.25,0%,1%,94%
+Regular Truffalo Soldier [Dine-in],1,$26.85,$2.44,$3.27,0%,1%,88%
+$60 BANQUET,1,$60.00,$5.45,$0.00,0%,1%,0%
+Garlic  Bread,1,$0.00,$0.00,$1.42,0%,0%,
+Regular New Yorker,1,$24.00,$2.18,$3.59,0%,1%,85%
+Grifter Pale Ale Cans D,1,$7.00,$0.64,$3.26,0%,0%,53%
+Add Basil,1,$1.00,$0.09,$0.00,0%,0%,0%
+Large BBQ Chicken Wings Deal,1,$30.00,$2.73,$4.34,0%,1%,86%
+$90 PIZZA PARTY,1,$90.00,$8.18,$0.00,0%,2%,0%
+Sour Cream,1,$1.03,$0.09,$0.00,0%,0%,0%
+Add Calabrese,1,$4.00,$0.36,$0.00,0%,0%,0%
+Large New Yorker,1,$0.00,$0.00,$5.01,0%,0%,
+Regular Uber Margherita,1,$18.50,$1.68,$3.19,0%,0%,83%
+Add Jalapenos,1,$1.50,$0.14,$0.00,0%,0%,0%
+Add Sour Cream,1,$1.50,$0.14,$0.00,0%,0%,0%
+Regular Vegetarian,1,$16.00,$1.45,$2.37,0%,0%,85%
+Regular Sorrento,1,$24.00,$2.18,$4.11,0%,1%,83%
+Add Pineapple,1,$1.50,$0.14,$0.00,0%,0%,0%
+Large Truffalo Soldier,1,$25.00,$2.27,$4.56,0%,1%,82%
+Delivery Fee - Curl Curl / Manly / Dee Why,1,$6.50,$0.59,$0.00,0%,0%,0%
+Axl Rose Pizza,1,$26.85,$2.43,$0.00,0%,1%,0%
+Add Onion,1,$0.00,$0.00,$0.00,0%,0%,0%
+Add Anchovies,1,$2.00,$0.18,$0.00,0%,0%,0%
+Regular Uber Margherita [Dine-in],1,$23.77,$2.16,$3.19,0%,1%,87%
+Gluten-free BBQ Chicken Pizza,1,$30.50,$2.77,$7.21,0%,1%,76%
+Add Bocconcini,1,$3.00,$0.27,$0.00,0%,0%,0%
+Gluten-free Sanchez,1,$30.50,$2.77,$8.03,0%,1%,74%
+Regular Jimmy Jury [Dine-in],1,$27.89,$2.55,$3.34,0%,1%,88%
+Large Sorrento,1,$27.00,$2.45,$7.17,0%,1%,73%
+Feast Deal Pizzas,1,$45.00,$4.09,$0.00,0%,1%,0%
+Large Cosmopolitan,1,$0.00,$0.00,$6.76,0%,0%,
+Choc  Brownie,1,$0.00,$0.00,$1.95,0%,0%,
+Regular Garlic Cheese Pizza,1,$9.00,$0.82,$1.39,0%,0%,85%
+Large Roma Special,1,$25.00,$2.27,$6.22,0%,1%,75%
+Grifter Pale Ale 4-pack D,1,$20.00,$1.82,$13.06,0%,0%,35%
+,272,"$4,389.94",$396.76,$818.50,100%,100%,81%
