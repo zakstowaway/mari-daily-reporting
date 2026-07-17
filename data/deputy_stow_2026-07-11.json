@@ -35,7 +35,7 @@
     "start_time": 1783732500,
     "end_time": 1783769400,
     "hours": 9.75,
-    "cost": 455.62,
+    "cost": 396.05,
     "salaried_synth": false
   },
   {
@@ -48,8 +48,8 @@
     "start_time": 1783734300,
     "end_time": 1783774800,
     "hours": 10.75,
-    "cost": 0.0,
-    "salaried_synth": false
+    "cost": 387.62,
+    "salaried_synth": true
   },
   {
     "timesheet_id": 35252,
@@ -100,7 +100,7 @@
     "start_time": 1783751400,
     "end_time": 1783756800,
     "hours": 1.5,
-    "cost": 0.0,
+    "cost": 81.24,
     "salaried_synth": false
   }
 ]
