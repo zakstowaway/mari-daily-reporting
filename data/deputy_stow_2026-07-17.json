@@ -20,9 +20,9 @@
     "company": "Stowaway",
     "dept": "FOH",
     "start_time": 1784268000,
-    "end_time": 1784296800,
-    "hours": 7.5,
-    "cost": 262.5,
+    "end_time": 1784295900,
+    "hours": 7.25,
+    "cost": 253.75,
     "salaried_synth": true
   },
   {
@@ -35,7 +35,7 @@
     "start_time": 1784268900,
     "end_time": 1784296800,
     "hours": 7.25,
-    "cost": 0.0,
+    "cost": 208.68,
     "salaried_synth": false
   },
   {
@@ -48,7 +48,7 @@
     "start_time": 1784269800,
     "end_time": 1784286900,
     "hours": 4.75,
-    "cost": 0.0,
+    "cost": 160.79,
     "salaried_synth": false
   },
   {
@@ -61,7 +61,7 @@
     "start_time": 1784271600,
     "end_time": 1784286900,
     "hours": 4.25,
-    "cost": 0.0,
+    "cost": 137.32,
     "salaried_synth": false
   },
   {
@@ -74,7 +74,7 @@
     "start_time": 1784271600,
     "end_time": 1784289600,
     "hours": 5.0,
-    "cost": 0.0,
+    "cost": 169.25,
     "salaried_synth": false
   },
   {
@@ -87,7 +87,7 @@
     "start_time": 1784273400,
     "end_time": 1784287800,
     "hours": 4.0,
-    "cost": 0.0,
+    "cost": 135.4,
     "salaried_synth": false
   }
 ]

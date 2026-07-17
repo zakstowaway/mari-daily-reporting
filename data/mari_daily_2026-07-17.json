@@ -1,6 +1,6 @@
 {
   "date": "2026-07-17",
-  "generated_at": "2026-07-17T21:37:33.735130Z",
+  "generated_at": "2026-07-17T22:34:31.374419Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -33,17 +33,17 @@
     "bev_gp_pct": null
   },
   "wages": {
-    "kitchen_dollars": 393.75,
+    "kitchen_dollars": 460.41,
     "foh_dollars": 0.0,
     "driver_dollars": 0.0,
     "admin_dollars": 0.0,
     "leave_dollars": 0.0,
-    "total_dollars": 393.75,
-    "wages_pct": 9.9,
+    "total_dollars": 460.41,
+    "wages_pct": 11.5,
     "net_wage_pct": null,
     "kitchen_hours": 26.2,
     "foh_hours": 0,
-    "wages_kitchen_pct": 9.9,
+    "wages_kitchen_pct": 11.5,
     "wages_foh_pct": null,
     "includes_super": true,
     "salaried_synthesized": true

@@ -34,8 +34,8 @@
     "dept": "FOH",
     "start_time": 1784267100,
     "end_time": 1784289600,
-    "hours": 5.75,
-    "cost": 0.0,
+    "hours": 6.25,
+    "cost": 194.64,
     "salaried_synth": false
   }
 ]
