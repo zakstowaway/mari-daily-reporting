@@ -74,6 +74,7 @@ ALIASES = {
     "Hugh": "Hugh Yiend",
     "Rei": "Rei Ikeda",
     "Archie": "Archie Humphries",
+    "Sam Hall": "Samuel Hall",              # 8 wks, 8 both, 0 D-only
     # ⚠️ DO NOT add "Oliver" (id 24). He is Oliver Iaccarino, an owner, and lives
     # in _corp_payroll_only. His pay reaches corp payroll via the residual (Xero
     # group payroll MINUS Deputy group wages), so mapping him would move owner
@@ -86,13 +87,22 @@ ALIASES = {
     # construction. If he ever clocks on, his Deputy cost lands on a venue AND
     # his salary stays in the residual — counted twice, silently.
     #
-    # NOT MAPPED — because Xero has never paid them, under any name:
+    # NOT MAPPED, DELIBERATELY — Xero has never paid them, under any name:
     #   "pedro f"   (id 261): hours in 14 separate weeks, Xero pay in ZERO.
     #   "Long Long" (id 225): hours in 4 weeks, Xero pay in ZERO.
     # Verified by week-alignment Mar–Jul and by name search across all 122 people
-    # in the pay history. This is not a mapping gap — it is a person and a
-    # payroll that have never met. Do NOT invent an alias to make the totals
-    # tie; that would bury it. Needs Zak.
+    # in the pay history. Not a mapping gap — a person and a payroll that have
+    # never met.
+    #
+    # Zak, 2026-07-17: "assume pedro at his deputy rates. same with long long."
+    # So the existing fallback IS the answer: unmapped -> rebuild_wages costs them
+    # from Deputy's own Cost. That is not a bug and needs no code; it is why the
+    # fallback exists. An ALIAS would be actively wrong — it would point them at
+    # someone else's payslip and make the totals tie by lying.
+    #
+    # The audit will keep reporting them as "no xero -> deputy/model" every week.
+    # That line is CORRECT. Do not silence it: the day Xero does start paying
+    # them, the line disappearing is how you find out.
 }
 
 xero = json.loads((ROOT / "data" / "xero_pay_weekly.json").read_text())
