@@ -1,6 +1,6 @@
 {
   "date": "2026-07-16",
-  "generated_at": "2026-07-16T23:14:00.629776Z",
+  "generated_at": "2026-07-17T09:29:07.001246Z",
   "venue": "marilynas",
   "venue_display": "Marilyna's Pizza",
   "lane_config": [
@@ -98,121 +98,141 @@
       "name": "Regular No Chorizo, No Cry",
       "qty": 5.0,
       "rev": 115.0,
-      "cost": 14.56
+      "cost": 14.56,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Feast Deal Pizzas",
       "qty": 2.0,
       "rev": 90.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Super House Special",
       "qty": 3.0,
       "rev": 89.0,
-      "cost": 22.14
+      "cost": 22.14,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Pepperoni",
       "qty": 4.0,
       "rev": 88.0,
-      "cost": 18.26
+      "cost": 18.26,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Little Italy",
       "qty": 3.0,
       "rev": 75.0,
-      "cost": 14.41
+      "cost": 14.41,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Margherita",
       "qty": 3.0,
       "rev": 63.0,
-      "cost": 6.89
+      "cost": 6.89,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Sanchez",
       "qty": 2.0,
       "rev": 62.0,
-      "cost": 10.98
+      "cost": 10.98,
+      "cost_source": "lightspeed"
     },
     {
       "name": "WINGS DEAL",
       "qty": 2.0,
       "rev": 60.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hail Africa [Dine-in]",
       "qty": 2.0,
       "rev": 54.93,
-      "cost": 5.82
+      "cost": 5.82,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large No Chorizo, No Cry",
       "qty": 2.0,
       "rev": 54.0,
-      "cost": 12.63
+      "cost": 12.63,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Jimmy Jury [Dine-in]",
       "qty": 2.0,
       "rev": 49.49,
-      "cost": 6.67
+      "cost": 6.67,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Sorrento",
       "qty": 2.0,
       "rev": 49.0,
-      "cost": 8.21
+      "cost": 8.21,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hail Africa",
       "qty": 3.0,
       "rev": 48.0,
-      "cost": 8.74
+      "cost": 8.74,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Uber Margherita [Dine-in]",
       "qty": 2.0,
       "rev": 47.52,
-      "cost": 6.39
+      "cost": 6.39,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular No Chorizo, No Cry [Dine-in]",
       "qty": 2.0,
       "rev": 46.8,
-      "cost": 5.82
+      "cost": 5.82,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Margherita",
       "qty": 2.0,
       "rev": 33.0,
-      "cost": 2.46
+      "cost": 2.46,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large New Yorker",
       "qty": 1.0,
       "rev": 30.0,
-      "cost": 5.01
+      "cost": 5.01,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Regular Hawaiian",
       "qty": 2.0,
       "rev": 28.4,
-      "cost": 2.49
+      "cost": 2.49,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Meatlovers",
       "qty": 3.0,
       "rev": 28.0,
-      "cost": 21.75
+      "cost": 21.75,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Large Hawaiian",
       "qty": 1.0,
       "rev": 28.0,
-      "cost": 3.26
+      "cost": 3.26,
+      "cost_source": "lightspeed"
     }
   ]
 }

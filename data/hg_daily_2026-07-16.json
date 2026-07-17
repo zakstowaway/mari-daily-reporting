@@ -1,6 +1,6 @@
 {
   "date": "2026-07-16",
-  "generated_at": "2026-07-16T23:14:04.388918Z",
+  "generated_at": "2026-07-17T09:29:11.552684Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -110,121 +110,141 @@
       "name": "Unlimited BBQ",
       "qty": 2.0,
       "rev": 90.0,
-      "cost": 17.17
+      "cost": 17.17,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Tonkotsu",
       "qty": 3.0,
       "rev": 87.0,
-      "cost": 12.49
+      "cost": 12.49,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Katsu Curry",
       "qty": 3.0,
       "rev": 81.0,
-      "cost": 8.57
+      "cost": 8.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Prawn Har Gow [GF]",
       "qty": 4.0,
       "rev": 72.2,
-      "cost": 17.65
+      "cost": 17.65,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fried Rice",
       "qty": 3.0,
       "rev": 70.0,
-      "cost": 8.04
+      "cost": 8.04,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Miso",
       "qty": 2.0,
       "rev": 52.2,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "River Retreat Pinot Grigio - Bottle",
       "qty": 1.0,
       "rev": 49.0,
-      "cost": 10.05
+      "cost": 10.05,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Sapporo - 500ml",
       "qty": 7.0,
       "rev": 38.7,
-      "cost": 26.6
+      "cost": 26.6,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Schooner",
       "qty": 4.0,
       "rev": 35.5,
-      "cost": 6.68
+      "cost": 6.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Pint",
       "qty": 3.0,
       "rev": 34.0,
-      "cost": 6.72
+      "cost": 6.72,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Edamame",
       "qty": 3.0,
       "rev": 30.8,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Popcorn Cauliflower",
       "qty": 2.0,
       "rev": 29.0,
-      "cost": 1.96
+      "cost": 1.96,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Veg Gyoza",
       "qty": 2.0,
       "rev": 28.0,
-      "cost": 3.92
+      "cost": 3.92,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Shredded Beef",
       "qty": 1.0,
       "rev": 26.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "River Retreat Pinot Grigio - Regular",
       "qty": 2.0,
       "rev": 24.0,
-      "cost": 4.02
+      "cost": 4.02,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Ottelia Cab Sav - Regular",
       "qty": 1.0,
       "rev": 18.0,
-      "cost": 4.73
+      "cost": 4.73,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Karaage",
       "qty": 1.0,
       "rev": 17.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Duck Spring Roll",
       "qty": 1.0,
       "rev": 16.0,
-      "cost": 3.57
+      "cost": 3.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Devon's Prawn Toast",
       "qty": 1.0,
       "rev": 16.0,
-      "cost": 3.89
+      "cost": 3.89,
+      "cost_source": "lightspeed"
     },
     {
       "name": "From Sundays Shiraz - Regular",
       "qty": 1.0,
       "rev": 15.0,
-      "cost": 2.8
+      "cost": 2.8,
+      "cost_source": "lightspeed"
     }
   ]
 }

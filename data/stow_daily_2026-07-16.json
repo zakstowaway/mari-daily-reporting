@@ -1,6 +1,6 @@
 {
   "date": "2026-07-16",
-  "generated_at": "2026-07-16T23:14:03.093711Z",
+  "generated_at": "2026-07-17T09:29:09.347458Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -110,121 +110,141 @@
       "name": "Grifter Pale - Pint",
       "qty": 9.0,
       "rev": 135.0,
-      "cost": 29.96
+      "cost": 29.96,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 9.0,
       "rev": 133.39,
-      "cost": 36.22
+      "cost": 36.22,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Petits Detours Ros\u00e9 Mediterranee - Bottle",
       "qty": 2.0,
       "rev": 128.0,
-      "cost": 32.64
+      "cost": 32.64,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Baked Camembert",
       "qty": 6.0,
       "rev": 127.77,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Patron Silver Margarita",
       "qty": 5.0,
       "rev": 123.96,
-      "cost": 24.99
+      "cost": 24.99,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Pint",
       "qty": 11.0,
       "rev": 121.25,
-      "cost": 26.97
+      "cost": 26.97,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fancy Pants Parmy - Classic",
       "qty": 4.0,
       "rev": 119.81,
-      "cost": 32.42
+      "cost": 32.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Schooner",
       "qty": 13.0,
       "rev": 114.93,
-      "cost": 23.77
+      "cost": 23.77,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Year Wines Fiano - Regular",
       "qty": 6.0,
       "rev": 109.8,
-      "cost": 25.64
+      "cost": 25.64,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Rosemary Salted Fries",
       "qty": 8.0,
       "rev": 105.33,
-      "cost": 14.84
+      "cost": 14.84,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Schooner",
       "qty": 8.0,
       "rev": 104.43,
-      "cost": 25.97
+      "cost": 25.97,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Sensei Calamari",
       "qty": 5.0,
       "rev": 100.72,
-      "cost": 11.53
+      "cost": 11.53,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Version Two Pinot Grigio - Regular",
       "qty": 10.0,
       "rev": 99.53,
-      "cost": 17.67
+      "cost": 17.67,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Jalape\u00f1o Marg",
       "qty": 6.0,
       "rev": 96.9,
-      "cost": 4.56
+      "cost": 4.56,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mulled Wine",
       "qty": 6.0,
       "rev": 91.48,
-      "cost": 12.4
+      "cost": 12.4,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Kirin - Schooner",
       "qty": 6.7,
       "rev": 91.0,
-      "cost": 25.17
+      "cost": 25.17,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fish Tacos",
       "qty": 4.0,
       "rev": 82.63,
-      "cost": 8.74
+      "cost": 8.74,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Negroni",
       "qty": 5.0,
       "rev": 75.98,
-      "cost": 19.47
+      "cost": 19.47,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Schooner",
       "qty": 7.0,
       "rev": 73.7,
-      "cost": 17.38
+      "cost": 17.38,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Padrillos Malbec - Regular",
       "qty": 4.0,
       "rev": 73.18,
-      "cost": 15.47
+      "cost": 15.47,
+      "cost_source": "lightspeed"
     }
   ]
 }
