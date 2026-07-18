@@ -22,7 +22,7 @@
     "start_time": 1784337300,
     "end_time": 1784368800,
     "hours": 8.25,
-    "cost": 0.0,
+    "cost": 333.76,
     "salaried_synth": false
   },
   {
@@ -61,7 +61,7 @@
     "start_time": 1784358000,
     "end_time": 1784375100,
     "hours": 4.5,
-    "cost": 0.0,
+    "cost": 182.11,
     "salaried_synth": false
   },
   {
@@ -74,7 +74,7 @@
     "start_time": 1784358000,
     "end_time": 1784383200,
     "hours": 6.5,
-    "cost": 0.0,
+    "cost": 278.25,
     "salaried_synth": false
   }
 ]
