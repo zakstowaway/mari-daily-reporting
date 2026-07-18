@@ -13,38 +13,6 @@ import config  # noqa: E402
 import metrics  # noqa: E402
 
 
-# --- contribution ----------------------------------------------------------- #
-
-def test_contribution_single_bill_round_numbers():
-    # $110 inc-GST bill, 20% offer, 22% blended COGS.
-    c = metrics.contribution_for_bill(bill_inc=110, offer_pct=Decimal("0.20"),
-                                      cost_blend=Decimal("0.22"))
-    assert c.menu_ex == Decimal("100.00")
-    assert c.discount_ex == Decimal("20.00")
-    assert c.commission_ex == Decimal("10.00")
-    assert c.net_ex == Decimal("70.00")
-    assert c.cogs_ex == Decimal("22.00")
-    assert c.contribution == Decimal("48.00")
-    assert c.contrib_pct_of_net == Decimal("68.6")
-
-
-def test_weekly_contribution_skips_unredeemed():
-    rows = [
-        {"bill_full": "110.00", "offer_pct": "20"},
-        {"bill_full": "", "offer_pct": "25"},          # unredeemed -> skipped
-        {"bill_full": None, "offer_pct": "25"},        # unredeemed -> skipped
-    ]
-    c = metrics.weekly_contribution(rows, cost_blend=Decimal("0.22"))
-    assert c.menu_ex == Decimal("100.00")
-    assert c.contribution == Decimal("48.00")
-
-
-def test_offer_pct_accepts_percentage_or_fraction():
-    a = metrics.contribution_for_bill(110, 20, Decimal("0.22"))
-    b = metrics.contribution_for_bill(110, Decimal("0.20"), Decimal("0.22"))
-    assert a == b
-
-
 # --- cannibalisation: real HG nights, 2026-07-18 pull ----------------------- #
 
 def test_hg_fri_17_jul_no_cannibalisation():

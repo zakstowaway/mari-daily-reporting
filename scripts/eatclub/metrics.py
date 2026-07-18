@@ -35,76 +35,14 @@ def money(x) -> Decimal:
 
 
 # --------------------------------------------------------------------------- #
-# Contribution — net of discount, commission and blended COGS, ex-GST.
-# GST-neutral. Labour is EXCLUDED (that belongs to the wage-margin view).
+# COGS is deliberately NOT computed here. EatClub's margin impact is purely the
+# fees it keeps -- offer discount + 11% commission -- which is what
+# scripts/eatclub/giveaway.py measures and the daily aggregator subtracts from
+# revenue ("EatClub give-away"). COGS is owned by the daily reporting pipeline
+# (real recipe / Lightspeed cost, shown on the dashboard); there is no
+# blended-COGS estimate in this package by design.
+# Removed 2026-07-19 (Zak: don't recalculate COGS, just wire in the fees).
 # --------------------------------------------------------------------------- #
-
-@dataclass(frozen=True)
-class Contribution:
-    menu_ex: Decimal
-    discount_ex: Decimal
-    commission_ex: Decimal
-    net_ex: Decimal
-    cogs_ex: Decimal
-    contribution: Decimal
-
-    @property
-    def contrib_pct_of_net(self) -> Decimal:
-        if self.net_ex == 0:
-            return Decimal("0")
-        return (self.contribution / self.net_ex * 100).quantize(Decimal("0.1"))
-
-
-def contribution_for_bill(bill_inc, offer_pct, cost_blend) -> Contribution:
-    """One redeemed EatClub bill's contribution.
-
-    bill_inc   full menu value, inc-GST, as rung on the POS.
-    offer_pct  the discount fraction actually applied (0.25, 0.30, ...).
-    cost_blend blended COGS as a fraction of MENU volume, ex-GST — charged on the
-               full dish, NOT the discounted price (the kitchen cooks the whole
-               plate; the discount comes off the price, not the food).
-    """
-    menu_ex = D(bill_inc) / GST_DIVISOR
-    discount_ex = menu_ex * _as_fraction(offer_pct)
-    commission_ex = menu_ex * COMMISSION_EX
-    net_ex = menu_ex - discount_ex - commission_ex
-    cogs_ex = menu_ex * D(cost_blend)
-    return Contribution(
-        menu_ex=money(menu_ex),
-        discount_ex=money(discount_ex),
-        commission_ex=money(commission_ex),
-        net_ex=money(net_ex),
-        cogs_ex=money(cogs_ex),
-        contribution=money(net_ex - cogs_ex),
-    )
-
-
-def weekly_contribution(rows, cost_blend) -> Contribution:
-    """Aggregate a week (or any set) of PAID redemptions.
-
-    rows: iterable of dicts with 'bill_full' (inc-GST) and 'offer_pct' (as a
-    percentage, e.g. 25, or a fraction 0.25 — both accepted). UNREDEEMED rows
-    (blank bill) are skipped: an unredeemed offer costs nothing.
-    """
-    tot = {k: Decimal("0") for k in
-           ("menu_ex", "discount_ex", "commission_ex", "net_ex", "cogs_ex", "contribution")}
-    for r in rows:
-        bill = r.get("bill_full")
-        if bill in (None, "", "None"):
-            continue
-        c = contribution_for_bill(bill, r["offer_pct"], cost_blend)
-        tot["menu_ex"] += c.menu_ex
-        tot["discount_ex"] += c.discount_ex
-        tot["commission_ex"] += c.commission_ex
-        tot["net_ex"] += c.net_ex
-        tot["cogs_ex"] += c.cogs_ex
-        tot["contribution"] += c.contribution
-    return Contribution(**{k: money(v) for k, v in tot.items()})
-
-
-def _as_fraction(offer) -> Decimal:
-    o = D(offer)
-    return o / 100 if o > 1 else o
 
 
 # --------------------------------------------------------------------------- #
