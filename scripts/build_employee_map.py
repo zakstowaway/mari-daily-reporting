@@ -125,6 +125,32 @@ ALIASES = {
     # of Xero pay was in the corp-payroll residual. Counted twice, for 39 weeks,
     # and the group total tied the whole time.
     "Long Long": "Teramet Tongsong",       # 225        39 wks, $26,293.62
+    # 2026-07-18 — the MIRROR of the alias problem, found by
+    # scripts/match_xero_to_deputy.py. These people are PAID BY XERO but no
+    # Deputy id claimed them, so their cost never reached a venue: it fell into
+    # the corp-payroll residual, which is where OWNER salary lives. Every venue
+    # was understated by their pay and corp payroll overstated by it.
+    #
+    # They were invisible because Deputy's People screen shows 41 active of 280
+    # accounts — all 239 ARCHIVED ones, every departed chef, are hidden in the UI.
+    # Found by matching Xero -> Deputy on week alignment. x_only = weeks Xero PAID
+    # them that the Deputy account did NOT work; 0 on every one of these, and
+    # payroll does not pay people for weeks they never worked.
+    #
+    # Zak confirmed all four, 2026-07-18: "that matching is correct".
+    #
+    #   deputy id  archived   worked / paid weeks   x_only   jaccard
+    "Angie": "Angela Rinaudo",             # 233        5/5        0     1.00
+    "Faith": "Fatima Mitra",               # 290        5/5        0     1.00
+    "Agustin": "Agustin Neme",             # 281        3/3        0     0.60
+    # Zak: "nattachat is oak". Deputy 268 "Paola" ALSO scored a perfect 1.00 here
+    # — she worked the identical weeks — so the maths could not separate them.
+    # The shared SURNAME did. Worth remembering: a perfect week alignment is not
+    # proof of identity when two people work the same roster.
+    "Oak Thongsrinoon": "Nattachat Thongsrinoon",   # 271  4/4     0     1.00
+    # Same run, same evidence, not explicitly named by Zak but the names speak:
+    "Saif": "Saif Quader",                 # 231        6/6        0     0.67
+    "Coco": "Corentin Golbry",             # 155       12/12       0     1.00
     #
     # Confirming Billy freed Guillermo and let the matcher settle five more —
     # each a PERFECT week alignment (every week worked is a week paid, d_only 0)
@@ -185,6 +211,25 @@ ALIASES = {
 
 xero = json.loads((ROOT / "data" / "xero_pay_weekly.json").read_text())
 xnames = set(xero)
+# Case-insensitive index. NOT a fuzzy match — the letters must be identical;
+# only capitalisation may differ.
+#
+# Deputy "George Sampson" and Xero "George sampson" are the same man, 13 weeks,
+# $1,371.90, and the exact-match test never saw it because of one capital S. He
+# then sat in the unmapped pile for months while his pay went to the
+# corp-payroll residual instead of his venue.
+#
+# This is safe in a way ALIASES are not: no judgement, no similarity, no
+# threshold. If two names differ by more than case they still do not match here.
+_lower = {}
+for _n in xnames:
+    _lower.setdefault(_n.lower(), []).append(_n)
+# A collision would mean Xero holds two people whose names differ only by case —
+# then this is guesswork and must not run. Never seen; assert rather than assume.
+_ambiguous_case = {k: v for k, v in _lower.items() if len(v) > 1}
+if _ambiguous_case:
+    sys.exit(f"Xero has names differing only by case: {_ambiguous_case}. "
+             f"Case-insensitive matching is unsafe here — resolve by hand.")
 
 req = urllib.request.Request("https://831d4015123255.au.deputy.com/api/v1/resource/Employee/QUERY",
     data=json.dumps({"search": {}, "max": 500}).encode(),
@@ -200,6 +245,9 @@ for e in emps:
         mapping[eid] = ALIASES[nm]
     elif nm in xnames:
         mapping[eid] = nm
+    elif nm.lower() in _lower:
+        # Same name, different capitalisation (George Sampson / George sampson).
+        mapping[eid] = _lower[nm.lower()][0]
     else:
         unmatched.append((eid, nm))
 
