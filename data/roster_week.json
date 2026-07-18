@@ -1,236 +1,236 @@
 {
- "generated": "2026-07-18T09:37:55+10:00",
+ "generated": "2026-07-18T18:05:34+10:00",
  "days": {
   "2026-07-13": {
    "hg": {
-    "Kitchen": 931.01,
-    "Admin": 14.37,
-    "FOH": 671.68,
-    "total": 1617.06
+    "Kitchen": 942.28,
+    "Admin": 14.92,
+    "FOH": 735.56,
+    "total": 1692.76
    },
    "stow": {
-    "Admin": 129.32,
-    "FOH": 653.01,
-    "total": 782.33
+    "Admin": 134.27,
+    "FOH": 711.96,
+    "total": 846.23
    }
   },
   "2026-07-14": {
    "stow": {
-    "Admin": 274.01,
-    "FOH": 519.49,
-    "Kitchen": 195.78,
-    "total": 989.28
+    "Admin": 283.82,
+    "FOH": 573.16,
+    "Kitchen": 277.88,
+    "total": 1134.86
    },
    "hg": {
-    "Admin": 30.45,
-    "total": 30.45
+    "Admin": 31.54,
+    "total": 31.54
    },
    "mari": {
-    "Kitchen": 537.15,
-    "total": 537.15
+    "Kitchen": 550.4,
+    "total": 550.4
    }
   },
   "2026-07-15": {
    "stow": {
-    "Admin": 492.91,
-    "FOH": 763.38,
-    "Kitchen": 758.07,
-    "total": 2014.36
+    "Admin": 505.73,
+    "FOH": 762.34,
+    "Kitchen": 747.87,
+    "total": 2015.94
    },
    "hg": {
-    "Admin": 54.77,
-    "FOH": 423.3,
-    "Kitchen": 653.21,
-    "total": 1131.28
+    "Admin": 56.19,
+    "FOH": 434.15,
+    "Kitchen": 643.0,
+    "total": 1133.34
    },
    "mari": {
-    "Kitchen": 616.85,
-    "total": 616.85
+    "Kitchen": 597.84,
+    "total": 597.84
    }
   },
   "2026-07-16": {
    "hg": {
-    "Kitchen": 700.6,
-    "FOH": 357.77,
-    "Admin": 16.49,
-    "total": 1074.86
+    "Kitchen": 698.21,
+    "FOH": 369.54,
+    "Admin": 16.93,
+    "total": 1084.68
    },
    "stow": {
-    "FOH": 1028.12,
-    "Kitchen": 815.68,
-    "Admin": 148.42,
-    "total": 1992.22
+    "FOH": 1048.91,
+    "Kitchen": 805.47,
+    "Admin": 152.33,
+    "total": 2006.71
    },
    "mari": {
-    "Kitchen": 569.36,
-    "Driver": 88.6,
-    "total": 657.96
+    "Kitchen": 560.75,
+    "Driver": 88.38,
+    "total": 649.13
    }
   },
   "2026-07-17": {
    "hg": {
-    "Kitchen": 831.92,
-    "FOH": 446.39,
-    "total": 1278.31
+    "Kitchen": 839.2,
+    "FOH": 464.92,
+    "total": 1304.12
    },
    "stow": {
-    "FOH": 1617.52,
-    "Kitchen": 1051.84,
-    "total": 2669.36
+    "FOH": 1696.12,
+    "Kitchen": 1111.98,
+    "total": 2808.1
    },
    "mari": {
-    "Kitchen": 854.51,
-    "Driver": 88.6,
-    "total": 943.11
+    "Kitchen": 845.11,
+    "Driver": 89.86,
+    "total": 934.97
    }
   },
   "2026-07-18": {
    "hg": {
-    "Kitchen": 869.62,
-    "FOH": 458.49,
-    "total": 1328.11
+    "Kitchen": 877.13,
+    "FOH": 473.53,
+    "total": 1350.66
    },
    "stow": {
-    "FOH": 2007.17,
-    "Kitchen": 1263.8,
-    "total": 3270.97
+    "FOH": 2007.13,
+    "Kitchen": 1332.96,
+    "total": 3340.09
    },
    "mari": {
-    "Kitchen": 1042.49,
-    "Driver": 72.59,
-    "total": 1115.08
+    "Kitchen": 1029.42,
+    "Driver": 67.13,
+    "total": 1096.55
    }
   },
   "2026-07-19": {
    "stow": {
-    "Kitchen": 1218.48,
-    "FOH": 1445.64,
-    "Admin": 74.21,
-    "total": 2738.33
+    "Kitchen": 1286.76,
+    "FOH": 1423.57,
+    "Admin": 76.17,
+    "total": 2786.5
    },
    "mari": {
-    "Kitchen": 700.44,
-    "total": 700.44
+    "Kitchen": 661.5,
+    "total": 661.5
    },
    "hg": {
-    "Admin": 8.25,
-    "total": 8.25
+    "Admin": 8.46,
+    "total": 8.46
    }
   },
   "2026-07-20": {
    "hg": {
-    "Kitchen": 931.01,
-    "Admin": 5.88,
-    "FOH": 618.16,
-    "total": 1555.05
+    "Kitchen": 942.28,
+    "Admin": 6.14,
+    "FOH": 697.39,
+    "total": 1645.81
    },
    "stow": {
-    "Admin": 52.92,
-    "FOH": 635.62,
-    "total": 688.54
+    "Admin": 55.27,
+    "FOH": 691.36,
+    "total": 746.63
    }
   },
   "2026-07-21": {
    "stow": {
-    "Admin": 52.92,
-    "FOH": 637.8,
-    "Kitchen": 195.78,
-    "total": 886.5
+    "Admin": 55.27,
+    "FOH": 707.93,
+    "Kitchen": 277.88,
+    "total": 1041.08
    },
    "hg": {
-    "Admin": 5.88,
-    "total": 5.88
+    "Admin": 6.14,
+    "total": 6.14
    },
    "mari": {
-    "Kitchen": 587.7,
-    "total": 587.7
+    "Kitchen": 595.72,
+    "total": 595.72
    }
   },
   "2026-07-22": {
    "stow": {
-    "Admin": 489.35,
-    "FOH": 728.23,
-    "Kitchen": 953.85,
-    "total": 2171.43
+    "Admin": 501.61,
+    "FOH": 716.53,
+    "Kitchen": 1001.91,
+    "total": 2220.05
    },
    "hg": {
-    "Admin": 54.37,
-    "FOH": 424.76,
-    "Kitchen": 653.21,
-    "total": 1132.34
+    "Admin": 55.73,
+    "FOH": 439.69,
+    "Kitchen": 643.0,
+    "total": 1138.42
    },
    "mari": {
-    "Kitchen": 620.47,
-    "total": 620.47
+    "Kitchen": 601.48,
+    "total": 601.48
    }
   },
   "2026-07-23": {
    "hg": {
-    "Kitchen": 700.6,
-    "FOH": 458.47,
-    "Admin": 16.8,
-    "total": 1175.87
+    "Kitchen": 698.21,
+    "FOH": 473.02,
+    "Admin": 17.24,
+    "total": 1188.47
    },
    "stow": {
-    "FOH": 927.55,
-    "Kitchen": 1011.45,
-    "Admin": 151.2,
-    "total": 2090.2
+    "FOH": 933.76,
+    "Kitchen": 1068.28,
+    "Admin": 155.19,
+    "total": 2157.23
    },
    "mari": {
-    "Kitchen": 517.0,
-    "Driver": 60.48,
-    "total": 577.48
+    "Kitchen": 509.37,
+    "Driver": 55.93,
+    "total": 565.3
    }
   },
   "2026-07-24": {
    "hg": {
-    "Kitchen": 831.92,
-    "FOH": 495.82,
-    "total": 1327.74
+    "Kitchen": 839.2,
+    "FOH": 523.64,
+    "total": 1362.84
    },
    "stow": {
-    "FOH": 1594.93,
-    "Kitchen": 1051.84,
-    "total": 2646.77
+    "FOH": 1652.39,
+    "Kitchen": 1111.98,
+    "total": 2764.37
    },
    "mari": {
-    "Kitchen": 994.47,
-    "Driver": 88.6,
-    "total": 1083.07
+    "Kitchen": 978.34,
+    "Driver": 89.86,
+    "total": 1068.2
    }
   },
   "2026-07-25": {
    "hg": {
-    "Kitchen": 869.62,
-    "FOH": 593.66,
-    "total": 1463.28
+    "Kitchen": 877.13,
+    "FOH": 621.93,
+    "total": 1499.06
    },
    "stow": {
-    "FOH": 2270.33,
-    "Kitchen": 1263.8,
-    "total": 3534.13
+    "FOH": 2336.3,
+    "Kitchen": 1332.96,
+    "total": 3669.26
    },
    "mari": {
-    "Kitchen": 1048.26,
-    "Driver": 72.59,
-    "total": 1120.85
+    "Kitchen": 1035.76,
+    "Driver": 67.13,
+    "total": 1102.89
    }
   },
   "2026-07-26": {
    "stow": {
-    "Kitchen": 1218.48,
-    "FOH": 1666.34,
-    "Admin": 75.6,
-    "total": 2960.42
+    "Kitchen": 1286.76,
+    "FOH": 1644.53,
+    "Admin": 77.6,
+    "total": 3008.89
    },
    "mari": {
-    "Kitchen": 722.56,
-    "total": 722.56
+    "Kitchen": 659.06,
+    "total": 659.06
    },
    "hg": {
-    "Admin": 8.4,
-    "total": 8.4
+    "Admin": 8.62,
+    "total": 8.62
    }
   }
  }
