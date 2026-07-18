@@ -1,0 +1,45 @@
+name: Wage Calibrate
+
+# Refreshes data/wage_calibration.json — each person's measured estimate-vs-Xero
+# correction, learned from CLOSED weeks. The nightly rebuild READS this file;
+# nothing else writes it.
+#
+# Why weekly and not nightly: the nightly rebuild only fetches 2 payroll weeks,
+# and recomputing every factor from 2 weeks of evidence would throw away
+# everything learned and chase noise. rebuild_wages refuses to write the file
+# for windows under 60 days for exactly that reason.
+#
+# Backtested 2026-07-18, 13 weeks, walk-forward (the factor never sees the week
+# it predicts):
+#   raw         MAE $1,065.67/wk   MAPE 3.99%    2/13 weeks within +/-2%
+#   calibrated  MAE $  485.71/wk   MAPE 1.82%    9/13 weeks within +/-2%
+#
+# DEPENDS ON A FRESH XERO PULL. scripts/pull_xero_pay_weekly.py runs on Zak's
+# Mac (the refresh token rotates on every use and can't live in Actions), so if
+# that hasn't run, this learns nothing new — it just re-learns the same weeks.
+
+on:
+  schedule:
+    - cron: '0 19 * * 0'      # Mondays 5:00am AEST, before the 6:30am rebuild
+  workflow_dispatch:
+
+jobs:
+  calibrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Rebuild full history + publish calibration
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/rebuild_wages.py 2024-10-21 "$(TZ=Australia/Sydney date -d '+7 days' +%F)" --write --backtest
+      - name: Commit
+        run: |
+          git config user.name "Wage Calibrate"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Recalibrate wage estimate from closed weeks"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
