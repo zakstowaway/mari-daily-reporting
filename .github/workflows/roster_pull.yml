@@ -26,6 +26,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Measure roster realization (worked/planned hours)
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/measure_roster_realization.py --weeks 8
       - name: Pull roster
         env:
           DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
@@ -34,6 +38,6 @@ jobs:
         run: |
           git config user.name "Roster Pull"
           git config user.email "hello@stowawaybar.com"
-          git add data/roster_week.json
+          git add data/roster_week.json data/roster_realization.json
           git diff --quiet --staged || git commit -m "Roster week refresh"
           for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done

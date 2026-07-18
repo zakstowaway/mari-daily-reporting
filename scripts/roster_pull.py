@@ -154,6 +154,26 @@ def _factor(eid):
     return c["factor"] if c else 1.0
 
 
+# Roster realization: rostered hours run hot (a planned 8h becomes a worked
+# 6.5h), so the forecast is discounted by worked/planned, measured from Deputy
+# (measure_roster_realization.py). Hourly only — a salaried person costs
+# annual/52 no matter how the roster is trimmed, so their forecast is not
+# discounted. Missing/implausible file -> 1.0 (no discount, old behaviour).
+_rr_f = DATA_DIR / "roster_realization.json"
+_rr = json.loads(_rr_f.read_text()) if _rr_f.exists() else {}
+_DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+def _realize(eid, dstr):
+    if str(eid) in SAL_ANNUAL:
+        return 1.0
+    ov = _rr.get("overall")
+    if not ov or not (0.5 <= ov <= 1.05):
+        return 1.0
+    dow = _DOW[date.fromisoformat(dstr).weekday()]
+    return _rr.get("by_dow", {}).get(dow, ov)
+
+
 for wk, wk_shifts in by_week.items():
     # This feed is ALWAYS the live roster, so the shortfall-is-leave rule
     # applies: a salaried person rostered under 40 is on leave for the rest
@@ -170,7 +190,8 @@ for wk, wk_shifts in by_week.items():
         # gross-up sat on the dept totals below, by which point the identity is
         # gone and a flat rate is the only thing possible.
         c = (s["cost_final"] * _super_for(s["employee_id"], _wk_end)
-             * _factor(s["employee_id"]))
+             * _factor(s["employee_id"])
+             * _realize(s["employee_id"], s["date"]))
         b, dstr = s["bucket"], s["date"]
         if b == "admin":
             add(dstr, "stow", "Admin", c * V.ADMIN_SHARES["stowaway"])

@@ -135,6 +135,24 @@ def calibrate(eid, ex):
     c = CALIB.get(str(eid))
     return ex * c["factor"] if c else ex
 
+
+# Roster realization (worked/planned hours), for the ASSUMED pass only: an
+# unclocked rostered shift is discounted to what usually gets worked, because
+# rostered hours run hot. Hourly only; salaried cost annual/52 regardless.
+# Measured by measure_roster_realization.py.
+_rr_f = DATA_DIR / "roster_realization.json"
+_RR = json.loads(_rr_f.read_text()) if _rr_f.exists() else {}
+_RR_DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+
+def realize(eid, dstr):
+    if str(eid) in SAL:
+        return 1.0
+    ov = _RR.get("overall")
+    if not ov or not (0.5 <= ov <= 1.05):
+        return 1.0
+    return _RR.get("by_dow", {}).get(_RR_DOW[date.fromisoformat(dstr).weekday()], ov)
+
 d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
 d_from -= timedelta(days=d_from.weekday())          # back to Monday
 d_to += timedelta(days=6 - d_to.weekday())          # out to Sunday
@@ -619,6 +637,11 @@ while cur <= d_to:
     # a zero-cost warning about a shift we invented is noise.
     if do_assumed:
         c_a, _, _ = cost_week(shifts + assumed_extra, roster_shifts)
+        # Discount the ASSUMED (unclocked rostered) shifts to what usually gets
+        # worked — rostered hours run hot. Real clocked shifts are untouched.
+        for s_ in c_a:
+            if s_.get("_assumed"):
+                s_["cost_final"] *= realize(s_["employee_id"], s_["date"])
         book(c_a, day_assumed)
         if assumed_extra:
             ad = sorted({s["date"] for s in assumed_extra})
