@@ -587,7 +587,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], inclOverhead: false, oncost: { rate: 0, ownerWeekly: 0 } };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], inclOverhead: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -744,6 +744,49 @@ function ohFactor(day, venue, wdays) {
 // P&L over the wage-covered slice of the selected window. Long windows can
 // include days before wage data exists (late Nov 2025) — costs and profit
 // are computed only over days with full cost data, and labelled as such.
+// Actual Uber Eats fees for a venue over a date window, split COMMISSION
+// (delivery, unavoidable ~33%) vs MARKETING (funded offers + ads, discretionary).
+// From data/uber_daily.csv + uber_marketing_weekly.csv (merchant-portal pull).
+// Returns null when we have no actual for this window (older days fall back to
+// the trailing estimate). Applied for mari/hg only; stow isn't on Uber Eats.
+function uberSplit(venue, sIso, eIso) {
+  if (!STATE.uberDaily.length) return null;
+  if (venue !== 'mari' && venue !== 'hg') return null;
+  let comm = 0, offers = 0, have = false;
+  for (const r of STATE.uberDaily) {
+    if (r.shop === venue && r.date >= sIso && r.date <= eIso) {
+      comm += toNum(r.commission_inc_gst); offers += toNum(r.offers_inc_gst); have = true;
+    }
+  }
+  if (!have) return null;
+  // Ads are billed weekly — amortise each week's spend over its 7 days, counting
+  // only the portion overlapping the window.
+  let ads = 0;
+  for (const r of STATE.uberAds) {
+    if (r.shop !== venue || !r.week_ending) continue;
+    const wkStart = isoDate(addDays(new Date(r.week_ending), -6));
+    const ovStart = wkStart > sIso ? wkStart : sIso;
+    const ovEnd = r.week_ending < eIso ? r.week_ending : eIso;
+    const days = (new Date(ovEnd) - new Date(ovStart)) / 86400000 + 1;
+    if (days > 0) ads += toNum(r.ads_inc_gst) * days / 7;
+  }
+  return { commission: comm, marketing: offers + ads };
+}
+
+// What fraction of a venue's blended delivery-fee estimate is Uber Eats — so we
+// can swap just that slice for the actual and keep the rest (Mari: DoorDash +
+// Uber Direct; HG delivery estimate is ME&U only, no Uber, so 0).
+function uberEatsShareOfDelivery(venue, endIso) {
+  if (venue !== 'mari') return 0;
+  const feed = STATE.xeroOH;
+  const endMonth = String(endIso || '').slice(0, 7);
+  const months = feed.filter(r => r.month && r.month < endMonth && hasVal(r.mari_uber_fees))
+                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  let all = 0, only = 0;
+  for (const r of months) { all += toNum(r.mari_uber_fees); only += toNum(r.mari_uber_only); }
+  return all ? Math.min(1, only / all) : 0.89;
+}
+
 function pnlWindow(day, venue = STATE.currentVenue) {
   const revAll = toNum(day.revenue_ex_gst);
   if (!revAll || !hasVal(day.wages_dollars)) return null;
@@ -761,15 +804,28 @@ function pnlWindow(day, venue = STATE.currentVenue) {
   const oh = ((ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) + wageOncostDaily(venue, endIso)) * ohf;
   const dfr = deliveryFeesPct(venue, endIso);
   const fa = feesActualWindow(day, venue);
-  const df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
+  let df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
+  // Uber marketing (funded offers + ads) is discretionary — Zak's decision to
+  // keep it OFF the delivery line and on its own. Where we have the actual daily
+  // Uber Eats split, swap the Uber-Eats slice of the blended delivery estimate
+  // for the real commission and lift marketing out to `mktg`. Non-Uber delivery
+  // (Mari DoorDash+Direct; HG ME&U) stays estimated. Older days: unchanged.
+  let mktg = 0;
+  const _win = String(day.date).includes(' — ') ? String(day.date).split(' — ') : [day.date, day.date];
+  const _u = uberSplit(venue, _win[0], _win[1]);
+  if (_u) {
+    const nonUber = df * (1 - uberEatsShareOfDelivery(venue, endIso));
+    df = _u.commission + nonUber;   // actual Uber commission + non-Uber estimate
+    mktg = _u.marketing;            // funded offers + ads, its own line
+  }
   const cp = corpPayrollDaily(venue, endIso) * ohf;   // owners' salary, DOW-weighted
   const fin = financeDaily(venue, endIso) * ohf;      // interest + depreciation
   // Operating profit drives breakeven and every trading decision — it must stay
   // free of interest/depreciation (you can't roster your way out of a loan).
   // Net profit is what the accountant sees. Keep both, and never confuse them.
-  const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
+  const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - mktg - cp;
   const profit = opProfit - fin;
-  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
+  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, mktg, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
 }
 
 // Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
@@ -1549,6 +1605,15 @@ const CARD_DEFS = {
     }
     const dfr = deliveryFeesPct(STATE.currentVenue, winEnd(day));
     if (!dfr || !rev) return { label: 'Delivery platforms', value: '\u2014', sub: 'no Xero fee data', status: 'unknown' };
+    const _win = String(day.date).includes(' — ') ? String(day.date).split(' — ') : [day.date, day.date];
+    const _u = uberSplit(STATE.currentVenue, _win[0], _win[1]);
+    if (_u) {
+      const nonUber = rev * dfr.pct / 100 * (1 - uberEatsShareOfDelivery(STATE.currentVenue, winEnd(day)));
+      const del = _u.commission + nonUber;
+      const other = STATE.currentVenue === 'mari' ? ' + DoorDash/Direct est' : ' + ME&U est';
+      return { label: 'Delivery platforms ' + pill('Uber actual', 'green'), value: fmtPct(del / rev * 100),
+        sub: `${fmtDollars(del)} · Uber commission ${fmtDollars(_u.commission)}${other} · Uber marketing ${fmtDollars(_u.marketing)} shown separately`, status: 'unknown' };
+    }
     const src = STATE.currentVenue === 'mari' ? 'Uber + DoorDash' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
     return { label: 'Delivery platforms', value: fmtPct(dfr.pct),
       sub: `est. ${fmtDollars(rev * dfr.pct / 100)} ${src} fees (Xero trailing ${dfr.months}-mo rate) \u00b7 driver in wages`, status: 'unknown' };
@@ -2712,6 +2777,16 @@ async function bootstrap() {
         const o = await r.json();
         STATE.oncost = { rate: toNum(o.oncost_rate), ownerWeekly: toNum(o.owner_weekly_inc_super) };
       }
+    } catch (e) {}
+    try {
+      // Actual daily Uber Eats fees, split commission vs marketing, per shop.
+      // Pulled from the merchant portal by the uber-eats-daily-fees scheduled task.
+      const r = await fetch('data/uber_daily.csv?t=' + Date.now());
+      if (r.ok) STATE.uberDaily = parseCsv(await r.text());
+    } catch (e) {}
+    try {
+      const r = await fetch('data/uber_marketing_weekly.csv?t=' + Date.now());
+      if (r.ok) STATE.uberAds = parseCsv(await r.text());
     } catch (e) {}
     try {
       const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
