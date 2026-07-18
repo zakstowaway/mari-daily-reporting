@@ -222,9 +222,9 @@
   "rate_per_hour": 38.807
  },
  "200": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.0493,
+  "weeks": 8,
+  "name": "Guillermo De las Carreras",
   "rate_per_hour": 32.7086
  },
  "204": {
@@ -300,9 +300,9 @@
   "rate_per_hour": 35.4151
  },
  "220": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.114,
+  "weeks": 4,
+  "name": "Sofia Maria Sastre",
   "rate_per_hour": 35.0379
  },
  "221": {
@@ -354,9 +354,9 @@
   "rate_per_hour": 33.5928
  },
  "229": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.0447,
+  "weeks": 6,
+  "name": "Bishal Dangi Chhetri",
   "rate_per_hour": 32.5033
  },
  "231": {
@@ -378,9 +378,9 @@
   "rate_per_hour": 33.8143
  },
  "234": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.136,
+  "weeks": 7,
+  "name": "Paula Andrea Romero",
   "rate_per_hour": 32.9801
  },
  "235": {
@@ -600,9 +600,9 @@
   "rate_per_hour": 43.9079
  },
  "280": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.1938,
+  "weeks": 5,
+  "name": "Alison Almeida",
   "rate_per_hour": 40.5381
  },
  "281": {
@@ -655,8 +655,8 @@
  },
  "291": {
   "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "weeks": 8,
+  "name": "Abishek Bhattarai",
   "rate_per_hour": 35.2056
  },
  "292": {
