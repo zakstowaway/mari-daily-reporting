@@ -158,18 +158,21 @@ export default defineComponent({
       }
 
       const path_ = `data/recipes/${venue}.yaml`;
+      // Read the OAuth token OUT here, where `this` is unambiguously the
+      // component instance. Inside the arrow below `this` would be lexical and
+      // fragile; pulling it out is clearer and correct.
+      const ghToken = this.github.$auth.oauth_access_token;
       const gh = async (method, url, payload) => {
-        const r = await fetch(`https://api.github.com/repos/${REPO}/${url}`, {
+        return await fetch(`https://api.github.com/repos/${REPO}/${url}`, {
           method,
           headers: {
-            authorization: `Bearer ${this.github.$auth.oauth_access_token}`,
+            authorization: `Bearer ${ghToken}`,
             accept: "application/vnd.github+json",
             "user-agent": "shg-auth",
             ...(payload ? { "content-type": "application/json" } : {}),
           },
           ...(payload ? { body: JSON.stringify(payload) } : {}),
         });
-        return r;
       };
 
       let sha, current = "";
