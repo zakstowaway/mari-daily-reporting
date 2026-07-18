@@ -25,7 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
 from core import venues as V
-from wage_model import allocate_week
+from wage_model import allocate_week, super_lookup
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -127,6 +127,19 @@ for s in shifts:
     by_week.setdefault(wk, []).append(
         {"employee_id": emp, "hours": hours, "cost": cost, "date": dstr, "bucket": bucket})
 
+# Super, PER PERSON — see wage_model.super_lookup. The roster is the FORECAST
+# half of the week strip and the actuals are the other half; if the two gross
+# super differently the seam compares two different definitions of a wage.
+_xp = DATA_DIR / "xero_pay_weekly.json"
+_xs = DATA_DIR / "xero_super_weekly.json"
+_em = DATA_DIR / "employee_map.json"
+if _xp.exists() and _xs.exists() and _em.exists():
+    _super_for = super_lookup(json.loads(_xp.read_text()), json.loads(_xs.read_text()),
+                              json.loads(_em.read_text()), V.SUPER_RATE)
+else:
+    print(f"  super: no Xero data — flat {V.SUPER_RATE * 100:.0f}%")
+    _super_for = lambda _e, _w: SUPER_MULT
+
 for wk, wk_shifts in by_week.items():
     # This feed is ALWAYS the live roster, so the shortfall-is-leave rule
     # applies: a salaried person rostered under 40 is on leave for the rest
@@ -137,8 +150,13 @@ for wk, wk_shifts in by_week.items():
                                  week_days=wk_days, shortfall_leave=True)
     for w in warn:
         print(f"  warn {w}")
+    _wk_end = (date.fromisoformat(wk) + timedelta(days=6)).isoformat()
     for s in costed:
-        c, b, dstr = s["cost_final"], s["bucket"], s["date"]
+        # Grossed HERE, per person, while we still know who it is. The old
+        # gross-up sat on the dept totals below, by which point the identity is
+        # gone and a flat rate is the only thing possible.
+        c = s["cost_final"] * _super_for(s["employee_id"], _wk_end)
+        b, dstr = s["bucket"], s["date"]
         if b == "admin":
             add(dstr, "stow", "Admin", c * V.ADMIN_SHARES["stowaway"])
             add(dstr, "hg", "Admin", c * V.ADMIN_SHARES["harry"])
@@ -163,7 +181,8 @@ out = {"generated": datetime.now(timezone(timedelta(hours=OFFSET_H))).isoformat(
 for dstr in sorted(days):
     out["days"][dstr] = {}
     for ven, depts in days[dstr].items():
-        grossed = {k: round(v * SUPER_MULT, 2) for k, v in depts.items()}
+        # Already inc-super — grossed per person above, not here.
+        grossed = {k: round(v, 2) for k, v in depts.items()}
         grossed["total"] = round(sum(grossed.values()), 2)
         out["days"][dstr][ven] = grossed
 

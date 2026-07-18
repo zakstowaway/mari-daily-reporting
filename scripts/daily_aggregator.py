@@ -111,6 +111,7 @@ def _load_our_costs(venue_key, target):
         print(f"  recipe costing unavailable ({e}) — using Lightspeed's cost")
         return {}
 from core import venues as V
+from wage_model import super_lookup
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -677,8 +678,33 @@ if deputy_file is None:
 else:
     with deputy_file.open() as f:
         d = json.load(f)
+
+    # Super, PER PERSON — not a flat 12% (2026-07-18).
+    #
+    # This runs before Xero has posted the week, so it can't use actuals. But it
+    # can use each person's OWN trailing rate, and that matters: Mari's drivers
+    # are under 18 and legally get NO super, so 12% invented cost on exactly the
+    # venue least able to carry it. Grossing flat here also meant Zak's 9am
+    # number and the same week after the 6:30am rebuild disagreed by ~0.8% for
+    # no reason he could see.
+    #
+    # Rules live in wage_model.super_lookup — shared with rebuild_wages and
+    # roster_pull. Three copies of the gross-up is how it drifted to flat.
+    _xp = DATA_DIR / "xero_pay_weekly.json"
+    _xs = DATA_DIR / "xero_super_weekly.json"
+    _em = DATA_DIR / "employee_map.json"
+    if _xp.exists() and _xs.exists() and _em.exists():
+        _super_for = super_lookup(json.loads(_xp.read_text()), json.loads(_xs.read_text()),
+                                  json.loads(_em.read_text()), V.SUPER_RATE)
+    else:
+        print(f"  super: no Xero data — flat {V.SUPER_RATE * 100:.0f}% "
+              f"(overstates; rebuild_wages corrects it at 6:30am)")
+        _super_for = lambda _e, _w: SUPER_MULT
+    _wk = (target - timedelta(days=target.weekday()) + timedelta(days=6)).isoformat()
+
     def dept_cost(name):
-        return sum(t["cost"] for t in d if t.get("dept") == name) * SUPER_MULT
+        return sum(t["cost"] * _super_for(t.get("employee_id"), _wk)
+                   for t in d if t.get("dept") == name)
     kitchen_cost = dept_cost("Kitchen")
     foh_cost = dept_cost("FOH")
     driver_cost = dept_cost("Driver")

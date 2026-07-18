@@ -33,7 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
 from core import venues as V
-from wage_model import allocate_week
+from wage_model import allocate_week, super_lookup
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -99,6 +99,8 @@ else:
           f"{V.SUPER_RATE * 100:.0f}%. Super is only payable on ordinary time "
           f"earnings, so this OVERSTATES wages (~$52/wk measured). "
           f"Run scripts/pull_xero_pay_weekly.py.")
+
+SUPER_MULT_FOR = super_lookup(XERO_PAY, XERO_SUPER, EMP_MAP, V.SUPER_RATE)
 
 d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
 d_from -= timedelta(days=d_from.weekday())          # back to Monday
@@ -367,25 +369,11 @@ while cur <= d_to:
         def gross(eid, ex):
             """ex-super dollars -> what the person actually COSTS, inc super.
 
-            Super is payable on ORDINARY TIME earnings — overtime and some
-            allowances attract none — so it is NOT a flat 12% of gross pay.
-            Measured week ending 2026-07-12: Xero's effective rate was 11.79%,
-            and per person it ranged from 12.00% (Herminder Khera, salaried) to
-            11.31% (David Armour). The old flat 1.12 overstated that week by
-            $52.63 (~$2,737/yr).
-
-            So: where Xero has told us what it actually paid in super, use THAT.
-            SUPER_MULT survives only as the fallback for people/weeks Xero can't
-            speak to — open weeks, and anyone payroll has never paid (pedro f).
-            An estimate is still the right answer there; it just isn't the right
-            answer when the truth is sitting in a file.
+            The rules live in wage_model.super_lookup — one definition, shared
+            with daily_aggregator and roster_pull. Three copies of the gross-up
+            is exactly how it drifted into a flat 12% in the first place.
             """
-            xn = EMP_MAP.get(str(eid))
-            w = XERO_PAY.get(xn, {}).get(wk_key) if xn else None
-            s = XERO_SUPER.get(xn, {}).get(wk_key) if xn else None
-            if w and s is not None:
-                return ex * (1.0 + s / w)
-            return ex * SUPER_MULT
+            return ex * SUPER_MULT_FOR(eid, wk_key)
 
         if not paid:
             c, w = allocate_week(base_shifts + stand_ins, SAL, WPY,

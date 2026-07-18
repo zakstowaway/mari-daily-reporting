@@ -98,12 +98,57 @@ print("\n5. THE CODE USES ACTUALS, NOT THE CONSTANT")
 src = (ROOT / "scripts" / "rebuild_wages.py").read_text()
 check("rebuild_wages reads xero_super_weekly.json", "xero_super_weekly.json" in src)
 check("it grosses per person inside cost_week, not per dept bucket",
-      "def gross(" in src and "XERO_SUPER.get(xn, {}).get(wk_key)" in src)
+      "def gross(" in src and "SUPER_MULT_FOR(eid, wk_key)" in src)
 # SUPER_MULT must survive ONLY as the fallback — the open week and people Xero
 # has never paid. If it creeps back onto the dept buckets, super is flat again.
 bucket_flat = [ln.strip() for ln in src.splitlines()
                if "SUPER_MULT" in ln and "|Kitchen" in ln or "SUPER_MULT" in ln and "|FOH" in ln]
 check("no dept-bucket multiply reintroduced", not bucket_flat, str(bucket_flat[:2]))
+
+print("\n6. THE OPEN WEEK USES EACH PERSON'S OWN RATE, NOT 12%")
+print("   (before: the 9am number ran ~0.8% pessimistic, then moved at 6:30am")
+print("    for no reason Zak could see)")
+sys.path.insert(0, str(ROOT / "scripts"))
+from wage_model import super_lookup   # noqa: E402
+
+emap = json.loads((D / "employee_map.json").read_text())
+rev = {v: k for k, v in emap.items()}
+f = super_lookup(pay, sup, emap, 0.12)
+OPEN = "2099-01-03"          # a week Xero will never have posted
+
+# A closed week must still be the actual — tier 2 must not shadow tier 1.
+for n in ("Herminder Khera", "David Armour"):
+    did = rev.get(n)
+    if did and "2026-07-12" in pay.get(n, {}):
+        actual = 1 + sup[n]["2026-07-12"] / pay[n]["2026-07-12"]
+        check(f"{n}: closed week still uses Xero's actual",
+              abs(f(did, "2026-07-12") - actual) < 1e-9, f"{actual:.4f}")
+
+# The whole point: a junior legally on 0% must STAY on 0% in the open week.
+zero = [n for n, v in pay.items()
+        if sum(v.values()) > 500 and sum(sup.get(n, {}).values()) == 0 and n in rev]
+if zero:
+    n = zero[0]
+    check(f"{n}: zero-super junior stays at 0% in the open week",
+          abs(f(rev[n], OPEN) - 1.0) < 1e-9, f"mult {f(rev[n], OPEN):.4f}")
+else:
+    print("   (no zero-super person is currently mapped to Deputy — skipped)")
+
+check("someone Xero has never seen falls back to the statutory rate",
+      abs(f("99999", OPEN) - 1.12) < 1e-9, f"{f('99999', OPEN):.4f}")
+
+print("\n7. ONE DEFINITION — all three writers share it")
+for f_, label in ((ROOT / "scripts/rebuild_wages.py", "rebuild_wages"),
+                  (ROOT / "scripts/daily_aggregator.py", "daily_aggregator"),
+                  (ROOT / "scripts/roster_pull.py", "roster_pull")):
+    src = f_.read_text()
+    check(f"{label} resolves super via wage_model.super_lookup",
+          "super_lookup" in src)
+# roster_pull's old flat gross-up sat on the dept totals, where the person is
+# already gone. If it comes back, the roster and the actuals silently disagree.
+rp = (ROOT / "scripts/roster_pull.py").read_text()
+check("roster_pull no longer grosses the dept totals flat",
+      "v * SUPER_MULT" not in rp)
 
 print("\n" + "=" * 78)
 print(f"PASSED {len(PASS)}   FAILED {len(FAIL)}")

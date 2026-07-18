@@ -137,3 +137,70 @@ def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None,
                          "logged_h": round(total_h, 2), "leave_h": round(short_h, 2),
                          "leave_cost": round(leave_cost, 2)})
     return out, warn
+
+
+# ---------------------------------------------------------------------------
+# SUPER
+# ---------------------------------------------------------------------------
+# Deputy's Cost is ex-super. Everything we report is inc-super. The gross-up
+# used to be a flat 12% everywhere, which is wrong twice over:
+#
+#   1. The SG rate CHANGED — 11% (Jul 2023), 11.5% (Jul 2024), 12% (Jul 2025).
+#      Most of our history predates 12%.
+#   2. Under-18s working <=30 h/wk are entitled to NO super. Not a reduced
+#      rate — none. Marilyna's runs on teenage drivers, so a flat 12% invented
+#      ~$5,413 of super for people who legally receive zero, and booked it to
+#      her line.
+#
+# Measured over 100 Xero pay runs: $289,768.94 on $2,587,065.11 = 11.201%.
+# Flat 12% books $310,447.81 — $20,678.87 too much.
+#
+# This lives here, and only here, because three copies of the gross-up is how
+# it drifted in the first place. rebuild_wages, daily_aggregator and roster_pull
+# all resolve super through super_lookup().
+
+
+def super_lookup(xero_pay, xero_super, emp_map, default_rate):
+    """-> mult(employee_id, week_ending_iso) giving the inc-super multiplier.
+
+    Three tiers, best first:
+
+      1. ACTUAL — Xero paid this person in this week. Use exactly what it paid.
+         Closed weeks are simply not estimated.
+      2. TRAILING — Xero knows the person but not this week yet (the OPEN week,
+         which is the number Zak reads at 9am). Use their own recent effective
+         rate. A junior on 0% stays on 0%; someone who just turned 18 moves to
+         12% the week Xero says so, not the week we guess.
+      3. DEFAULT — Xero has never seen them (a brand-new hire, or pedro f whom
+         payroll has never paid). Only here is a flat rate the right answer,
+         and it is the statutory one.
+
+    Tier 2 is what stops the live week disagreeing with the same week once it
+    closes. Before this, the open week ran ~0.8% pessimistic and then moved
+    under Zak the next morning for no reason he could see.
+    """
+    TRAILING_WEEKS = 8
+
+    def _trailing(xn):
+        weeks = sorted(xero_pay.get(xn, {}))[-TRAILING_WEEKS:]
+        w = sum(xero_pay[xn][k] for k in weeks)
+        s = sum(xero_super.get(xn, {}).get(k, 0) for k in weeks)
+        # No wages in the window -> no opinion; fall through to the default.
+        return (1.0 + s / w) if w > 0 else None
+
+    cache = {}
+
+    def mult(employee_id, week_key):
+        xn = emp_map.get(str(employee_id))
+        if xn:
+            w = xero_pay.get(xn, {}).get(week_key)
+            s = xero_super.get(xn, {}).get(week_key)
+            if w and s is not None:
+                return 1.0 + s / w                      # 1. actual
+            if xn not in cache:
+                cache[xn] = _trailing(xn)
+            if cache[xn] is not None:
+                return cache[xn]                        # 2. trailing
+        return 1.0 + default_rate                       # 3. statutory fallback
+
+    return mult
