@@ -27,7 +27,14 @@ sys.path.insert(0, os.path.dirname(__file__))
 import config  # noqa: E402
 from metrics import D, money  # noqa: E402
 
-WINDOW_HOURS = {17, 18, 19, 20}   # 17:00-20:59 dinner window
+# Stowaway trades dinner-only Mon-Fri, but adds a real lunch service on weekends
+# (measured 1 Jun-18 Jul: weekend lunch ~$4.1k/day vs ~$25 on weekdays), and
+# EatClub follows suit -- weekday redemptions are all dinner, weekend redemptions
+# are mostly lunch. So emit BOTH windows every day; the cannibalisation reader
+# picks the ones that apply to that day (weekday: dinner; weekend: lunch+dinner).
+DINNER_HOURS = {17, 18, 19, 20}   # 17:00-20:59
+LUNCH_HOURS = {12, 13, 14, 15}    # 12:00-15:59
+WINDOW_HOURS = DINNER_HOURS       # back-compat alias
 
 
 def _resolve(headers, *needles):
@@ -84,16 +91,22 @@ def ingest(csv_path, out_path):
         # HG-food-on-Stow-till ('harry gatos food') is intentionally dropped:
         # is_stowaway_proper_row returns False for it, is_marilynas_row False too.
 
+    def _win(hours, hrs, key):
+        return sum((hours.get(h, {}).get(key, Decimal("0")) for h in hrs), Decimal("0"))
+
     def summarise(scope):
         hours = buckets[scope]
-        window_inc = sum((hours.get(h, {}).get("inc", Decimal("0")) for h in WINDOW_HOURS), Decimal("0"))
-        window_ex = sum((hours.get(h, {}).get("ex", Decimal("0")) for h in WINDOW_HOURS), Decimal("0"))
         day_inc = sum((v["inc"] for v in hours.values()), Decimal("0"))
         return {
             "by_hour": {str(h): {"inc_gst": str(money(v["inc"])), "ex_gst": str(money(v["ex"]))}
                         for h, v in sorted(hours.items())},
-            "window_1700_2059_inc_gst": str(money(window_inc)),
-            "window_1700_2059_ex_gst": str(money(window_ex)),
+            "dinner_window_1700_2059_inc_gst": str(money(_win(hours, DINNER_HOURS, "inc"))),
+            "dinner_window_1700_2059_ex_gst": str(money(_win(hours, DINNER_HOURS, "ex"))),
+            "lunch_window_1200_1559_inc_gst": str(money(_win(hours, LUNCH_HOURS, "inc"))),
+            "lunch_window_1200_1559_ex_gst": str(money(_win(hours, LUNCH_HOURS, "ex"))),
+            # back-compat: the original dinner-only key
+            "window_1700_2059_inc_gst": str(money(_win(hours, DINNER_HOURS, "inc"))),
+            "window_1700_2059_ex_gst": str(money(_win(hours, DINNER_HOURS, "ex"))),
             "day_total_inc_gst": str(money(day_inc)),
         }
 
