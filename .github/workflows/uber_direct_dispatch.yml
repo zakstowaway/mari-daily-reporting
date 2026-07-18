@@ -1,0 +1,50 @@
+name: Uber Direct fee ingest
+
+# Fired by the Pipedream "Mari Insights to GitHub" workflow when Uber's daily
+# Direct invoice email arrives. Pipedream parses date + fee and POSTs a
+# repository_dispatch (event_type: uber-direct-arrived, client_payload:
+# { target_date, fee }). This job upserts the fee into the CSV the dashboard reads.
+concurrency:
+  group: uber-direct-ingest
+  cancel-in-progress: false
+
+on:
+  repository_dispatch:
+    types:
+      - uber-direct-arrived
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Activity date (YYYY-MM-DD)'
+        required: true
+      fee:
+        description: 'Uber Direct fee inc GST, e.g. 15.23'
+        required: true
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TARGET_DATE: ${{ github.event.client_payload.target_date || inputs.target_date }}
+      FEE: ${{ github.event.client_payload.fee || inputs.fee }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Upsert uber_direct_daily.csv
+        run: python3 scripts/uber_direct_upsert.py "$TARGET_DATE" "$FEE"
+
+      - name: Commit + push
+        run: |
+          git config user.name "uber-direct-bot"
+          git config user.email "bot@stowawaybar.com"
+          git add data/uber_direct_daily.csv
+          git diff --quiet --staged || git commit -m "Uber Direct fee ${TARGET_DATE} A\$${FEE} (email->Pipedream)"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
