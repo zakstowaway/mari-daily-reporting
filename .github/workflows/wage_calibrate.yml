@@ -36,6 +36,8 @@ jobs:
         env:
           DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
         run: python scripts/rebuild_wages.py 2024-10-21 "$(TZ=Australia/Sydney date -d '+7 days' +%F)" --write --backtest
+      - name: Refresh wage on-costs (owner salary + payroll-tax/WC rate)
+        run: python scripts/compute_wage_oncosts.py
       - name: Commit
         run: |
           git config user.name "Wage Calibrate"
