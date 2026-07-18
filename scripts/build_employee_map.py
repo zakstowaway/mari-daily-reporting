@@ -151,6 +151,12 @@ ALIASES = {
     # Same run, same evidence, not explicitly named by Zak but the names speak:
     "Saif": "Saif Quader",                 # 231        6/6        0     0.67
     "Coco": "Corentin Golbry",             # 155       12/12       0     1.00
+    # Zak, 2026-07-18: "maria is paola". The matcher could NOT have called this
+    # one: "Paola" is not "Maria", and Deputy 268 "Paola" tied 271 "Oak" at a
+    # perfect 1.00 (both worked the same 3 weeks Maria Manjarrez was paid). Pure
+    # roster overlap, zero name signal — exactly the case where the arithmetic
+    # narrows to two and a human has to choose. Zak chose.
+    "Paola": "Maria Manjarrez",            # 268        3/3        0     0.75
     #
     # Confirming Billy freed Guillermo and let the matcher settle five more —
     # each a PERFECT week alignment (every week worked is a week paid, d_only 0)
