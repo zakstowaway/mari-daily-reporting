@@ -1,6 +1,6 @@
 {
   "date": "2026-07-15",
-  "generated_at": "2026-07-16T09:37:23.668788Z",
+  "generated_at": "2026-07-18T22:19:01.869079Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -15,14 +15,17 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 5953.69,
-    "revenue_ex_gst": 5412.56,
+    "revenue_inc_gst": 5897.09,
+    "revenue_ex_gst": 5361.11,
     "cogs_dollars": 1279.56,
-    "cogs_pct": 23.6,
-    "gp_dollars": 4133.0,
-    "gp_pct": 76.4,
+    "cogs_pct": 23.9,
+    "gp_dollars": 4081.55,
+    "gp_pct": 76.1,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 51.45,
+    "eatclub_covers": 2,
+    "revenue_ex_gst_before_eatclub": 5412.56,
     "food_ex_gst": 1847.02,
     "bev_ex_gst": 3565.43,
     "food_cogs": 406.72,
@@ -37,17 +40,17 @@
   },
   "wages": {
     "kitchen_dollars": 387.02,
-    "foh_dollars": 440.41,
-    "driver_dollars": 0.0,
-    "admin_dollars": 329.54,
-    "leave_dollars": 0.0,
-    "total_dollars": 1156.96,
-    "wages_pct": 21.4,
+    "foh_dollars": 463.26,
+    "driver_dollars": 0,
+    "admin_dollars": 335.8,
+    "leave_dollars": 0,
+    "total_dollars": 1186.07,
+    "wages_pct": 22.1,
     "net_wage_pct": null,
     "kitchen_hours": 6.2,
     "foh_hours": 11.0,
     "wages_kitchen_pct": 21.0,
-    "wages_foh_pct": 12.4,
+    "wages_foh_pct": 13.0,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -110,121 +113,141 @@
       "name": "Fancy Pants Parmy - Classic",
       "qty": 21.0,
       "rev": 515.78,
-      "cost": 170.22
+      "cost": 170.22,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stow Schnitty",
       "qty": 22.0,
       "rev": 475.05,
-      "cost": 117.17
+      "cost": 117.17,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Guinness Draught - Pint",
       "qty": 24.0,
       "rev": 422.85,
-      "cost": 113.23
+      "cost": 113.23,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Kuku Sauvignon Blanc - Regular",
       "qty": 13.0,
       "rev": 182.0,
-      "cost": 37.89
+      "cost": 37.89,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mulled Wine",
       "qty": 11.0,
       "rev": 165.98,
-      "cost": 22.73
+      "cost": 22.73,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fresh is Best Lager - Schooner",
       "qty": 17.0,
       "rev": 143.75,
-      "cost": 31.1
+      "cost": 31.1,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Beef Cheek",
       "qty": 3.0,
       "rev": 118.36,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "A. Rodda Chardonnay - Bottle",
       "qty": 1.0,
       "rev": 112.0,
-      "cost": 37.7
+      "cost": 37.7,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Geppetto Pinot Noir - Regular",
       "qty": 7.0,
       "rev": 106.47,
-      "cost": 24.58
+      "cost": 24.58,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Version Two Pinot Grigio - Regular",
       "qty": 10.0,
       "rev": 105.39,
-      "cost": 17.67
+      "cost": 17.67,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 7.0,
       "rev": 104.46,
-      "cost": 28.94
+      "cost": 28.94,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fish Tacos",
       "qty": 5.0,
       "rev": 102.61,
-      "cost": 10.92
+      "cost": 10.92,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Grifter Pale - Pint",
       "qty": 8.0,
       "rev": 96.0,
-      "cost": 26.64
+      "cost": 26.64,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Eggplant Parmy",
       "qty": 4.0,
       "rev": 92.76,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Kirin - Pint",
       "qty": 5.0,
       "rev": 92.5,
-      "cost": 25.19
+      "cost": 25.19,
+      "cost_source": "lightspeed"
     },
     {
       "name": "San Giorgio Ciampoleto Rosso di Montalcino 2023 - Regular Glass",
       "qty": 3.0,
       "rev": 89.9,
-      "cost": 24.42
+      "cost": 24.42,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Status Quo - Pint",
       "qty": 5.0,
       "rev": 88.66,
-      "cost": 20.82
+      "cost": 20.82,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Baileys Irish Cream",
       "qty": 8.0,
       "rev": 88.0,
-      "cost": 13.19
+      "cost": 13.19,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Crankshaft IPA - Pint",
       "qty": 5.0,
       "rev": 87.5,
-      "cost": 19.56
+      "cost": 19.56,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Stone & Wood - Pint",
       "qty": 5.0,
       "rev": 83.86,
-      "cost": 21.77
+      "cost": 21.77,
+      "cost_source": "lightspeed"
     }
   ]
 }

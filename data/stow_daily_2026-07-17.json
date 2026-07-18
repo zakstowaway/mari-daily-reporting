@@ -1,6 +1,6 @@
 {
   "date": "2026-07-17",
-  "generated_at": "2026-07-18T08:27:56.036501Z",
+  "generated_at": "2026-07-18T22:19:01.935620Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -15,14 +15,17 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 11417.85,
-    "revenue_ex_gst": 10380.07,
+    "revenue_inc_gst": 11412.87,
+    "revenue_ex_gst": 10375.54,
     "cogs_dollars": 2224.65,
     "cogs_pct": 21.4,
-    "gp_dollars": 8155.42,
+    "gp_dollars": 8150.89,
     "gp_pct": 78.6,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 4.53,
+    "eatclub_covers": 1,
+    "revenue_ex_gst_before_eatclub": 10380.07,
     "food_ex_gst": 2054.13,
     "bev_ex_gst": 8325.74,
     "food_cogs": 318.12,

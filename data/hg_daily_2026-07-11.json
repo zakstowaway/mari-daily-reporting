@@ -1,6 +1,6 @@
 {
   "date": "2026-07-11",
-  "generated_at": "2026-07-12T13:55:03.739112Z",
+  "generated_at": "2026-07-18T22:19:50.944650Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -15,38 +15,42 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 4905.4,
-    "revenue_ex_gst": 4459.53,
+    "revenue_inc_gst": 4683.1,
+    "revenue_ex_gst": 4257.44,
     "cogs_dollars": 680.57,
-    "cogs_pct": 15.3,
-    "gp_dollars": 3778.96,
-    "gp_pct": 84.7,
+    "cogs_pct": 16.0,
+    "gp_dollars": 3576.87,
+    "gp_pct": 84.0,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
-    "food_ex_gst": 2639.09,
-    "bev_ex_gst": 1820.36,
+    "eatclub_giveaway_ex_gst": 202.09,
+    "eatclub_covers": 10,
+    "revenue_ex_gst_before_eatclub": 4459.53,
+    "food_ex_gst": 2616.36,
+    "bev_ex_gst": 1843.09,
     "food_cogs": 279.86,
     "bev_cogs": 400.71,
-    "food_cogs_pct": 10.6,
-    "bev_cogs_pct": 22.0,
-    "food_gp_pct": 89.4,
-    "bev_gp_pct": 78.0,
+    "food_cogs_pct": 10.7,
+    "bev_cogs_pct": 21.7,
+    "food_gp_pct": 89.3,
+    "bev_gp_pct": 78.3,
     "mari_rideon_ex_gst": 0.0,
     "hg_food_out_ex_gst": 0.0,
     "stow_food_out_ex_gst": 11.82
   },
   "wages": {
-    "kitchen_dollars": 405.19,
-    "foh_dollars": 408.82,
-    "driver_dollars": 0.0,
-    "admin_dollars": 4.2,
-    "total_dollars": 818.22,
-    "wages_pct": 18.3,
+    "kitchen_dollars": 407.69,
+    "foh_dollars": 422.02,
+    "driver_dollars": 0,
+    "admin_dollars": 4.31,
+    "leave_dollars": 0,
+    "total_dollars": 834.02,
+    "wages_pct": 19.6,
     "net_wage_pct": null,
     "kitchen_hours": 10.8,
     "foh_hours": 9.0,
-    "wages_kitchen_pct": 15.4,
-    "wages_foh_pct": 22.5,
+    "wages_kitchen_pct": 15.6,
+    "wages_foh_pct": 22.9,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -109,121 +113,141 @@
       "name": "Dumplings - Prawn Har Gow [GF]",
       "qty": 19.0,
       "rev": 358.0,
-      "cost": 83.86
+      "cost": 83.86,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Shredded Beef",
       "qty": 12.0,
       "rev": 312.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Sapporo - 500ml",
       "qty": 25.0,
       "rev": 306.75,
-      "cost": 92.75
+      "cost": 92.75,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Tonkotsu",
       "qty": 9.0,
       "rev": 261.0,
-      "cost": 37.48
+      "cost": 37.48,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Mie Goreng",
       "qty": 11.0,
       "rev": 256.0,
-      "cost": 35.01
+      "cost": 35.01,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Katsu Curry",
       "qty": 10.0,
       "rev": 245.0,
-      "cost": 28.57
+      "cost": 28.57,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Harry's Lager - Pint",
       "qty": 16.0,
       "rev": 181.75,
-      "cost": 34.87
+      "cost": 34.87,
+      "cost_source": "lightspeed"
     },
     {
       "name": "BBQ Meat Platter",
       "qty": 4.0,
       "rev": 160.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Classic Margarita",
       "qty": 8.0,
       "rev": 152.0,
-      "cost": 26.11
+      "cost": 26.11,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Miso",
       "qty": 5.0,
       "rev": 139.2,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Azurescens Pinot Noir - Regular",
       "qty": 9.0,
       "rev": 135.0,
-      "cost": 25.2
+      "cost": 25.2,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Dumplings - Veg Gyoza",
       "qty": 9.0,
       "rev": 126.0,
-      "cost": 17.65
+      "cost": 17.65,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Popcorn Cauliflower",
       "qty": 8.0,
       "rev": 119.0,
-      "cost": 7.83
+      "cost": 7.83,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Chicken Karaage",
       "qty": 7.0,
       "rev": 119.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Duck Spring Roll",
       "qty": 7.0,
       "rev": 112.0,
-      "cost": 25.0
+      "cost": 25.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Aperol Spritz",
       "qty": 6.0,
       "rev": 110.2,
-      "cost": 20.68
+      "cost": 20.68,
+      "cost_source": "lightspeed"
     },
     {
       "name": "From Sundays Shiraz - Regular",
       "qty": 7.0,
       "rev": 102.0,
-      "cost": 19.6
+      "cost": 19.6,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Fried Rice",
       "qty": 4.0,
       "rev": 94.0,
-      "cost": 10.72
+      "cost": 10.72,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Shoyu",
       "qty": 3.0,
       "rev": 87.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     },
     {
       "name": "Meat Platter",
       "qty": 2.0,
       "rev": 80.0,
-      "cost": 0.0
+      "cost": 0.0,
+      "cost_source": "lightspeed"
     }
   ]
 }

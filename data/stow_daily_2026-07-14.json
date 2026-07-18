@@ -1,6 +1,6 @@
 {
   "date": "2026-07-14",
-  "generated_at": "2026-07-17T11:39:52.452528Z",
+  "generated_at": "2026-07-18T22:19:01.800216Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -15,14 +15,17 @@
     "payments": "missing"
   },
   "sales": {
-    "revenue_inc_gst": 2303.36,
-    "revenue_ex_gst": 2094.03,
+    "revenue_inc_gst": 2196.89,
+    "revenue_ex_gst": 1997.24,
     "cogs_dollars": 456.83,
-    "cogs_pct": 21.8,
-    "gp_dollars": 1637.2,
-    "gp_pct": 78.2,
+    "cogs_pct": 22.9,
+    "gp_dollars": 1540.41,
+    "gp_pct": 77.1,
     "uber_eats_revenue": 0,
     "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 96.79,
+    "eatclub_covers": 4,
+    "revenue_ex_gst_before_eatclub": 2094.03,
     "food_ex_gst": 448.15,
     "bev_ex_gst": 1645.81,
     "food_cogs": 87.06,
@@ -36,18 +39,18 @@
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
-    "kitchen_dollars": 0.0,
-    "foh_dollars": 355.3,
-    "driver_dollars": 0.0,
-    "admin_dollars": 305.84,
-    "leave_dollars": 0.0,
-    "total_dollars": 661.14,
-    "wages_pct": 31.6,
+    "kitchen_dollars": 273.14,
+    "foh_dollars": 406.24,
+    "driver_dollars": 0,
+    "admin_dollars": 315.88,
+    "leave_dollars": 0,
+    "total_dollars": 995.27,
+    "wages_pct": 49.8,
     "net_wage_pct": null,
     "kitchen_hours": 4.8,
     "foh_hours": 9.2,
-    "wages_kitchen_pct": 0.0,
-    "wages_foh_pct": 21.6,
+    "wages_kitchen_pct": 60.9,
+    "wages_foh_pct": 24.7,
     "includes_super": true,
     "salaried_synthesized": true
   },
@@ -55,13 +58,13 @@
   "payments_breakdown": null,
   "alerts": {
     "cogs": "green",
-    "wages": "yellow",
+    "wages": "red",
     "delivery": "n/a",
     "gp": "green",
     "cogs_food": "green",
     "cogs_bev": "yellow",
-    "wages_kitchen": "green",
-    "wages_foh": "yellow"
+    "wages_kitchen": "red",
+    "wages_foh": "amber"
   },
   "targets": {
     "cogs": {
