@@ -59,7 +59,7 @@ textarea{width:100%;height:190px;font-family:ui-monospace,Menlo,monospace;font-s
 <div id="gate"></div>
 <div class="wrap" id="app" style="display:none">
   <h1>Recipe builder</h1>
-  <div class="muted" style="float:right;margin-top:-28px"><span id="who"></span> · <a href="#" onclick="Auth.logout();location.reload()">sign out</a></div>
+  <div class="muted" style="float:right;margin-top:-28px"><span id="who"></span> · <a href="#" onclick="Auth.logout().then(()=>location.reload())">sign out</a></div>
   <div class="sub" id="sub">Loading ingredients…</div>
 
   <div class="grid">
@@ -130,26 +130,26 @@ textarea{width:100%;height:190px;font-family:ui-monospace,Menlo,monospace;font-s
 <script type="module">
 import { Auth } from '/_shared/auth.js';
 import { Feed } from '/_shared/feed.js';
+import { WORKER_URL } from '/_shared/config.js';
 
-let ING = [], LINES = [];
+let ING = [], LINES = [], CURRENT_USER = null;
 
-// Kitchen roles only. NOTE this is a cupboard lock, not a vault -- users.json
-// ships the salt to the browser. Fine for gating a read-only page; the SAVE
-// path must authenticate at the endpoint. See _shared/auth.js.
+// Kitchen roles only. Auth is Supabase; the SAVE path re-verifies the token at
+// the Pipedream endpoint (role from Supabase app_metadata, never the browser).
 Auth.gate(document.getElementById('gate'), {
   roles: Auth.KITCHEN_ROLES,
   onOk: (user) => {
+    CURRENT_USER = user;
     document.getElementById('app').style.display = '';
     document.getElementById('who').textContent = user.name;
     const canWrite = Auth.canWrite();
     document.getElementById('save-btn').disabled = !canWrite;
-    document.getElementById('save-mode').textContent = canWrite ? `as ${user.name}` : 'unavailable';
+    document.getElementById('save-mode').textContent = canWrite ? `as ${user.name}` : 'no kitchen role';
     document.getElementById('save-note').innerHTML = canWrite
       ? `Commits to <code>data/recipes/</code> as <b>${user.name}</b>. Every recipe carries the
          name of whoever entered it.`
-      : `<span style="color:var(--amber)">Saving is off until the auth Worker is deployed.</span>
-         The current login is a shared station password checked in the browser, so a save would
-         have no name on it. Copy the YAML for now. See <code>modules/auth/README.md</code>.`;
+      : `<span style="color:var(--amber)">Your account has no kitchen role yet.</span>
+         An admin needs to set it before you can save. Copy the YAML for now.`;
     boot();
   }
 });
@@ -306,12 +306,12 @@ async function save() {
   try { token = Auth.requireToken(); }
   catch (e) { out.innerHTML = `<span style="color:var(--red)">${e.message}</span>`; return; }
 
-  const user = Auth.current();
+  const user = CURRENT_USER;
   const venue = user.venue || (user.role === 'hgfood' ? 'harry_gatos' : 'stowaway');
 
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    const r = await fetch(`${Auth.WORKER_URL}/recipes`, {
+    const r = await fetch(`${WORKER_URL}/recipes`, {
       method: 'POST',
       headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
       body: JSON.stringify({ venue, product: dish, yaml: document.getElementById('yaml').value }),

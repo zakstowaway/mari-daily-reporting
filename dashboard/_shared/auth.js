@@ -1,162 +1,236 @@
 /**
- * Shared auth. One login per person, every app.
+ * Auth, backed by Supabase. Self-service: users sign in, sign up (by invite),
+ * reset their own password. Supabase handles the whole credential lifecycle —
+ * we never see or store a password or a hash.
  *
- * TWO MODES, on purpose — this is a live migration, not a rewrite.
+ * WHY A PROVIDER (Zak, 2026-07-19: "passwords and logins ... completely managed
+ * by the user ... forgot password and everything")
+ * ------------------------------------------------------------------------------
+ * The previous build was admin-provisioned: a CLI set each password into a
+ * fixed env var. That cannot do self-service — there is nowhere to write a new
+ * user or a changed password at runtime, and no way to email a reset link.
+ * Hand-rolling reset flows (token expiry, enumeration, deliverability) is a
+ * known footgun. Supabase's are battle-tested and free.
  *
- *   WORKER  (WORKER_URL set)  The real thing. Password goes to the Worker,
- *                             which holds the hashes and returns a signed
- *                             token. The browser never sees a hash or a salt.
+ * WHAT LIVES WHERE
+ * ----------------
+ *   Supabase      identities + passwords + reset emails. NOT business data.
+ *   this repo     recipes, COGS, everything that matters. Unchanged.
+ *   Pipedream     verifies a Supabase token, then commits a recipe AS the user.
  *
- *   LEGACY  (no WORKER_URL)   The old dashboard/users.json scheme:
- *                             sha256(global_salt + password), checked HERE, in
- *                             the browser, against hashes that also shipped
- *                             here. It is a speed bump, not a lock. It stays
- *                             ONLY so the live dashboard keeps working until
- *                             the Worker is deployed. Delete it after.
+ * ROLE is admin-controlled, not self-service — you don't let a chef self-assign
+ * admin. It lives in the Supabase user's app_metadata.role (only settable with
+ * the service key) and rides in the token. Password is the user's; role is
+ * yours. See modules/auth/README.md.
  *
- * The mode is visible: Auth.mode() returns 'worker' or 'legacy'. Anything that
- * WRITES must refuse in legacy mode — see requireToken(). A shared station
- * password can't tell you who entered a recipe, which is the whole point
- * (Zak: "one username per person, so that we can see who's inputting data").
+ * The public API (gate/current/requireToken/canWrite/logout/KITCHEN_ROLES) is
+ * unchanged from the previous version, so pages that used it don't change.
  */
 
-// Set after `wrangler deploy` — see modules/auth/README.md
-export const WORKER_URL = ""; // e.g. "https://shg-auth.zak.workers.dev"
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export const Auth = (() => {
-  const KEY = "shg.session";
-  let CURRENT = null;
-  let USERS = null;      // legacy only
-
-  const mode = () => (WORKER_URL ? "worker" : "legacy");
-
-  // ── legacy (delete with users.json) ──────────────────────────────────────
-  async function sha256Hex(s) {
-    const buf = new TextEncoder().encode(s);
-    const digest = await crypto.subtle.digest("SHA-256", buf);
-    return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
-  }
-
-  async function legacyLogin(username, password) {
-    if (!USERS) {
-      const r = await fetch("/users.json?t=" + Date.now());
-      if (!r.ok) throw new Error(`users.json ${r.status}`);
-      USERS = await r.json();
-    }
-    const u = String(username).trim().toLowerCase();
-    const rec = USERS.users[u];
-    if (!rec) return null;
-    if ((await sha256Hex(USERS.salt + password)) !== rec.hash) return null;
-    return { username: u, name: rec.display, role: rec.role, venue: null, token: null, legacy: true };
-  }
-
-  // ── worker ───────────────────────────────────────────────────────────────
-  async function workerLogin(username, password) {
-    const r = await fetch(`${WORKER_URL}/login`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ username: String(username).trim().toLowerCase(), password }),
-    });
-    if (r.status === 401) return null;
-    if (!r.ok) throw new Error(`login failed (${r.status})`);
-    const { token, user } = await r.json();
-    return { ...user, token, legacy: false };
-  }
-
-  // ── public ───────────────────────────────────────────────────────────────
-  async function login(username, password) {
-    const session = WORKER_URL ? await workerLogin(username, password)
-                               : await legacyLogin(username, password);
-    if (!session) return null;
-    CURRENT = session;
-    sessionStorage.setItem(KEY, JSON.stringify(session));
-    return session;
-  }
-
-  function current() {
-    if (CURRENT) return CURRENT;
-    try {
-      const s = sessionStorage.getItem(KEY);
-      if (s) CURRENT = JSON.parse(s);
-    } catch { /* ignore */ }
-    return CURRENT;
-  }
-
-  function logout() {
-    CURRENT = null;
-    sessionStorage.removeItem(KEY);
-  }
-
-  /**
-   * The token for a write. Throws rather than letting a write proceed
-   * unattributed or unauthenticated.
-   */
-  function requireToken() {
-    const c = current();
-    if (!c) throw new Error("Not signed in.");
-    if (c.legacy || !c.token) {
-      throw new Error(
-        "Saving is disabled until the auth Worker is deployed. The current login " +
-        "is a shared station password checked in the browser — it cannot prove who " +
-        "you are, so a save would have no name on it. See modules/auth/README.md."
-      );
-    }
-    return c.token;
-  }
-
-  const hasRole = (...allowed) => { const c = current(); return !!c && allowed.includes(c.role); };
-  const canWrite = () => { try { requireToken(); return true; } catch { return false; } };
+  const configured = !!(SUPABASE_URL && SUPABASE_ANON_KEY);
+  const sb = configured ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
   const KITCHEN_ROLES = ["admin", "bigchef", "stowfood", "hgfood", "pizza"];
 
-  /** Gate a page: render a login card into `mount`, call onOk when in. */
-  async function gate(mount, { roles = null, onOk }) {
-    const go = () => {
-      const c = current();
-      if (!c) return false;
-      if (roles && !roles.includes(c.role)) {
-        mount.innerHTML = `<div class="wrap"><div class="card"><b>No access</b>
-          <div class="muted">Signed in as ${c.name} (${c.role}). Needs: ${roles.join(", ")}.
-          <a href="#" id="_lo">sign out</a></div></div></div>`;
-        mount.querySelector("#_lo").onclick = () => { logout(); location.reload(); };
-        return true;
-      }
-      mount.style.display = "none";
-      onOk(c);
-      return true;
+  // Shape a Supabase user into the {username,name,role,venue,token} the app uses.
+  function shape(session) {
+    if (!session?.user) return null;
+    const u = session.user;
+    const meta = { ...(u.app_metadata || {}), ...(u.user_metadata || {}) };
+    return {
+      username: u.email,
+      email: u.email,
+      name: meta.name || u.email,
+      role: meta.role || null,          // set by admin in app_metadata
+      venue: meta.venue || null,
+      token: session.access_token,      // the Supabase JWT the Worker verifies
     };
-    if (go()) return;
+  }
 
-    mount.innerHTML = `
-      <div class="login-wrap"><div class="login-card">
-        <form id="_lf">
-          <label for="_u">Username</label>
-          <input id="_u" autocomplete="username" autocapitalize="none" autofocus>
-          <label for="_p">Password</label>
-          <input id="_p" type="password" autocomplete="current-password">
-          <button type="submit">Sign In</button>
-          <div class="err" id="_e"></div>
-          ${mode() === "legacy"
-            ? `<div class="muted" style="margin-top:10px">Shared station login. Saving is
-               off until personal accounts are live.</div>` : ""}
-        </form>
-      </div></div>`;
+  let CACHE = null;
+  async function current() {
+    if (!sb) return null;
+    const { data } = await sb.auth.getSession();
+    CACHE = shape(data.session);
+    return CACHE;
+  }
+
+  async function login(email, password) {
+    if (!sb) throw new Error("Auth not configured yet — Supabase keys missing.");
+    const { data, error } = await sb.auth.signInWithPassword({ email: email.trim(), password });
+    if (error) return null;
+    CACHE = shape(data.session);
+    return CACHE;
+  }
+
+  async function signUp(email, password, name) {
+    if (!sb) throw new Error("Auth not configured yet.");
+    const { error } = await sb.auth.signUp({
+      email: email.trim(), password,
+      options: { data: { name: name || "" } },   // -> user_metadata; role is set by admin
+    });
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
+  async function forgotPassword(email) {
+    if (!sb) throw new Error("Auth not configured yet.");
+    const { error } = await sb.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${location.origin}/recipes/#reset`,
+    });
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
+  async function completePasswordReset(newPassword) {
+    if (!sb) throw new Error("Auth not configured yet.");
+    const { error } = await sb.auth.updateUser({ password: newPassword });
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
+  async function logout() {
+    if (sb) await sb.auth.signOut();
+    CACHE = null;
+  }
+
+  /** The token for a write. Throws rather than let a write go out unattributed. */
+  function requireToken() {
+    if (!CACHE) throw new Error("Not signed in.");
+    if (!CACHE.token) throw new Error("No session token — sign in again.");
+    return CACHE.token;
+  }
+  const canWrite = () => !!(CACHE && CACHE.token && KITCHEN_ROLES.includes(CACHE.role));
+  const hasRole = (...allowed) => !!(CACHE && allowed.includes(CACHE.role));
+
+  /**
+   * Gate a page: render a sign-in / sign-up / forgot card, call onOk when in.
+   * Handles the reset-link return (#reset) too.
+   */
+  async function gate(mount, { roles = null, onOk }) {
+    if (!configured) {
+      mount.innerHTML = `<div class="wrap"><div class="card"><b>Login isn't set up yet</b>
+        <div class="muted">Supabase keys are missing from _shared/config.js —
+        see modules/auth/README.md.</div></div></div>`;
+      return;
+    }
+
+    // Returning from a reset email? Supabase has put a recovery session in place.
+    if (location.hash.includes("reset")) return renderReset(mount, onOk, roles);
+
+    const c = await current();
+    if (c) return admit(c, mount, onOk, roles);
+    renderSignIn(mount, onOk, roles);
+  }
+
+  function admit(c, mount, onOk, roles) {
+    if (roles && !roles.includes(c.role)) {
+      mount.innerHTML = `<div class="wrap"><div class="card"><b>No access</b>
+        <div class="muted">Signed in as ${c.name} (${c.role || "no role set"}).
+        This page needs: ${roles.join(", ")}. Ask an admin to set your role.
+        <a href="#" id="_lo">sign out</a></div></div></div>`;
+      mount.querySelector("#_lo").onclick = async () => { await logout(); location.reload(); };
+      return;
+    }
+    mount.style.display = "none";
+    onOk(c);
+  }
+
+  const card = (inner) => `<div class="login-wrap"><div class="login-card">${inner}</div></div>`;
+
+  function renderSignIn(mount, onOk, roles) {
+    mount.style.display = "";
+    mount.innerHTML = card(`
+      <form id="_lf">
+        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
+        <label for="_p">Password</label><input id="_p" type="password" autocomplete="current-password">
+        <button type="submit">Sign In</button>
+        <div class="err" id="_er"></div>
+        <div class="muted" style="margin-top:10px;display:flex;justify-content:space-between">
+          <a href="#" id="_forgot">Forgot password?</a>
+          <a href="#" id="_signup">Create account</a>
+        </div>
+      </form>`);
+    const err = mount.querySelector("#_er");
     mount.querySelector("#_lf").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const err = mount.querySelector("#_e");
-      const btn = mount.querySelector("button");
-      err.textContent = ""; btn.disabled = true; btn.textContent = "Checking…";
+      e.preventDefault(); err.textContent = "";
+      const btn = e.target.querySelector("button"); btn.disabled = true; btn.textContent = "Checking…";
       try {
-        const c = await login(mount.querySelector("#_u").value, mount.querySelector("#_p").value);
-        if (!c) { err.textContent = "Invalid credentials"; return; }
-        go();
-      } catch (ex) {
-        err.textContent = String(ex.message || ex);
-      } finally {
-        btn.disabled = false; btn.textContent = "Sign In";
-      }
+        const c = await login(mount.querySelector("#_e").value, mount.querySelector("#_p").value);
+        if (!c) { err.textContent = "Invalid email or password"; return; }
+        admit(c, mount, onOk, roles);
+      } finally { btn.disabled = false; btn.textContent = "Sign In"; }
+    });
+    mount.querySelector("#_forgot").onclick = (e) => { e.preventDefault(); renderForgot(mount, onOk, roles); };
+    mount.querySelector("#_signup").onclick = (e) => { e.preventDefault(); renderSignUp(mount, onOk, roles); };
+  }
+
+  function renderSignUp(mount, onOk, roles) {
+    mount.innerHTML = card(`
+      <form id="_sf">
+        <label for="_n">Your name</label><input id="_n" autocomplete="name" autofocus>
+        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username">
+        <label for="_p">Password (8+ chars)</label><input id="_p" type="password" autocomplete="new-password">
+        <button type="submit">Create account</button>
+        <div class="err" id="_er"></div>
+        <div class="muted" style="margin-top:10px">An admin sets what you can access.
+          <a href="#" id="_back">Back to sign in</a></div>
+      </form>`);
+    const err = mount.querySelector("#_er");
+    mount.querySelector("#_sf").addEventListener("submit", async (e) => {
+      e.preventDefault(); err.textContent = "";
+      const r = await signUp(mount.querySelector("#_e").value, mount.querySelector("#_p").value,
+                             mount.querySelector("#_n").value);
+      err.style.color = r.ok ? "var(--green)" : "var(--red)";
+      err.textContent = r.ok ? "Account created. Check your email to confirm, then sign in."
+                             : r.error;
+    });
+    mount.querySelector("#_back").onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
+  }
+
+  function renderForgot(mount, onOk, roles) {
+    mount.innerHTML = card(`
+      <form id="_ff">
+        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
+        <button type="submit">Email me a reset link</button>
+        <div class="err" id="_er"></div>
+        <div class="muted" style="margin-top:10px"><a href="#" id="_back">Back to sign in</a></div>
+      </form>`);
+    const err = mount.querySelector("#_er");
+    mount.querySelector("#_ff").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const r = await forgotPassword(mount.querySelector("#_e").value);
+      err.style.color = "var(--green)";
+      // Same message whether or not the email exists — don't leak who has an account.
+      err.textContent = "If that email has an account, a reset link is on its way.";
+    });
+    mount.querySelector("#_back").onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
+  }
+
+  function renderReset(mount, onOk, roles) {
+    mount.style.display = "";
+    mount.innerHTML = card(`
+      <form id="_rf">
+        <label for="_p">New password (8+ chars)</label>
+        <input id="_p" type="password" autocomplete="new-password" autofocus>
+        <button type="submit">Set new password</button>
+        <div class="err" id="_er"></div>
+      </form>`);
+    const err = mount.querySelector("#_er");
+    mount.querySelector("#_rf").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const r = await completePasswordReset(mount.querySelector("#_p").value);
+      if (!r.ok) { err.textContent = r.error; return; }
+      history.replaceState(null, "", location.pathname);   // drop #reset
+      const c = await current();
+      admit(c, mount, onOk, roles);
     });
   }
 
-  return { login, logout, current, hasRole, canWrite, requireToken, gate, mode, KITCHEN_ROLES, WORKER_URL };
+  return {
+    login, signUp, forgotPassword, completePasswordReset, logout,
+    current, requireToken, canWrite, hasRole, gate, KITCHEN_ROLES,
+    configured, SUPABASE_URL,
+  };
 })();
