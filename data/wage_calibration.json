@@ -138,9 +138,9 @@
   "rate_per_hour": 34.4548
  },
  "155": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.075,
+  "weeks": 8,
+  "name": "Corentin Golbry",
   "rate_per_hour": 36.0792
  },
  "157": {
@@ -186,9 +186,9 @@
   "rate_per_hour": 39.2354
  },
  "187": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 0.9803,
+  "weeks": 8,
+  "name": "George sampson",
   "rate_per_hour": 20.4123
  },
  "188": {
@@ -360,9 +360,9 @@
   "rate_per_hour": 32.5033
  },
  "231": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.1314,
+  "weeks": 6,
+  "name": "Saif Quader",
   "rate_per_hour": 36.9894
  },
  "232": {
@@ -372,9 +372,9 @@
   "rate_per_hour": 21.5444
  },
  "233": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.0624,
+  "weeks": 5,
+  "name": "Angela Rinaudo",
   "rate_per_hour": 33.8143
  },
  "234": {
@@ -564,9 +564,9 @@
   "rate_per_hour": 34.5235
  },
  "271": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.0001,
+  "weeks": 4,
+  "name": "Nattachat Thongsrinoon",
   "rate_per_hour": 34.9781
  },
  "273": {
@@ -608,7 +608,7 @@
  "281": {
   "factor": 1.0,
   "weeks": 0,
-  "name": null,
+  "name": "Agustin Neme",
   "rate_per_hour": 34.9215
  },
  "282": {
@@ -648,9 +648,9 @@
   "rate_per_hour": 36.8659
  },
  "290": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.0249,
+  "weeks": 5,
+  "name": "Fatima Mitra",
   "rate_per_hour": 37.1961
  },
  "291": {
