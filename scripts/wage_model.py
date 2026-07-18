@@ -160,7 +160,7 @@ def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None,
 # all resolve super through super_lookup().
 
 
-def super_lookup(xero_pay, xero_super, emp_map, default_rate):
+def super_lookup(xero_pay, xero_super, emp_map, default_rate, as_of=None):
     """-> mult(employee_id, week_ending_iso) giving the inc-super multiplier.
 
     Three tiers, best first:
@@ -178,11 +178,17 @@ def super_lookup(xero_pay, xero_super, emp_map, default_rate):
     Tier 2 is what stops the live week disagreeing with the same week once it
     closes. Before this, the open week ran ~0.8% pessimistic and then moved
     under Zak the next morning for no reason he could see.
+
+    as_of: restrict BOTH tiers to weeks strictly before this one. Only the
+    backtest passes it — measuring the estimate against a trailing rate that
+    saw the answer would flatter it, and a backtest that lies is worse than no
+    backtest.
     """
     TRAILING_WEEKS = 8
 
-    def _trailing(xn):
-        weeks = sorted(xero_pay.get(xn, {}))[-TRAILING_WEEKS:]
+    def _trailing(xn, before=None):
+        weeks = [k for k in sorted(xero_pay.get(xn, {})) if before is None or k < before]
+        weeks = weeks[-TRAILING_WEEKS:]
         w = sum(xero_pay[xn][k] for k in weeks)
         s = sum(xero_super.get(xn, {}).get(k, 0) for k in weeks)
         # No wages in the window -> no opinion; fall through to the default.
@@ -193,14 +199,16 @@ def super_lookup(xero_pay, xero_super, emp_map, default_rate):
     def mult(employee_id, week_key):
         xn = emp_map.get(str(employee_id))
         if xn:
-            w = xero_pay.get(xn, {}).get(week_key)
-            s = xero_super.get(xn, {}).get(week_key)
-            if w and s is not None:
-                return 1.0 + s / w                      # 1. actual
-            if xn not in cache:
-                cache[xn] = _trailing(xn)
-            if cache[xn] is not None:
-                return cache[xn]                        # 2. trailing
+            if as_of is None:
+                w = xero_pay.get(xn, {}).get(week_key)
+                s = xero_super.get(xn, {}).get(week_key)
+                if w and s is not None:
+                    return 1.0 + s / w                  # 1. actual
+            key = (xn, week_key if as_of is not None else None)
+            if key not in cache:
+                cache[key] = _trailing(xn, week_key if as_of is not None else None)
+            if cache[key] is not None:
+                return cache[key]                       # 2. trailing
         return 1.0 + default_rate                       # 3. statutory fallback
 
     return mult

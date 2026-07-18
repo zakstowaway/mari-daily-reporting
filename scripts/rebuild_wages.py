@@ -49,6 +49,11 @@ WRITE = "--write" in sys.argv
 # +$516.86 while pedro f alone was worth $921.20 -- so ~$404 of mapped staff was
 # light and no amount of staring at the total could say whose.
 AUDIT = "--audit" in sys.argv
+# --backtest: cost every CLOSED week the way the OPEN week gets costed, then
+# compare to what Xero actually paid. The only honest measure of how good the
+# 9am number is. Read-only; implies a dry run.
+BACKTEST = "--backtest" in sys.argv
+BT_ROWS = []
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 if len(args) < 2:
     sys.exit("usage: rebuild_wages.py <from YYYY-MM-DD> <to YYYY-MM-DD> [--write]")
@@ -101,6 +106,10 @@ else:
           f"Run scripts/pull_xero_pay_weekly.py.")
 
 SUPER_MULT_FOR = super_lookup(XERO_PAY, XERO_SUPER, EMP_MAP, V.SUPER_RATE)
+# as_of: the backtest must not see the week it is predicting. A trailing rate
+# that includes the answer would flatter the estimate, and a backtest that lies
+# is worse than no backtest.
+BT_SUPER = super_lookup(XERO_PAY, XERO_SUPER, EMP_MAP, V.SUPER_RATE, as_of=True)
 
 d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
 d_from -= timedelta(days=d_from.weekday())          # back to Monday
@@ -447,6 +456,46 @@ while cur <= d_to:
             warnings.append({"type": "not_in_xero", "employee_id": _e,
                              "week": wk_end.isoformat(), "hours": round(_hh, 2),
                              "deputy_cost": round(_cc, 2)})
+    if BACKTEST and paid_this_week:
+        # HOW GOOD IS THE 9AM NUMBER, REALLY?
+        #
+        # Cost this CLOSED week exactly the way the OPEN week gets costed — no
+        # Xero, salaried on annual/52, shortfall-is-leave, assumed shifts filled,
+        # super from the person's TRAILING rate (as_of, so it can't see the
+        # answer) — then compare to what payroll actually paid.
+        #
+        # This is the only honest measure of the daily number. Everything else
+        # is an opinion about the daily number.
+        _est_shifts = shifts + assumed_extra
+        _c, _ = allocate_week(_est_shifts, SAL, WPY, week_days=week_days,
+                              shortfall_leave=True)
+        est = defaultdict(float)
+        hrs = defaultdict(float)
+        for s_ in _c:
+            if s_.get("_roster") or s_.get("_leave_fill"):
+                # _leave_fill is synthesised leave for a salaried shortfall. It
+                # is part of the person's cost, so it counts.
+                if not s_.get("_leave_fill"):
+                    continue
+            e_ = str(s_["employee_id"])
+            est[e_] += s_["cost_final"] * BT_SUPER(e_, wk_key)
+            hrs[e_] += s_.get("hours") or 0
+        for e_, w in paid_this_week.items():
+            xn = EMP_MAP.get(str(e_))
+            act = w + (XERO_SUPER.get(xn, {}).get(wk_key, w * V.SUPER_RATE) if xn else w * V.SUPER_RATE)
+            BT_ROWS.append({"week": wk_key, "eid": e_, "name": xn,
+                            "est": est.get(e_, 0.0), "act": act,
+                            "hours": hrs.get(e_, 0.0),
+                            "salaried": str(e_) in SAL,
+                            "deputy": sum((x.get("cost") or 0) for x in shifts
+                                          if str(x["employee_id"]) == str(e_))})
+        # Costed but NOT paid — pure invention if it isn't a known exception.
+        for e_ in est:
+            if e_ not in paid_this_week and e_ not in XERO_EXEMPT:
+                BT_ROWS.append({"week": wk_key, "eid": e_, "name": EMP_MAP.get(str(e_)),
+                                "est": est[e_], "act": 0.0, "hours": hrs.get(e_, 0.0),
+                                "salaried": str(e_) in SAL, "deputy": 0.0})
+
     if AUDIT:
         # Compare each person against the yardstick they are actually COSTED by,
         # not against Xero regardless (Zak, 2026-07-17: "match pedro to his
@@ -691,4 +740,68 @@ if nh:
     print(f"\n  {len(nh)} salaried-weeks with no logged hours (paid, unattributable):")
     for w in nh[:10]:
         print(f"    employee {w['employee_id']}: ${w['week_cost']:,.2f}")
+if BACKTEST and BT_ROWS:
+    print("\n" + "=" * 78)
+    print("BACKTEST — the 9am estimate vs what payroll actually paid")
+    print("=" * 78)
+    tot_e = sum(r["est"] for r in BT_ROWS)
+    tot_a = sum(r["act"] for r in BT_ROWS)
+    n_wk = len({r["week"] for r in BT_ROWS})
+    print(f"{n_wk} closed weeks, {len(BT_ROWS)} employee-weeks")
+    print(f"  estimate ${tot_e:>12,.2f}")
+    print(f"  actual   ${tot_a:>12,.2f}")
+    print(f"  bias     ${tot_e - tot_a:>+12,.2f}   ({(tot_e - tot_a) / tot_a * 100:+.2f}%)")
+
+    # Bias is the average error; MAE is how wrong a typical WEEK is. They differ
+    # when errors cancel — and a number that is right on average and wrong every
+    # week is not a number Zak can act on.
+    by_wk = defaultdict(lambda: [0.0, 0.0])
+    for r in BT_ROWS:
+        by_wk[r["week"]][0] += r["est"]; by_wk[r["week"]][1] += r["act"]
+    errs = [(e - a) for e, a in by_wk.values()]
+    pcts = [(e - a) / a * 100 for e, a in by_wk.values() if a]
+    mae = sum(abs(x) for x in errs) / len(errs)
+    mape = sum(abs(x) for x in pcts) / len(pcts)
+    print(f"\n  per WEEK: mean abs error ${mae:,.2f} ({mape:.2f}%)"
+          f"   worst {max(abs(x) for x in errs):,.2f}")
+    good = sum(1 for p in pcts if abs(p) <= 2)
+    print(f"  weeks within +/-2%: {good}/{len(pcts)} ({good / len(pcts) * 100:.0f}%)")
+
+    print("\n  --- split: salaried vs hourly ---")
+    for lab, sel in (("salaried", lambda r: r["salaried"]),
+                     ("hourly", lambda r: not r["salaried"])):
+        rs = [r for r in BT_ROWS if sel(r)]
+        if not rs:
+            continue
+        e = sum(r["est"] for r in rs); a = sum(r["act"] for r in rs)
+        ae = sum(abs(r["est"] - r["act"]) for r in rs)
+        print(f"  {lab:9} est ${e:>11,.2f}  act ${a:>11,.2f}  bias ${e-a:>+10,.2f} "
+              f"({(e-a)/a*100:+6.2f}%)  abs err ${ae:>10,.2f}")
+
+    print("\n  --- worst 20 people by TOTAL absolute error ---")
+    per = defaultdict(lambda: [0.0, 0.0, 0.0, 0, False])
+    for r in BT_ROWS:
+        p = per[r["name"] or f'deputy id {r["eid"]}']
+        p[0] += r["est"]; p[1] += r["act"]; p[2] += abs(r["est"] - r["act"]); p[3] += 1
+        p[4] = r["salaried"]
+    print(f"  {'name':30} {'wks':>4} {'est':>11} {'actual':>11} {'bias':>10} {'abs err':>10}")
+    for nm, p in sorted(per.items(), key=lambda kv: -kv[1][2])[:20]:
+        tag = " [sal]" if p[4] else ""
+        print(f"  {nm[:30]:30} {p[3]:>4} ${p[0]:>10,.2f} ${p[1]:>10,.2f} "
+              f"${p[0]-p[1]:>+9,.2f} ${p[2]:>9,.2f}{tag}")
+
+    print("\n  --- where the bias comes from ---")
+    over = sum(r["est"] - r["act"] for r in BT_ROWS if r["est"] > r["act"])
+    under = sum(r["act"] - r["est"] for r in BT_ROWS if r["act"] > r["est"])
+    print(f"  overestimated  ${over:>11,.2f}  ({sum(1 for r in BT_ROWS if r['est'] > r['act'])} employee-weeks)")
+    print(f"  underestimated ${under:>11,.2f}  ({sum(1 for r in BT_ROWS if r['act'] > r['est'])} employee-weeks)")
+    ghost = [r for r in BT_ROWS if r["act"] == 0 and r["est"] > 0]
+    if ghost:
+        print(f"  costed but NOT paid at all: ${sum(r['est'] for r in ghost):,.2f} "
+              f"across {len(ghost)} employee-weeks")
+    miss = [r for r in BT_ROWS if r["est"] == 0 and r["act"] > 0]
+    if miss:
+        print(f"  paid but NOT costed:        ${sum(r['act'] for r in miss):,.2f} "
+              f"across {len(miss)} employee-weeks")
+
 print("\nDRY RUN — nothing written. Re-run with --write." if not WRITE else "\nwritten")

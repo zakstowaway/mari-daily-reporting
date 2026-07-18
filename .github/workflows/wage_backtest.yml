@@ -1,0 +1,24 @@
+name: Wage Backtest
+
+# Costs every CLOSED payroll week the way the OPEN week gets costed — no Xero,
+# salaried on annual/52, shortfall-is-leave, assumed shifts filled, super from
+# the person's trailing rate — then compares to what payroll actually paid.
+#
+# This is the only honest measure of how good Zak's 9am number is. Read-only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      from_date: { description: 'From', required: true }
+      to_date:   { description: 'To',   required: true }
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Backtest
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/rebuild_wages.py "${{ inputs.from_date }}" "${{ inputs.to_date }}" --backtest
