@@ -1,0 +1,86 @@
+name: Hourly Pull
+
+# Isolated from daily_pull.yml on purpose: this consumes a DIFFERENT feed
+# (the Custom Insights hour x reporting-group CSV) and must never share a
+# concurrency queue with the production daily pipeline. Its own group keeps a
+# broken hourly run from ever cancelling a daily venue dispatch.
+concurrency:
+  group: hourly-pull-${{ github.event.client_payload.venue || 'stow' }}
+  cancel-in-progress: false
+
+on:
+  # Fired by Pipedream when the 'Stow Hourly RG Auto' Insights email arrives.
+  repository_dispatch:
+    types:
+      - stow-hourly-arrived
+  # Manual re-run for a specific date (CSV must already be in data/).
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: 'Target date (YYYY-MM-DD), defaults to yesterday'
+        required: false
+        default: ''
+
+jobs:
+  ingest-hourly:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine target date
+        id: date
+        run: |
+          if [[ -n "${{ inputs.target_date }}" ]]; then
+            echo "target=${{ inputs.target_date }}" >> $GITHUB_OUTPUT
+          elif [[ -n "${{ github.event.client_payload.target_date }}" ]]; then
+            echo "target=${{ github.event.client_payload.target_date }}" >> $GITHUB_OUTPUT
+          else
+            echo "target=$(TZ='Australia/Sydney' date -d 'yesterday' +%Y-%m-%d)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Write CSV payload  (immutable dated fact)
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          TARGET_DATE="${{ steps.date.outputs.target }}"
+          FINAL_CSV="data/stow_hourly_${TARGET_DATE}.csv"
+          TMP_BIN="/tmp/hourly_payload.bin"
+          mkdir -p data /tmp/hourly_unzip
+
+          echo '${{ toJson(github.event.client_payload.csv_base64) }}' | tr -d '"' | base64 -d > "$TMP_BIN"
+          FILE_TYPE=$(file --mime-type -b "$TMP_BIN")
+          echo "Detected: $FILE_TYPE"
+          if [[ "$FILE_TYPE" == "application/zip" ]]; then
+            unzip -o "$TMP_BIN" -d /tmp/hourly_unzip
+            LARGEST_CSV=$(find /tmp/hourly_unzip -name '*.csv' -printf '%s %p\n' | sort -rn | head -1 | awk '{print $2}')
+            [[ -z "$LARGEST_CSV" ]] && { echo "::error::ZIP has no CSV"; exit 1; }
+            mv "$LARGEST_CSV" "$FINAL_CSV"
+          else
+            mv "$TMP_BIN" "$FINAL_CSV"
+          fi
+          echo "Wrote $FINAL_CSV"
+
+      - name: Preserve CSV immediately
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          git config user.name "Hourly Pull"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Ingest hourly payload ${{ steps.date.outputs.target }}"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
+
+      - name: Split by reporting group + compute windows
+        run: |
+          python scripts/eatclub/ingest_hourly.py "${{ steps.date.outputs.target }}"
+
+      - name: Commit hourly JSON
+        run: |
+          git config user.name "Hourly Pull"
+          git config user.email "hello@stowawaybar.com"
+          git add data/
+          git diff --quiet --staged || git commit -m "Hourly split ${{ steps.date.outputs.target }}"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done
