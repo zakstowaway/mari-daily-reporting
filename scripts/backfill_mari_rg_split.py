@@ -32,15 +32,38 @@ import Lightspeed's cost as an absolute (see COGS below).
 
   --write   actually save. Default is a dry run.
 
-WHY THE RESIDUAL GOES TO STOW, NOT PRO-RATA
--------------------------------------------
-Lightspeed's pair total and our stored pair total disagree by $2.40/day on
-average ($-1,313.63 over 549 days, 0.02% of revenue) — export vintage, late-
-closed orders, whatever. That gap is NOT what this script is chartered to fix,
-so it is preserved, not spread. Mari is set exactly to Lightspeed and Stow
-absorbs the residual: Stow is ~4x her size, so the same dollar distorts her four
-times as much. Verified: the largest single-day residual is $188.90 (2026-06-25,
-already flagged as an anomaly).
+WHY THE PAIR TOTAL IS CONSERVED AND NOT "CORRECTED" TO LIGHTSPEED
+-----------------------------------------------------------------
+Lightspeed's Stow-site total is $1,313.63 BELOW our stored pair across the 549
+days. It is tempting to call that an error and set both venues from Lightspeed.
+DO NOT. It was investigated to the dollar on 2026-07-18 and it is not an error:
+
+  $1,158.29 (88%)  'Stow Food' rung on the HARRY GATOS TILL — 46 days, mostly
+                   Nuggets & Chips [HG] ($466.23), Beef Burger [HG] ($151.27).
+                   backfill_history.py reads BOTH masters and route()s that RG
+                   to Stowaway, which is correct: it is Stow's food, Stow's
+                   kitchen, Stow's P&L. Harry Gatos is a SEPARATE SITE in
+                   Lightspeed, so a `Location Site Name == "Stowaway Bar"` query
+                   CANNOT return those rows — by construction, not by accident.
+                   Proof: add them back and history-vs-master goes from
+                   $1,158.33 across 45 days to $0.04 across 0 days.
+
+  $155.30 (12%)    Stowaway.csv vs Lightspeed on the same site: 0.0037% over
+                   $5.09M. Almost all of it is reporting-group RECLASSIFICATION
+                   drift — the master stores the RG as-of-sale, Lightspeed
+                   reports it as-of-now, so a product that moved from Small
+                   Plates to Harry Gatos Food shifts between venues without any
+                   money changing. Only 5 days differ by more than $5, netting
+                   +$40.13 (worst: 2026-06-25 -$177.08, 2026-05-02 +$163.42).
+
+So conserving the pair is not a compromise — it is the only correct option.
+Sourcing Stow from the Stow site would have SILENTLY DELETED $1,158.29 of real
+Stowaway revenue, and every check would still have passed, because Lightspeed
+would have agreed with itself.
+
+The one real cost: Mari is set from the Stow site, and $2.09 of her product has
+ever been rung on Harry's till (Corn $1.82, Tomato Sauce $0.27, over 21 months).
+She is understated by $2.09 across the whole history. Measured, not assumed.
 
 COGS
 ----
