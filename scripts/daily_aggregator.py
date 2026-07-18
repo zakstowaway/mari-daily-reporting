@@ -724,15 +724,55 @@ else:
         c = _cal.get(str(t.get("employee_id")))
         return _super_for(t.get("employee_id"), _wk) * (c["factor"] if c else 1.0)
 
+    # UNAPPROVED TIMESHEETS — the single biggest error in this number.
+    #
+    # Deputy costs a shift when it is APPROVED. Yesterday's shifts usually
+    # aren't. Measured 2026-07-18: 17 Jul had 13.50h of 93h (14.5%) at Cost = 0
+    # — real hours, worked, that will absolutely be paid, booked at nothing.
+    # The calibration factor cannot touch this: 0 x 1.05 is still 0.
+    #
+    # So cost them at the person's own learned $/h (published by rebuild_wages,
+    # which sees enough Deputy history to know it; this script sees one day).
+    # Marked _imputed so it's visible rather than silently blended in.
+    _imp_n = _imp_h = 0
+
+    def _cost_of(t):
+        global _imp_n, _imp_h
+        c = t.get("cost") or 0
+        h = t.get("hours") or 0
+        if c == 0 and h > 0 and not t.get("salaried_synth"):
+            r = (_cal.get(str(t.get("employee_id"))) or {}).get("rate_per_hour")
+            if r:
+                _imp_n += 1
+                _imp_h += h
+                return h * r
+        return c
+
     def dept_cost(name):
-        return sum(t["cost"] * _rate(t) for t in d if t.get("dept") == name)
+        return sum(_cost_of(t) * _rate(t) for t in d if t.get("dept") == name)
     kitchen_cost = dept_cost("Kitchen")
     foh_cost = dept_cost("FOH")
     driver_cost = dept_cost("Driver")
     admin_cost = dept_cost("Admin")
-    leave_cost = dept_cost("Leave")   # Group overhead — NOT in the venue total
-                                      # (weekly canon); the dashboard adds it to
-                                      # the synthesized Group wage figure.
+    # Leave is group overhead — NOT in the venue total (weekly canon); the
+    # dashboard adds it to the synthesized Group wage figure.
+    leave_cost = dept_cost("Leave")
+    if _imp_n:
+        print(f"  wages: {_imp_n} unapproved shift(s) ({_imp_h:.2f}h) costed at "
+              f"the person's own rate — Deputy has no cost until approval")
+    _unratable = [t for t in d if (t.get("cost") or 0) == 0 and (t.get("hours") or 0) > 0
+                  and not t.get("salaried_synth")
+                  and not (_cal.get(str(t.get("employee_id"))) or {}).get("rate_per_hour")]
+    if _unratable:
+        # No rate, no imputation. These hours book $0 and the number is light by
+        # however much they're worth. Say so — a silent $0 is how a wage line
+        # goes quietly wrong.
+        print(f"  !! wages: {len(_unratable)} shift(s), "
+              f"{sum(t.get('hours') or 0 for t in _unratable):.2f}h — real hours, no cost, "
+              f"and no known rate to impute from. BOOKED AT $0:")
+        for t in _unratable[:5]:
+            print(f"       employee {t.get('employee_id')} ({t.get('employee_name')}) "
+                  f"{t.get('hours')}h {t.get('dept')}")
     # Total = Kitchen + FOH + Admin + Driver. Driver stays inside the venue
     # total (Mari Venue Total = Kitchen + Driver in the weekly canon) AND
     # also surfaces in the delivery lane.

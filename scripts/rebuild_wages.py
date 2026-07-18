@@ -33,7 +33,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
 from core import venues as V
-from wage_model import allocate_week, super_lookup, calibration_factor
+from wage_model import (allocate_week, super_lookup, calibration_factor,
+                        impute_uncosted)
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -210,6 +211,12 @@ day = defaultdict(lambda: defaultdict(float))      # day[date][f"{venue}|{dept}"
 # +$17.71 on the week ending 14 Jun. A week Deputy knows about is authoritative
 # for all seven of its days, including the ones nobody clocked on.
 covered = set()
+# Each person's $/h, learned from their own COSTED shifts as the run walks
+# forward in time. Used to cost shifts Deputy hasn't approved yet.
+RATE_H = defaultdict(float)
+RATE_C = defaultdict(float)
+imputed_shifts = 0
+imputed_hours = 0.0
 day_assumed = defaultdict(lambda: defaultdict(float))   # same, with unclocked rostered shifts filled in
 assumed_n = defaultdict(lambda: defaultdict(int))       # assumed_n[date][venue_prefix] = shifts filled
 warnings, weeks = [], 0
@@ -247,6 +254,28 @@ while cur <= d_to:
                 continue                            # unknown OU (PH Not Worked etc.)
         shifts.append({"employee_id": emp, "hours": hours, "cost": cost,
                        "date": dstr, "bucket": bucket})
+
+    # ---- UNAPPROVED TIMESHEETS: real hours, Cost = 0 (2026-07-18) ----
+    #
+    # Deputy costs a shift when it is APPROVED. Until then the hours are there
+    # and the money isn't. Measured: 3.3% of all hours we hold carry no cost —
+    # but stacked on the newest days, which is exactly what the 9am number
+    # reports. On 17 Jul it was 13.50h of 93h (14.5%).
+    #
+    # Learn each person's $/h from their own COSTED shifts and use it to fill
+    # the silence. RATE_* accumulates across the run, and weeks are processed in
+    # order, so by the time we reach the open week every prior (approved) week
+    # has already taught us their rate.
+    for _s in shifts:
+        _h, _c = (_s.get("hours") or 0), (_s.get("cost") or 0)
+        if _h > 0 and _c > 0:
+            RATE_H[str(_s["employee_id"])] += _h
+            RATE_C[str(_s["employee_id"])] += _c
+    _rates = {e: RATE_C[e] / RATE_H[e] for e in RATE_H if RATE_H[e] >= 2.0}
+    shifts, _n_imp, _h_imp = impute_uncosted(shifts, _rates, salaried_ids=set(SAL))
+    if _n_imp:
+        imputed_shifts += _n_imp
+        imputed_hours += _h_imp
 
     # ---- open week: fill the rest of the week from the ROSTER (2026-07-17) ----
     # A salaried person costs annual/52 for the WHOLE week, and allocate_week
@@ -792,13 +821,24 @@ if nh:
 # 2-week nightly window would recompute every factor from 2 weeks of evidence
 # and throw away everything learned. The nightly run reads this file; the weekly
 # full rebuild is what refreshes it.
+if imputed_shifts:
+    print(f"\nunapproved timesheets: costed {imputed_shifts} shift(s), "
+          f"{imputed_hours:.2f}h, from each person's own $/h")
+    print("  (Deputy costs a shift on APPROVAL — until then real hours book $0)")
+
 if WRITE and CAL_EST and (d_to - d_from).days > 60:
     new_cal = {}
-    for eid, ew in CAL_EST.items():
-        f, n = calibration_factor(ew, CAL_ACT.get(eid, {}))
-        if n >= 3 and abs(f - 1.0) > 0.005:
-            new_cal[str(eid)] = {"factor": round(f, 4), "weeks": n,
-                                 "name": EMP_MAP.get(str(eid))}
+    # Publish the learned $/h too: daily_aggregator sees ONE day of Deputy JSON
+    # and cannot work out anybody's rate from it, so it needs this file to cost
+    # an unapproved shift. Everyone we have a rate for is included, even at
+    # factor 1.0 — the rate is useful on its own.
+    for eid in set(list(CAL_EST) + [e for e in RATE_H if RATE_H[e] >= 2.0]):
+        f, n = calibration_factor(CAL_EST.get(eid, {}), CAL_ACT.get(eid, {}))
+        rate = RATE_C[eid] / RATE_H[eid] if RATE_H.get(eid, 0) >= 2.0 else None
+        if (n >= 3 and abs(f - 1.0) > 0.005) or rate:
+            new_cal[str(eid)] = {"factor": round(f, 4) if n >= 3 else 1.0,
+                                 "weeks": n, "name": EMP_MAP.get(str(eid)),
+                                 "rate_per_hour": round(rate, 4) if rate else None}
     _cal_f.write_text(json.dumps(dict(sorted(new_cal.items(), key=lambda kv: int(kv[0]))), indent=1))
     _f = [v["factor"] for v in new_cal.values()]
     print(f"\ncalibration: {len(new_cal)} people -> {_cal_f.name}")

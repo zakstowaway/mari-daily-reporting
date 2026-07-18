@@ -270,3 +270,64 @@ def calibration_factor(est_by_week, act_by_week, before=None, window=8):
     # salaried config, a mis-mapped name), and silently tripling someone's cost
     # would bury the fault instead of surfacing it.
     return min(max(f, CALIB_CLAMP[0]), CALIB_CLAMP[1]), len(weeks)
+
+
+# ---------------------------------------------------------------------------
+# UNAPPROVED TIMESHEETS
+# ---------------------------------------------------------------------------
+# Deputy computes a timesheet's Cost when it is APPROVED. Before that the shift
+# has real hours and Cost = 0. Measured 2026-07-18 across the days we hold:
+# 3.3% of all hours carry no cost, but it is not spread evenly — it is stacked
+# on the most recent days, which is precisely the window Zak's 9am number
+# reports on. On 17 Jul, 13.50h of 93h (14.5%) had no cost.
+#
+# This — not stale rates — is the biggest error in the daily number. Olliver
+# Case looked like a 29% under-cost until his shifts were read one by one:
+# $35.65, $34.67, $36.56/h, all correct against his $34.96 card, and then one
+# 4.75h shift at $0.00 that dragged his average to $27.00. The rate was never
+# wrong. The approval hadn't happened.
+#
+# Note what this means for the calibration: it CANNOT fix an uncosted shift.
+# 0 x 1.05 is still 0. The two corrections are for different faults and both
+# are needed.
+
+
+def implied_rates(shifts, min_hours=2.0):
+    """-> {employee_id: $/h} learned from that person's COSTED shifts.
+
+    Deliberately Deputy's own $/h, not Xero's: it is what the shift WOULD have
+    been costed at once approved, so the calibration factor still composes on
+    top exactly as it does for every other shift. Imputing at a Xero-derived
+    rate and then applying the factor would correct the same gap twice.
+    """
+    agg = defaultdict(lambda: [0.0, 0.0])
+    for s in shifts:
+        h, c = (s.get("hours") or 0), (s.get("cost") or 0)
+        if h > 0 and c > 0:
+            e = str(s["employee_id"])
+            agg[e][0] += h
+            agg[e][1] += c
+    return {e: c / h for e, (h, c) in agg.items() if h >= min_hours}
+
+
+def impute_uncosted(shifts, rates, salaried_ids=()):
+    """Cost the shifts Deputy hasn't approved yet, from the person's own rate.
+
+    Mutates nothing; returns (new_shifts, n_imputed, hours_imputed).
+
+    Skips salaried staff — their Cost is always 0 by design and the salaried
+    model handles them. Skips anyone with no rate: a shift we cannot cost stays
+    at $0 and keeps warning, which is correct. Inventing a number for someone we
+    know nothing about is how you get a confident wrong answer.
+    """
+    out, n, h_tot = [], 0, 0.0
+    for s in shifts:
+        h, c = (s.get("hours") or 0), (s.get("cost") or 0)
+        e = str(s.get("employee_id"))
+        if h > 0 and c == 0 and e not in salaried_ids and e in rates:
+            out.append({**s, "cost": h * rates[e], "_imputed": True})
+            n += 1
+            h_tot += h
+        else:
+            out.append(s)
+    return out, n, h_tot
