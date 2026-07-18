@@ -163,6 +163,33 @@ class CostSeries:
 
 # ------------------------------------------------------------------- load ----
 
+def load_ingredient_map(path: Path = ROOT / "data" / "ingredient_map.csv"
+                        ) -> dict[str, str]:
+    """
+    purchasable_id -> canonical ingredient_id, ONLY where a human confirmed it.
+
+    This is Decision 1's map (ARCHITECTURE.md): it lets "Select Fresh ONIBK" and
+    "B&E onion" be declared the SAME ingredient, so switching supplier does not
+    break a recipe or snap its cost history.
+
+    Empty today, and correctly so: the current 55 observations have no
+    cross-supplier duplicate, so there is nothing yet to merge. A purchasable
+    with no row here maps to itself (see load_cost_observations). The file
+    exists so that the day a second onion supplier appears, confirming they are
+    one ingredient is a one-line edit — reviewed in a diff, attributed via
+    confirmed_by — not a code change.
+    """
+    if not path.exists():
+        return {}
+    out = {}
+    for r in csv.DictReader(path.open(encoding="utf-8-sig")):
+        pid = (r.get("purchasable_id") or "").strip()
+        ing = (r.get("ingredient_id") or "").strip()
+        if pid and ing:
+            out[pid] = ing
+    return out
+
+
 def load_cost_observations(path: Path = ROOT / "data" / "costs.csv",
                            purchasable_to_ingredient: Optional[dict[str, str]] = None
                            ) -> list[CostObservation]:
@@ -189,10 +216,13 @@ def load_cost_observations(path: Path = ROOT / "data" / "costs.csv",
         raise FileNotFoundError(
             f"{path} missing — run: python3 modules/recipes/pipeline/build_costs.py"
         )
+    # Default to the confirmed map on disk; caller may override for tests.
+    mapping = purchasable_to_ingredient if purchasable_to_ingredient is not None \
+        else load_ingredient_map()
     out = []
     for r in csv.DictReader(path.open(encoding="utf-8-sig")):
         pid = r["ingredient"]
-        ing = (purchasable_to_ingredient or {}).get(pid, pid)
+        ing = mapping.get(pid, pid)     # unmapped purchasable = its own ingredient
         out.append(CostObservation(
             ingredient=ing,
             observed_on=date.fromisoformat(r["observed_on"]),

@@ -161,3 +161,42 @@ def test_the_real_cogs_list_loads_as_an_observation_log():
     a = s.as_of("ilg:395-6785P", date(2026, 7, 14))          # Aperol, invoice 03729959
     assert a.cost_per_unit == Decimal("29.0817")
     assert a.source_invoice == "03729959"
+
+
+# ---- ingredient identity map (Decision 1) ---------------------------------
+
+def test_ingredient_map_empty_by_default_and_maps_to_self():
+    """
+    No cross-supplier duplicates in the data yet, so the map is empty and every
+    purchasable is its own ingredient. Squid must still resolve.
+    """
+    from core.domain import load_cost_observations, load_ingredient_map
+    assert load_ingredient_map() == {}
+    obs = load_cost_observations()
+    assert any(o.ingredient == "foodlink:102689" for o in obs)
+
+
+def test_ingredient_map_merges_two_suppliers_when_confirmed(tmp_path):
+    """
+    THE POINT OF DECISION 1. Declare Select Fresh onion and B&E onion the same
+    ingredient; both suppliers' prices then land on one continuous series.
+    """
+    from datetime import date
+    from decimal import Decimal
+    from core.domain import CostSeries, load_cost_observations
+
+    costs = tmp_path / "costs.csv"
+    costs.write_text(
+        "ingredient,observed_on,cost_per_unit,unit,venue,source_invoice,pack,description\n"
+        "select-fresh:ONIBK,2026-05-01,0.0024,g,stowaway,A,per kg,ONION BROWN KG\n"
+        "b-e:ONION-10KG,2026-07-01,0.0028,g,stowaway,B,10kg,ONION BROWN 10KG\n"
+    )
+    merged = load_cost_observations(path=costs,
+                                    purchasable_to_ingredient={
+                                        "select-fresh:ONIBK": "onion-brown",
+                                        "b-e:ONION-10KG": "onion-brown",
+                                    })
+    s = CostSeries(merged)
+    # one ingredient, continuous across the supplier change
+    assert s.as_of("onion-brown", date(2026, 6, 1)).cost_per_unit == Decimal("0.0024")
+    assert s.as_of("onion-brown", date(2026, 8, 1)).cost_per_unit == Decimal("0.0028")
