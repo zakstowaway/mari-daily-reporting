@@ -517,10 +517,17 @@ while cur <= d_to:
             # Feed the calibration. RAW estimate vs actual — if we recorded the
             # already-calibrated figure the factor would chase its own tail and
             # converge on 1.0 while the error stayed.
+            # WALK-FORWARD: the factor for this week may only use weeks BEFORE
+            # it. Weeks are processed in order, so CAL_EST/CAL_ACT hold exactly
+            # the prior evidence. Calibrating on the answer would report an
+            # improvement that doesn't exist in production.
+            _f, _n = calibration_factor(CAL_EST[str(e_)], CAL_ACT[str(e_)],
+                                        before=wk_key)
             CAL_EST[str(e_)][wk_key] = est.get(e_, 0.0)
             CAL_ACT[str(e_)][wk_key] = act
             BT_ROWS.append({"week": wk_key, "eid": e_, "name": xn,
                             "est": est.get(e_, 0.0), "act": act,
+                            "cal": est.get(e_, 0.0) * _f, "cal_n": _n,
                             "hours": hrs.get(e_, 0.0),
                             "salaried": str(e_) in SAL,
                             "deputy": sum((x.get("cost") or 0) for x in shifts
@@ -804,28 +811,32 @@ if BACKTEST and BT_ROWS:
     print("\n" + "=" * 78)
     print("BACKTEST — the 9am estimate vs what payroll actually paid")
     print("=" * 78)
-    tot_e = sum(r["est"] for r in BT_ROWS)
-    tot_a = sum(r["act"] for r in BT_ROWS)
     n_wk = len({r["week"] for r in BT_ROWS})
     print(f"{n_wk} closed weeks, {len(BT_ROWS)} employee-weeks")
-    print(f"  estimate ${tot_e:>12,.2f}")
-    print(f"  actual   ${tot_a:>12,.2f}")
-    print(f"  bias     ${tot_e - tot_a:>+12,.2f}   ({(tot_e - tot_a) / tot_a * 100:+.2f}%)")
+    print(f"  actual ${sum(r['act'] for r in BT_ROWS):,.2f}\n")
 
-    # Bias is the average error; MAE is how wrong a typical WEEK is. They differ
-    # when errors cancel — and a number that is right on average and wrong every
-    # week is not a number Zak can act on.
-    by_wk = defaultdict(lambda: [0.0, 0.0])
-    for r in BT_ROWS:
-        by_wk[r["week"]][0] += r["est"]; by_wk[r["week"]][1] += r["act"]
-    errs = [(e - a) for e, a in by_wk.values()]
-    pcts = [(e - a) / a * 100 for e, a in by_wk.values() if a]
-    mae = sum(abs(x) for x in errs) / len(errs)
-    mape = sum(abs(x) for x in pcts) / len(pcts)
-    print(f"\n  per WEEK: mean abs error ${mae:,.2f} ({mape:.2f}%)"
-          f"   worst {max(abs(x) for x in errs):,.2f}")
-    good = sum(1 for p in pcts if abs(p) <= 2)
-    print(f"  weeks within +/-2%: {good}/{len(pcts)} ({good / len(pcts) * 100:.0f}%)")
+    # RAW = what the estimate said. CALIBRATED = the same estimate corrected by
+    # the person's own prior weeks, WALK-FORWARD (never sees the week it is
+    # predicting). If calibration only helps when it can see the answer, it
+    # isn't a fix, it's a curve fit.
+    print(f"  {'':13} {'estimate':>13} {'bias':>13} {'MAE/wk':>11} {'MAPE':>7} {'wks +/-2%':>10}")
+    for key, lab in (("est", "raw"), ("cal", "calibrated")):
+        rows = [r for r in BT_ROWS if key in r or key == "est"]
+        te = sum(r.get(key, r["est"]) for r in rows)
+        ta = sum(r["act"] for r in rows)
+        by_wk = defaultdict(lambda: [0.0, 0.0])
+        for r in rows:
+            by_wk[r["week"]][0] += r.get(key, r["est"]); by_wk[r["week"]][1] += r["act"]
+        errs = [(e - a) for e, a in by_wk.values()]
+        pcts = [(e - a) / a * 100 for e, a in by_wk.values() if a]
+        mae = sum(abs(x) for x in errs) / len(errs)
+        mape = sum(abs(x) for x in pcts) / len(pcts)
+        good = sum(1 for p in pcts if abs(p) <= 2)
+        print(f"  {lab:13} ${te:>12,.2f} ${te-ta:>+12,.2f} ${mae:>10,.2f} {mape:>6.2f}% "
+              f"{good:>4}/{len(pcts)} ({good/len(pcts)*100:.0f}%)")
+    # Keep the raw figures for the sections below.
+    tot_e = sum(r["est"] for r in BT_ROWS)
+    tot_a = sum(r["act"] for r in BT_ROWS)
 
     print("\n  --- split: salaried vs hourly ---")
     for lab, sel in (("salaried", lambda r: r["salaried"]),
