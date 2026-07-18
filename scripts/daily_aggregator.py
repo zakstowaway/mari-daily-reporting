@@ -538,6 +538,34 @@ else:
     else:
         revenue_net = revenue_inc / 1.1
 
+    # ---- EatClub give-away (off-POS discount + commission) ----
+    # EatClub tables ring the FULL bill on the POS at full price, so revenue_inc /
+    # revenue_net above are OVERSTATED by whatever EatClub kept (the offer discount
+    # + its 11% commission) and never settled to us. Subtract the day's give-away
+    # HERE, before cogs/gp are formed, so revenue, GP$ and GP% all correct
+    # together. COGS is unchanged -- the kitchen cooked the full dish; only the
+    # money we actually receive drops. Optional dated fact written by the daily
+    # EatClub pull; absent -> no adjustment (graceful). See scripts/eatclub/giveaway.py.
+    revenue_inc_gross = revenue_inc
+    revenue_ex_gross = revenue_net
+    eatclub_giveaway_ex = 0.0
+    eatclub_covers = 0
+    _ec_file = resolve(DATA_DIR / f"eatclub_{prefix}_{target.isoformat()}.json")
+    if _ec_file is not None:
+        try:
+            with _ec_file.open() as _f:
+                _ec = json.load(_f)
+            _give_inc = parse_num(_ec.get("giveaway_inc"))
+            eatclub_covers = int(_ec.get("covers") or 0)
+            if _give_inc:
+                eatclub_giveaway_ex = _give_inc / 1.1
+                revenue_inc -= _give_inc
+                revenue_net -= eatclub_giveaway_ex
+                print(f"  EatClub: -${_give_inc:.2f} inc give-away ({eatclub_covers} covers)"
+                      f" -> revenue net -${eatclub_giveaway_ex:.2f} ex")
+        except (json.JSONDecodeError, AttributeError, ValueError, TypeError) as e:
+            print(f"  WARNING: could not parse {_ec_file}: {e}")
+
     cogs = sum(row_cogs(r) for r in rows)
     gp = revenue_net - cogs
 
@@ -616,6 +644,10 @@ else:
         "gp_pct": gp / revenue_net * 100 if revenue_net else 0,
         "cogs_pct": cogs / revenue_net * 100 if revenue_net else 0,
         "uber_eats_rev": uber_eats_rev,
+        "eatclub_giveaway_ex": eatclub_giveaway_ex,
+        "eatclub_covers": eatclub_covers,
+        "revenue_inc_gross": revenue_inc_gross,
+        "revenue_ex_gross": revenue_ex_gross,
         "category_breakdown": category_breakdown,
         "product_breakdown": product_breakdown[:20],
         "dept_sums": dept_sums if split_venue else None,
@@ -928,6 +960,10 @@ record = {
         "gp_pct":          round(lightspeed_data["gp_pct"], 1) if lightspeed_data else None,
         "uber_eats_revenue": round(lightspeed_data.get("uber_eats_rev", 0), 2) if lightspeed_data else 0,
         "net_takings_ex_gst": round(net_takings_ex, 2) if net_takings_ex is not None else None,
+        "eatclub_giveaway_ex_gst": round(lightspeed_data.get("eatclub_giveaway_ex", 0), 2) if lightspeed_data else 0,
+        "eatclub_covers": lightspeed_data.get("eatclub_covers", 0) if lightspeed_data else 0,
+        "revenue_ex_gst_before_eatclub": (round(lightspeed_data["revenue_ex_gross"], 2)
+                                          if lightspeed_data and lightspeed_data.get("eatclub_giveaway_ex") else None),
         **(split or {}),
     },
     "wages": {
@@ -1001,6 +1037,8 @@ nr = {
     "delivery_pct":     record["delivery"]["delivery_pct"] if record["delivery"] else "",
     "gp_dollars":       record["sales"]["gp_dollars"],
     "gp_pct":           record["sales"]["gp_pct"],
+    "eatclub_giveaway_ex_gst": record["sales"]["eatclub_giveaway_ex_gst"],
+    "eatclub_covers":          record["sales"]["eatclub_covers"],
     "cogs_alert":       cogs_status,
     "wages_alert":      wages_status,
     "delivery_alert":   delivery_status,
