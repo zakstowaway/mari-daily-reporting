@@ -1,0 +1,29 @@
+name: Suggest Employee Aliases
+
+# Proposes Deputy -> Xero aliases by WEEK ALIGNMENT, for Zak to confirm.
+# Read-only. Writes nothing, commits nothing.
+#
+# Why it exists: 66 people work but have no Xero payslip ($333,746 of
+# Deputy-costed labour). They are not unpaid — 197 Deputy accounts hold a first
+# name where Xero holds the legal name, so the cost lands on a venue from Deputy
+# AND in the corp-payroll residual from Xero. Counted twice, silently.
+#
+# Why not just fuzzy-match: a fuzzy match would have mapped Deputy 'Will N' onto
+# Xero 'Toby Williams'. This repo has Olly (kitchen), Oliver (OWNER) and two
+# Olivias. Mapping an owner onto a venue wage line is a five-figure error that
+# reconciles perfectly.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  suggest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Suggest
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/suggest_employee_aliases.py
