@@ -75,6 +75,44 @@ ALIASES = {
     "Rei": "Rei Ikeda",
     "Archie": "Archie Humphries",
     "Sam Hall": "Samuel Hall",              # 8 wks, 8 both, 0 D-only
+    # 2026-07-18 — found by scripts/suggest_employee_aliases.py, which matches on
+    # WEEK ALIGNMENT rather than name. 66 people were working with no Xero
+    # payslip ($333,746 of Deputy-costed labour); their cost was landing on a
+    # venue from Deputy AND in the corp-payroll residual from Xero. Counted
+    # twice, silently.
+    #
+    # Each of these has BOTH: the first name matches exactly, AND the weeks they
+    # logged hours are the weeks Xero paid them. `d_only` = weeks worked but not
+    # paid, which for a true match must be ~0 — you cannot work a week and not be
+    # paid for it. Neither test alone would be enough; together they are.
+    #
+    #   deputy id  name        xero                     overlap   d_only  jaccard
+    "Ishwor": "Ishwor Purja",              # 239        40/41         1     0.98
+    "Victor": "Victor Flores",             # 259        11/11         0     1.00
+    "Rob Bolt": "Robert Bolt",             # 279        10/10         0     0.91
+    "Jordan": "Jordan Taylor",             # 224        18/19         1     0.95
+    "Cesar": "Cesar Machuca",              # 278         8/9          1     0.89
+    "Maeva": "Maeva Boutin-Kelly",         # 219        36/38         2     0.95
+    "Julio": "Julio Cesar Mendes",         # 217        27/29         2     0.93
+    "Ailu": "Ailen Gaitan",                # 218        22/24         2     0.92
+    "Mais": "Maisie Hughes",               # 235        16/18         2     0.89
+    "Camila Green": "Camila Gomez Green",  # 189        60/64         4     0.94
+    "Audi": "Audi Audi",                   # 250        24/28         4     0.86
+    "Suraj": "Suraj Khadgi",               # 157        29/34         5     0.85
+    "Milan": "Milan Khanal",               # 270        12/15         3     0.80
+    "Arata": "Arata Kitamoto",             # 193         9/13         4     0.69
+    "Dom": "Dom Lees-Bell",                # 179         6/10         4     0.60
+    #
+    # ⚠️ DELIBERATELY NOT MAPPED — the matcher found these AMBIGUOUS, and an
+    # ambiguous alias is how one person's wages land on another person's venue:
+    #   id 200 "Billy"         -> Guillermo De las Carreras (jac 0.78) ...but
+    #   id 213 "Wilson Cortes" -> Guillermo De las Carreras (jac 0.74) TOO.
+    #     Both cannot be right. ("Billy" IS a real nickname for Guillermo, which
+    #     is exactly what makes this dangerous.) Needs Zak.
+    #   id 221 "Patrick"       -> Audi Audi (jac 0.61), but 250 "Audi" fits Audi
+    #     Audi far better (0.86, exact name). 221 is unresolved.
+    #   id 252 "Sanjida"       -> Victor Flores (jac 0.69), but 259 "Victor" is
+    #     a perfect 1.00 match to Victor Flores. 252 is unresolved.
     # ⚠️ DO NOT add "Oliver" (id 24). He is Oliver Iaccarino, an owner, and lives
     # in _corp_payroll_only. His pay reaches corp payroll via the residual (Xero
     # group payroll MINUS Deputy group wages), so mapping him would move owner
