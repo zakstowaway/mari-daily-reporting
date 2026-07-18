@@ -106,7 +106,19 @@ print(f"Xero: {len(unmapped_x)} paid people not yet mapped to a Deputy id\n")
 
 rows = []
 for eid, dw in d_weeks.items():
-    if eid in emap or eid in exempt or not dw:
+    # EXEMPT PEOPLE ARE CHECKED, NOT SKIPPED (fixed 2026-07-18).
+    #
+    # This used to `continue` on `eid in exempt`, and that is exactly how Long
+    # Long (id 225) hid for 39 weeks. He was exempted on my claim that Xero had
+    # never paid him "under any name" — a claim I tested by SEARCHING THE NAME
+    # "Long Long", which could never have found him, because his Xero name is
+    # Teramet Tongsong ($26,293.62). This tool would have caught it on week
+    # alignment. It didn't get the chance: the exemption suppressed the only
+    # check capable of questioning the exemption.
+    #
+    # An exemption is a CLAIM ("this person and this payroll have never met").
+    # A claim is the thing you test most, not the thing you stop testing.
+    if eid in emap or not dw:
         continue
     best = []
     for xn, xw in unmapped_x.items():
@@ -136,8 +148,15 @@ for hrs, eid, dn, best in rows:
                "likely" if jac >= 0.6 and d_only <= 3 else "weak")
     if verdict == "STRONG":
         strong += 1
+    # An exempt person with a plausible candidate is the LOUDEST thing here: the
+    # exemption asserts Xero has never paid them, and a candidate says otherwise.
+    # If that assertion is wrong, their Deputy cost is on a venue AND their Xero
+    # pay is in the corp-payroll residual — double counted, with the group total
+    # tying perfectly the whole time. That is how Long Long hid for 39 weeks.
+    ex = "  ⚠️ EXEMPT — but this says Xero MAY pay them. Check before trusting." \
+         if eid in exempt else ""
     print(f"  deputy {eid:>4} {dn[:22]:22} {hrs:>7.1f}h  ->  {xn[:28]:28} "
-          f"overlap {inter:>2}/{ndw:>2}wk  d_only {d_only:>2}  jac {jac:.2f}  [{verdict}]")
+          f"overlap {inter:>2}/{ndw:>2}wk  d_only {d_only:>2}  jac {jac:.2f}  [{verdict}]{ex}")
     if len(best) > 1 and best[1][0] >= 0.5:
         j2, d2, i2, _, _, x2 = best[1]
         print(f"       {'runner-up:':>27} {x2[:28]:28} "

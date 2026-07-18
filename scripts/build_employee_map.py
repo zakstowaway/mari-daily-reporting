@@ -107,6 +107,24 @@ ALIASES = {
     # also fitted Guillermo at 0.74 and both could not be right. Zak's call
     # resolves it — and it means 213 is someone ELSE, not that 213 has no match.
     "Billy": "Guillermo De las Carreras",  # 200        21/27         6     0.78
+    # Zak, 2026-07-18: "teramet is long long."
+    #
+    # Long Long (id 225) sat in _xero_exempt for a DAY AND A HALF on my say-so:
+    # "hours in 4 weeks, Xero pay in ZERO. Verified by week-alignment Mar-Jul and
+    # by name search across all 122 people in the pay history." The name search
+    # was worthless — his Xero name is Teramet Tongsong, so searching "Long Long"
+    # was never going to find him. "Not in Xero under any name" only ever meant
+    # "not under any name I recognised".
+    #
+    # And the week-alignment matcher, which WOULD have found this (39 weeks,
+    # $26,293.62), skips anyone on the exempt list. The exemption suppressed the
+    # one tool that could have questioned it. That is now fixed in
+    # suggest_employee_aliases.py — exempt ids are checked, and loudly.
+    #
+    # The cost of the mistake: his Deputy cost was on a venue AND his $26,293.62
+    # of Xero pay was in the corp-payroll residual. Counted twice, for 39 weeks,
+    # and the group total tied the whole time.
+    "Long Long": "Teramet Tongsong",       # 225        39 wks, $26,293.62
     #
     # Confirming Billy freed Guillermo and let the matcher settle five more —
     # each a PERFECT week alignment (every week worked is a week paid, d_only 0)
@@ -142,10 +160,17 @@ ALIASES = {
     #
     # NOT MAPPED, DELIBERATELY — Xero has never paid them, under any name:
     #   "pedro f"   (id 261): hours in 14 separate weeks, Xero pay in ZERO.
-    #   "Long Long" (id 225): hours in 4 weeks, Xero pay in ZERO.
-    # Verified by week-alignment Mar–Jul and by name search across all 122 people
-    # in the pay history. Not a mapping gap — a person and a payroll that have
-    # never met.
+    #
+    # ⚠️ "Long Long" (id 225) USED TO BE ON THIS LIST AND IT WAS WRONG. He is
+    # Xero's Teramet Tongsong — 39 weeks, $26,293.62 — mapped above on Zak's word
+    # (2026-07-18). I had "verified" him by searching the name "Long Long" across
+    # the pay history, which could never have worked.
+    #
+    # So treat the claim above about pedro with the same suspicion: it rests on
+    # the same name search. It is CORROBORATED by week-alignment now that
+    # suggest_employee_aliases.py checks exempt ids (it proposes no candidate for
+    # 261), but week-alignment cannot prove a negative either — it can only say
+    # nobody in Xero looks like him. Zak's knowledge outranks both.
     #
     # Zak, 2026-07-17: "assume pedro at his deputy rates. same with long long."
     # So the existing fallback IS the answer: unmapped -> rebuild_wages costs them
