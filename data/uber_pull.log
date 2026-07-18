@@ -1,0 +1,3 @@
+2026-07-18T22:16:11Z uber-eats-daily-fees: pulled Jul 14-18 2026 for both shops (hg, mari). HG Jul14 had no orders (no card). Session active (no login prompt).
+2026-07-18T22:16:11Z   marketing: no ads invoice overlaps captured days yet - latest 'Uber to shop' invoice is week 07/06-07/12 for both shops (issued 2026-07-15); week 07/13-07/19 not yet issued. uber_marketing_weekly.csv unchanged.
+2026-07-18T22:16:11Z   Uber Direct: none observed in Payouts view.
