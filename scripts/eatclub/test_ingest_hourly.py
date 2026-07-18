@@ -11,22 +11,24 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import ingest_hourly  # noqa: E402
 
+# Real feed shape: leading index column (blank header), $-prefixed money,
+# thousands commas. This mirrors the live 2026-07-17 CSV that first broke ingest.
 SAMPLE = (
-    "Reporting Group Name,Sale Closed Hour of Day,Site Name,Sale Closed Date,"
+    ",Reporting Group Name,Sale Closed Hour of Day,Site Name,Sale Closed Date,"
     "Total Revenue,Gross Sale Ex Tax,Gross Sale Inc Tax\n"
     # Stowaway-proper, in window (17-20)
-    "Cocktails - Classic,18,Stowaway Bar,2026-07-17,,990.88,1090.00\n"
-    "Gin,20,Stowaway Bar,2026-07-17,,62.73,69.00\n"
+    "1,Cocktails - Classic,18,Stowaway Bar,2026-07-17,,$990.88,\"$1,090.00\"\n"
+    "2,Gin,20,Stowaway Bar,2026-07-17,,$62.73,$69.00\n"
     # Stowaway-proper, OUT of window
-    "Red Wine,16,Stowaway Bar,2026-07-17,,421.78,464.00\n"
+    "3,Red Wine,16,Stowaway Bar,2026-07-17,,$421.78,$464.00\n"
     # Marilyna's (dine-in pizza) in window
-    "Dine-in Pizza,19,Stowaway Bar,2026-07-17,,45.45,50.00\n"
+    "4,Dine-in Pizza,19,Stowaway Bar,2026-07-17,,$45.45,$50.00\n"
     # Marilyna's (soft drinks) out of window
-    "Marilyna's Soft Drinks,15,Stowaway Bar,2026-07-17,,13.64,15.00\n"
+    "5,Marilyna's Soft Drinks,15,Stowaway Bar,2026-07-17,,$13.64,$15.00\n"
     # Delivery Cocktails -> STOW, in window (per 2026-07-16 canon)
-    "Delivery Cocktails,19,Stowaway Bar,2026-07-17,,50.00,55.00\n"
+    "6,Delivery Cocktails,19,Stowaway Bar,2026-07-17,,$50.00,$55.00\n"
     # HG food on Stow till -> dropped from both
-    "Harry Gatos Food,19,Stowaway Bar,2026-07-17,,100.00,110.00\n"
+    "7,Harry Gatos Food,19,Stowaway Bar,2026-07-17,,$100.00,$110.00\n"
 )
 
 

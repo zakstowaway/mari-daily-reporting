@@ -41,6 +41,13 @@ def _resolve(headers, *needles):
         % (list(needles), headers))
 
 
+def _num(raw):
+    """Parse a Looker money cell to Decimal. Values arrive like '$1,176.70';
+    strip the currency symbol and thousands separators. Blank -> 0."""
+    s = (raw or "").replace("$", "").replace(",", "").strip()
+    return D(s) if s else Decimal("0")
+
+
 def ingest(csv_path, out_path):
     with open(csv_path, newline="") as f:
         reader = csv.DictReader(f)
@@ -68,8 +75,8 @@ def ingest(csv_path, out_path):
             hour = int(float(hour_raw))
         except ValueError:
             continue
-        inc = D(r.get(col_inc) or 0)
-        ex = D(r.get(col_ex) or 0)
+        inc = _num(r.get(col_inc))
+        ex = _num(r.get(col_ex))
         if config.is_marilynas_row(rg):
             add("marilynas", hour, inc, ex)
         elif config.is_stowaway_proper_row(rg):
