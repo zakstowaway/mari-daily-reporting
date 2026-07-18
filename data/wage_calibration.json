@@ -330,9 +330,9 @@
   "rate_per_hour": 34.5253
  },
  "225": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.0464,
+  "weeks": 8,
+  "name": "Teramet Tongsong",
   "rate_per_hour": 33.7619
  },
  "226": {
