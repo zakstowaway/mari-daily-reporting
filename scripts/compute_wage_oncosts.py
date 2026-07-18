@@ -86,15 +86,18 @@ oncost_rate = oncost_dollars / venue_wages if venue_wages else 0.0
 owner_weekly = owner_pay / len(owner_weeks) if owner_weeks else 0.0
 
 out = {
-    "_comment": "Wage on-costs for the dashboard P&L. payroll tax + workers-comp "
-                "-> overheads as oncost_rate x wages; owners -> corp payroll. "
-                "See scripts/compute_wage_oncosts.py.",
+    "_comment": "Wage on-costs for the dashboard P&L. The dashboard uses "
+                "owner_weekly_inc_super for the corp-payroll line and computes "
+                "payroll tax + workers-comp LIVE as lumpy actuals "
+                "(group_payroll - staff wages - owners), NOT from oncost_rate. "
+                "oncost_rate is retained for reference only. Zak, 2026-07-18: "
+                "'don't estimate ... treat them as lumpy expenses'.",
     "_generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     "_months_used": months,
-    "_caveat": "oncost_rate is blended over only these months and carries some "
-               "accrual/cash timing. Replace with Xero's actual annual "
-               "(payroll tax + workers-comp) / total wages once a full year "
-               "exists — it is a one-number change; everything reads this file.",
+    "_note_rate_unused": "oncost_rate is informational. The dashboard does not "
+                         "apply a rate to wages; payroll tax + WC flow through as "
+                         "actual dollars, smoothed over trailing 3 months like "
+                         "every other lumpy overhead.",
     "oncost_rate": round(oncost_rate, 4),
     "owner_weekly_inc_super": round(owner_weekly, 2),
     "_basis": {

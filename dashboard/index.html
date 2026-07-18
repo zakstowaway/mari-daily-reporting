@@ -653,12 +653,36 @@ function corpPayrollDaily(venue, endIso) {
   return wk * (PLAN_WAGE_SHARE[venue] || 0) / 7;
 }
 
-// Payroll tax + workers-comp: employer on-costs, levied on wages. Put in
-// OVERHEADS as a rate × that venue's wages (Zak, 2026-07-18: "into overheads,
-// calculated from wages"), so they land where the wages are and scale with the
-// roster. Rate from data/wage_oncosts.json.
-function wageOncost(wages) {
-  return (STATE.oncost.rate || 0) * (wages || 0);
+// Payroll tax + workers-comp: LUMPY ACTUAL expenses (Zak, 2026-07-18: "don't
+// estimate ... treat them as lumpy expenses"). NOT a rate on wages.
+//
+// They are exactly what remains of the Xero group payroll once staff wages
+// (Deputy) and owner salary are removed — an ACTUAL dollar figure per month, not
+// a guess. Fed through the SAME trailing-3-month smoothing the dashboard already
+// uses for every other lumpy overhead (quarterly power, annual insurance), and
+// split to venues by plan wage share since wages drive them. Daily $, matching
+// overheadsDailyRate / corpPayrollDaily.
+function wageOncostDaily(venue, endIso) {
+  const feed = STATE.xeroOH;
+  if (!feed.length) return 0;
+  const endMonth = String(endIso || '').slice(0, 7);
+  const months = feed.filter(r => r.month && r.month < endMonth && hasVal(r.group_payroll))
+                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  if (!months.length) return 0;
+  const monthSet = new Set(months.map(r => r.month));
+  let gp = 0, days = 0;
+  for (const r of months) {
+    gp += toNum(r.group_payroll);
+    const [y, m] = r.month.split('-').map(Number);
+    days += new Date(y, m, 0).getDate();
+  }
+  let deputy = 0;
+  for (const v of REAL_VENUES) for (const r of (STATE.histories[v] || [])) {
+    if (monthSet.has(r.date.slice(0, 7))) deputy += toNum(r.wages_dollars) + toNum(r.leave_dollars);
+  }
+  const ownerTot = (STATE.oncost.ownerWeekly || 0) / 7 * days;   // owners over same days
+  const oncost = Math.max(0, gp - deputy - ownerTot);            // payroll tax + WC (+ timing)
+  return days ? oncost * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
 }
 
 // Interest + depreciation/amortisation, per day, from the Xero monthly feed.
@@ -733,9 +757,8 @@ function pnlWindow(day, venue = STATE.currentVenue) {
   const ohA = overheadsDailyRate(venue, endIso);
   const ohf = ohFactor(day, venue, wdays);
   const wages = toNum(day.wages_dollars);
-  // Overheads = fixed OH (DOW-weighted) + wage on-costs (payroll tax + WC,
-  // proportional to THIS window's wages, so no DOW weighting).
-  const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) * ohf + wageOncost(wages);
+  // Overheads = fixed OH + payroll tax/WC (both lumpy group costs, DOW-weighted).
+  const oh = ((ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) + wageOncostDaily(venue, endIso)) * ohf;
   const dfr = deliveryFeesPct(venue, endIso);
   const fa = feesActualWindow(day, venue);
   const df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
@@ -879,16 +902,15 @@ function venueForecast(venue, dow) {
 // margin, matching the BEP workbooks).
 function breakevenParts(venue, endIso) {
   const ohA = overheadsDailyRate(venue, endIso);
-  // Fixed = real overheads + owner salary (corp payroll). Payroll tax + WC are
-  // NOT fixed — they scale with wages, so they go on the variable side below.
-  const fixedDaily = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) + corpPayrollDaily(venue, endIso);
+  // Fixed = real overheads + owner salary + payroll tax/WC. All lumpy group
+  // costs that don't move with tonight's trade — the breakeven denominator.
+  const fixedDaily = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7)
+                     + corpPayrollDaily(venue, endIso) + wageOncostDaily(venue, endIso);
   const a = actualCogs(venue, endIso);
   const dfr = deliveryFeesPct(venue, endIso);
   const wm = wageMedian12wk(STATE.histories[venue] || []);
   if (!a && wm === null) return null;
-  // Wages carry their on-cost: each wage dollar also costs rate in payroll
-  // tax + WC, so the wage % becomes wm x (1 + oncost rate).
-  const varPct = (a ? a.pct : 0) + (dfr ? dfr.pct : 0) + (wm || 0) * (1 + (STATE.oncost.rate || 0));
+  const varPct = (a ? a.pct : 0) + (dfr ? dfr.pct : 0) + (wm || 0);
   if (varPct >= 95) return null;
   return { fixedDaily, varPct };
 }
@@ -1052,15 +1074,17 @@ function actualProfitWindow(day) {
     fin += toNum(r.group_finance) * (PLAN_WAGE_SHARE[v] || 1);
   }
   // group_payroll bundles staff wages, owner salary, payroll tax and workers-
-  // comp. Split it to match the operational card and Zak's rule: staff wages
-  // stay in payroll; owners + payroll tax/WC move to overheads. PROFIT IS
-  // UNCHANGED — wages + oh are preserved to the cent; this only re-labels which
-  // line each dollar sits on. (Falls back to no-op if the on-cost feed is absent.)
-  const daysIn = months.reduce((t, m) => { const [yy, mm] = m.split('-').map(Number); return t + new Date(yy, mm, 0).getDate(); }, 0);
-  const ownerTot = (STATE.oncost.ownerWeekly || 0) / 7 * daysIn * (PLAN_WAGE_SHARE[v] || 1);
-  const staffWages = STATE.oncost.rate ? (wages - ownerTot) / (1 + STATE.oncost.rate) : (wages - ownerTot);
-  oh += (wages - staffWages);            // = owners + payroll tax + WC
-  wages = staffWages;
+  // comp. Split it to match the operational card and Zak's rule, with NO
+  // estimation: staff wages are the ACTUAL Deputy figure for these months; what
+  // is left (owners + payroll tax + WC — all lumpy actuals) moves to overheads.
+  // PROFIT IS UNCHANGED — wages + oh are preserved to the cent; only the label
+  // moves. Falls back to a no-op if histories are absent.
+  const vens = v === 'group' ? REAL_VENUES : [v];
+  let staffWages = 0;
+  for (const vv of vens) for (const r of (STATE.histories[vv] || [])) {
+    if (r.date >= sIso && r.date <= eIso) staffWages += toNum(r.wages_dollars) + toNum(r.leave_dollars);
+  }
+  if (staffWages > 0 && staffWages <= wages) { oh += (wages - staffWages); wages = staffWages; }
   const profit = rev - cos - wages - oh - df - fin;
   return { profit, cos, wages, oh, df, fin, rev, nMonths: months.length };
 }
@@ -1534,7 +1558,7 @@ const CARD_DEFS = {
     const days = day.days_included || 1;
     const ohA = overheadsDailyRate(STATE.currentVenue, winEnd(day));
     const ohf = ohFactor(day, STATE.currentVenue, days);
-    const oc = wageOncost(toNum(day.wages_dollars));
+    const oc = wageOncostDaily(STATE.currentVenue, winEnd(day)) * ohf;
     const oh = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[STATE.currentVenue] || 0) / 7) * ohf + oc;
     return { label: 'Overheads', value: rev ? fmtPct(oh / rev * 100) : '\u2014',
       sub: `${fmtDollars(oh)} \u00b7 rent + share of group OH (${ohA ? 'Xero ' + ohA.months + '-mo' : 'plan'}) \u00b7 DOW-weighted`, status: 'unknown' };
@@ -2410,8 +2434,9 @@ function renderChart() {
 
     if (STATE.focusMetric) {
       const sh = dowShares(STATE.currentVenue);
-      const ocr = STATE.oncost.rate || 0;   // payroll tax + WC, on this bin's wages
-      const ohOf = (k, B = bins) => (dailyBins && sh ? ohDaily * 7 * sh[new Date(k).getDay()] : ohDaily * B[k].days) + ocr * B[k].wages;
+      // Overhead per day = fixed OH + payroll tax/WC (both lumpy, DOW-weighted).
+      const ohcDaily = ohDaily + wageOncostDaily(STATE.currentVenue, endIso);
+      const ohOf = (k, B = bins) => dailyBins && sh ? ohcDaily * 7 * sh[new Date(k).getDay()] : ohcDaily * B[k].days;
       const t = STATE.baselines[STATE.currentVenue] || {};
       const a = actualCogs(STATE.currentVenue, endIso);
       const FOCUS = {
