@@ -805,27 +805,25 @@ function pnlWindow(day, venue = STATE.currentVenue) {
   const dfr = deliveryFeesPct(venue, endIso);
   const fa = feesActualWindow(day, venue);
   let df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
-  // Uber marketing (funded offers + ads) is discretionary — Zak's decision to
-  // keep it OFF the delivery line and on its own. Where we have the actual daily
-  // Uber Eats split, swap the Uber-Eats slice of the blended delivery estimate
-  // for the real commission and lift marketing out to `mktg`. Non-Uber delivery
-  // (Mari DoorDash+Direct; HG ME&U) stays estimated. Older days: unchanged.
-  let mktg = 0;
+  // Where we have the actual daily Uber Eats split, swap the Uber-Eats slice of
+  // the blended delivery estimate for the real numbers. Marketing (funded
+  // offers + ads) stays INSIDE the delivery total (Zak: no separate line) — it's
+  // broken out only in the delivery card's text. Non-Uber delivery (Mari
+  // DoorDash+Direct; HG ME&U) stays estimated. Older days: unchanged.
   const _win = String(day.date).includes(' — ') ? String(day.date).split(' — ') : [day.date, day.date];
   const _u = uberSplit(venue, _win[0], _win[1]);
   if (_u) {
     const nonUber = df * (1 - uberEatsShareOfDelivery(venue, endIso));
-    df = _u.commission + nonUber;   // actual Uber commission + non-Uber estimate
-    mktg = _u.marketing;            // funded offers + ads, its own line
+    df = _u.commission + _u.marketing + nonUber;   // full Uber cost + non-Uber est
   }
   const cp = corpPayrollDaily(venue, endIso) * ohf;   // owners' salary, DOW-weighted
   const fin = financeDaily(venue, endIso) * ohf;      // interest + depreciation
   // Operating profit drives breakeven and every trading decision — it must stay
   // free of interest/depreciation (you can't roster your way out of a loan).
   // Net profit is what the accountant sees. Keep both, and never confuse them.
-  const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - mktg - cp;
+  const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
   const profit = opProfit - fin;
-  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, mktg, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
+  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
 }
 
 // Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
@@ -1609,10 +1607,11 @@ const CARD_DEFS = {
     const _u = uberSplit(STATE.currentVenue, _win[0], _win[1]);
     if (_u) {
       const nonUber = rev * dfr.pct / 100 * (1 - uberEatsShareOfDelivery(STATE.currentVenue, winEnd(day)));
-      const del = _u.commission + nonUber;
+      const del = _u.commission + _u.marketing + nonUber;   // full delivery cost
       const other = STATE.currentVenue === 'mari' ? ' + DoorDash/Direct est' : ' + ME&U est';
+      const mkt = _u.marketing > 0 ? ` · marketing ${fmtDollars(_u.marketing)} (offers+ads)` : '';
       return { label: 'Delivery platforms ' + pill('Uber actual', 'green'), value: fmtPct(del / rev * 100),
-        sub: `${fmtDollars(del)} · Uber commission ${fmtDollars(_u.commission)}${other} · Uber marketing ${fmtDollars(_u.marketing)} shown separately`, status: 'unknown' };
+        sub: `${fmtDollars(del)} · Uber commission ${fmtDollars(_u.commission)}${mkt}${other}`, status: 'unknown' };
     }
     const src = STATE.currentVenue === 'mari' ? 'Uber + DoorDash' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
     return { label: 'Delivery platforms', value: fmtPct(dfr.pct),
