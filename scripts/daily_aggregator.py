@@ -702,9 +702,30 @@ else:
         _super_for = lambda _e, _w: SUPER_MULT
     _wk = (target - timedelta(days=target.weekday()) + timedelta(days=6)).isoformat()
 
+    # Per-person calibration, learned by rebuild_wages from CLOSED weeks.
+    #
+    # Backtested 2026-07-18 over 13 weeks: the uncalibrated estimate was UNDER
+    # what payroll actually paid in 357 of 398 employee-weeks — -4% overall,
+    # -7.6% on hourly staff, only 2 weeks in 13 within +/-2%. Deputy's rates are
+    # stale in a different way for each person (award rises, loading, penalties,
+    # overtime, allowances), and modelling each cause is a losing game.
+    #
+    # So this figure carries each person's own measured error forward. It is a
+    # correction learned from payslips, not a fudge factor.
+    _cal_f = DATA_DIR / "wage_calibration.json"
+    _cal = json.loads(_cal_f.read_text()) if _cal_f.exists() else {}
+    if _cal:
+        print(f"  wages: calibrated from {len(_cal)} people's closed weeks")
+    else:
+        print("  wages: NO calibration file — this number runs ~4% light. "
+              "Run the full rebuild_wages --write to publish one.")
+
+    def _rate(t):
+        c = _cal.get(str(t.get("employee_id")))
+        return _super_for(t.get("employee_id"), _wk) * (c["factor"] if c else 1.0)
+
     def dept_cost(name):
-        return sum(t["cost"] * _super_for(t.get("employee_id"), _wk)
-                   for t in d if t.get("dept") == name)
+        return sum(t["cost"] * _rate(t) for t in d if t.get("dept") == name)
     kitchen_cost = dept_cost("Kitchen")
     foh_cost = dept_cost("FOH")
     driver_cost = dept_cost("Driver")

@@ -212,3 +212,61 @@ def super_lookup(xero_pay, xero_super, emp_map, default_rate, as_of=None):
         return 1.0 + default_rate                       # 3. statutory fallback
 
     return mult
+
+
+# ---------------------------------------------------------------------------
+# CALIBRATION
+# ---------------------------------------------------------------------------
+# Measured 2026-07-18 by backtesting 13 closed weeks (rebuild_wages --backtest):
+# the estimate that produces Zak's 9am number was UNDER the truth in 357 of 398
+# employee-weeks. Not noise — a systematic bias, ~-4% overall, -7.6% on hourly
+# staff. Only 2 weeks in 13 landed within +/-2%.
+#
+# The per-person error is not one missing rule. It ranged from -21.6% (Olliver
+# Case) to -7.6% (David Armour), and even salaried staff ran -1.3% because their
+# configured annual predates their last pay rise. Deputy's rates are simply
+# stale relative to what payroll pays, in a different way for each person:
+# award increases, casual loading, penalties, overtime, allowances, leave
+# loading. Modelling each one is a losing game — the list is long, it changes,
+# and every item is another thing to get wrong.
+#
+# So: don't model it. Measure it. For each person, compare what we ESTIMATED in
+# recent closed weeks against what Xero actually PAID, and carry the ratio
+# forward. Any systematic per-person error corrects itself, including causes
+# nobody has thought of yet, and it re-learns automatically when someone gets a
+# rise.
+#
+# This is a correction, not a guess: it only ever uses weeks payroll has closed.
+
+
+CALIB_MIN_WEEKS = 3        # below this a single odd week dominates
+CALIB_CLAMP = (0.70, 1.40)  # a factor outside this is a broken input, not a rise
+
+
+def calibration_factor(est_by_week, act_by_week, before=None, window=8):
+    """-> (factor, n_weeks) from a person's own recent closed weeks.
+
+    est_by_week / act_by_week: {week_ending_iso: dollars}, inc-super both sides.
+    before: only use weeks strictly before this one (no lookahead).
+
+    Returns (1.0, 0) when there isn't enough evidence — an uncalibrated estimate
+    is better than one calibrated on a fortnight of noise.
+    """
+    weeks = [w for w in sorted(est_by_week)
+             if w in act_by_week and (before is None or w < before)]
+    # A week where either side is ~0 carries no rate information and would
+    # wreck the ratio: a termination payout against a half-week of hours, or
+    # hours logged in a week payroll hasn't touched.
+    weeks = [w for w in weeks if est_by_week[w] > 50 and act_by_week[w] > 50]
+    weeks = weeks[-window:]
+    if len(weeks) < CALIB_MIN_WEEKS:
+        return 1.0, 0
+    e = sum(est_by_week[w] for w in weeks)
+    a = sum(act_by_week[w] for w in weeks)
+    if e <= 0:
+        return 1.0, 0
+    f = a / e
+    # Clamped, deliberately. A factor of 3 means the input is broken (a missing
+    # salaried config, a mis-mapped name), and silently tripling someone's cost
+    # would bury the fault instead of surfacing it.
+    return min(max(f, CALIB_CLAMP[0]), CALIB_CLAMP[1]), len(weeks)

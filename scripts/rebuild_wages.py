@@ -33,7 +33,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))   # repo root -> core/
 from core import venues as V
-from wage_model import allocate_week, super_lookup
+from wage_model import allocate_week, super_lookup, calibration_factor
 
 REPO_ROOT = Path(os.environ.get("REPO_ROOT", "."))
 DATA_DIR = REPO_ROOT / "data"
@@ -110,6 +110,29 @@ SUPER_MULT_FOR = super_lookup(XERO_PAY, XERO_SUPER, EMP_MAP, V.SUPER_RATE)
 # that includes the answer would flatter the estimate, and a backtest that lies
 # is worse than no backtest.
 BT_SUPER = super_lookup(XERO_PAY, XERO_SUPER, EMP_MAP, V.SUPER_RATE, as_of=True)
+
+# Per-person calibration, learned from closed weeks (see wage_model). Written at
+# the end of this run, read at the start of the next — one run stale, which is
+# fine: it tracks award increases and pay rises, not the weather.
+#
+# Only the OPEN week uses it. A closed week has Xero and needs no help.
+_cal_f = DATA_DIR / "wage_calibration.json"
+CALIB = json.loads(_cal_f.read_text()) if _cal_f.exists() else {}
+if CALIB:
+    _fs = [v["factor"] for v in CALIB.values()]
+    print(f"Calibration: {len(CALIB)} people, factors "
+          f"{min(_fs):.3f}..{max(_fs):.3f} (median {sorted(_fs)[len(_fs)//2]:.3f})")
+else:
+    print("Calibration: none yet — the open week runs uncalibrated "
+          "(measured ~-4% low). It is written at the end of this run.")
+CAL_EST = defaultdict(dict)   # eid -> {week: our estimate}
+CAL_ACT = defaultdict(dict)   # eid -> {week: xero actual}
+
+
+def calibrate(eid, ex):
+    """Apply the person's learned correction. 1.0 when we haven't earned one."""
+    c = CALIB.get(str(eid))
+    return ex * c["factor"] if c else ex
 
 d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
 d_from -= timedelta(days=d_from.weekday())          # back to Monday
@@ -375,20 +398,27 @@ while cur <= d_to:
                 if xn and wk_key in XERO_PAY.get(xn, {}):
                     paid[eid] = XERO_PAY[xn][wk_key]
 
-        def gross(eid, ex):
+        def gross(eid, ex, estimated=False):
             """ex-super dollars -> what the person actually COSTS, inc super.
 
             The rules live in wage_model.super_lookup — one definition, shared
             with daily_aggregator and roster_pull. Three copies of the gross-up
             is exactly how it drifted into a flat 12% in the first place.
+
+            estimated=True means this figure came from Deputy/the salaried model
+            rather than a payslip, so it gets the person's learned correction.
+            Never applied to a Xero-sourced figure: calibrating the truth
+            against itself is how you turn a fact back into a guess.
             """
-            return ex * SUPER_MULT_FOR(eid, wk_key)
+            v = ex * SUPER_MULT_FOR(eid, wk_key)
+            return calibrate(eid, v) if estimated else v
 
         if not paid:
             c, w = allocate_week(base_shifts + stand_ins, SAL, WPY,
                                  week_days=week_days, shortfall_leave=is_open)
             for s_ in c:
-                s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"])
+                s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"],
+                                         estimated=True)
             return c, w, paid
         by_emp = defaultdict(list)
         for s in base_shifts:
@@ -419,7 +449,8 @@ while cur <= d_to:
         c2, w = allocate_week(rest, SAL, WPY,
                               week_days=week_days, shortfall_leave=is_open)
         for s_ in c2:
-            s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"])
+            s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"],
+                                     estimated=True)
         costed.extend(c2)
         return costed, w, paid
 
@@ -456,7 +487,7 @@ while cur <= d_to:
             warnings.append({"type": "not_in_xero", "employee_id": _e,
                              "week": wk_end.isoformat(), "hours": round(_hh, 2),
                              "deputy_cost": round(_cc, 2)})
-    if BACKTEST and paid_this_week:
+    if paid_this_week:
         # HOW GOOD IS THE 9AM NUMBER, REALLY?
         #
         # Cost this CLOSED week exactly the way the OPEN week gets costed — no
@@ -483,6 +514,11 @@ while cur <= d_to:
         for e_, w in paid_this_week.items():
             xn = EMP_MAP.get(str(e_))
             act = w + (XERO_SUPER.get(xn, {}).get(wk_key, w * V.SUPER_RATE) if xn else w * V.SUPER_RATE)
+            # Feed the calibration. RAW estimate vs actual — if we recorded the
+            # already-calibrated figure the factor would chase its own tail and
+            # converge on 1.0 while the error stayed.
+            CAL_EST[str(e_)][wk_key] = est.get(e_, 0.0)
+            CAL_ACT[str(e_)][wk_key] = act
             BT_ROWS.append({"week": wk_key, "eid": e_, "name": xn,
                             "est": est.get(e_, 0.0), "act": act,
                             "hours": hrs.get(e_, 0.0),
@@ -740,6 +776,30 @@ if nh:
     print(f"\n  {len(nh)} salaried-weeks with no logged hours (paid, unattributable):")
     for w in nh[:10]:
         print(f"    employee {w['employee_id']}: ${w['week_cost']:,.2f}")
+# ---- publish the calibration -------------------------------------------------
+# Written from CLOSED weeks only, and only on a full-history --write run: a
+# 2-week nightly window would recompute every factor from 2 weeks of evidence
+# and throw away everything learned. The nightly run reads this file; the weekly
+# full rebuild is what refreshes it.
+if WRITE and CAL_EST and (d_to - d_from).days > 60:
+    new_cal = {}
+    for eid, ew in CAL_EST.items():
+        f, n = calibration_factor(ew, CAL_ACT.get(eid, {}))
+        if n >= 3 and abs(f - 1.0) > 0.005:
+            new_cal[str(eid)] = {"factor": round(f, 4), "weeks": n,
+                                 "name": EMP_MAP.get(str(eid))}
+    _cal_f.write_text(json.dumps(dict(sorted(new_cal.items(), key=lambda kv: int(kv[0]))), indent=1))
+    _f = [v["factor"] for v in new_cal.values()]
+    print(f"\ncalibration: {len(new_cal)} people -> {_cal_f.name}")
+    if _f:
+        print(f"  factors {min(_f):.3f}..{max(_f):.3f}  median {sorted(_f)[len(_f)//2]:.3f}")
+        _big = {k: v for k, v in new_cal.items() if v["factor"] >= 1.35 or v["factor"] <= 0.75}
+        if _big:
+            print("  !! near the clamp — these are probably a BROKEN INPUT (a missing")
+            print("     salaried config, a mis-mapped name), not a real pay rise:")
+            for k, v in _big.items():
+                print(f"       {v['name'] or f'deputy id {k}':32} x{v['factor']:.3f} ({v['weeks']} wks)")
+
 if BACKTEST and BT_ROWS:
     print("\n" + "=" * 78)
     print("BACKTEST — the 9am estimate vs what payroll actually paid")

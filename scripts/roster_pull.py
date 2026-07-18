@@ -140,6 +140,20 @@ else:
     print(f"  super: no Xero data — flat {V.SUPER_RATE * 100:.0f}%")
     _super_for = lambda _e, _w: SUPER_MULT
 
+# Same learned correction the actuals use (see daily_aggregator). The roster is
+# the forecast half of the week strip; if it isn't calibrated the same way, the
+# seam between forecast and actual has a ~4% step in it that isn't real.
+_cal_f = DATA_DIR / "wage_calibration.json"
+_cal = json.loads(_cal_f.read_text()) if _cal_f.exists() else {}
+print(f"  calibration: {len(_cal)} people" if _cal else
+      "  calibration: none — the roster runs ~4% light")
+
+
+def _factor(eid):
+    c = _cal.get(str(eid))
+    return c["factor"] if c else 1.0
+
+
 for wk, wk_shifts in by_week.items():
     # This feed is ALWAYS the live roster, so the shortfall-is-leave rule
     # applies: a salaried person rostered under 40 is on leave for the rest
@@ -155,7 +169,8 @@ for wk, wk_shifts in by_week.items():
         # Grossed HERE, per person, while we still know who it is. The old
         # gross-up sat on the dept totals below, by which point the identity is
         # gone and a flat rate is the only thing possible.
-        c = s["cost_final"] * _super_for(s["employee_id"], _wk_end)
+        c = (s["cost_final"] * _super_for(s["employee_id"], _wk_end)
+             * _factor(s["employee_id"]))
         b, dstr = s["bucket"], s["date"]
         if b == "admin":
             add(dstr, "stow", "Admin", c * V.ADMIN_SHARES["stowaway"])
