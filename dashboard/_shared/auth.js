@@ -20,8 +20,11 @@
  * (Zak: "one username per person, so that we can see who's inputting data").
  */
 
-// Set after `wrangler deploy` — see modules/auth/README.md
-export const WORKER_URL = ""; // e.g. "https://shg-auth.zak.workers.dev"
+// The deployed SHG Auth workflow (Pipedream, project Mari Reporting).
+// Live once Zak sets PASSWORDS/PEOPLE/JWT_SECRET and clicks Deploy —
+// see modules/auth/README.md. Safe to set now: only the not-yet-live
+// recipe page reads this; the main dashboard has its own inline auth.
+export const WORKER_URL = "https://eotwefx7cim9jou.m.pipedream.net";
 
 export const Auth = (() => {
   const KEY = "shg.session";
