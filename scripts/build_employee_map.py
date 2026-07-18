@@ -108,14 +108,26 @@ ALIASES = {
     # resolves it — and it means 213 is someone ELSE, not that 213 has no match.
     "Billy": "Guillermo De las Carreras",  # 200        21/27         6     0.78
     #
-    # ⚠️ DELIBERATELY NOT MAPPED — still ambiguous, and an ambiguous alias is how
-    # one person's wages land on another person's venue:
-    #   id 213 "Wilson Cortes" — was only fitting Guillermo because Guillermo was
-    #     unclaimed. Now that Billy has him, 213 needs a fresh look.
-    #   id 221 "Patrick"       -> Audi Audi (jac 0.61), but 250 "Audi" fits Audi
-    #     Audi far better (0.86, exact name). 221 is unresolved.
-    #   id 252 "Sanjida"       -> Victor Flores (jac 0.69), but 259 "Victor" is
-    #     a perfect 1.00 match to Victor Flores. 252 is unresolved.
+    # Confirming Billy freed Guillermo and let the matcher settle five more —
+    # each a PERFECT week alignment (every week worked is a week paid, d_only 0)
+    # with the name agreeing too:
+    "Alison": "Alison Almeida",            # 280         5/5          0     1.00
+    "Sofia": "Sofia Maria Sastre",         # 220         4/4          0     1.00
+    "Bishal": "Bishal Dangi Chhetri",      # 229         6/6          0     1.00
+    "Pauli": "Paula Andrea Romero",        # 234         7/7          0     1.00
+    "Avee": "Abishek Bhattarai",           # 291         8/8          0     1.00
+    #     ^ weeks are a flawless 8/8, but "Avee" -> "Abishek" is the one name
+    #       here I am inferring rather than reading. Zak: worth a glance.
+    #
+    # ⚠️ STILL NOT MAPPED — the matcher has no honest answer for these:
+    #   id 213 "Wilson Cortes" -> Teramet Tongsong (jac 0.51, d_only 4). It only
+    #     ever fitted Guillermo because Guillermo was unclaimed; with him taken
+    #     the best remaining candidate shares nothing with the name. Needs Zak.
+    #   id 221 "Patrick"       -> Corentin Golbry (jac 0.21, d_only 22). 22 weeks
+    #     worked and not paid is not one person, it is two.
+    #   id 252 "Sanjida"       -> Corentin Golbry (jac 0.22, d_only 11). Same.
+    #   id 208 "Harry R"       -> Sofia Maria Sastre (jac 0.50) — and Sofia is
+    #     already 220's, at a perfect 4/4. Not this.
     # ⚠️ DO NOT add "Oliver" (id 24). He is Oliver Iaccarino, an owner, and lives
     # in _corp_payroll_only. His pay reaches corp payroll via the residual (Xero
     # group payroll MINUS Deputy group wages), so mapping him would move owner
