@@ -11,8 +11,6 @@ daily_aggregator.classify_product EXACTLY (same normalisation, same sets).
 
 from __future__ import annotations
 
-from decimal import Decimal
-
 # --- RG attribution, copied verbatim from daily_aggregator.py (normalised) ---
 # Matching is strip().lower() then drop a trailing ' [harrys]'. The literals here
 # are already in that normalised (lowercase) form.
@@ -55,12 +53,9 @@ def is_stowaway_proper_row(reporting_group: str, product_name: str = "") -> bool
 
 
 # --- EatClub program config per venue ---------------------------------------
-# cost_blend = blended COGS as a fraction of MENU volume, ex-GST.
-#   harry     0.22  — measured (night mix food ~68 / alc ~28 / non-alc ~2.5 x
-#                     cost-model GPs 77 / 80 / 87). Re-derive if the mix shifts.
-#   stowaway  None  — MUST be set from Stowaway's own mix before contribution is
-#                     trusted. Do not borrow HG's blend.
-#   marilynas None  — pizza economics; set from Mari's own COGS.
+# NOTE: COGS is intentionally NOT held here. EatClub's margin impact is the fees
+# only (discount + commission); COGS comes from the daily reporting pipeline's
+# real recipe/Lightspeed cost (shown on the dashboard). See eatclub/giveaway.py.
 #
 # window_hours: the offer window for dine-in venues, POS hour buckets.
 # launch_date : EatClub go-live. Baseline is the 8 weeks BEFORE this. None = not
@@ -74,7 +69,6 @@ VENUE_EATCLUB = {
         "window_hours": (17, 18, 19, 20),
         "launch_date": "2026-07-01",
         "baseline_window": ("2026-05-06", "2026-06-30"),
-        "cost_blend": Decimal("0.22"),
         "eatclub_login": "kris@stowawaybar.com",
         # HG is its own Lightspeed site; hourly comes from salesummarybyhour.
         "hourly_source": "salesummarybyhour",
@@ -85,7 +79,6 @@ VENUE_EATCLUB = {
         "window_hours": (17, 18, 19, 20),
         "launch_date": None,               # not live — behind onboarding tour
         "baseline_window": None,           # set 8 weeks pre-launch once dated
-        "cost_blend": None,                # set from Stowaway's own mix
         "eatclub_login": "kris@stowawaybar.com",
         # Shared till: salesummarybyhour can't separate Mari. Hourly must come
         # from the Custom Insights 'Stow Hourly RG Auto' feed, split by RG.
@@ -98,7 +91,6 @@ VENUE_EATCLUB = {
         "window_hours": None,              # no dine-in window — substitution model
         "launch_date": None,               # TBC
         "baseline_window": None,
-        "cost_blend": None,                # pizza COGS; set from Mari's own
         "eatclub_login": "kris@stowawaybar.com",
         # Baseline is delivery, not a window: mari_daily_history.csv delivery_dollars.
         "baseline_metric": "delivery_dollars",

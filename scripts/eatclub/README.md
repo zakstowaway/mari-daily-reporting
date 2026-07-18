@@ -45,9 +45,12 @@ has landed. Contract it must satisfy: one row per (date, hour, reporting_group)
 with inc- and ex-GST revenue; the aggregator sums hours in `window_hours` over the
 rows passing the venue's `row_filter`.
 
-## Before contribution numbers are trusted
+## COGS is not this package's job
 
-`cost_blend` is set only for HG (0.22, measured). Stowaway and Marilyna's are
-`None` in `config.py` on purpose — set each from its own mix, don't borrow HG's.
-`launch_date` is `None` for both new venues (Stowaway is still behind the EatClub
-onboarding tour); the baseline has no cutoff until these are dated.
+EatClub's margin impact is the **fees only** — offer discount + 11% commission —
+measured by `giveaway.py` and subtracted from revenue by the aggregator. COGS
+stays whatever the daily reporting pipeline reports (real recipe/Lightspeed cost,
+on the dashboard). There is deliberately no blended-COGS estimate here.
+
+`launch_date` is still `None` for the new venues in `config.py`; set it once
+confirmed so the cannibalisation baseline has a cutoff.
