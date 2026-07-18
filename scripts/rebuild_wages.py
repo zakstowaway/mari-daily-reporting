@@ -75,8 +75,10 @@ XERO_EXEMPT = set(cfg.get("_xero_exempt", {}).get("ids", {}))
 #     Xero's Employees endpoint only lists ACTIVE people;
 #   * part weeks, leave, loading and allowances, for free.
 XERO_PAY = {}
+XERO_SUPER = {}
 EMP_MAP = {}
 _xp = DATA_DIR / "xero_pay_weekly.json"
+_xs = DATA_DIR / "xero_super_weekly.json"
 _em = DATA_DIR / "employee_map.json"
 if _xp.exists() and _em.exists():
     XERO_PAY = json.loads(_xp.read_text())
@@ -84,6 +86,19 @@ if _xp.exists() and _em.exists():
     print(f"Xero pay: {len(XERO_PAY)} employees, map: {len(EMP_MAP)} Deputy ids")
 else:
     print("WARNING: no Xero pay data — falling back to the salaried estimate everywhere")
+
+# Actual super, per person per week (2026-07-18). Optional: without it every
+# wage silently reverts to the flat-12% estimate, which is the OLD behaviour —
+# wrong by ~$2,737/yr but not catastrophic. Say so loudly rather than let a
+# missing file quietly change what the numbers mean.
+if _xs.exists():
+    XERO_SUPER = json.loads(_xs.read_text())
+    print(f"Xero super: {len(XERO_SUPER)} employees (actuals, not a flat rate)")
+else:
+    print(f"WARNING: {_xs.name} missing — grossing every wage by a flat "
+          f"{V.SUPER_RATE * 100:.0f}%. Super is only payable on ordinary time "
+          f"earnings, so this OVERSTATES wages (~$52/wk measured). "
+          f"Run scripts/pull_xero_pay_weekly.py.")
 
 d_from = date.fromisoformat(args[0]); d_to = date.fromisoformat(args[1])
 d_from -= timedelta(days=d_from.weekday())          # back to Monday
@@ -348,9 +363,35 @@ while cur <= d_to:
                 xn = EMP_MAP.get(eid)
                 if xn and wk_key in XERO_PAY.get(xn, {}):
                     paid[eid] = XERO_PAY[xn][wk_key]
+
+        def gross(eid, ex):
+            """ex-super dollars -> what the person actually COSTS, inc super.
+
+            Super is payable on ORDINARY TIME earnings — overtime and some
+            allowances attract none — so it is NOT a flat 12% of gross pay.
+            Measured week ending 2026-07-12: Xero's effective rate was 11.79%,
+            and per person it ranged from 12.00% (Herminder Khera, salaried) to
+            11.31% (David Armour). The old flat 1.12 overstated that week by
+            $52.63 (~$2,737/yr).
+
+            So: where Xero has told us what it actually paid in super, use THAT.
+            SUPER_MULT survives only as the fallback for people/weeks Xero can't
+            speak to — open weeks, and anyone payroll has never paid (pedro f).
+            An estimate is still the right answer there; it just isn't the right
+            answer when the truth is sitting in a file.
+            """
+            xn = EMP_MAP.get(str(eid))
+            w = XERO_PAY.get(xn, {}).get(wk_key) if xn else None
+            s = XERO_SUPER.get(xn, {}).get(wk_key) if xn else None
+            if w and s is not None:
+                return ex * (1.0 + s / w)
+            return ex * SUPER_MULT
+
         if not paid:
             c, w = allocate_week(base_shifts + stand_ins, SAL, WPY,
                                  week_days=week_days, shortfall_leave=is_open)
+            for s_ in c:
+                s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"])
             return c, w, paid
         by_emp = defaultdict(list)
         for s in base_shifts:
@@ -372,13 +413,16 @@ while cur <= d_to:
             # timesheets and a live roster (Zak, 2026-07-17) — see the open-week
             # call to allocate_week below.
             for g in group:
-                costed.append({**g, "cost_final": paid[eid] * (g.get("hours") or 0) / th})
+                costed.append({**g, "cost_final":
+                               gross(eid, paid[eid] * (g.get("hours") or 0) / th)})
         # Roster stand-ins only help the ESTIMATE. Anyone Xero has paid is costed
         # from the payslip across the shifts they actually logged — a planned
         # shift must never absorb a share of real money.
         rest.extend(r for r in stand_ins if r["employee_id"] not in paid)
         c2, w = allocate_week(rest, SAL, WPY,
                               week_days=week_days, shortfall_leave=is_open)
+        for s_ in c2:
+            s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"])
         costed.extend(c2)
         return costed, w, paid
 
@@ -436,12 +480,18 @@ while cur <= d_to:
         _tb = _tx = 0.0
         for e in sorted(set(list(_by) + list(paid_this_week)), key=lambda x: -_by.get(x, 0)):
             b = _by.get(e, 0.0)
+            # `booked` is INC-super since 2026-07-18, so every yardstick here has
+            # to be grossed the same way or the audit reports a ~12% mismatch on
+            # every single person and stops meaning anything.
             if e in paid_this_week:
-                exp, basis = paid_this_week[e], "xero"
+                _xn = EMP_MAP.get(str(e))
+                _s = XERO_SUPER.get(_xn, {}).get(wk_key) if _xn else None
+                exp = paid_this_week[e] + (_s if _s is not None else paid_this_week[e] * V.SUPER_RATE)
+                basis = "xero" if _s is not None else "xero + 12% (no super data)"
             elif str(e) in SAL:
                 exp, basis = b, "salaried model (no xero yet)"
             else:
-                exp, basis = _dep.get(e, 0.0), "deputy rate (not in xero)"
+                exp, basis = _dep.get(e, 0.0) * SUPER_MULT, "deputy rate (not in xero)"
             _tb += b; _tx += exp
             note = basis
             if e in paid_this_week and e not in _by:
@@ -510,10 +560,10 @@ for pfx in ("stow", "hg", "mari"):
             continue
         seen_dates.add(d)
         b = day.get(d, {})
-        kit = b.get(f"{pfx}|Kitchen", 0) * SUPER_MULT
-        foh = b.get(f"{pfx}|FOH", 0) * SUPER_MULT
-        drv = b.get(f"{pfx}|Driver", 0) * SUPER_MULT
-        adm = b.get(f"{pfx}|Admin", 0) * SUPER_MULT
+        kit = b.get(f"{pfx}|Kitchen", 0)
+        foh = b.get(f"{pfx}|FOH", 0)
+        drv = b.get(f"{pfx}|Driver", 0)
+        adm = b.get(f"{pfx}|Admin", 0)
         tot = kit + foh + drv + adm
         # NO `if tot <= 0: continue` (removed 2026-07-17).
         #
@@ -550,7 +600,7 @@ for pfx in ("stow", "hg", "mari"):
         if n_a:
             a = day_assumed.get(d, {})
             tot_a = ((a.get(f"{pfx}|Kitchen", 0) + a.get(f"{pfx}|FOH", 0)
-                      + a.get(f"{pfx}|Driver", 0)) * SUPER_MULT)
+                      + a.get(f"{pfx}|Driver", 0)))
         else:
             # Nothing was assumed FOR THIS VENUE, so assumed must equal actual.
             # It didn't, before: the pass also fills unclocked ADMIN shifts, and
@@ -568,7 +618,7 @@ for pfx in ("stow", "hg", "mari"):
             r["delivery_dollars"] = round(drv, 2)
             r["delivery_pct"] = round(drv / rev * 100, 1) if rev else ""
         if pfx == "stow":
-            lv = b.get("stow|Leave", 0) * SUPER_MULT
+            lv = b.get("stow|Leave", 0)
             r["leave_dollars"] = round(lv, 2) if lv else ""
         touched += 1
     print(f"  {pfx}: {touched} days, wages {delta:+,.0f}")
@@ -584,7 +634,7 @@ for pfx in ("stow", "hg", "mari"):
         if not (args[0] <= _d <= args[1]) or _d in seen_dates:
             continue
         _t = ((_b.get(f"{pfx}|Kitchen", 0) + _b.get(f"{pfx}|FOH", 0)
-               + _b.get(f"{pfx}|Driver", 0) + _b.get(f"{pfx}|Admin", 0)) * SUPER_MULT)
+               + _b.get(f"{pfx}|Driver", 0) + _b.get(f"{pfx}|Admin", 0)))
         if _t > 0.005:
             _orph.append((_d, _t))
     if _orph:
@@ -603,10 +653,10 @@ for pfx in ("stow", "hg", "mari"):
         for _d, _t in sorted(_orph):
             print(f"        {_d}  ${_t:,.2f} inc super")
             _b = day[_d]
-            _kit = _b.get(f"{pfx}|Kitchen", 0) * SUPER_MULT
-            _foh = _b.get(f"{pfx}|FOH", 0) * SUPER_MULT
-            _drv = _b.get(f"{pfx}|Driver", 0) * SUPER_MULT
-            _adm = _b.get(f"{pfx}|Admin", 0) * SUPER_MULT
+            _kit = _b.get(f"{pfx}|Kitchen", 0)
+            _foh = _b.get(f"{pfx}|FOH", 0)
+            _drv = _b.get(f"{pfx}|Driver", 0)
+            _adm = _b.get(f"{pfx}|Admin", 0)
             _nr = {k: "" for k in fields}
             _nr["date"] = _d
             _nr["wages_dollars"] = round(_kit + _foh + _drv + _adm, 2)
@@ -615,7 +665,7 @@ for pfx in ("stow", "hg", "mari"):
             _nr["wages_driver_dollars"] = round(_drv, 2)
             _nr["wages_admin_dollars"] = round(_adm, 2)
             if pfx == "stow":
-                _nr["leave_dollars"] = round(_b.get("stow|Leave", 0) * SUPER_MULT, 2)
+                _nr["leave_dollars"] = round(_b.get("stow|Leave", 0), 2)
             rows.append(_nr)
             delta += _nr["wages_dollars"]
             touched += 1

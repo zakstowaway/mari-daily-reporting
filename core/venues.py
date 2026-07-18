@@ -36,9 +36,27 @@ backwards compat with the pre-refactor pipeline.
 ADMIN_OU_NAME = "Admin"
 ADMIN_SHARES = {"stowaway": 0.9, "harry": 0.1}
 
-# Deputy Employer Superannuation Guarantee rate — the weekly report's wage
-# figures are ALWAYS inc-super (TotalWagesIncSuper). Deputy's Cost field is
-# ex-super, so the aggregator grosses up by this rate.
+# Superannuation Guarantee rate. Deputy's Cost field is ex-super, so wages get
+# grossed up by this.
+#
+# ESTIMATE OF LAST RESORT — do not reach for it if Xero can answer (2026-07-18).
+# Two ways this is wrong as a flat rate:
+#
+#   1. Super is payable on ORDINARY TIME earnings. Overtime and some allowances
+#      attract none, so even today nobody is at exactly 12%: week ending
+#      2026-07-12 ran 11.79% overall — Herminder Khera 12.00% (salaried, no OT),
+#      David Armour 11.31%.
+#   2. The SG rate CHANGED. 11% from 1 Jul 2023, 11.5% from 1 Jul 2024, 12% from
+#      1 Jul 2025. Most of our history predates 12% entirely.
+#
+# Measured against 100 Xero pay runs: actual super is $289,768.94 on
+# $2,587,065.11 of wages — 11.201%. A flat 12% books $310,447.81, overstating by
+# $20,678.87. By financial year: FY24-25 10.93%, FY25-26 11.37%, FY26-27 11.71%.
+#
+# rebuild_wages now uses Xero's per-person actuals (data/xero_super_weekly.json)
+# and only falls back to this for the open week and for people payroll has never
+# paid. daily_aggregator and roster_pull still use it — they run before Xero
+# knows anything, and rebuild_wages corrects them afterwards.
 SUPER_RATE = 0.12
 
 # OU that must flip venue on Mondays: Stow Kitchen -> HarryGatos Kitchen.
