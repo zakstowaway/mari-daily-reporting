@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stowaway Hospitality Group</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/_shared/tokens.css">
+<!--
+  The app home. Sign in ONCE here (Supabase), then pick a tool. This is the
+  front door: login lives at /, not on any one tool page. Each tool (/sales/,
+  /recipes/) shares this session — one login for everything.
+-->
+<style>
+  .home{max-width:900px;margin:0 auto;padding:40px 24px}
+  .brand{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+  .brand img{height:44px}
+  .brand h1{font-size:22px;margin:0}
+  .who{color:var(--ink-soft);font-size:13px;margin:2px 0 28px}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .tile{display:block;text-decoration:none;color:inherit;background:var(--paper);
+    border-radius:12px;padding:20px;border-top:4px solid var(--grey);
+    box-shadow:0 1px 3px rgba(0,0,0,.05);transition:transform .12s,box-shadow .12s}
+  .tile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.09)}
+  .tile.stow{border-top-color:var(--stow)} .tile.hg{border-top-color:var(--hg)}
+  .tile.mari{border-top-color:var(--mari)}
+  .tile h2{font-size:16px;margin:0 0 6px} .tile p{margin:0;font-size:13px;color:var(--ink-soft)}
+  .tile .locked{font-size:12px;color:var(--amber);margin-top:8px}
+  .signout{float:right;font-size:13px}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+<div class="home" id="app" style="display:none">
+  <a href="#" class="signout muted" id="signout">sign out</a>
+  <div class="brand">
+    <img src="/logo_512.png" alt="Stowaway Hospitality Group">
+    <h1>Stowaway Hospitality Group</h1>
+  </div>
+  <div class="who" id="who"></div>
+
+  <div class="tiles" id="tiles"></div>
+</div>
+
+<script type="module">
+import { Auth } from '/_shared/auth.js';
+
+const TOOLS = [
+  { href: '/sales/',   cls: 'stow', title: 'Daily Reporting',
+    desc: 'Sales, wages, COGS and margins across all three venues.',
+    roles: null },   // everyone signed in
+  { href: '/recipes/', cls: 'hg',   title: 'Recipe Builder',
+    desc: 'Cost a dish from what you actually bought. Build the COGS database.',
+    roles: Auth.KITCHEN_ROLES },
+];
+
+Auth.gate(document.getElementById('gate'), {
+  roles: null,               // any signed-in user reaches the home
+  onOk: (user) => {
+    document.getElementById('app').style.display = '';
+    document.getElementById('who').textContent =
+      `Signed in as ${user.name}` + (user.role ? ` · ${user.role}` : ' · no role yet');
+    document.getElementById('signout').onclick = async (e) => {
+      e.preventDefault(); await Auth.logout(); location.reload();
+    };
+    const tiles = TOOLS.map(t => {
+      const allowed = !t.roles || (user.role && t.roles.includes(user.role));
+      return `<a class="tile ${t.cls}" href="${allowed ? t.href : '#'}"
+                 ${allowed ? '' : 'onclick="return false" style="opacity:.6;cursor:default"'}>
+        <h2>${t.title}</h2><p>${t.desc}</p>
+        ${allowed ? '' : '<div class="locked">Needs a kitchen role — ask an admin.</div>'}
+      </a>`;
+    }).join('');
+    document.getElementById('tiles').innerHTML = tiles;
+  },
+});
+</script>
+</body>
+</html>

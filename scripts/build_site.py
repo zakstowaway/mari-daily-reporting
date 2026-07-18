@@ -36,9 +36,12 @@ SITE = ROOT / "_site"
 # The site map. One line per thing served. This IS the deployment.
 #   (source, destination in _site)
 LAYOUT: list[tuple[str, str]] = [
-    ("dashboard",              ""),          # index.html, _shared/, users.json, logos -> /
+    ("dashboard/root",         ""),          # CNAME, favicon, logos -> /
+    ("dashboard/_shared",      "_shared"),   # shared JS/CSS -> /_shared/
+    ("dashboard/home",         ""),          # the app HOME (sign in here) -> /
+    ("dashboard/sales",        "sales"),     # the daily-reporting dashboard -> /sales/
     ("modules/recipes/app",    "recipes"),   # -> /recipes/
-    ("data",                   "data"),      # the feeds -> /data/
+    ("data",                   "data"),      # feeds -> /data/
     ("baselines",              "baselines"),
 ]
 

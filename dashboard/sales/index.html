@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <title>Stowaway Hospitality Group — Daily Reporting</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" type="image/png" sizes="16x16" href="logo_16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="logo_32.png">
-<link rel="icon" type="image/png" sizes="128x128" href="logo_128.png">
-<link rel="apple-touch-icon" sizes="180x180" href="logo_180.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/logo_16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/logo_32.png">
+<link rel="icon" type="image/png" sizes="128x128" href="/logo_128.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/logo_180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -374,12 +374,18 @@ tbody tr:hover { background: var(--group-tint); }
 .placeholder-card { grid-column: 1 / -1; text-align: center; padding: 60px 24px; }
 </style>
 </head>
+<script>
+  // Single sign-on for the whole app: Supabase session is resolved once here,
+  // shared with the recipe builder etc. Dynamic import returns a promise
+  // immediately, so tryResume() below can await it regardless of module timing.
+  window.__shgSession = import('/_shared/auth.js').then(m => (window.__shgAuth = m.Auth, m.Auth.current()));
+</script>
 <body>
 
-<div id="login" class="login-wrap">
+<div id="login" class="login-wrap" style="display:none">
   <div class="login-card">
     <div class="group-mark">
-      <img class="brand-logo" alt="Stowaway Hospitality Group" src="logo_512.png">
+      <img class="brand-logo" alt="Stowaway Hospitality Group" src="/logo_512.png">
       <span class="brand-sub">Hospitality Group · Daily Reporting</span>
       <div class="venues">
         <span class="venue-chip stow">Stowaway</span>
@@ -402,7 +408,7 @@ tbody tr:hover { background: var(--group-tint); }
   <div class="header">
     <div class="header-inner">
       <div class="brand-row">
-        <img class="header-logo" alt="" src="logo_128.png">
+        <img class="header-logo" alt="" src="/logo_128.png">
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
       <div class="who">
@@ -518,12 +524,8 @@ async function doLogin(evt) {
   return false;
 }
 function logout() {
-  sessionStorage.removeItem('mari_session');
-  CURRENT_USER = null; CURRENT_ROLE = null;
-  document.getElementById('login').classList.remove('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
-  document.getElementById('username').value = '';
-  document.getElementById('password').value = '';
+  (window.__shgAuth ? window.__shgAuth.logout() : Promise.resolve())
+    .then(() => location.replace('/'));
 }
 async function showDashboard() {
   document.getElementById('login').classList.add('hidden');
@@ -532,16 +534,12 @@ async function showDashboard() {
   await bootstrap();
 }
 async function tryResume() {
-  await loadUsers();
-  const raw = sessionStorage.getItem('mari_session');
-  if (!raw) return;
-  try {
-    const s = JSON.parse(raw);
-    if (USERS.users[s.username] && USERS.users[s.username].hash === s.hash) {
-      CURRENT_USER = s; CURRENT_ROLE = s.role;
-      showDashboard();
-    }
-  } catch (e) {}
+  // Supabase is the auth now (one login, at /). No session -> go sign in there.
+  const u = await window.__shgSession;
+  if (!u) { location.replace('/'); return; }
+  CURRENT_USER = { username: u.email, display: u.name || u.email, role: u.role };
+  CURRENT_ROLE = u.role;
+  showDashboard();
 }
 
 const REAL_VENUES = ['mari', 'stow', 'hg'];
@@ -2845,24 +2843,24 @@ async function bootstrap() {
   STATE.histories = await loadAllHistories(CURRENT_ROLE);
   // Roster forecast is OPERATIONAL — every role gets the week-ahead view.
   try {
-    const r = await fetch('data/roster_week.json?t=' + Date.now());
+    const r = await fetch('/data/roster_week.json?t=' + Date.now());
     if (r.ok) STATE.roster = await r.json();
   } catch (e) {}
   // Economic feeds are ADMIN-ONLY (Zak, 2026-07-15: only admin sees overheads
   // and profit) — manager roles never download Xero/fee data at all.
   if (CURRENT_ROLE === 'admin') {
     try {
-      const r = await fetch('data/xero_cogs_weekly.csv?t=' + Date.now());
+      const r = await fetch('/data/xero_cogs_weekly.csv?t=' + Date.now());
       if (r.ok) STATE.xeroCogs = parseCsv(await r.text());
     } catch (e) {}
     try {
-      const r = await fetch('data/xero_overheads_monthly.csv?t=' + Date.now());
+      const r = await fetch('/data/xero_overheads_monthly.csv?t=' + Date.now());
       if (r.ok) STATE.xeroOH = parseCsv(await r.text());
     } catch (e) {}
     try {
       // Wage on-costs: owner salary (-> corp payroll) + payroll-tax/WC rate
       // (-> overheads, as a % of wages). Built by compute_wage_oncosts.py.
-      const r = await fetch('data/wage_oncosts.json?t=' + Date.now());
+      const r = await fetch('/data/wage_oncosts.json?t=' + Date.now());
       if (r.ok) {
         const o = await r.json();
         STATE.oncost = { rate: toNum(o.oncost_rate), ownerWeekly: toNum(o.owner_weekly_inc_super) };
@@ -2871,26 +2869,26 @@ async function bootstrap() {
     try {
       // Actual daily Uber Eats fees, split commission vs marketing, per shop.
       // Pulled from the merchant portal by the uber-eats-daily-fees scheduled task.
-      const r = await fetch('data/uber_daily.csv?t=' + Date.now());
+      const r = await fetch('/data/uber_daily.csv?t=' + Date.now());
       if (r.ok) STATE.uberDaily = parseCsv(await r.text());
     } catch (e) {}
     try {
-      const r = await fetch('data/uber_marketing_weekly.csv?t=' + Date.now());
+      const r = await fetch('/data/uber_marketing_weekly.csv?t=' + Date.now());
       if (r.ok) STATE.uberAds = parseCsv(await r.text());
     } catch (e) {}
     try {
       // Actual daily Uber Direct fees (Mari's own online orders). Emailed daily
       // invoice -> Pipedream -> this CSV (see pipedream/uber_direct_ingest.js).
-      const r = await fetch('data/uber_direct_daily.csv?t=' + Date.now());
+      const r = await fetch('/data/uber_direct_daily.csv?t=' + Date.now());
       if (r.ok) STATE.uberDirect = parseCsv(await r.text());
     } catch (e) {}
     try {
-      const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
+      const r = await fetch('/data/uber_fees_weekly.csv?t=' + Date.now());
       if (r.ok) STATE.uberFees = parseCsv(await r.text());
     } catch (e) {}
     for (const [v, f] of [['mari', 'mari_baseline.json'], ['stow', 'stow_baseline.json'], ['hg', 'hg_baseline.json']]) {
       try {
-        const r = await fetch('baselines/' + f + '?t=' + Date.now());
+        const r = await fetch('/baselines/' + f + '?t=' + Date.now());
         if (r.ok) STATE.baselines[v] = (await r.json()).targets_and_alerts || {};
       } catch (e) {}
     }
