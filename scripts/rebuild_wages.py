@@ -535,8 +535,12 @@ while cur <= d_to:
         # Costed but NOT paid — pure invention if it isn't a known exception.
         for e_ in est:
             if e_ not in paid_this_week and e_ not in XERO_EXEMPT:
+                # cal == est: nothing to calibrate against, and leaving the key
+                # off would silently drop these rows from the calibrated column
+                # and compare two different populations.
                 BT_ROWS.append({"week": wk_key, "eid": e_, "name": EMP_MAP.get(str(e_)),
-                                "est": est[e_], "act": 0.0, "hours": hrs.get(e_, 0.0),
+                                "est": est[e_], "act": 0.0, "cal": est[e_], "cal_n": 0,
+                                "hours": hrs.get(e_, 0.0),
                                 "salaried": str(e_) in SAL, "deputy": 0.0})
 
     if AUDIT:
@@ -821,7 +825,11 @@ if BACKTEST and BT_ROWS:
     # isn't a fix, it's a curve fit.
     print(f"  {'':13} {'estimate':>13} {'bias':>13} {'MAE/wk':>11} {'MAPE':>7} {'wks +/-2%':>10}")
     for key, lab in (("est", "raw"), ("cal", "calibrated")):
-        rows = [r for r in BT_ROWS if key in r or key == "est"]
+        # SAME rows on both lines, always. Comparing a raw column that includes
+        # the ghost rows against a calibrated one that doesn't made calibration
+        # look like it swung the bias by $121k when it had done nothing of the
+        # sort.
+        rows = BT_ROWS
         te = sum(r.get(key, r["est"]) for r in rows)
         ta = sum(r["act"] for r in rows)
         by_wk = defaultdict(lambda: [0.0, 0.0])
