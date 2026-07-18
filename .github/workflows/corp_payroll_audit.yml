@@ -1,0 +1,21 @@
+name: Corp Payroll Audit
+
+# THE RULE (Zak, 2026-07-18): only Oliver and Bryony salaries belong in corp
+# payroll. This decomposes the corp-payroll residual to the cent and EXITS
+# NON-ZERO if any other person's pay is sitting in it — turning the rule into a
+# tripwire instead of a one-time check. Read-only.
+
+on:
+  schedule:
+    - cron: '0 19 * * 1'      # Mondays 5am AEST, after the weekly recalibrate
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Audit corp payroll
+        run: python scripts/audit_corp_payroll.py
