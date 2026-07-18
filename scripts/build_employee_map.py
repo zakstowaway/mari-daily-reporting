@@ -151,6 +151,22 @@ ALIASES = {
     # Same run, same evidence, not explicitly named by Zak but the names speak:
     "Saif": "Saif Quader",                 # 231        6/6        0     0.67
     "Coco": "Corentin Golbry",             # 155       12/12       0     1.00
+    # 2026-07-18 — the long tail of archived one-to-few-week casuals, found by
+    # match_xero_to_deputy.py. Each has BOTH an obvious nickname->legal-name
+    # match AND perfect week alignment (x_only 0: every paid week was worked).
+    # Confirmed with Zak. Small individually, but they were falling into the
+    # payroll-tax/WC overhead bucket instead of a venue.
+    #
+    #   deputy id  archived nickname   xero legal name       wks   x_only
+    "Fla": "Flavia Castillo",              # 253                    3/3     0
+    "Mica": "Micaela Londero",             # 275                    2/2     0   jac 1.00
+    "Fe": "Fernanda Correa",               # 246                    3/3     0   jac 1.00
+    "Camille": "Camille Lincoln",          # 206                    4/4     0
+    "Ollie": "Oliver Ford",                # 222                    2/2     0
+    #   ^ id 222 "Ollie" — a THIRD Oliver: NOT 284 "Olly" (Olliver Case, kitchen)
+    #     and NOT 24 "Oliver" (owner Iaccarino). Three people, three ids.
+    "Carl": "Carlito Vesely",              # 204                    1/1     0   Carl->Carlito
+    "Harry R": "Harry Riggs",              # 208                    1/1     0   name matches
     # Zak, 2026-07-18: "maria is paola". The matcher could NOT have called this
     # one: "Paola" is not "Maria", and Deputy 268 "Paola" tied 271 "Oak" at a
     # perfect 1.00 (both worked the same 3 weeks Maria Manjarrez was paid). Pure
