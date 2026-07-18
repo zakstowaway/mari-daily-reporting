@@ -2,241 +2,715 @@
  "1": {
   "factor": 1.0369,
   "weeks": 8,
-  "name": "Kris Hegarty"
+  "name": "Kris Hegarty",
+  "rate_per_hour": null
  },
  "3": {
   "factor": 1.0287,
   "weeks": 8,
-  "name": "Zakaria Britton"
+  "name": "Zakaria Britton",
+  "rate_per_hour": null
  },
  "5": {
   "factor": 1.0286,
   "weeks": 8,
-  "name": "Nicola Bisato"
+  "name": "Nicola Bisato",
+  "rate_per_hour": null
  },
  "6": {
   "factor": 1.0067,
   "weeks": 8,
-  "name": "James Regan"
+  "name": "James Regan",
+  "rate_per_hour": 33.8895
  },
  "15": {
   "factor": 1.0115,
   "weeks": 8,
-  "name": "Marssheel Marssheel"
+  "name": "Marssheel Marssheel",
+  "rate_per_hour": null
  },
  "16": {
   "factor": 1.0492,
   "weeks": 8,
-  "name": "Stephanie Kunde"
+  "name": "Stephanie Kunde",
+  "rate_per_hour": null
  },
  "22": {
   "factor": 1.2018,
   "weeks": 8,
-  "name": "Sophie Cridland"
+  "name": "Sophie Cridland",
+  "rate_per_hour": 30.7377
+ },
+ "56": {
+  "factor": 1.0019,
+  "weeks": 8,
+  "name": "Lucas Agnew",
+  "rate_per_hour": 26.685
  },
  "60": {
   "factor": 1.0168,
   "weeks": 8,
-  "name": "Manuel Marti"
+  "name": "Manuel Marti",
+  "rate_per_hour": 29.7008
  },
  "69": {
   "factor": 1.0144,
   "weeks": 8,
-  "name": "Samuel Hall"
+  "name": "Samuel Hall",
+  "rate_per_hour": 35.7834
  },
  "78": {
   "factor": 1.0084,
   "weeks": 8,
-  "name": "Sushant Acharya"
+  "name": "Sushant Acharya",
+  "rate_per_hour": 35.3194
+ },
+ "83": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Miller Manson",
+  "rate_per_hour": 25.4421
+ },
+ "102": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Flynn O'Connor",
+  "rate_per_hour": 20.7584
  },
  "104": {
   "factor": 1.0656,
   "weeks": 8,
-  "name": "Toby Williams"
+  "name": "Toby Williams",
+  "rate_per_hour": 23.7613
  },
  "106": {
   "factor": 1.0135,
   "weeks": 8,
-  "name": "Reef Poole"
+  "name": "Reef Poole",
+  "rate_per_hour": 28.8759
+ },
+ "107": {
+  "factor": 1.0024,
+  "weeks": 8,
+  "name": "Greg Arkins",
+  "rate_per_hour": 35.5399
  },
  "109": {
   "factor": 1.0103,
   "weeks": 8,
-  "name": "Roman Bunting"
+  "name": "Roman Bunting",
+  "rate_per_hour": 26.6529
  },
  "118": {
   "factor": 1.0213,
   "weeks": 8,
-  "name": "Jack Colbran"
+  "name": "Jack Colbran",
+  "rate_per_hour": 36.0625
+ },
+ "123": {
+  "factor": 1.0043,
+  "weeks": 8,
+  "name": "Kade Marshall-Witte",
+  "rate_per_hour": 29.6564
+ },
+ "128": {
+  "factor": 1.0014,
+  "weeks": 8,
+  "name": "James Brown",
+  "rate_per_hour": 33.6026
  },
  "133": {
   "factor": 1.007,
   "weeks": 8,
-  "name": "Devon Saputra Lukiana"
+  "name": "Devon Saputra Lukiana",
+  "rate_per_hour": null
  },
  "142": {
   "factor": 1.0077,
   "weeks": 8,
-  "name": "Renan Borba Bagesteiro"
+  "name": "Renan Borba Bagesteiro",
+  "rate_per_hour": 35.209
  },
  "145": {
   "factor": 1.1504,
   "weeks": 8,
-  "name": "Rhys Taylor"
+  "name": "Rhys Taylor",
+  "rate_per_hour": 34.4548
+ },
+ "155": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 36.0792
+ },
+ "157": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 37.7528
  },
  "165": {
   "factor": 1.1327,
   "weeks": 8,
-  "name": "Joe Stoddart"
+  "name": "Joe Stoddart",
+  "rate_per_hour": 19.9998
  },
  "166": {
   "factor": 1.0495,
   "weeks": 8,
-  "name": "Rei Ikeda"
+  "name": "Rei Ikeda",
+  "rate_per_hour": 35.0608
+ },
+ "171": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Beau Patterson",
+  "rate_per_hour": 20.2707
+ },
+ "173": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "stirling macfarlane",
+  "rate_per_hour": 20.6332
+ },
+ "178": {
+  "factor": 0.9993,
+  "weeks": 6,
+  "name": "Keisuke Shimura",
+  "rate_per_hour": 35.4441
+ },
+ "179": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 39.2354
+ },
+ "187": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 20.4123
  },
  "188": {
   "factor": 1.016,
   "weeks": 8,
-  "name": "Oscar Hugill"
+  "name": "Oscar Hugill",
+  "rate_per_hour": 36.3133
+ },
+ "189": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.042
  },
  "190": {
   "factor": 1.1434,
   "weeks": 8,
-  "name": "John Campbell"
+  "name": "John Campbell",
+  "rate_per_hour": 20.7781
+ },
+ "193": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.2307
+ },
+ "196": {
+  "factor": 1.0459,
+  "weeks": 8,
+  "name": "Gabriel Choi",
+  "rate_per_hour": 38.807
+ },
+ "200": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.7086
+ },
+ "204": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 26.9698
  },
  "205": {
   "factor": 1.2119,
   "weeks": 8,
-  "name": "Olivia Giuliano"
+  "name": "Olivia Giuliano",
+  "rate_per_hour": 34.2679
+ },
+ "206": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 31.4176
+ },
+ "208": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 18.0
  },
  "209": {
   "factor": 1.0712,
   "weeks": 8,
-  "name": "Candelaria Gualtieri"
+  "name": "Candelaria Gualtieri",
+  "rate_per_hour": 34.6871
+ },
+ "210": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Jack Fay",
+  "rate_per_hour": 34.7155
+ },
+ "213": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 28.3624
+ },
+ "215": {
+  "factor": 0.9159,
+  "weeks": 8,
+  "name": "Udaya Moktan",
+  "rate_per_hour": 50.526
+ },
+ "216": {
+  "factor": 0.8581,
+  "weeks": 8,
+  "name": "Royani Royani",
+  "rate_per_hour": 43.1537
+ },
+ "217": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.8209
+ },
+ "218": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.3587
+ },
+ "219": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.4151
+ },
+ "220": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.0379
+ },
+ "221": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.0436
+ },
+ "222": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 19.2212
+ },
+ "223": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Pippa Harvey",
+  "rate_per_hour": 33.6167
+ },
+ "224": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 34.5253
+ },
+ "225": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.7619
  },
  "226": {
-  "factor": 1.05,
+  "factor": 1.2745,
   "weeks": 8,
-  "name": "Harry Langley"
+  "name": "Harry Langley",
+  "rate_per_hour": 32.2749
+ },
+ "227": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "James Bruen",
+  "rate_per_hour": 21.172
+ },
+ "228": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": "Lewis Cross",
+  "rate_per_hour": 33.5928
+ },
+ "229": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.5033
+ },
+ "231": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 36.9894
  },
  "232": {
   "factor": 1.0963,
   "weeks": 8,
-  "name": "Hugh Yiend"
+  "name": "Hugh Yiend",
+  "rate_per_hour": 21.5444
+ },
+ "233": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.8143
+ },
+ "234": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.9801
+ },
+ "235": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.9189
+ },
+ "236": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 27.495
+ },
+ "237": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 30.0
  },
  "238": {
   "factor": 1.0627,
   "weeks": 8,
-  "name": "Arthur Rodrigues Arruda"
+  "name": "Arthur Rodrigues Arruda",
+  "rate_per_hour": 30.6547
+ },
+ "239": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.4976
  },
  "240": {
   "factor": 1.2275,
   "weeks": 8,
-  "name": "Anderson Sorin"
+  "name": "Anderson Sorin",
+  "rate_per_hour": 33.3418
+ },
+ "241": {
+  "factor": 1.0014,
+  "weeks": 8,
+  "name": "Leonardo Monteleone",
+  "rate_per_hour": 35.1992
  },
  "242": {
   "factor": 1.0913,
   "weeks": 8,
-  "name": "David Armour"
+  "name": "David Armour",
+  "rate_per_hour": 35.4863
+ },
+ "243": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 26.3821
  },
  "244": {
   "factor": 1.0328,
   "weeks": 8,
-  "name": "Ethan Reboredo"
+  "name": "Ethan Reboredo",
+  "rate_per_hour": 21.7884
+ },
+ "246": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.5427
  },
  "247": {
-  "factor": 1.0381,
+  "factor": 1.1402,
   "weeks": 8,
-  "name": "Maria Flor Da Silva Quelhas Campinos Pocas"
+  "name": "Maria Flor Da Silva Quelhas Campinos Pocas",
+  "rate_per_hour": 40.1535
+ },
+ "248": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": "Monica Dos Santos Konkel",
+  "rate_per_hour": 41.3791
+ },
+ "250": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.1325
  },
  "251": {
   "factor": 1.1319,
   "weeks": 8,
-  "name": "Emily Duncan"
+  "name": "Emily Duncan",
+  "rate_per_hour": 35.1084
+ },
+ "252": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 26.6308
+ },
+ "253": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.1502
+ },
+ "254": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 40.0
+ },
+ "255": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.5613
  },
  "256": {
   "factor": 1.227,
   "weeks": 3,
-  "name": "Paddy Furlong"
+  "name": "Paddy Furlong",
+  "rate_per_hour": 21.1809
+ },
+ "257": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Aleisha Armitage",
+  "rate_per_hour": 21.8682
  },
  "258": {
   "factor": 1.0106,
   "weeks": 8,
-  "name": "piettra bagesteiro"
+  "name": "piettra bagesteiro",
+  "rate_per_hour": 20.2481
+ },
+ "259": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.5933
+ },
+ "261": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 27.7755
  },
  "262": {
   "factor": 1.4,
   "weeks": 7,
-  "name": "Baptiste Frugier"
+  "name": "Baptiste Frugier",
+  "rate_per_hour": 33.9045
+ },
+ "265": {
+  "factor": 1.0,
+  "weeks": 8,
+  "name": "Mathilde PLESSIS",
+  "rate_per_hour": 34.0762
  },
  "267": {
   "factor": 1.08,
   "weeks": 8,
-  "name": "Reef Houston"
+  "name": "Reef Houston",
+  "rate_per_hour": 19.0741
+ },
+ "268": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 32.7933
  },
  "269": {
   "factor": 1.2159,
   "weeks": 8,
-  "name": "Zach Davis"
+  "name": "Zach Davis",
+  "rate_per_hour": 24.1124
+ },
+ "270": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 34.5235
+ },
+ "271": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 34.9781
+ },
+ "273": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": "Salan Basnet",
+  "rate_per_hour": 31.5413
+ },
+ "275": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 33.4084
  },
  "276": {
   "factor": 1.0083,
   "weeks": 8,
-  "name": "Daniel Biesty"
+  "name": "Daniel Biesty",
+  "rate_per_hour": 23.2083
+ },
+ "278": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.9329
+ },
+ "279": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 43.9079
+ },
+ "280": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 40.5381
+ },
+ "281": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 34.9215
  },
  "282": {
   "factor": 1.2501,
   "weeks": 4,
-  "name": "Hayden Cheshire"
+  "name": "Hayden Cheshire",
+  "rate_per_hour": 20.1583
  },
  "283": {
   "factor": 1.2422,
   "weeks": 8,
-  "name": "Olivia Allen-Hall"
+  "name": "Olivia Allen-Hall",
+  "rate_per_hour": 35.213
  },
  "284": {
   "factor": 1.4,
   "weeks": 8,
-  "name": "Olliver Case"
+  "name": "Olliver Case",
+  "rate_per_hour": 36.679
+ },
+ "285": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": "Mathis Moriceau",
+  "rate_per_hour": 53.9802
+ },
+ "286": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": "Dorian Lipke",
+  "rate_per_hour": 37.428
+ },
+ "288": {
+  "factor": 1.0049,
+  "weeks": 8,
+  "name": "TAKUMI ISHII",
+  "rate_per_hour": 36.8659
+ },
+ "290": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 37.1961
+ },
+ "291": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": null,
+  "rate_per_hour": 35.2056
  },
  "292": {
   "factor": 1.021,
   "weeks": 8,
-  "name": "Sophie Campbell"
+  "name": "Sophie Campbell",
+  "rate_per_hour": 36.5115
  },
  "294": {
   "factor": 1.2645,
   "weeks": 7,
-  "name": "Mikel Martin"
+  "name": "Mikel Martin",
+  "rate_per_hour": 30.364
  },
  "295": {
   "factor": 1.009,
   "weeks": 8,
-  "name": "denis ferreira rodrigues"
+  "name": "denis ferreira rodrigues",
+  "rate_per_hour": 37.7729
  },
  "296": {
   "factor": 1.0096,
   "weeks": 8,
-  "name": "Pongnapa Chonkaew"
+  "name": "Pongnapa Chonkaew",
+  "rate_per_hour": 36.9764
  },
  "297": {
   "factor": 0.9734,
   "weeks": 8,
-  "name": "Pujan Tamang"
+  "name": "Pujan Tamang",
+  "rate_per_hour": null
  },
  "298": {
   "factor": 1.1113,
   "weeks": 8,
-  "name": "Kiana Dettmann"
+  "name": "Kiana Dettmann",
+  "rate_per_hour": 35.0949
  },
  "299": {
   "factor": 1.11,
   "weeks": 6,
-  "name": "Ana Ribeiro"
+  "name": "Ana Ribeiro",
+  "rate_per_hour": 35.7759
  },
  "301": {
   "factor": 1.0391,
   "weeks": 3,
-  "name": "Annarita Dagostino"
+  "name": "Annarita Dagostino",
+  "rate_per_hour": 35.7885
+ },
+ "302": {
+  "factor": 1.0,
+  "weeks": 0,
+  "name": "Archie Humphries",
+  "rate_per_hour": 22.003
  }
 }
