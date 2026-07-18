@@ -1,6 +1,6 @@
 {
   "date": "2026-07-17",
-  "generated_at": "2026-07-17T22:34:32.922066Z",
+  "generated_at": "2026-07-18T08:27:56.036501Z",
   "venue": "stowaway",
   "venue_display": "Stowaway Bar",
   "lane_config": [
@@ -37,17 +37,17 @@
   },
   "wages": {
     "kitchen_dollars": 526.34,
-    "foh_dollars": 1193.01,
-    "driver_dollars": 0.0,
-    "admin_dollars": 0.0,
-    "leave_dollars": 0.0,
-    "total_dollars": 1719.36,
-    "wages_pct": 16.6,
+    "foh_dollars": 1287.74,
+    "driver_dollars": 0,
+    "admin_dollars": 0,
+    "leave_dollars": 0,
+    "total_dollars": 1814.08,
+    "wages_pct": 17.5,
     "net_wage_pct": null,
     "kitchen_hours": 8.5,
     "foh_hours": 32.5,
     "wages_kitchen_pct": 25.6,
-    "wages_foh_pct": 14.3,
+    "wages_foh_pct": 15.5,
     "includes_super": true,
     "salaried_synthesized": true
   },
