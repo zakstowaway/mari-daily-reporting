@@ -1,0 +1,22 @@
+name: Match Xero to Deputy
+
+# Reverse of alias_suggest: for each Xero payee with no Deputy id, list the
+# Deputy accounts — ARCHIVED INCLUDED — that worked the weeks they were paid.
+# Deputy's People screen shows 41 active of 280, so 239 accounts are invisible
+# in the UI and every departed chef is among them.
+# Read-only. Writes nothing.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  match:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Match
+        env:
+          DEPUTY_TOKEN: ${{ secrets.DEPUTY_TOKEN }}
+        run: python scripts/match_xero_to_deputy.py
