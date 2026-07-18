@@ -47,9 +47,16 @@ def test_ingest_splits_and_windows(tmp_path):
     # Red Wine (hr 16) excluded from window but in day total: +464 = 1678.00
     assert sp["day_total_inc_gst"] == "1678.00"
 
-    # Mari window = Dine-in Pizza 50 (hr 19); soft drinks hr15 excluded
+    # Mari dinner window = Dine-in Pizza 50 (hr 19); soft drinks hr15 excluded
     assert ma["window_1700_2059_inc_gst"] == "50.00"
+    assert ma["dinner_window_1700_2059_inc_gst"] == "50.00"
     assert ma["day_total_inc_gst"] == "65.00"
+
+    # Lunch window (12-15): Mari soft drinks at hr15 = $15; Stow has none in 12-15
+    # (Red Wine is hr16, outside both windows).
+    assert ma["lunch_window_1200_1559_inc_gst"] == "15.00"
+    assert sp["lunch_window_1200_1559_inc_gst"] == "0.00"
+    assert sp["dinner_window_1700_2059_inc_gst"] == "1214.00"
 
     # HG food excluded from both scopes entirely
     disk = json.loads(out_p.read_text())
