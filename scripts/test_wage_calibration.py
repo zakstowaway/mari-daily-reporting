@@ -91,6 +91,46 @@ check("the Xero-paid path is never calibrated",
 check("the calibration file is only written on a long window",
       "(d_to - d_from).days > 60" in src)
 
+print("\n7. UNAPPROVED TIMESHEETS GET COSTED")
+print("   (Deputy costs a shift on APPROVAL. Mari's 17 Jul number was $456.59")
+print("    with 13.50h booked at $0; the truth was ~$900. It reported HALF.)")
+from wage_model import implied_rates, impute_uncosted   # noqa: E402
+
+shifts = [
+    {"employee_id": "1", "hours": 10.0, "cost": 350.0},   # costed -> teaches $35/h
+    {"employee_id": "1", "hours": 4.0, "cost": 0.0},      # unapproved
+    {"employee_id": "2", "hours": 5.0, "cost": 0.0},      # unapproved, no rate known
+    {"employee_id": "3", "hours": 8.0, "cost": 0.0},      # salaried -> always $0
+]
+rates = implied_rates(shifts)
+check("learns $/h from costed shifts only", abs(rates.get("1", 0) - 35.0) < 1e-9,
+      f"{rates}")
+check("a person with no costed shift has no rate", "2" not in rates)
+
+out, n, h = impute_uncosted(shifts, rates, salaried_ids={"3"})
+by = {(s["employee_id"], s["hours"]): s for s in out}
+check("the unapproved shift is costed at the person's own rate",
+      abs(by[("1", 4.0)]["cost"] - 140.0) < 1e-9, f"${by[('1', 4.0)]['cost']:.2f}")
+check("it is marked _imputed, not silently blended", by[("1", 4.0)].get("_imputed") is True)
+check("the costed shift is untouched", by[("1", 10.0)]["cost"] == 350.0
+      and not by[("1", 10.0)].get("_imputed"))
+# Inventing a number for someone we know nothing about is how you get a
+# confident wrong answer. $0 and a warning beats a guess.
+check("someone with no known rate stays at $0", by[("2", 5.0)]["cost"] == 0.0)
+check("salaried staff are skipped (Cost=0 is by design for them)",
+      by[("3", 8.0)]["cost"] == 0.0)
+check("counts what it touched", n == 1 and abs(h - 4.0) < 1e-9, f"{n} shifts, {h}h")
+
+print("\n8. THE TWO CORRECTIONS ARE INDEPENDENT")
+# A calibration factor cannot rescue an uncosted shift: 0 x 1.05 is still 0.
+# If anyone ever "simplifies" by dropping one, this is why they can't.
+f, _ = calibration_factor({w: 0.0 for w in wk(8)}, {w: 1000.0 for w in wk(8)})
+check("calibration alone cannot fix a $0 estimate", f == 1.0,
+      "all-zero estimate -> no factor, by design")
+agg = (ROOT / "scripts" / "daily_aggregator.py").read_text()
+check("daily_aggregator costs unapproved shifts", "rate_per_hour" in agg)
+check("and warns when it cannot", "BOOKED AT $0" in agg)
+
 print("\n" + "=" * 78)
 print(f"PASSED {len(PASS)}   FAILED {len(FAIL)}")
 sys.exit(1 if FAIL else 0)
