@@ -230,7 +230,7 @@
  "204": {
   "factor": 1.0,
   "weeks": 0,
-  "name": null,
+  "name": "Carlito Vesely",
   "rate_per_hour": 26.9698
  },
  "205": {
@@ -240,15 +240,15 @@
   "rate_per_hour": 34.2679
  },
  "206": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 0.9982,
+  "weeks": 3,
+  "name": "Camille Lincoln",
   "rate_per_hour": 31.4176
  },
  "208": {
   "factor": 1.0,
   "weeks": 0,
-  "name": null,
+  "name": "Harry Riggs",
   "rate_per_hour": 18.0
  },
  "209": {
@@ -314,7 +314,7 @@
  "222": {
   "factor": 1.0,
   "weeks": 0,
-  "name": null,
+  "name": "Oliver Ford",
   "rate_per_hour": 19.2212
  },
  "223": {
@@ -446,7 +446,7 @@
  "246": {
   "factor": 1.0,
   "weeks": 0,
-  "name": null,
+  "name": "Fernanda Correa",
   "rate_per_hour": 35.5427
  },
  "247": {
@@ -480,9 +480,9 @@
   "rate_per_hour": 26.6308
  },
  "253": {
-  "factor": 1.0,
-  "weeks": 0,
-  "name": null,
+  "factor": 1.109,
+  "weeks": 3,
+  "name": "Flavia Castillo",
   "rate_per_hour": 33.1502
  },
  "254": {
@@ -578,7 +578,7 @@
  "275": {
   "factor": 1.0,
   "weeks": 0,
-  "name": null,
+  "name": "Micaela Londero",
   "rate_per_hour": 33.4084
  },
  "276": {
