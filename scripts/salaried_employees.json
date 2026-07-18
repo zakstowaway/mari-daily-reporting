@@ -62,7 +62,11 @@
   "_comment": "Deputy people Zak has CONFIRMED are correctly costed at Deputy's own rate because Xero does not pay them (2026-07-17: 'assume pedro at his deputy rates. same with long long. it's just an exception for pedro'). Listed by Deputy id so rebuild_wages stops flagging them. Anyone with hours who is NOT in Xero and NOT on this list gets shouted about \u2014 that is the point: the next person in this situation must not quietly blend into the fallback. Do NOT add someone here to make a reconciliation tie; add them only when Zak has said it's an exception.",
   "ids": {
    "261": "pedro f",
-   "225": "Long Long"
-  }
+   "225": "Long Long",
+   "213": "Wilson Cortes",
+   "221": "Patrick",
+   "252": "Sanjida"
+  },
+  "_2026-07-18": "Zak: 'the rest just cost out at deputy rates'. Costing them at Deputy's rate was ALREADY the behaviour — it is the fallback — so listing them here changes no number; it only stops the weekly NOT IN XERO warning, which IS the point: a permanent false positive is how a report gets ignored. VERIFIED SAFE BEFORE ADDING: the danger in this instruction is that if payroll DID pay them under a name we haven't matched, their cost lands on a venue from Deputy AND in the corp-payroll residual from Xero — counted twice, silently. Checked all 18 remaining unmapped Xero payees: no Wilson, no Patrick, no Sanjida, under any spelling. Same test that cleared pedro f and Long Long."
  }
 }
