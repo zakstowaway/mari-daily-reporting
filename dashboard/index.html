@@ -1324,7 +1324,8 @@ function synthesizeGroupHistory(histories) {
   for (const date of Array.from(allDates).sort()) {
     const sum = { revenue_ex_gst: 0, cogs_dollars: 0, wages_dollars: 0, delivery_dollars: 0, gp_dollars: 0,
                   food_ex_gst: 0, bev_ex_gst: 0, food_cogs: 0, bev_cogs: 0,
-                  wages_kitchen_dollars: 0, wages_foh_dollars: 0 };
+                  wages_kitchen_dollars: 0, wages_foh_dollars: 0,
+                  eatclub_giveaway_ex_gst: 0, eatclub_covers: 0 };
     let venueCount = 0;
     let wagePresent = false;
     let splitPresent = false, kwPresent = false;
@@ -1373,6 +1374,8 @@ function synthesizeGroupHistory(histories) {
       }
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
+      sum.eatclub_giveaway_ex_gst += toNum(row.eatclub_giveaway_ex_gst);
+      sum.eatclub_covers          += toNum(row.eatclub_covers);
       venueCount++;
     }
     if (venueCount === 0) continue;
@@ -1384,6 +1387,7 @@ function synthesizeGroupHistory(histories) {
       wages_pct: wagePresent && rev ? sum.wages_dollars / rev * 100 : '',
       delivery_dollars: sum.delivery_dollars, delivery_pct: rev ? sum.delivery_dollars / rev * 100 : 0,
       gp_dollars: sum.gp_dollars, gp_pct: rev ? sum.gp_dollars / rev * 100 : 0,
+      eatclub_giveaway_ex_gst: sum.eatclub_giveaway_ex_gst, eatclub_covers: sum.eatclub_covers,
       contributing_venues: venueCount,
       cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
       ...(splitPresent ? {
@@ -1408,7 +1412,8 @@ function synthesizeGroupHistory(histories) {
 // Fields summed across days/venues in rollups. Split fields ride along so
 // week/month/quarter views can recompute split percentages properly.
 const SUM_FIELDS = ['revenue_ex_gst', 'cogs_dollars', 'wages_dollars', 'delivery_dollars', 'gp_dollars',
-  'food_ex_gst', 'bev_ex_gst', 'food_cogs', 'bev_cogs', 'wages_kitchen_dollars', 'wages_foh_dollars'];
+  'food_ex_gst', 'bev_ex_gst', 'food_cogs', 'bev_cogs', 'wages_kitchen_dollars', 'wages_foh_dollars',
+  'eatclub_giveaway_ex_gst', 'eatclub_covers'];
 
 function rowsForTimeframe(rows, timeframe, anchorDay) {
   const anchor = new Date(anchorDay);
@@ -1486,6 +1491,7 @@ function rollup(rows) {
     wages_pct: wageDays && revW ? sums.wages_dollars / revW * 100 : '',
     delivery_dollars: sums.delivery_dollars, delivery_pct: rev ? sums.delivery_dollars / rev * 100 : 0,
     gp_dollars: sums.gp_dollars, gp_pct: rev ? sums.gp_dollars / rev * 100 : 0,
+    eatclub_giveaway_ex_gst: sums.eatclub_giveaway_ex_gst, eatclub_covers: sums.eatclub_covers,
     cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
   };
   // Split lanes: only emit when at least one row in range carried the field,
@@ -1685,6 +1691,22 @@ const CARD_DEFS = {
     const src = STATE.currentVenue === 'mari' ? 'Uber Eats + Direct' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
     return { label: 'Delivery platforms', value: fmtPct(dfr.pct),
       sub: `est. ${fmtDollars(rev * dfr.pct / 100)} ${src} fees (Xero trailing ${dfr.months}-mo rate) \u00b7 driver in wages`, status: 'unknown' };
+  },
+  eatclub: (day, cfg) => {
+    // EatClub rings the FULL bill on the POS, then keeps the offer discount +
+    // 11% commission off-POS. revenue_ex_gst above is already NET of that; this
+    // card surfaces what EatClub took (why revenue/GP dropped). $0 -> no redemptions.
+    const give = toNum(day.eatclub_giveaway_ex_gst);
+    if (!give) return { label: 'EatClub give-away', value: '—', sub: 'no EatClub redemptions', status: 'unknown' };
+    const covers = toNum(day.eatclub_covers);
+    const gross = toNum(day.revenue_ex_gst) + give;   // POS gross, before EatClub's cut
+    const pct = gross ? give / gross * 100 : 0;
+    return {
+      label: 'EatClub give-away',
+      value: '−' + fmtDollars(give),
+      sub: `${fmtPct(pct)} of gross · ${covers} cover${covers === 1 ? '' : 's'} · discount + 11% commission, already off revenue`,
+      status: 'unknown',
+    };
   },
   overheads: (day, cfg) => {
     const rev = toNum(day.revenue_ex_gst);
@@ -1952,7 +1974,7 @@ function cardsForCurrentView() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const base = (roleCfg.cards || venueCfg.cards);
-  return CURRENT_ROLE === 'admin' ? ['revenue', 'profit', 'wages_hero', 'cogs_merged', 'delivery_fees', 'overheads'] : base;
+  return CURRENT_ROLE === 'admin' ? ['revenue', 'profit', 'wages_hero', 'cogs_merged', 'delivery_fees', 'overheads', 'eatclub'] : base;
 }
 
 function renderSnapshot() {
