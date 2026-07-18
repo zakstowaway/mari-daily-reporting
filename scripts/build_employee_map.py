@@ -102,13 +102,16 @@ ALIASES = {
     "Milan": "Milan Khanal",               # 270        12/15         3     0.80
     "Arata": "Arata Kitamoto",             # 193         9/13         4     0.69
     "Dom": "Dom Lees-Bell",                # 179         6/10         4     0.60
+    # Zak, 2026-07-18: "billy is buillermo" [Guillermo]. The matcher ranked this
+    # first (jac 0.78) but flagged it ambiguous, because id 213 "Wilson Cortes"
+    # also fitted Guillermo at 0.74 and both could not be right. Zak's call
+    # resolves it — and it means 213 is someone ELSE, not that 213 has no match.
+    "Billy": "Guillermo De las Carreras",  # 200        21/27         6     0.78
     #
-    # ⚠️ DELIBERATELY NOT MAPPED — the matcher found these AMBIGUOUS, and an
-    # ambiguous alias is how one person's wages land on another person's venue:
-    #   id 200 "Billy"         -> Guillermo De las Carreras (jac 0.78) ...but
-    #   id 213 "Wilson Cortes" -> Guillermo De las Carreras (jac 0.74) TOO.
-    #     Both cannot be right. ("Billy" IS a real nickname for Guillermo, which
-    #     is exactly what makes this dangerous.) Needs Zak.
+    # ⚠️ DELIBERATELY NOT MAPPED — still ambiguous, and an ambiguous alias is how
+    # one person's wages land on another person's venue:
+    #   id 213 "Wilson Cortes" — was only fitting Guillermo because Guillermo was
+    #     unclaimed. Now that Billy has him, 213 needs a fresh look.
     #   id 221 "Patrick"       -> Audi Audi (jac 0.61), but 250 "Audi" fits Audi
     #     Audi far better (0.86, exact name). 221 is unresolved.
     #   id 252 "Sanjida"       -> Victor Flores (jac 0.69), but 259 "Victor" is
