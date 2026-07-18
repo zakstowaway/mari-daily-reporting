@@ -587,7 +587,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], inclOverhead: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [] };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], inclOverhead: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [], uberDirect: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -787,6 +787,56 @@ function uberEatsShareOfDelivery(venue, endIso) {
   return all ? Math.min(1, only / all) : 0.89;
 }
 
+// Actual Uber Direct delivery fees (Mari's own online orders, delivered by
+// Uber's fleet — billed DAILY, one invoice per day, separate from Uber Eats
+// marketplace). From data/uber_direct_daily.csv. Returns { fee, covered } —
+// covered=true when the whole window sits inside the pulled date range, so a
+// day with no Direct orders reads as a real $0 rather than a gap. Uncovered
+// windows return covered:false -> caller estimates. Mari only.
+function uberDirectActual(venue, sIso, eIso) {
+  if (venue !== 'mari') return null;
+  const rows = STATE.uberDirect || [];
+  let min = null, max = null;
+  for (const r of rows) {
+    if (r.shop !== venue) continue;
+    if (min === null || r.date < min) min = r.date;
+    if (max === null || r.date > max) max = r.date;
+  }
+  if (min === null) return null;
+  let fee = 0;
+  for (const r of rows) {
+    if (r.shop === venue && r.date >= sIso && r.date <= eIso) fee += toNum(r.fee_inc_gst);
+  }
+  return { fee, covered: sIso >= min && eIso <= max };
+}
+
+// Revenue for one venue over [sIso,eIso] from its daily history.
+function venueRevWindow(venue, sIso, eIso) {
+  let rev = 0;
+  for (const r of (STATE.histories[venue] || [])) {
+    if (r.date >= sIso && r.date <= eIso) rev += toNum(r.revenue_ex_gst);
+  }
+  return rev;
+}
+
+// Delivery-fee dollars for ONE real venue over a window, using actual portal
+// data where it covers the window and the Xero trailing-rate estimate otherwise.
+// Mari: Uber Eats (commission + marketing) actual + Uber Direct actual, residual
+// estimated. HG: Uber Eats actual + ME&U estimate. Stow: ME&U estimate only.
+// Marketing stays INSIDE df — broken out only in card text (Zak: no separate line).
+function venueDeliveryEst(venue, sIso, eIso, endIso) {
+  const rev = venueRevWindow(venue, sIso, eIso);
+  const dfr = deliveryFeesPct(venue, endIso);
+  const dfEst = dfr ? rev * dfr.pct / 100 : 0;
+  const _u = uberSplit(venue, sIso, eIso);
+  if (!_u) return { df: dfEst, commission: 0, marketing: 0, direct: null, actual: false };
+  const dir = uberDirectActual(venue, sIso, eIso);
+  const directActual = dir && dir.covered;
+  const nonUber = directActual ? dir.fee : dfEst * (1 - uberEatsShareOfDelivery(venue, endIso));
+  return { df: _u.commission + _u.marketing + nonUber, commission: _u.commission,
+           marketing: _u.marketing, direct: directActual ? dir.fee : null, actual: true };
+}
+
 function pnlWindow(day, venue = STATE.currentVenue) {
   const revAll = toNum(day.revenue_ex_gst);
   if (!revAll || !hasVal(day.wages_dollars)) return null;
@@ -802,19 +852,22 @@ function pnlWindow(day, venue = STATE.currentVenue) {
   const wages = toNum(day.wages_dollars);
   // Overheads = fixed OH + payroll tax/WC (both lumpy group costs, DOW-weighted).
   const oh = ((ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) + wageOncostDaily(venue, endIso)) * ohf;
-  const dfr = deliveryFeesPct(venue, endIso);
   const fa = feesActualWindow(day, venue);
-  let df = fa ? fa.fees : (dfr ? rev * dfr.pct / 100 : 0);
-  // Where we have the actual daily Uber Eats split, swap the Uber-Eats slice of
-  // the blended delivery estimate for the real numbers. Marketing (funded
-  // offers + ads) stays INSIDE the delivery total (Zak: no separate line) — it's
-  // broken out only in the delivery card's text. Non-Uber delivery (Mari
-  // DoorDash+Direct; HG ME&U) stays estimated. Older days: unchanged.
+  // Delivery fees. Whole-month closed windows use booked/portal actuals (fa).
+  // Otherwise venueDeliveryEst swaps in the live Uber Eats + Uber Direct daily
+  // data per venue where it covers the window, and estimates the rest. Marketing
+  // stays INSIDE df (Zak: no separate line). Group = sum of real venues when any
+  // live data is present, else the blended trailing rate (older windows unchanged).
   const _win = String(day.date).includes(' — ') ? String(day.date).split(' — ') : [day.date, day.date];
-  const _u = uberSplit(venue, _win[0], _win[1]);
-  if (_u) {
-    const nonUber = df * (1 - uberEatsShareOfDelivery(venue, endIso));
-    df = _u.commission + _u.marketing + nonUber;   // full Uber cost + non-Uber est
+  let df;
+  if (fa) {
+    df = fa.fees;
+  } else if (venue === 'group') {
+    const parts = REAL_VENUES.map(v => venueDeliveryEst(v, _win[0], _win[1], endIso));
+    if (parts.some(p => p.actual)) df = parts.reduce((t, p) => t + p.df, 0);
+    else { const dfr = deliveryFeesPct(venue, endIso); df = dfr ? rev * dfr.pct / 100 : 0; }
+  } else {
+    df = venueDeliveryEst(venue, _win[0], _win[1], endIso).df;
   }
   const cp = corpPayrollDaily(venue, endIso) * ohf;   // owners' salary, DOW-weighted
   const fin = financeDaily(venue, endIso) * ohf;      // interest + depreciation
@@ -1594,9 +1647,9 @@ const CARD_DEFS = {
     if (fa && rev) {
       const uberLbl = fa.portal ? 'Uber svc (portal, ex-mktg)' : 'Uber';
       const src = STATE.currentVenue === 'mari'
-        ? `${uberLbl} + DoorDash + Direct ${fmtDollars(fa.mari)}${fa.portal && fa.mkt ? ` \u00b7 Uber marketing ${fmtDollars(fa.mkt)} excluded` : ''}`
+        ? `${uberLbl} + Uber Direct ${fmtDollars(fa.mari)}${fa.portal && fa.mkt ? ` \u00b7 Uber marketing ${fmtDollars(fa.mkt)} excluded` : ''}`
         : STATE.currentVenue === 'group'
-        ? `${uberLbl}+DD+Direct ${fmtDollars(fa.mari)} \u00b7 ME&U+Doshii ${fmtDollars(fa.meu)}`
+        ? `${uberLbl}+Direct ${fmtDollars(fa.mari)} \u00b7 ME&U+Doshii ${fmtDollars(fa.meu)}`
         : 'ME&U + Doshii, revenue-share';
       return { label: 'Delivery platforms ' + pill('actual', 'green'), value: fmtPct(fa.fees / rev * 100),
         sub: `${fmtDollars(fa.fees)} actual${fa.portal ? ' (Uber portal + Xero)' : ', booked in Xero'}, ${fa.nMonths} complete month${fa.nMonths > 1 ? 's' : ''} \u00b7 ${src} \u00b7 driver in wages`, status: 'unknown' };
@@ -1604,16 +1657,32 @@ const CARD_DEFS = {
     const dfr = deliveryFeesPct(STATE.currentVenue, winEnd(day));
     if (!dfr || !rev) return { label: 'Delivery platforms', value: '\u2014', sub: 'no Xero fee data', status: 'unknown' };
     const _win = String(day.date).includes(' — ') ? String(day.date).split(' — ') : [day.date, day.date];
-    const _u = uberSplit(STATE.currentVenue, _win[0], _win[1]);
-    if (_u) {
-      const nonUber = rev * dfr.pct / 100 * (1 - uberEatsShareOfDelivery(STATE.currentVenue, winEnd(day)));
-      const del = _u.commission + _u.marketing + nonUber;   // full delivery cost
-      const other = STATE.currentVenue === 'mari' ? ' + DoorDash/Direct est' : ' + ME&U est';
-      const mkt = _u.marketing > 0 ? ` · marketing ${fmtDollars(_u.marketing)} (offers+ads)` : '';
-      return { label: 'Delivery platforms ' + pill('Uber actual', 'green'), value: fmtPct(del / rev * 100),
-        sub: `${fmtDollars(del)} · Uber commission ${fmtDollars(_u.commission)}${mkt}${other}`, status: 'unknown' };
+    // Group: sum each venue's live actual-or-estimate when any Uber data covers
+    // the window, so the card is current (not the blended trailing rate).
+    if (STATE.currentVenue === 'group' && rev) {
+      const parts = REAL_VENUES.map(v => venueDeliveryEst(v, _win[0], _win[1], winEnd(day)));
+      if (parts.some(x => x.actual)) {
+        const del = parts.reduce((t, x) => t + x.df, 0);
+        const comm = parts.reduce((t, x) => t + x.commission, 0);
+        const mktG = parts.reduce((t, x) => t + x.marketing, 0);
+        const direct = parts.reduce((t, x) => t + (x.direct || 0), 0);
+        const dirT = parts.some(x => x.direct !== null) ? ` · Uber Direct ${fmtDollars(direct)}` : '';
+        const mktT = mktG > 0 ? ` · marketing ${fmtDollars(mktG)} (offers+ads)` : '';
+        return { label: 'Delivery platforms ' + pill('Uber actual', 'green'), value: fmtPct(del / rev * 100),
+          sub: `${fmtDollars(del)} · Uber commission ${fmtDollars(comm)}${dirT}${mktT} + ME&U est · driver in wages`, status: 'unknown' };
+      }
     }
-    const src = STATE.currentVenue === 'mari' ? 'Uber + DoorDash' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
+    const p = STATE.currentVenue === 'group' ? null : venueDeliveryEst(STATE.currentVenue, _win[0], _win[1], winEnd(day));
+    if (p && p.actual) {
+      const other = STATE.currentVenue === 'mari'
+        ? (p.direct !== null ? ` · Uber Direct ${fmtDollars(p.direct)}` : ' + Uber Direct est')
+        : ' + ME&U est';
+      const mkt = p.marketing > 0 ? ` · marketing ${fmtDollars(p.marketing)} (offers+ads)` : '';
+      const lbl = STATE.currentVenue === 'mari' && p.direct !== null ? 'Uber+Direct actual' : 'Uber actual';
+      return { label: 'Delivery platforms ' + pill(lbl, 'green'), value: fmtPct(p.df / rev * 100),
+        sub: `${fmtDollars(p.df)} · Uber commission ${fmtDollars(p.commission)}${mkt}${other}`, status: 'unknown' };
+    }
+    const src = STATE.currentVenue === 'mari' ? 'Uber Eats + Direct' : STATE.currentVenue === 'group' ? 'all platforms' : 'ME&U share';
     return { label: 'Delivery platforms', value: fmtPct(dfr.pct),
       sub: `est. ${fmtDollars(rev * dfr.pct / 100)} ${src} fees (Xero trailing ${dfr.months}-mo rate) \u00b7 driver in wages`, status: 'unknown' };
   },
@@ -2786,6 +2855,12 @@ async function bootstrap() {
     try {
       const r = await fetch('data/uber_marketing_weekly.csv?t=' + Date.now());
       if (r.ok) STATE.uberAds = parseCsv(await r.text());
+    } catch (e) {}
+    try {
+      // Actual daily Uber Direct fees (Mari's own online orders). Emailed daily
+      // invoice -> Pipedream -> this CSV (see pipedream/uber_direct_ingest.js).
+      const r = await fetch('data/uber_direct_daily.csv?t=' + Date.now());
+      if (r.ok) STATE.uberDirect = parseCsv(await r.text());
     } catch (e) {}
     try {
       const r = await fetch('data/uber_fees_weekly.csv?t=' + Date.now());
