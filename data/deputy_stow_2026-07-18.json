@@ -1,0 +1,80 @@
+[
+  {
+    "timesheet_id": 35378,
+    "employee_id": 5,
+    "employee_name": "Nicola Bisato",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784337300,
+    "end_time": 1784373300,
+    "hours": 9.5,
+    "cost": 319.71,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35379,
+    "employee_id": 292,
+    "employee_name": "Sophie Campbell",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784337300,
+    "end_time": 1784368800,
+    "hours": 8.25,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35380,
+    "employee_id": 297,
+    "employee_name": "Pujan Tamang",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784338200,
+    "end_time": 1784377800,
+    "hours": 10.5,
+    "cost": 378.61,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35383,
+    "employee_id": 16,
+    "employee_name": "Stephanie Kunde",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784352600,
+    "end_time": 1784384100,
+    "hours": 8.25,
+    "cost": 288.75,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35387,
+    "employee_id": 69,
+    "employee_name": "Sam Hall",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784358000,
+    "end_time": 1784375100,
+    "hours": 4.5,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35389,
+    "employee_id": 301,
+    "employee_name": "Annarita Dagostino",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784358000,
+    "end_time": 1784383200,
+    "hours": 6.5,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]
