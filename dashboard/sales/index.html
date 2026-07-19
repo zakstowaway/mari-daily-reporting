@@ -1972,7 +1972,12 @@ function cardsForCurrentView() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const base = (roleCfg.cards || venueCfg.cards);
-  return CURRENT_ROLE === 'admin' ? ['revenue', 'profit', 'wages_hero', 'cogs_merged', 'delivery_fees', 'overheads', 'eatclub'] : base;
+  const list = (CURRENT_ROLE === 'admin')
+    ? ['revenue', 'profit', 'wages_hero', 'cogs_merged', 'delivery_fees', 'overheads', 'eatclub']
+    : base.slice();
+  // EatClub give-away must surface for EVERY role, not just admin (Zak, 2026-07-19).
+  if (!list.includes('eatclub')) list.push('eatclub');
+  return list;
 }
 
 function renderSnapshot() {
