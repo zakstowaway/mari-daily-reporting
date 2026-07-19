@@ -155,6 +155,10 @@ body {
   font-weight: 500; margin-left: 6px; border-bottom: 1px solid var(--line);
 }
 .header .who a:hover { border-bottom-color: var(--ink); }
+.header-right { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.tool-nav { display: flex; align-items: center; gap: 18px; }
+.tool-nav a { font-size: 13px; color: var(--ink-soft); text-decoration: none; transition: color 0.15s; }
+.tool-nav a:hover { color: var(--ink); }
 
 .venue-tabs { background: var(--paper); border-bottom: 1px solid var(--line); padding: 0 24px; position: sticky; top: 0; z-index: 30; }
 .vt-flex { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -172,9 +176,9 @@ body {
 .venue-tabs-inner { display: flex; gap: 4px; flex-wrap: wrap; }
 .venue-tab {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--ink-soft);
-  padding: 16px 20px; border: none; background: transparent;
+  font-size: 14px; font-weight: 600; letter-spacing: 0;
+  text-transform: none; color: var(--ink-soft);
+  padding: 15px 16px; border: none; background: transparent;
   cursor: pointer; border-bottom: 3px solid transparent;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -464,8 +468,11 @@ tbody tr:hover { background: var(--group-tint); }
         <img class="header-logo" alt="" src="/logo_128.png">
         <span class="group-brand">Stowaway Hospitality Group</span>
       </div>
-      <div class="who">
-        <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
+      <div class="header-right">
+        <nav class="tool-nav" id="tool-nav"></nav>
+        <div class="who">
+          <strong id="who-name"></strong> · <a onclick="logout()">Sign out</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1939,9 +1946,11 @@ function renderVenueTabs() {
     const cfg = VENUE_CONFIG[v];
     const active = v === STATE.currentVenue ? `active ${cfg.chipClass}` : '';
     return `<button class="venue-tab ${active}" onclick="switchVenue('${v}')">${cfg.label}</button>`;
-  }).join('') + (CURRENT_ROLE === 'admin'
-    ? `<a class="venue-tab eatclub-tab" href="rg.html">Menu Trends</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="eatclub.html">EatClub</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="/recipes/">Recipes</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="/admin/">Team</a>`
-    : '');
+  }).join('');
+  const toolNav = document.getElementById('tool-nav');
+  if (toolNav) toolNav.innerHTML = CURRENT_ROLE === 'admin'
+    ? `<a href="rg.html">Menu trends</a><a href="eatclub.html">EatClub</a><a href="/recipes/">Recipes</a><a href="/admin/">Team</a>`
+    : '';
 }
 function renderVenueStrip() {
   const el = document.getElementById('venue-strip');
