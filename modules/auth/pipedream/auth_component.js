@@ -85,9 +85,14 @@ export default defineComponent({
         const j = await r.json();
         return (j.users || []).find((u) => (u.email || "").toLowerCase() === email.toLowerCase())?.id;
       };
+      const getUser = async (uid) => {
+        const r = await sbAdmin("GET", `admin/users/${uid}`);
+        return r.ok ? r.json() : null;
+      };
       const shapeUser = (u) => ({
         id: u.id, email: u.email, name: u.user_metadata?.name || "",
         role: u.app_metadata?.role || null, venue: u.app_metadata?.venue || null,
+        employee: u.app_metadata?.employee_id || null,   // links login -> wage rate
         confirmed: !!u.email_confirmed_at, last_sign_in: u.last_sign_in_at || null,
       });
 
@@ -110,10 +115,11 @@ export default defineComponent({
         const inv = await sbAdmin("POST", "invite", { email });
         if (!inv.ok) return reply(502, { error: "invite failed", detail: await inv.text() });
         const invited = await inv.json();
-        if (newRole || newVenue) {
-          const meta = {};
-          if (newRole) meta.role = newRole;
-          if (newVenue) meta.venue = newVenue;
+        const meta = {};
+        if (newRole) meta.role = newRole;
+        if (newVenue) meta.venue = newVenue;
+        if (body.employee) meta.employee_id = String(body.employee);
+        if (Object.keys(meta).length) {
           await sbAdmin("PUT", `admin/users/${invited.id}`, { app_metadata: meta });
         }
         return reply(200, { ok: true, invited: email, role: newRole, venue: newVenue });
@@ -127,25 +133,31 @@ export default defineComponent({
         if (newVenue && !VENUES.includes(newVenue)) return reply(400, { error: "bad venue" });
         const uid = body.id || (email ? await findId(email) : null);
         if (!uid) return reply(404, { error: "user not found" });
-        const upd = await sbAdmin("PUT", `admin/users/${uid}`, {
-          app_metadata: { role: newRole, venue: newVenue },
-        });
+        // Merge onto existing app_metadata so setting a role never wipes the
+        // employee link (and vice versa). Only touch keys the caller sent.
+        const cur = await getUser(uid);
+        const meta = { ...(cur?.app_metadata || {}) };
+        if ("role" in body) meta.role = newRole;
+        if ("venue" in body) meta.venue = newVenue;
+        if ("employee" in body) meta.employee_id = body.employee ? String(body.employee) : null;
+        const upd = await sbAdmin("PUT", `admin/users/${uid}`, { app_metadata: meta });
         if (!upd.ok) return reply(502, { error: "update failed", detail: await upd.text() });
         return reply(200, { ok: true });
       }
     }
 
-    // ── /recipes — kitchen role, commit AS the person ──────────────────────
+    // ── repo writes — kitchen role, committed AS the person ────────────────
+    // Both /recipes and /prep append to a YAML file and commit under the
+    // signed-in user's name. One helper, so the GitHub plumbing lives once.
     if (!KITCHEN.includes(role)) return reply(403, { error: "Your role cannot edit recipes" });
 
-    const { venue, product, yaml } = body;
-    if (!venue || !product || !yaml) return reply(400, { error: "venue, product and yaml required" });
+    const { venue, product } = body;
+    if (!venue || !product) return reply(400, { error: "venue and product required" });
     if (!/^[a-z_]+$/.test(venue)) return reply(400, { error: "bad venue" });
     if (!["admin", "bigchef"].includes(role) && allowedVenue && allowedVenue !== venue) {
       return reply(403, { error: `You can only edit ${allowedVenue}` });
     }
 
-    const path_ = `data/recipes/${venue}.yaml`;
     const ghToken = this.github.$auth.oauth_access_token;
     const gh = (method, url, payload) =>
       fetch(`https://api.github.com/repos/${REPO}/${url}`, {
@@ -158,23 +170,51 @@ export default defineComponent({
         },
         ...(payload ? { body: JSON.stringify(payload) } : {}),
       });
-
-    let sha, current = "";
-    const existing = await gh("GET", `contents/${path_}`);
-    if (existing.ok) {
-      const j = await existing.json();
-      sha = j.sha;
-      current = Buffer.from(j.content, "base64").toString("utf8");
-    }
     const stamp = new Date().toISOString().slice(0, 10);
+    // Append `block` to `path_` and commit. Existing content is preserved; the
+    // file is append-only in spirit (recipes and prep are both facts over time).
+    const appendCommit = async (path_, block, message) => {
+      let sha, current = "";
+      const existing = await gh("GET", `contents/${path_}`);
+      if (existing.ok) {
+        const j = await existing.json();
+        sha = j.sha;
+        current = Buffer.from(j.content, "base64").toString("utf8");
+      }
+      const put = await gh("PUT", `contents/${path_}`, {
+        message,
+        content: Buffer.from(current + block, "utf8").toString("base64"),
+        author: { name, email: user.email },
+        ...(sha ? { sha } : {}),
+      });
+      if (!put.ok) return { ok: false, detail: await put.text(), status: put.status };
+      return { ok: true, path: path_ };
+    };
+
+    // ── /prep — log a timed prep session against this person ───────────────
+    if (path.endsWith("/prep")) {
+      const minutes = Number(body.minutes);
+      if (!(minutes > 0) || minutes > 600) return reply(400, { error: "minutes must be 0–600" });
+      // who = the employee id linked to this login (-> their exact wage rate).
+      // Falls back to the display name if the admin hasn't linked them yet.
+      const who = app.employee_id || name;
+      const safe = String(product).replace(/"/g, "'");
+      const block =
+        `- product: "${safe}"\n  who: "${who}"\n  who_name: "${name}"\n` +
+        `  minutes: ${minutes}\n  recorded_on: ${stamp}\n  recorded_by: "${user.email}"\n`;
+      const res = await appendCommit(`data/prep_sessions/${venue}.yaml`, block,
+        `Prep: ${safe} ${minutes}min (${venue}) — ${name}`);
+      if (!res.ok) return reply(502, { error: `GitHub ${res.status}`, detail: res.detail });
+      return reply(200, { ok: true, path: res.path, minutes, who });
+    }
+
+    // ── /recipes — commit the recipe YAML ──────────────────────────────────
+    const { yaml } = body;
+    if (!yaml) return reply(400, { error: "yaml required" });
     const block = `\n# ${product} — entered by ${name} (${user.email}) on ${stamp}\n${String(yaml).trim()}\n`;
-    const put = await gh("PUT", `contents/${path_}`, {
-      message: `Recipe: ${product} (${venue}) — ${name}`,
-      content: Buffer.from(current + block, "utf8").toString("base64"),
-      author: { name, email: user.email },
-      ...(sha ? { sha } : {}),
-    });
-    if (!put.ok) return reply(502, { error: `GitHub ${put.status}`, detail: await put.text() });
-    return reply(200, { ok: true, path: path_, committed_as: name });
+    const res = await appendCommit(`data/recipes/${venue}.yaml`, block,
+      `Recipe: ${product} (${venue}) — ${name}`);
+    if (!res.ok) return reply(502, { error: `GitHub ${res.status}`, detail: res.detail });
+    return reply(200, { ok: true, path: res.path, committed_as: name });
   },
 });

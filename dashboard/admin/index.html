@@ -14,13 +14,13 @@
   The service key never reaches this page. See modules/auth/pipedream/.
 -->
 <style>
-  .wrap{max-width:920px}
-  .row{display:grid;grid-template-columns:1fr 140px 130px 1fr;gap:8px;align-items:center;
+  .wrap{max-width:1040px}
+  .row{display:grid;grid-template-columns:1fr 120px 120px 160px 130px;gap:8px;align-items:center;
        padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;background:var(--paper)}
   .row .who{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .row .who small{display:block;color:var(--ink-soft);font-size:11px}
   select,input{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);width:100%}
-  .invite{display:grid;grid-template-columns:1fr 150px 150px auto;gap:8px;align-items:end}
+  .invite{display:grid;grid-template-columns:1fr 130px 130px 160px auto;gap:8px;align-items:end}
   label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin:0 0 4px}
   .muted{color:var(--ink-soft);font-size:12px}
   .hd{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 8px}
@@ -46,6 +46,7 @@
       <div><label>Email</label><input id="inv-email" type="email" placeholder="name@stowawaybar.com"></div>
       <div><label>Role</label><select id="inv-role"></select></div>
       <div><label>Venue</label><select id="inv-venue"></select></div>
+      <div><label>Employee</label><select id="inv-emp"></select></div>
       <div><button id="inv-btn" onclick="doInvite()">Send invite</button></div>
     </div>
     <div class="msg" id="inv-msg"></div>
@@ -61,18 +62,26 @@ import { Auth } from '/_shared/auth.js';
 
 const ROLES  = ['admin','bigchef','stowfood','hgfood','bar','pizza'];
 const VENUES = ['stowaway','harry_gatos','marilynas'];
+let EMPLOYEES = [];   // {id,name} from data/employees.json — links login -> wage
 const roleOpts  = (sel) => ['<option value="">— no access —</option>']
   .concat(ROLES.map(r=>`<option ${r===sel?'selected':''}>${r}</option>`)).join('');
 const venueOpts = (sel) => ['<option value="">any / all</option>']
   .concat(VENUES.map(v=>`<option ${v===sel?'selected':''}>${v}</option>`)).join('');
+const empOpts = (sel) => ['<option value="">— not linked —</option>']
+  .concat(EMPLOYEES.map(e=>`<option value="${e.id}" ${String(e.id)===String(sel)?'selected':''}>${e.name}</option>`)).join('');
 
 Auth.gate(document.getElementById('gate'), {
   roles: ['admin'],   // this page is admins only
-  onOk: (user) => {
+  onOk: async (user) => {
     document.getElementById('app').style.display = '';
     document.getElementById('who').textContent = user.name;
+    try {
+      const r = await fetch('/data/employees.json');
+      EMPLOYEES = (await r.json()).employees || [];
+    } catch { EMPLOYEES = []; }
     document.getElementById('inv-role').innerHTML = roleOpts('stowfood');
     document.getElementById('inv-venue').innerHTML = venueOpts('');
+    document.getElementById('inv-emp').innerHTML = empOpts('');
     load();
   },
 });
@@ -88,6 +97,7 @@ async function load() {
           ${u.confirmed ? '' : '· not confirmed yet'}</small></div>
         <select data-email="${u.email}" class="r">${roleOpts(u.role)}</select>
         <select data-email="${u.email}" class="v">${venueOpts(u.venue)}</select>
+        <select data-email="${u.email}" class="e" title="Deputy employee — sets the wage rate their prep is costed at">${empOpts(u.employee)}</select>
         <div style="text-align:right">
           <span class="pill ${u.role?'set':'none'}">${u.role || 'no role'}</span>
           <button class="ghost save" data-email="${u.email}" style="margin-left:6px">Save</button>
@@ -104,9 +114,10 @@ async function saveRole(email) {
   const msg = document.getElementById('list-msg');
   const role  = document.querySelector(`.r[data-email="${CSS.escape(email)}"]`).value || null;
   const venue = document.querySelector(`.v[data-email="${CSS.escape(email)}"]`).value || null;
+  const emp   = document.querySelector(`.e[data-email="${CSS.escape(email)}"]`).value || null;
   msg.textContent = 'Saving…';
   try {
-    await Auth.setUserRole(email, role, venue);
+    await Auth.setUserRole(email, role, venue, emp);
     msg.innerHTML = `<span style="color:var(--green)">${email}: ${role || 'access removed'}${venue?` · ${venue}`:''}. They pick it up on next sign-in.</span>`;
     load();
   } catch (e) { msg.innerHTML = `<span style="color:var(--red)">${e.message}</span>`; }
@@ -117,10 +128,11 @@ window.doInvite = async () => {
   const email = document.getElementById('inv-email').value.trim();
   const role  = document.getElementById('inv-role').value || null;
   const venue = document.getElementById('inv-venue').value || null;
+  const emp   = document.getElementById('inv-emp').value || null;
   if (!email) { msg.textContent = 'Enter an email.'; return; }
   const btn = document.getElementById('inv-btn'); btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    await Auth.inviteUser(email, role, venue);
+    await Auth.inviteUser(email, role, venue, emp);
     msg.innerHTML = `<span style="color:var(--green)">Invite emailed to ${email}${role?` as ${role}`:''}. They set their own password.</span>`;
     document.getElementById('inv-email').value = '';
     load();

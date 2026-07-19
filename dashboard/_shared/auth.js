@@ -47,6 +47,7 @@ export const Auth = (() => {
       name: meta.name || u.email,
       role: meta.role || null,          // set by admin in app_metadata
       venue: meta.venue || null,
+      employee: (u.app_metadata || {}).employee_id || null,  // -> wage rate
       token: session.access_token,      // the Supabase JWT the Worker verifies
     };
   }
@@ -258,8 +259,8 @@ export const Auth = (() => {
     return j;
   }
   const listUsers  = () => adminCall("users", {}).then((j) => j.users || []);
-  const inviteUser = (email, role, venue) => adminCall("invite", { email, role, venue });
-  const setUserRole = (email, role, venue) => adminCall("role", { email, role, venue });
+  const inviteUser = (email, role, venue, employee) => adminCall("invite", { email, role, venue, employee });
+  const setUserRole = (email, role, venue, employee) => adminCall("role", { email, role, venue, employee });
 
   return {
     login, signUp, forgotPassword, completePasswordReset, logout,

@@ -159,3 +159,24 @@ def product_labour(product: str, sessions: list[PrepSession],
     if not costs:
         return None
     return sum(costs) / Decimal(len(costs))
+
+
+# ----------------------------------------------- live-display estimate rate ---
+# The recipe builder shows a live "GP after labour" as a chef sets the prep
+# timer. Costing that at the chef's OWN exact rate would push an individual's
+# wage into the browser — payroll data we do not publish. So the LIVE figure
+# uses a whole-team average rate (no individual is identifiable from a mean),
+# published in data/labour_rate.json. It is an ESTIMATE. The number that goes
+# into reporting is the real one: each submitted prep session is costed at its
+# recorder's exact rate, server-side (product_labour). Live = team estimate;
+# stored = exact per person.
+
+def venue_estimate_rate_per_minute(venue: Optional[str] = None) -> Optional[Decimal]:
+    """Team-average effective $/min — for the live builder estimate only."""
+    calib = _calib()
+    rates = [Decimal(str(e["rate_per_hour"])) for e in calib.values()
+             if e.get("rate_per_hour") is not None]
+    if not rates:
+        return None
+    base = sum(rates) / Decimal(len(rates))
+    return (base * _effective_multiplier() / 60).quantize(Decimal("0.0001"))

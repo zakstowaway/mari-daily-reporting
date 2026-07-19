@@ -62,7 +62,8 @@ def build() -> int:
     # data/costs.csv is different: deterministic from cogs_list.csv, so it IS
     # committed and CI proves it reproduces. Two kinds of derived file; only one
     # of them can be checked byte-for-byte.
-    for gen in ("modules/recipes/pipeline/build_ingredients.py",):
+    for gen in ("modules/recipes/pipeline/build_ingredients.py",
+                "modules/recipes/pipeline/build_recipe_feeds.py"):
         r = subprocess.run([sys.executable, str(ROOT / gen)], capture_output=True, text=True, cwd=ROOT)
         if r.returncode:
             print(f"  FAILED {gen}\n{r.stderr}")
