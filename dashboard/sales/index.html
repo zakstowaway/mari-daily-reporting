@@ -1908,7 +1908,7 @@ function renderVenueTabs() {
     const active = v === STATE.currentVenue ? `active ${cfg.chipClass}` : '';
     return `<button class="venue-tab ${active}" onclick="switchVenue('${v}')">${cfg.label}</button>`;
   }).join('') + (CURRENT_ROLE === 'admin'
-    ? `<a class="venue-tab eatclub-tab" href="rg.html">Menu Trends</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="eatclub.html">EatClub</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="/recipes/">Recipes</a>`
+    ? `<a class="venue-tab eatclub-tab" href="rg.html">Menu Trends</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="eatclub.html">EatClub</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="/recipes/">Recipes</a><a class="venue-tab" style="text-decoration:none;display:inline-flex;align-items:center;" href="/admin/">Team</a>`
     : '');
 }
 function renderVenueStrip() {
