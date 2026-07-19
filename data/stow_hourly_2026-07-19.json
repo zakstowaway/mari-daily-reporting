@@ -1,0 +1,95 @@
+{
+  "date": "2026-07-19",
+  "source_csv": "stow_hourly_2026-07-19.csv",
+  "rows_ingested": 167,
+  "stowaway_proper": {
+    "by_hour": {
+      "12": {
+        "inc_gst": "1914.22",
+        "ex_gst": "1740.19"
+      },
+      "13": {
+        "inc_gst": "1338.18",
+        "ex_gst": "1216.54"
+      },
+      "14": {
+        "inc_gst": "1486.54",
+        "ex_gst": "1351.42"
+      },
+      "15": {
+        "inc_gst": "1425.16",
+        "ex_gst": "1295.60"
+      },
+      "16": {
+        "inc_gst": "2091.87",
+        "ex_gst": "1901.68"
+      },
+      "17": {
+        "inc_gst": "2892.85",
+        "ex_gst": "2629.87"
+      },
+      "18": {
+        "inc_gst": "1866.58",
+        "ex_gst": "1696.88"
+      },
+      "19": {
+        "inc_gst": "757.90",
+        "ex_gst": "689.01"
+      },
+      "20": {
+        "inc_gst": "174.35",
+        "ex_gst": "158.50"
+      },
+      "21": {
+        "inc_gst": "139.59",
+        "ex_gst": "126.90"
+      },
+      "22": {
+        "inc_gst": "37.95",
+        "ex_gst": "34.50"
+      },
+      "23": {
+        "inc_gst": "23.10",
+        "ex_gst": "21.00"
+      }
+    },
+    "dinner_window_1700_2059_inc_gst": "5691.68",
+    "dinner_window_1700_2059_ex_gst": "5174.26",
+    "lunch_window_1200_1559_inc_gst": "6164.10",
+    "lunch_window_1200_1559_ex_gst": "5603.75",
+    "window_1700_2059_inc_gst": "5691.68",
+    "window_1700_2059_ex_gst": "5174.26",
+    "day_total_inc_gst": "14148.29"
+  },
+  "marilynas": {
+    "by_hour": {
+      "16": {
+        "inc_gst": "115.32",
+        "ex_gst": "104.97"
+      },
+      "17": {
+        "inc_gst": "450.04",
+        "ex_gst": "409.32"
+      },
+      "18": {
+        "inc_gst": "291.20",
+        "ex_gst": "264.73"
+      },
+      "19": {
+        "inc_gst": "215.05",
+        "ex_gst": "195.50"
+      },
+      "20": {
+        "inc_gst": "28.60",
+        "ex_gst": "26.00"
+      }
+    },
+    "dinner_window_1700_2059_inc_gst": "984.89",
+    "dinner_window_1700_2059_ex_gst": "895.55",
+    "lunch_window_1200_1559_inc_gst": "0.00",
+    "lunch_window_1200_1559_ex_gst": "0.00",
+    "window_1700_2059_inc_gst": "984.89",
+    "window_1700_2059_ex_gst": "895.55",
+    "day_total_inc_gst": "1100.21"
+  }
+}
