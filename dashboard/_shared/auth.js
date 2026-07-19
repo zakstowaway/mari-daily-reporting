@@ -51,11 +51,21 @@ export const Auth = (() => {
     };
   }
 
-  let CACHE = null;
+  let CACHE = null, _refreshedForRole = false;
   async function current() {
     if (!sb) return null;
     const { data } = await sb.auth.getSession();
-    CACHE = shape(data.session);
+    let shaped = shape(data.session);
+    // A role granted AFTER sign-in is not in the cached JWT (it caches
+    // app_metadata at issue time). Refresh once to pick it up, so "an admin
+    // just gave me access" works without a manual re-login. Verified: this was
+    // exactly Zak's case after being made admin mid-session.
+    if (shaped && !shaped.role && !_refreshedForRole) {
+      _refreshedForRole = true;
+      const { data: r } = await sb.auth.refreshSession();
+      if (r?.session) shaped = shape(r.session);
+    }
+    CACHE = shaped;
     return CACHE;
   }
 
