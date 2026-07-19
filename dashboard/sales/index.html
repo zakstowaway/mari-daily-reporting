@@ -319,8 +319,8 @@ body {
 }
 .card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 .card .label {
-  font-family: 'Space Grotesk', sans-serif; font-size: 11px;
-  text-transform: uppercase; letter-spacing: 0.15em; font-weight: 500;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px;
+  text-transform: none; letter-spacing: 0.005em; font-weight: 600;
   color: var(--ink-soft); margin: 0 0 8px;
 }
 .card .value {
@@ -373,6 +373,58 @@ tbody tr:hover { background: var(--group-tint); }
 }
 .hidden { display: none !important; }
 .placeholder-card { grid-column: 1 / -1; text-align: center; padding: 60px 24px; }
+
+/* ---- Redesigned timeframe / day selector ---- */
+.timeframe-toggle { gap: 6px; align-items: center; }
+.tf-wklabel { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); padding: 0 4px; }
+.tf-chips { display: inline-flex; gap: 3px; flex-wrap: wrap; }
+.tf-chip { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; line-height: 1.15;
+  padding: 5px 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+  border-radius: 7px; cursor: pointer; text-align: center; min-width: 36px; }
+.tf-chip .tf-wd { display: block; font-size: 8px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 1px; }
+.tf-chip:hover:not([disabled]) { border-color: var(--ink); }
+.tf-chip.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.tf-chip.active .tf-wd { color: rgba(255,255,255,0.72); }
+.tf-chip.muted { opacity: 0.4; }
+.tf-chip[disabled] { cursor: default; }
+.tf-div { width: 1px; align-self: stretch; background: var(--line); margin: 3px 4px; }
+.tf-btn { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-soft); padding: 8px 12px; border: none; background: transparent;
+  border-radius: 6px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.tf-btn:hover { color: var(--ink); }
+.tf-btn.active { background: var(--group); color: var(--paper); }
+
+/* ---- Expected / actual profit card ---- */
+.pcard { background: var(--paper); border-radius: 12px; padding: 18px 20px; margin: 0 0 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-top: 4px solid var(--green); }
+.pcard.neg { border-top-color: var(--mari); }
+.pcard-head { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; }
+.pcard-lbl { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.02em; color: var(--ink-soft); }
+.pcard-hero { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1; color: var(--green); margin: 0 0 14px; }
+.pcard-hero.neg { color: var(--mari); }
+.pcard-margin { font-size: 15px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0; }
+.pmini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 14px; }
+@media (max-width: 500px) { .pmini { grid-template-columns: 1fr; } }
+.pmini-c { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
+.pmini-l { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; color: var(--ink-soft); margin: 0 0 5px; }
+.pmini-v { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0; color: var(--ink); }
+.pmini-s { font-size: 12px; margin: 3px 0 0; font-family: 'Space Grotesk', sans-serif; font-variant-numeric: tabular-nums;
+  display: flex; gap: 7px; align-items: baseline; }
+.pmini-s .vs-t { opacity: .7; } .pmini-s .vs-bad { color: #E24B4A; } .pmini-s .vs-good { color: #1D9E75; } .pmini-s .vs-ok { opacity: .55; }
+.pcard-bar { margin: 0 0 12px; }
+.pbrk { display: flex; flex-direction: column; gap: 2px; }
+.pbrk-row { display: flex; align-items: baseline; gap: 8px; font-size: 13px; padding: 3px 0; }
+.pbrk-dot { width: 9px; height: 9px; border-radius: 2px; flex: none; align-self: center; }
+.pbrk-l { flex: 1; color: var(--ink); }
+.pbrk-p { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 52px; text-align: right; }
+.pbrk-r { min-width: 118px; text-align: right; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pbrk-row.total { border-top: 1px solid var(--line); margin-top: 5px; padding-top: 8px; }
+.pbrk-row.total .pbrk-l { font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+.pbrk-row.total .pbrk-p { font-size: 15px; }
 </style>
 </head>
 <script>
@@ -421,23 +473,7 @@ tbody tr:hover { background: var(--group-tint); }
   <div id="venue-tabs" class="venue-tabs hidden">
     <div class="vt-flex">
       <div class="venue-tabs-inner" id="venue-tabs-inner"></div>
-      <div class="timeframe-toggle" id="timeframe-toggle">
-        <button data-tf="day" class="active">Yesterday</button>
-        <button data-tf="week">This Week</button>
-        <button data-tf="lastweek">Last Week</button>
-        <button data-tf="month">This Month</button>
-        <button data-tf="lastmonth">Last Month</button>
-        <button data-tf="quarter">This Quarter</button>
-        <button data-tf="lastquarter">Last Quarter</button>
-        <select id="tf-more">
-          <option value="">More…</option>
-          <option value="thisfy">This FY</option>
-          <option value="lastfy">Last FY</option>
-          <option value="last12">Last 12 months</option>
-          <option value="all">All time</option>
-          <option value="range">Custom range…</option>
-        </select>
-      </div>
+      <div class="timeframe-toggle" id="timeframe-toggle"><!-- populated by renderTimeframeToggle() --></div>
     </div>
   </div>
 
@@ -470,6 +506,7 @@ tbody tr:hover { background: var(--group-tint); }
     <p class="snapshot-date"><span id="latest-date"></span><span id="stale-badge"></span></p>
     <p id="verdict" class="verdict"></p>
 
+    <div id="profit-card" style="margin-top: 2px;"></div>
     <div class="grid" id="snapshot"></div>
     <div class="grid" id="split-snapshot" style="margin-top: 10px;"></div>
     <div id="dollar-strip" style="margin-top: 14px;"></div>
@@ -1237,6 +1274,10 @@ function vsTarget(pct, tgt, band = 2, invert = false) {
 
 function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
 function hasVal(x) { return x != null && x !== '' && isFinite(parseFloat(x)); }
+// GROSS revenue: what actually rang on the POS. revenue_ex_gst is already NET
+// of the EatClub give-away (discount + 11% commission), so add it back to get
+// the top line the customer was billed. gross = net + eatclub give-away.
+function grossRev(day) { return toNum(day.revenue_ex_gst) + toNum(day.eatclub_giveaway_ex_gst); }
 function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
 function isoDate(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -1598,7 +1639,7 @@ const CARD_DEFS = {
         }
       }
     }
-    return { label: 'Revenue (ex-GST)', value: fmtDollars(toNum(day.revenue_ex_gst)), sub, status: 'unknown' };
+    return { label: 'Revenue (gross)', value: fmtDollars(grossRev(day)), sub, status: 'unknown' };
   },
   wages_hero: (day, cfg) => {
     const med = wageMedian12wk(STATE.histories[STATE.currentVenue] || []);
@@ -1918,16 +1959,48 @@ function renderVenueStrip() {
   const cfg = VENUE_CONFIG[STATE.currentVenue];
   el.className = 'venue-strip ' + cfg.chipClass;
 }
+// Mon -> Sun of the CURRENT week (Sydney), as Date objects.
+function currentWeekDays() {
+  const mon = weekStart(sydneyToday());
+  const out = [];
+  for (let i = 0; i < 7; i++) out.push(addDays(mon, i));
+  return out;
+}
+// One-row selector: "This week" + 7 day chips (click = that date), a divider,
+// This week / Last week / This month buttons, then a More… select for the rest.
 function renderTimeframeToggle() {
-  document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tf === STATE.currentTimeframe);
-  });
-  const more = document.getElementById('tf-more');
-  if (more) {
-    const on = ['thisfy', 'lastfy', 'last12', 'all', 'range'].includes(STATE.currentTimeframe);
-    more.classList.toggle('active', on);
-    more.value = on ? STATE.currentTimeframe : '';
-  }
+  const el = document.getElementById('timeframe-toggle');
+  if (!el) return;
+  const tf = STATE.currentTimeframe;
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  const byDate = Object.fromEntries(rows.map(r => [r.date, r]));
+  const todayIso = isoDate(sydneyToday());
+  const chips = currentWeekDays().map(d => {
+    const iso = isoDate(d);
+    const future = iso > todayIso;
+    const has = !!byDate[iso] && !!byDate[iso].revenue_ex_gst;
+    const active = tf === 'day' && iso === STATE.currentDay;
+    const cls = ['tf-chip'];
+    if (active) cls.push('active');
+    if (future || !has) cls.push('muted');
+    const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
+    return `<button class="${cls.join(' ')}"${future ? ' disabled title="no data yet"' : ` onclick="switchDay('${iso}')"`}>` +
+           `<span class="tf-wd">${wd}</span>${d.getDate()}</button>`;
+  }).join('');
+  const btn = (t, lbl) => `<button class="tf-btn${tf === t ? ' active' : ''}" onclick="switchTimeframe('${t}')">${lbl}</button>`;
+  const moreOpts = [['lastmonth', 'Last month'], ['quarter', 'This quarter'], ['lastquarter', 'Last quarter'],
+    ['thisfy', 'This FY'], ['lastfy', 'Last FY'], ['last12', 'Last 12 months'], ['all', 'All time'], ['range', 'Custom range…']];
+  const moreOn = moreOpts.some(o => o[0] === tf);
+  const moreSel = `<select id="tf-more" class="${moreOn ? 'active' : ''}" onchange="if(this.value)switchTimeframe(this.value)">` +
+    `<option value="">More…</option>` +
+    moreOpts.map(o => `<option value="${o[0]}"${moreOn && tf === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('') +
+    `</select>`;
+  el.innerHTML =
+    `<span class="tf-wklabel">This week</span>` +
+    `<div class="tf-chips">${chips}</div>` +
+    `<span class="tf-div"></span>` +
+    btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') +
+    moreSel;
 }
 function renderRangePicker() {
   const el = document.getElementById('range-picker');
@@ -1949,24 +2022,12 @@ function applyRange() {
   STATE.rangeEnd   = si.value <= ei.value ? ei.value : si.value;
   render();
 }
+// The old standalone day-pill strip is gone — the week chips in the timeframe
+// toggle now select the day. This just keeps the custom-range inputs working.
 function renderDayPicker() {
-  renderRangePicker();
   const picker = document.getElementById('day-picker');
-  if (STATE.currentTimeframe !== 'day') { picker.style.display = 'none'; return; }
-  picker.style.display = 'flex';
-  const rows = STATE.histories[STATE.currentVenue] || [];
-  const rowsByDate = Object.fromEntries(rows.map(r => [r.date, r]));
-  const today = sydneyToday();
-  const days = [];
-  for (let i = 7; i >= 1; i--) days.push(addDays(today, -i));
-  picker.innerHTML = days.map(d => {
-    const iso = isoDate(d);
-    const has = !!rowsByDate[iso] && rowsByDate[iso].revenue_ex_gst;
-    const active = iso === STATE.currentDay ? 'active' : '';
-    const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
-    const dn = d.getDate();
-    return `<button class="day-pill ${active} ${has ? '' : 'no-data'}" onclick="switchDay('${iso}')"><span class="weekday">${wd}</span>${dn}</button>`;
-  }).join('');
+  if (picker) { picker.style.display = 'none'; picker.innerHTML = ''; }
+  renderRangePicker();
 }
 
 // Card lists: role config wins (slice-scoped roles like stowfood/bar carry
@@ -1975,11 +2036,14 @@ function cardsForCurrentView() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const base = (roleCfg.cards || venueCfg.cards);
-  const list = (CURRENT_ROLE === 'admin')
-    ? ['revenue', 'profit', 'wages_hero', 'cogs_merged', 'delivery_fees', 'overheads', 'eatclub']
+  // Admin: revenue / COGS / wages / profit now live in the dedicated #profit-card
+  // hero block (renderProfitCard). The plain grid keeps the supporting cost cards.
+  let list = (CURRENT_ROLE === 'admin')
+    ? ['delivery_fees', 'overheads']
     : base.slice();
-  // EatClub give-away must surface for EVERY role, not just admin (Zak, 2026-07-19).
-  if (!list.includes('eatclub')) list.push('eatclub');
+  // Retired cards: standalone GP (just 100 − COGS) and the EatClub give-away
+  // (now folded into the profit breakdown as a cost line, not its own card).
+  list = list.filter(k => k !== 'gp' && k !== 'eatclub');
   return list;
 }
 
@@ -2010,6 +2074,7 @@ function renderSnapshot() {
       return `<div class="card unknown"><p class="label">${c.label}</p><p class="value">—</p><p class="sub">no data yet</p></div>`;
     }).join('');
     snapshotEl.innerHTML = ghostCards;
+    const pcEl0 = document.getElementById('profit-card'); if (pcEl0) pcEl0.innerHTML = '';
     document.getElementById('dollar-strip').innerHTML = '';
     document.getElementById('split-snapshot').innerHTML = '';
     const waEl0 = document.getElementById('week-ahead'); if (waEl0) waEl0.innerHTML = '';
@@ -2035,35 +2100,10 @@ function renderSnapshot() {
     const behind = latest ? Math.floor((sydneyToday() - new Date(latest)) / 86400000) - 1 : 0;
     if (behind > 0) staleEl.innerHTML = `<span class="stale">Latest data ${behind}d behind</span>`;
   }
-  // Act 1: the verdict — one line answering "did we make money?"
+  // Verdict line retired in the redesign — the profit hero block carries the
+  // "did we make money?" answer now. Keep the container clear.
   const vEl = document.getElementById('verdict');
-  if (vEl) {
-    vEl.innerHTML = '';
-    if (CURRENT_ROLE === 'admin') {
-      const revV = toNum(day.revenue_ex_gst);
-      const apV = actualProfitWindow(day);
-      const wV = pnlWindow(day);
-      const PV = apV ? apV.profit : wV ? wV.profit : null;
-      const pRev = apV ? apV.rev : wV ? wV.rev : revV;
-      let html = fmtDollars(revV) + ' revenue';
-      if (PV !== null && pRev) {
-        html += ` <span class="v-arrow">→</span> <span class="${PV >= 0 ? 'v-pos' : 'v-neg'}">${(PV < 0 ? '−$' : '$') + Math.round(Math.abs(PV)).toLocaleString()} ${apV ? 'actual' : 'expected'} profit</span>`;
-        const bits = [fmtPct(PV / pRev * 100) + ' margin'];
-        if (!apV && wV) {
-          const bpV = breakevenParts(STATE.currentVenue, winEnd(day));
-          if (bpV) {
-            const beV = bpV.fixedDaily * ohFactor(day, STATE.currentVenue, wV.wdays) / (1 - bpV.varPct / 100);
-            const dBE = wV.rev - beV;
-            bits.push((dBE >= 0 ? fmtDollars(dBE) + ' above' : fmtDollars(-dBE) + ' below') + ' breakeven');
-          }
-        }
-        const yyV = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
-        if (yyV !== null) bits.push((yyV >= 0 ? '+' : '−') + Math.abs(yyV).toFixed(1) + '% vs LY');
-        html += ` <span class="v-dim">(${bits.join(' · ')})</span>`;
-      }
-      vEl.innerHTML = html;
-    }
-  }
+  if (vEl) vEl.innerHTML = '';
   const cardEls = cards.map(key => ({ key, ...CARD_DEFS[key](day, cfg) }));
   const clickable = CURRENT_ROLE === 'admin';
   // 30-day sparklines for the metrics with honest daily series
@@ -2094,49 +2134,136 @@ function sparkline(vals) {
 }
 
 function renderExtras(day, cfg) {
-  const strip = document.getElementById('dollar-strip');
-  const splitEl = document.getElementById('split-snapshot');
-  const waEl = document.getElementById('week-ahead');
-  const dhEl = document.getElementById('data-health');
-  const vbEl = document.getElementById('venue-breakdown');
-  strip.innerHTML = ''; splitEl.innerHTML = '';
-  if (waEl) waEl.innerHTML = ''; if (dhEl) dhEl.innerHTML = ''; if (vbEl) vbEl.innerHTML = '';
+  // De-noised in the redesign: the dollar strip now lives inside the profit
+  // card, and the verdict / kitchen-FOH split / week-ahead / data-health blocks
+  // are retired (their render functions stay defined but are no longer called).
+  document.getElementById('dollar-strip').innerHTML = '';
+  document.getElementById('split-snapshot').innerHTML = '';
+  const waEl = document.getElementById('week-ahead'); if (waEl) waEl.innerHTML = '';
+  const dhEl = document.getElementById('data-health'); if (dhEl) dhEl.innerHTML = '';
+  const vbEl = document.getElementById('venue-breakdown'); if (vbEl) vbEl.innerHTML = '';
+  const pcEl = document.getElementById('profit-card'); if (pcEl) pcEl.innerHTML = '';
   if (!day) return;
-  // Week-ahead roster forecast is for EVERYONE — managers roster their venue.
-  renderWeekAhead();
+  renderProfitCard(day, cfg);
   const srEl = document.getElementById('story-row');
-  if (CURRENT_ROLE !== 'admin') {
-    if (srEl) srEl.style.gridTemplateColumns = '1fr';
+  if (CURRENT_ROLE !== 'admin') { if (srEl) srEl.style.gridTemplateColumns = '1fr'; return; }
+  renderVenueBreakdown();   // kept: the group -> venue table
+  if (srEl) srEl.style.gridTemplateColumns = '1fr';
+}
+
+// Admin-only hero P&L block. Shows the closed/Xero ACTUAL profit when the whole
+// window is booked, otherwise the EXPECTED (open period) breakdown: small
+// revenue/COGS/wages cards, a 100%-of-gross stacked bar, and a cost-by-cost
+// list where every % is a share of GROSS and the profit $ is unchanged.
+function renderProfitCard(day, cfg) {
+  const el = document.getElementById('profit-card');
+  if (!el) return;
+  el.innerHTML = '';
+  if (CURRENT_ROLE !== 'admin' || !day) return;
+  const fmtP = x => (x < 0 ? '−$' : '$') + Math.round(Math.abs(x)).toLocaleString();
+
+  const ap = actualProfitWindow(day);
+  if (ap) {
+    // Closed period — actuals from Xero. Kept working, lightly restyled.
+    const w0 = pnlWindow(day);
+    const dlt = w0 ? ap.profit - w0.profit : null;
+    const margin = ap.rev ? ap.profit / ap.rev * 100 : 0;
+    const bits = [`COS ${fmtPct(ap.cos / ap.rev * 100)}`, `payroll ${fmtPct(ap.wages / ap.rev * 100)}`, `OH ${fmtDollars(ap.oh)}`];
+    if (ap.df) bits.push(`platform fees ${fmtDollars(ap.df)}`);
+    if (ap.fin) bits.push(`interest & dep ${fmtDollars(ap.fin)}`);
+    if (dlt !== null) bits.push(`expected said ${fmtP(w0.profit)} (Δ ${fmtP(dlt)})`);
+    bits.push(`${ap.nMonths} closed month${ap.nMonths > 1 ? 's' : ''}, stock journals posted`);
+    el.innerHTML =
+      `<div class="pcard${ap.profit >= 0 ? '' : ' neg'}">` +
+      `<div class="pcard-head"><span class="pcard-lbl">Actual profit</span> ${pill('closed · Xero', 'green')}</div>` +
+      `<div class="pcard-hero${ap.profit >= 0 ? '' : ' neg'}">${fmtP(ap.profit)}<span class="pcard-margin"> · ${fmtPct(margin)} margin</span></div>` +
+      `<div class="pbrk"><div class="pbrk-row"><span class="pbrk-l" style="font-size:12px;color:var(--ink-soft)">${bits.join(' · ')}</span></div></div>` +
+      `</div>`;
     return;
   }
-  renderVenueBreakdown(); renderDataHealth();
-  if (srEl) srEl.style.gridTemplateColumns = (vbEl && vbEl.innerHTML) ? '' : '1fr';
+
   const w = pnlWindow(day);
-  if (w) {
-    const rev = w.rev;
-    const segs = [
-      ['COGS', w.cogsPct, '#D85A30'],
-      ['Wages', w.wages / rev * 100, '#7F77DD'],
-      ['Delivery', w.df / rev * 100, '#EF9F27'],
-      ['Corp payroll', w.cp / rev * 100, '#D4537E'],
-      ['Overheads', w.oh / rev * 100, '#888780'],
-      // Interest + depreciation. Last before Profit, so the bar reads down the
-      // P&L in order and the green tail is NET profit, not operating profit —
-      // which is what it used to claim while quietly ignoring ~$70k/yr.
-      ['Interest & dep', w.fin / rev * 100, '#5A5A70'],
-    ].filter(sg => sg[1] > 0.05);
-    const profitPct = 100 - segs.reduce((t, sg) => t + sg[1], 0);
-    segs.push(['Profit', profitPct, profitPct >= 0 ? '#1D9E75' : '#E24B4A']);
-    strip.innerHTML = '<p class="strip-label">Where each revenue dollar went</p>'
-      + '<div class="strip-bar">' + segs.map(sg => `<div style="width:${Math.max(0, Math.min(100, sg[1])).toFixed(2)}%;background:${sg[2]};"></div>`).join('') + '</div>'
-      + '<div class="strip-legend">' + segs.map(sg => `<span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${sg[2]};margin-right:5px;"></span>${sg[0]} ${sg[1].toFixed(1)}%</span>`).join('') + '</div>';
+  if (!w) {
+    el.innerHTML = `<div class="pcard"><div class="pcard-head"><span class="pcard-lbl">Expected profit</span></div>` +
+      `<div class="pcard-hero" style="color:var(--ink-soft);font-size:22px">—</div>` +
+      `<div class="pbrk-row"><span class="pbrk-l" style="font-size:12px;color:var(--ink-soft)">needs revenue + wages</span></div></div>`;
+    return;
   }
-  if ((STATE.currentVenue === 'stow' || STATE.currentVenue === 'hg') && hasVal(day.food_ex_gst)) {
-    splitEl.innerHTML = ['cogs_food', 'cogs_bev', 'wages_kitchen', 'wages_foh'].map(k => {
-      const c = CARD_DEFS[k](day, cfg);
-      return `<div class="card ${c.status || 'unknown'}"><p class="label">${c.label}</p><p class="value">${c.value}</p>${c.vs ? `<p class="vs">${c.vs}</p>` : ''}<p class="sub">${c.sub || ''}</p></div>`;
-    }).join('');
-  }
+
+  const eat = toNum(day.eatclub_giveaway_ex_gst);
+  const covers = toNum(day.eatclub_covers);
+  const cogsD = w.rev * w.cogsPct / 100;
+  // Gross base for this window. gross = net + give-away, so subtracting the
+  // give-away as a cost leaves the profit $ EXACTLY equal to the net-based
+  // value: (rev + eat) - cogs - wages - oh - df - cp - eat - fin = w.profit.
+  const gross = w.rev + eat;
+  const pct = x => gross ? x / gross * 100 : 0;
+  const margin = pct(w.profit);
+  const wTgt = wageTargetFor(day);
+  const cogsPctG = pct(cogsD), wagesPctG = pct(w.wages);
+  const grpDisp = grossRev(day);   // full-window gross for the headline revenue card
+
+  // --- small cards: Revenue (gross) / COGS % vs tgt / Wages % vs tgt ---
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  let anchorDay = STATE.currentDay;
+  if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+  const yy = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
+  const revSub = yy !== null
+    ? `<span class="${yy >= 0 ? 'vs-good' : 'vs-bad'}">${(yy >= 0 ? '+' : '−') + Math.abs(yy).toFixed(1)}%</span><span class="vs-t">vs LY</span>`
+    : '';
+  const wagesLbl = 'Wages' + (STATE.currentVenue === 'group' ? ' (excl. admin)' : '');
+  const mini =
+    `<div class="pmini">` +
+    `<div class="pmini-c"><p class="pmini-l">Revenue (gross)</p><p class="pmini-v">${fmtDollars(grpDisp)}</p><p class="pmini-s">${revSub}</p></div>` +
+    `<div class="pmini-c"><p class="pmini-l">COGS</p><p class="pmini-v">${fmtPct(cogsPctG)}</p><p class="pmini-s">${vsTarget(cogsPctG, COGS_TARGET_PCT)}</p></div>` +
+    `<div class="pmini-c"><p class="pmini-l">${wagesLbl}</p><p class="pmini-v">${fmtPct(wagesPctG)}</p><p class="pmini-s">${wTgt !== null ? vsTarget(wagesPctG, wTgt) : ''}</p></div>` +
+    `</div>`;
+
+  // --- 100%-of-gross stacked bar (reuses the old dollar-strip logic) ---
+  const barDefs = [
+    ['COGS', cogsD, '#D85A30'],
+    ['Wages', w.wages, '#7F77DD'],
+    ['Delivery', w.df, '#EF9F27'],
+    ['EatClub give-away', eat, '#C86FA0'],
+    ["Owners' salary", w.cp, '#D4537E'],
+    ['Overheads', w.oh, '#888780'],
+    ['Interest & dep', w.fin, '#5A5A70'],
+  ].map(s => [s[0], pct(s[1]), s[2]]).filter(s => s[1] > 0.05);
+  const profitPct = 100 - barDefs.reduce((t, s) => t + s[1], 0);
+  const barSegs = barDefs.concat([['Expected profit', profitPct, profitPct >= 0 ? '#1D9E75' : '#E24B4A']]);
+  const bar = '<div class="pcard-bar"><div class="strip-bar">' +
+    barSegs.map(s => `<div style="width:${Math.max(0, Math.min(100, s[1])).toFixed(2)}%;background:${s[2]};" title="${s[0]} ${s[1].toFixed(1)}%"></div>`).join('') +
+    '</div></div>';
+
+  // --- breakdown list: each cost as a % of gross, with its target reference ---
+  const refCol = st => st === 'red' ? 'var(--red)' : st === 'green' ? 'var(--green)' : 'var(--amber)';
+  const line = (color, label, p, ref) =>
+    `<div class="pbrk-row"><span class="pbrk-dot" style="background:${color}"></span>` +
+    `<span class="pbrk-l">${label}</span><span class="pbrk-p">${fmtPct(p)}</span>` +
+    `<span class="pbrk-r">${ref || ''}</span></div>`;
+  const cogsRef = `<span style="color:${refCol(cogsStatus(cogsPctG))}">tgt ${fmtPct(COGS_TARGET_PCT)}</span>`;
+  const wageSt = wTgt === null ? 'amber' : wagesPctG > wTgt + 2 ? 'red' : wagesPctG < wTgt - 2 ? 'green' : 'amber';
+  const wageRef = wTgt !== null ? `<span style="color:${refCol(wageSt)}">tgt ${fmtPct(wTgt)}</span>` : '';
+  let list = '';
+  list += line('#D85A30', 'COGS', cogsPctG, cogsRef);
+  list += line('#7F77DD', wagesLbl, wagesPctG, wageRef);
+  list += line('#888780', 'Overheads', pct(w.oh), '');
+  list += line('#EF9F27', 'Delivery platforms', pct(w.df), '');
+  if (eat > 0.005) list += line('#C86FA0', 'EatClub give-away', pct(eat), `· ${covers} cover${covers === 1 ? '' : 's'}`);
+  if (w.cp > 0.005) list += line('#D4537E', "Owners' salary", pct(w.cp), '');
+  if (w.fin > 0.005) list += line('#5A5A70', 'Interest & dep', pct(w.fin), '');
+  list +=
+    `<div class="pbrk-row total"><span class="pbrk-dot" style="background:${profitPct >= 0 ? '#1D9E75' : '#E24B4A'}"></span>` +
+    `<span class="pbrk-l">Expected profit</span><span class="pbrk-p">${fmtPct(margin)}</span>` +
+    `<span class="pbrk-r">${fmtP(w.profit)}</span></div>`;
+
+  el.innerHTML =
+    `<div class="pcard${w.profit >= 0 ? '' : ' neg'}">` +
+    `<div class="pcard-head"><span class="pcard-lbl">Expected profit</span> ${pill('open period', 'warn')}` +
+    (w.partial ? ` <span style="font-size:11px;color:var(--ink-soft)">${w.wdays} of ${w.daysAll} days costed</span>` : '') + `</div>` +
+    `<div class="pcard-hero${w.profit >= 0 ? '' : ' neg'}">${fmtP(w.profit)}<span class="pcard-margin"> · ${fmtPct(margin)} margin</span></div>` +
+    mini + bar + `<div class="pbrk">${list}</div>` +
+    `</div>`;
 }
 
 // Wage targets: 30% weekly anchor (Zak, 2026-07-15), shaped by weekday.
@@ -2858,6 +2985,7 @@ function switchTimeframe(tf) {
   render();
 }
 function switchDay(iso) {
+  STATE.currentTimeframe = 'day';
   STATE.currentDay = iso;
   render();
 }
@@ -2921,11 +3049,9 @@ async function bootstrap() {
   STATE.currentVenue = (STATE.histories[defaultVenue]?.length ? defaultVenue : withData) || defaultVenue;
   const rows = STATE.histories[STATE.currentVenue] || [];
   STATE.currentDay = rows.length ? rows[rows.length - 1].date : isoDate(addDays(sydneyToday(), -1));
-  document.querySelectorAll('#timeframe-toggle button').forEach(btn => {
-    btn.onclick = () => switchTimeframe(btn.dataset.tf);
-  });
-  const more = document.getElementById('tf-more');
-  if (more) more.onchange = () => { if (more.value) switchTimeframe(more.value); };
+  // The timeframe toggle (week chips + buttons + More select) is rebuilt on
+  // every render by renderTimeframeToggle() with inline handlers, so there is
+  // nothing to wire here beyond the custom-range Apply button.
   document.getElementById('range-apply').onclick = applyRange;
   render();
 }

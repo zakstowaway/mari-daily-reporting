@@ -42,7 +42,7 @@ import csv
 import re
 from bisect import bisect_right
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Iterable, Optional
@@ -99,6 +99,13 @@ class CostObservation:
     venue: Optional[str] = None
     source_invoice: str = ""
     purchasable: str = ""
+    # How much was BOUGHT on this invoice line, in `unit`. Optional: the invoice
+    # pipeline does not capture it yet, so it is None today and the rolling
+    # average weights every observation equally (a plain mean). The day the
+    # pipeline records quantities, this turns the same average volume-weighted
+    # with no code change — a bulk buy will count more than a top-up, which is
+    # what you actually paid. See CostSeries.rolling.
+    qty: Optional[Decimal] = None
 
     def __post_init__(self):
         if not isinstance(self.cost_per_unit, Decimal):
@@ -146,6 +153,77 @@ class CostSeries:
             + ". Cannot cost this day. Do not substitute a current price -- that "
               "rewrites history, which is the ACP bug this design exists to avoid."
         )
+
+    def rolling(self, ingredient: str, on: date, window_days: int = 30,
+                venue: Optional[str] = None) -> CostObservation:
+        """
+        The CURRENT working cost: a trailing `window_days` average as of `on`.
+
+        Prices move (Zak, 2026-07-19: "prices move over time"). Pricing today's
+        menu off a single latest invoice is noisy — one odd delivery sets your
+        cost. So the live cost is the average of what you paid over the last
+        month, weighted by how much you bought (volume-weighted) when the
+        quantity is known, and a plain mean when it is not (which is the case
+        today — see CostObservation.qty).
+
+        This is the CURRENT view only. Historic reproducibility still runs
+        through as_of: recomputing July's COGS must give July's answer forever,
+        and an average that changes as new invoices land would rewrite it. So
+        cost_on uses as_of for a past day and rolling for the live number.
+
+        Degrades safely:
+          * one observation in the window  -> that price
+          * none in the window (but older exists) -> most recent (as_of)
+          * mixed units in the window -> most recent, not a meaningless average
+        """
+        key = self._pick_key(ingredient, on, venue)
+        if key is None:
+            # Reuse as_of purely to raise the same, well-explained LookupError.
+            return self.as_of(ingredient, on, venue=venue)
+
+        lst = self._by[key]
+        start = on - timedelta(days=window_days)
+        window = [o for o in lst if start < o.observed_on <= on]
+        if not window:
+            return self.as_of(ingredient, on, venue=venue)   # fall back to latest
+
+        units = {o.unit for o in window}
+        if len(units) > 1:
+            # Averaging g-prices with pack-prices is the $11,400/serve bug in a
+            # different hat. Refuse the average; use the latest single fact.
+            return self._latest(key, on)
+
+        # Volume-weighted when every line knows its quantity; else equal weight.
+        if all(o.qty is not None and o.qty > 0 for o in window):
+            weight = {id(o): o.qty for o in window}
+        else:
+            weight = {id(o): Decimal("1") for o in window}
+        wsum = sum(weight.values())
+        avg = sum(o.cost_per_unit * weight[id(o)] for o in window) / wsum
+
+        latest = max(window, key=lambda o: o.observed_on)
+        return CostObservation(
+            ingredient=ingredient,
+            observed_on=latest.observed_on,
+            cost_per_unit=avg,
+            unit=window[0].unit,
+            venue=key[1],
+            source_invoice=f"avg of {len(window)} obs, {window_days}d",
+        )
+
+    def _pick_key(self, ingredient: str, on: date,
+                  venue: Optional[str]) -> Optional[tuple[str, Optional[str]]]:
+        """The venue bucket as_of would resolve to — same preference rule."""
+        order: list[tuple[str, Optional[str]]] = []
+        if venue is not None:
+            order.append((ingredient, venue))
+        for v in self._venues(ingredient):
+            if (ingredient, v) not in order:
+                order.append((ingredient, v))
+        for key in order:
+            if self._latest(key, on):
+                return key
+        return None
 
     def _venues(self, ingredient: str) -> list[Optional[str]]:
         return [v for (i, v) in self._by if i == ingredient]
