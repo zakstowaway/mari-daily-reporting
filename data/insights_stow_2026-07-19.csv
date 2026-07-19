@@ -1,0 +1,223 @@
+Product Name,Product Quantity,$ Sales,Total Tax,Cost,% of Quantity,% of Sale Amount,Gross Profit %
+Lamb Roast,57,"$1,878.42",$170.85,$399.96,7%,13%,79%
+Guinness Draught - Pint,33,$331.09,$30.09,$155.70,4%,2%,53%
+Mulled Wine,24,$391.59,$35.60,$49.59,3%,3%,87%
+Fresh is Best Lager - Pint,23,$305.67,$27.78,$56.39,3%,2%,82%
+Stone & Wood - Schooner,22.7,$321.25,$29.19,$73.70,3%,2%,77%
+Extra Gravy,19,$40.16,$3.60,$6.40,2%,0%,84%
+Chicken Roast,18,$604.84,$55.02,$82.59,2%,4%,86%
+Stone & Wood - Pint,17,$318.48,$28.94,$74.02,2%,2%,77%
+Grifter Pale - Schooner,17,$197.34,$17.94,$42.20,2%,1%,79%
+Grifter Pale - Pint,13,$210.60,$19.15,$43.28,2%,1%,79%
+Villa Fresco Sangiovese - Regular,13,$162.80,$14.79,$31.36,2%,1%,81%
+Fresh is Best Summer Lager - Schooner,12,$100.97,$9.17,$19.05,1%,1%,81%
+Jalapeño Marg,11,$245.46,$22.30,$8.37,1%,2%,97%
+Version Two Pinot Grigio - Regular,11,$124.52,$11.32,$19.43,1%,1%,84%
+Extra Yorkshire Pudding,11,$24.62,$2.20,$0.00,1%,0%,0%
+Kuku Sauvignon Blanc - Regular,11,$168.37,$15.31,$32.06,1%,1%,81%
+Fish Tacos,10,$225.77,$20.53,$21.85,1%,2%,90%
+Fresh is Best Lager - Schooner,9.7,$93.69,$8.52,$17.73,1%,1%,81%
+Petits Detours Rosé - Regular,9,$159.55,$14.50,$31.47,1%,1%,80%
+Fresh Lime Soda,9,$34.92,$3.18,$0.00,1%,0%,0%
+Status Quo - Pint,9,$165.55,$15.05,$37.47,1%,1%,77%
+Pepsi Max Glass,9,$44.89,$4.09,$0.00,1%,0%,0%
+Cauliflower Cheese,9,$65.99,$6.01,$0.61,1%,0%,99%
+Philter XPA - Pint,9,$148.50,$13.50,$27.00,1%,1%,82%
+Trutta Streamside Shiraz [Chilled] - Regular,9,$154.44,$14.04,$33.66,1%,1%,78%
+Kirin - Schooner,8,$123.71,$11.25,$30.05,1%,1%,76%
+Negroni,8,$194.39,$17.67,$31.16,1%,1%,84%
+White Light Pure Vodka [House],8,$87.12,$7.92,$12.15,1%,1%,86%
+"Lemon, Lime & Bitters",8,$44.19,$4.01,$0.00,1%,0%,0%
+Classic Margarita,8,$179.61,$16.32,$32.20,1%,1%,82%
+Buffalo Wings,8,$156.52,$14.24,$31.22,1%,1%,80%
+Pie,8,$161.61,$14.70,$0.00,1%,1%,0%
+Side Tomato Sauce,7,$0.00,$0.00,$0.00,1%,0%,0%
+Mother's Milk Shiraz - Regular,7,$110.57,$10.06,$22.51,1%,1%,80%
+Sibiliana Nero D'Avola - Regular,7,$138.58,$12.60,$22.88,1%,1%,83%
+Sensei Calamari,7,$151.55,$13.77,$16.14,1%,1%,89%
+Rosemary Salted Fries,7,$98.36,$8.94,$12.99,1%,1%,87%
+American Standard Burger,7,$211.02,$19.18,$40.91,1%,1%,81%
+Crankshaft IPA - Pint,7,$134.75,$12.25,$27.38,1%,1%,80%
+Arancini Balls [5pc],6,$142.08,$12.91,$0.00,1%,1%,0%
+Ottelia Cab Sav - Regular,6,$113.46,$10.31,$27.65,1%,1%,76%
+Espresso Martini,6,$126.08,$11.46,$19.41,1%,1%,85%
+Pepsi Glass,6,$29.70,$2.70,$0.00,1%,0%,0%
+Nut Roast,5,$162.67,$14.78,$26.68,1%,1%,84%
+Side Aioli,5,$2.81,$0.25,$0.00,1%,0%,0%
+Philter XPA - Schooner,5,$63.67,$5.79,$11.18,1%,0%,82%
+Crankshaft IPA - Schooner,5,$74.25,$6.75,$14.58,1%,1%,80%
+Rocket Man,5,$89.11,$8.10,$15.98,1%,1%,82%
+Kirin - Pint,5,$101.75,$9.25,$25.19,1%,1%,75%
+Glaetzer Anaperenna Shiraz Cab - Regular,5,$154.00,$14.00,$37.50,1%,1%,76%
+Bombay Dry [House],5,$60.50,$5.50,$10.76,1%,0%,82%
+Fancy Pants Parmy - Classic,5,$162.63,$14.78,$40.53,1%,1%,75%
+Amarretto Sour,5,$106.26,$9.66,$20.44,1%,1%,81%
+On The Rocks,5,$0.00,$0.00,$0.00,1%,0%,0%
+Trentham Estate Rosé - Regular,5,$55.89,$5.09,$10.55,1%,0%,81%
+Heaps Normal Tin,4,$49.62,$4.52,$10.68,0%,0%,78%
+Casa Gheller Prosecco - Glass,4,$70.40,$6.40,$13.38,0%,0%,81%
+Scorched As,4,$79.04,$7.18,$17.06,0%,1%,78%
+Unico Zelo Terra Cotta - Regular,4,$75.24,$6.84,$17.51,0%,1%,77%
+Year Wines Fiano - Regular,4,$81.15,$7.38,$17.09,0%,1%,79%
+Asahi 3.5%,4,$46.96,$4.26,$9.88,0%,0%,79%
+Apple Juice Glass,4,$21.26,$1.93,$2.64,0%,0%,88%
+Extra Veg,4,$13.64,$1.24,$0.00,0%,0%,0%
+A. Rodda Tempranillo - Regular,4,$80.50,$7.32,$22.29,0%,1%,72%
+Large Hawaiian,4,$72.00,$6.55,$13.05,0%,1%,82%
+Flower Child,4,$87.12,$7.92,$11.62,0%,1%,87%
+Gluten-free [remove Yorkshire],4,$0.00,$0.00,$0.00,0%,0%,0%
+Lemonade Glass,4,$19.31,$1.76,$0.00,0%,0%,0%
+Large Super House Special,3,$61.90,$5.63,$23.16,0%,0%,63%
+Regular Uber Margherita [Dine-in],3,$66.65,$6.06,$9.58,0%,0%,86%
+Peroni 0%,3,$30.02,$2.73,$5.56,0%,0%,81%
+$21 Custom Cocktail,3,$27.72,$2.52,$0.00,0%,0%,0%
+Orange,3,$0.00,$0.00,$0.00,0%,0%,0%
+Geppetto Pinot Noir - Regular,3,$50.04,$4.55,$10.54,0%,0%,79%
+Corona,3,$35.03,$3.19,$7.73,0%,0%,78%
+Beef Cheek,3,$128.72,$11.70,$0.00,0%,1%,0%
+Kids Nuggets & Chips,3,$42.90,$3.90,$6.74,0%,0%,84%
+Ottelia Chardonnay - Regular,3,$52.80,$4.80,$10.38,0%,0%,80%
+BBQ Wings D,3,$33.60,$3.05,$9.42,0%,0%,72%
+Brownie D,3,$11.00,$1.00,$5.84,0%,0%,47%
+Online Surcharge,3,$3.71,$0.00,$0.00,0%,0%,0%
+Status Quo - Schooner,3,$44.55,$4.05,$9.31,0%,0%,79%
+Amalfi Olives,3,$39.21,$3.56,$0.00,0%,0%,0%
+Guinness Draught - Schooner,2.7,$40.10,$3.65,$9.50,0%,0%,76%
+Kuku Sauvignon Blanc - Large,2,$51.43,$4.68,$9.72,0%,0%,81%
+No Tomato,2,$0.00,$0.00,$0.00,0%,0%,0%
+Baked Camembert,2,$56.60,$5.16,$0.00,0%,0%,0%
+Brownie,2,$13.63,$1.24,$5.65,0%,0%,59%
+Onion Rings,2,$26.40,$2.40,$0.00,0%,0%,0%
+Sweet Potato Fries,2,$29.54,$2.68,$5.06,0%,0%,83%
+La Petite Mort Albarino 2025 - Regular,2,$39.13,$3.56,$9.16,0%,0%,77%
+Grey Goose,2,$30.80,$2.80,$5.36,0%,0%,83%
+Petits Detours Rosé - Large,2,$56.80,$5.16,$11.66,0%,0%,79%
+No Salad,2,$0.00,$0.00,$0.00,0%,0%,0%
+Regular Little Italy [Dine-in],2,$57.20,$5.20,$9.61,0%,0%,83%
+BBQ Wings,2,$37.79,$3.44,$6.28,0%,0%,83%
+Wolf Lane Navy Gin,2,$36.36,$3.31,$7.30,0%,0%,80%
+Kids Icecream,2,$11.20,$1.02,$1.48,0%,0%,87%
+Whispering Angel Rosé - Regular,2,$58.52,$5.32,$13.10,0%,0%,78%
+Garlic Bread,2,$0.00,$0.00,$2.84,0%,0%,
+Large Little Italy,2,$60.70,$5.52,$17.68,0%,0%,71%
+Fresh is Best Summer Lager - Pint,2,$26.40,$2.40,$4.26,0%,0%,84%
+Das Juice Pink Pet Nat - Bottle,2,$140.87,$12.81,$33.00,0%,1%,77%
+Regular Hail Africa,2,$38.20,$3.47,$5.82,0%,0%,85%
+Regular Little Italy,2,$42.90,$3.90,$9.61,0%,0%,78%
+Geppetto Pinot Noir - Large Glass,2,$53.66,$4.88,$11.71,0%,0%,78%
+Glass of Ice on the Side,2,$0.00,$0.00,$0.00,0%,0%,0%
+Version Two Pinot Grigio - Large,2,$41.80,$3.80,$5.89,0%,0%,86%
+Tonic [mixer],2,$0.00,$0.00,$1.61,0%,0%,
+Hakushu 12yr,2,$73.92,$6.72,$25.27,0%,1%,66%
+Add Prosciutto,2,$7.04,$0.64,$0.00,0%,0%,0%
+Send Kids Food With Mains,2,$0.00,$0.00,$0.00,0%,0%,0%
+Easy Sauce,2,$0.00,$0.00,$0.00,0%,0%,0%
+Bry Ol San Pell,2,$0.00,$0.00,$4.66,0%,0%,
+Send Kids Food ASAP,2,$0.00,$0.00,$0.00,0%,0%,0%
+Grifter Big Sur IPA Tin,2,$29.26,$2.66,$7.31,0%,0%,75%
+Ottelia Chardonnay - Large,2,$55.89,$5.08,$11.53,0%,0%,79%
+Better Beer Tin,2,$23.10,$2.10,$5.00,0%,0%,78%
+Virgin Margy,2,$28.60,$2.60,$0.00,0%,0%,0%
+Add Anchovies,2,$4.40,$0.40,$0.00,0%,0%,0%
+Tommy's Margarita,2,$41.30,$3.75,$9.95,0%,0%,76%
+Side BBQ Sauce,2,$0.00,$0.00,$0.00,0%,0%,0%
+Davy's Old Fashioned,2,$27.26,$2.48,$9.75,0%,0%,64%
+Biscoff Espresso,2,$52.26,$4.75,$6.51,0%,0%,88%
+Campari,2,$22.36,$2.03,$3.34,0%,0%,85%
+Unico Zelo Terra Cotta - Bottle,2,$96.36,$8.76,$43.78,0%,1%,55%
+Swap Fries for Sweet Potato Fries,1,$2.27,$0.20,$0.00,0%,0%,0%
+Remove Sour Cream,1,$0.00,$0.00,$0.00,0%,0%,0%
+Eggplant Parmy D,1,$22.00,$2.00,$0.00,0%,0%,0%
+Oceanside,1,$17.04,$1.55,$3.59,0%,0%,79%
+Buffalo Wings D,1,$16.00,$1.45,$3.90,0%,0%,76%
+Young Henrys Cloudy Cider Can,1,$13.20,$1.20,$2.82,0%,0%,79%
+Campari Spritz,1,$22.00,$2.00,$4.40,0%,0%,80%
+$45 FEAST,1,$49.50,$4.50,$0.00,0%,0%,0%
+Limoncello Spritz,1,$23.10,$2.10,$5.32,0%,0%,77%
+Regular Margherita,1,$15.40,$1.40,$1.23,0%,0%,92%
+WINGS DEAL,1,$33.00,$3.00,$0.00,0%,0%,0%
+Regular Hawaiian,1,$22.00,$2.00,$1.25,0%,0%,94%
+No Onion,1,$0.00,$0.00,$0.00,0%,0%,0%
+Regular Super House Special,1,$24.00,$2.18,$5.53,0%,0%,77%
+Hendrick's Gin,1,$9.24,$0.84,$2.68,0%,0%,71%
+Delivery Fee - Freshwater / Queenscliff,1,$5.50,$0.50,$0.00,0%,0%,0%
+Add Chilli,1,$1.10,$0.10,$0.00,0%,0%,0%
+Soda [mixer],1,$0.00,$0.00,$0.00,0%,0%,0%
+Add Rocket,1,$1.65,$0.15,$0.00,0%,0%,0%
+French Martini,1,$19.79,$1.79,$3.91,0%,0%,80%
+Regular Pepperoni,1,$16.50,$1.50,$2.13,0%,0%,87%
+Vinada Sparkling Rose,1,$13.63,$1.24,$3.05,0%,0%,78%
+Quiet Riot Negroni,1,$26.13,$2.38,$4.36,0%,0%,83%
+Add Olives,1,$1.65,$0.15,$0.00,0%,0%,0%
+Regular Meatlovers,1,$21.45,$1.95,$4.98,0%,0%,77%
+Cheesy Garlic Bread,1,$8.00,$0.73,$1.77,0%,0%,78%
+Coke Can,1,$4.00,$0.36,$1.89,0%,0%,53%
+Extra Taco,1,$7.95,$0.72,$1.09,0%,0%,86%
+Regular Garlic Cheese Pizza,1,$9.00,$0.82,$1.39,0%,0%,85%
+Large Margherita,1,$22.00,$2.00,$2.30,0%,0%,90%
+Sigurd GSM Red Blend - Bottle,1,$84.70,$7.70,$23.10,0%,1%,73%
+Wolf Lane Navy Gin Tonica,1,$14.52,$1.32,$6.64,0%,0%,54%
+Stow Soda - Grapefruit,1,$9.90,$0.90,$0.08,0%,0%,99%
+Kids Margherita Pizza,1,$14.77,$1.34,$0.00,0%,0%,0%
+Large Paddock,1,$31.00,$2.82,$5.11,0%,0%,84%
+Whisky Sour,1,$13.86,$1.26,$4.59,0%,0%,67%
+Lepinja Bread D,1,$9.90,$0.90,$0.00,0%,0%,0%
+Coconut Margarita,1,$25.30,$2.30,$4.10,0%,0%,84%
+Large Meatlovers,1,$0.00,$0.00,$6.96,0%,0%,
+Add Fetta,1,$3.30,$0.30,$0.00,0%,0%,0%
+San Pellegrino 500ml,1,$0.00,$0.00,$2.33,0%,0%,
+Under the Bridge Pizza,1,$11.44,$1.04,$4.08,0%,0%,64%
+Orange Juice Glass,1,$5.50,$0.50,$0.48,0%,0%,91%
+Regular El Patron,1,$25.00,$2.27,$3.64,0%,0%,85%
+Hugo Spritz,1,$23.10,$2.10,$1.35,0%,0%,94%
+Add Mushrooms,1,$1.65,$0.15,$0.00,0%,0%,0%
+Swap Gravy for Tomato Sauce,1,$0.00,$0.00,$0.00,0%,0%,0%
+Large Sanchez,1,$31.00,$2.82,$5.49,0%,0%,82%
+Stow Soda - Passionfruit,1,$9.90,$0.90,$0.00,0%,0%,0%
+No Burger Sauce,1,$0.00,$0.00,$0.00,0%,0%,0%
+Lychee Martini,1,$13.20,$1.20,$3.62,0%,0%,73%
+No Corn,1,$0.00,$0.00,$0.00,0%,0%,0%
+Grey Goose Vodka Martini,1,$27.50,$2.50,$4.05,0%,0%,85%
+Little Dragon Can,1,$13.75,$1.25,$3.54,0%,0%,74%
+Delivery Fee - Curl Curl / Manly / Dee Why,1,$7.15,$0.65,$0.00,0%,0%,0%
+Eggplant Parmy,1,$32.95,$3.00,$0.00,0%,0%,0%
+Large Roma Special,1,$27.50,$2.50,$5.63,0%,0%,80%
+Side Gravy,1,$1.65,$0.15,$0.34,0%,0%,80%
+Lepinja Bread,1,$11.36,$1.03,$0.00,0%,0%,0%
+Add Side Guac,1,$1.14,$0.11,$0.00,0%,0%,0%
+Side Blue Cheese Dip,1,$1.10,$0.10,$0.00,0%,0%,0%
+Philter Red - Pint,1,$17.04,$1.55,$3.40,0%,0%,80%
+Large Pepperoni,1,$28.00,$2.55,$4.56,0%,0%,84%
+Regular Sanchez,1,$25.00,$2.27,$3.39,0%,0%,86%
+Sunkist 1.25L,1,$7.00,$0.64,$2.04,0%,0%,71%
+Regular New Yorker [Dine-in],1,$26.40,$2.40,$3.59,0%,0%,86%
+Less Cheese,1,$0.00,$0.00,$0.00,0%,0%,0%
+Aperol Spritz,1,$22.00,$2.00,$3.55,0%,0%,84%
+Ottelia Cab Sav - Large,1,$29.70,$2.70,$7.68,0%,0%,74%
+Regular Hail Africa [Dine-in],1,$30.70,$2.79,$2.91,0%,0%,91%
+Add Grilled Fish,1,$5.68,$0.52,$0.00,0%,0%,0%
+Regular Bubba Gump,1,$26.00,$2.36,$3.96,0%,0%,85%
+Add Bacon,1,$4.40,$0.40,$0.00,0%,0%,0%
+No Glasses Needed,1,$0.00,$0.00,$0.00,0%,0%,0%
+Lemon Twist,1,$0.00,$0.00,$0.00,0%,0%,0%
+Monteith's Apple Cider Bottle,1,$11.55,$1.05,$3.11,0%,0%,73%
+Regular Paddock,1,$21.45,$1.95,$3.10,0%,0%,86%
+Regular Truffalo Soldier,1,$24.00,$2.18,$3.27,0%,0%,86%
+Pornstar Martini,1,$14.52,$1.32,$3.39,0%,0%,77%
+Swap Gravy for BBQ Sauce,1,$0.00,$0.00,$0.00,0%,0%,0%
+Large Bubba Gump,1,$31.00,$2.82,$5.53,0%,0%,82%
+Das Juice Pink Pet Nat - Regular,1,$18.18,$1.65,$3.30,0%,0%,82%
+Add Side Queso Dip,1,$1.14,$0.11,$0.00,0%,0%,0%
+Add Pumpkin,1,$1.65,$0.15,$0.00,0%,0%,0%
+Open Food,1,$3.00,$0.27,$0.00,0%,0%,0%
+Dry,1,$0.00,$0.00,$0.00,0%,0%,0%
+Sweet Potato Fries D,1,$14.00,$1.27,$2.53,0%,0%,82%
+Arancini Balls 5pcs D,1,$15.40,$1.40,$0.00,0%,0%,0%
+Stow Schnitty,1,$30.58,$2.79,$5.33,0%,0%,83%
+Large Jimmy Jury,1,$29.70,$2.70,$6.19,0%,0%,79%
+Philter Red - Schooner,1,$0.00,$0.00,$2.53,0%,0%,
+Regular Cosmopolitan,1,$21.45,$1.95,$4.73,0%,0%,78%
+Dom P|rignon Champagne - Bottle,1,$484.00,$44.00,$398.59,0%,3%,18%
+Eggplant Schnitty,1,$29.54,$2.68,$4.27,0%,0%,86%
+Pink Lemonade Glass,0,$0.00,$0.00,$0.00,0%,0%,0%
+,862.1,"$14,344.51","$1,303.71","$2,974.47",100%,100%,79%
