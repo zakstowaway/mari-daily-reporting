@@ -216,6 +216,25 @@ body {
 .vb-table tbody tr { cursor: pointer; }
 .vb-table tbody tr:hover td { background: rgba(127,119,221,.07); }
 .vb-pos { color: #1D9E75; } .vb-neg { color: #E24B4A; }
+/* Redesigned per-venue breakdown — calm panel, sentence-case, venue accents. */
+.vbx { background: var(--paper); border-radius: 12px; padding: 16px 18px 8px;
+  margin: 18px 0 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--line); }
+.vbx-title { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.02em; color: var(--ink-soft); margin: 0; }
+.vbx-scroll { overflow-x: auto; }
+.vbx-table { margin-top: 4px; }
+.vbx-table th { text-transform: none; letter-spacing: 0; font-size: 12px; opacity: .55; }
+.vbx-table td { border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.vbx-table tbody tr:first-child td { border-top: none; }
+.vbx-venue { font-family: 'Space Grotesk', sans-serif; font-weight: 600; white-space: nowrap; }
+.vbx-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px;
+  margin-right: 8px; vertical-align: middle; }
+.vbx-row.stow .vbx-dot { background: var(--stow); }
+.vbx-row.hg   .vbx-dot { background: var(--hg); }
+.vbx-row.mari .vbx-dot { background: var(--mari); }
+.vbx-row.stow:hover td { background: var(--stow-tint); }
+.vbx-row.hg:hover   td { background: var(--hg-tint); }
+.vbx-row.mari:hover td { background: var(--mari-tint); }
 .wa-dept { font-size: 11px; margin: 5px 0 0; line-height: 1.55; border-top: 1px solid var(--line); padding-top: 5px; }
 .wa-dept b { font-weight: 600; }
 .wa-none { font-size: 11px; font-weight: 600; margin: 4px 0 0; opacity: .7; }
@@ -507,6 +526,9 @@ tbody tr:hover { background: var(--group-tint); }
     <div class="grid" id="split-snapshot" style="margin-top: 10px;"></div>
     <div id="dollar-strip" style="margin-top: 14px;"></div>
 
+    <!-- Per-venue breakdown now sits ABOVE the stacked trend chart (group only). -->
+    <div id="venue-breakdown"></div>
+
     <div class="section" id="trend-section">
       <h2 id="trend-title">30-Day Trailing</h2>
       <div id="year-toggles" style="display:none; align-items:center; gap:6px; margin: 4px 0 10px; flex-wrap: wrap;"></div>
@@ -514,7 +536,6 @@ tbody tr:hover { background: var(--group-tint); }
     </div>
 
     <div id="story-row">
-      <div id="venue-breakdown"></div>
       <div id="week-ahead"></div>
     </div>
     <div id="data-health"></div>
@@ -1358,6 +1379,10 @@ async function loadAllHistories(role) {
 }
 
 function synthesizeGroupHistory(histories) {
+  // Any day on/after this week's Monday is the open (in-progress) payroll week.
+  // Its "leave" is provisional (unapproved salaried timesheets over-book it), so
+  // it must never fold into wages/profit — only closed-week leave is real.
+  const openWeekStart = isoDate(weekStart(sydneyToday()));
   const allDates = new Set();
   for (const v of REAL_VENUES) for (const r of histories[v] || []) allDates.add(r.date);
   const rows = [];
@@ -1409,7 +1434,8 @@ function synthesizeGroupHistory(histories) {
       // venues reconcile exactly when it's off. Default off (Zak, 2026-07-17):
       // the overhead answers "what does payroll cost?", not "how did we trade?".
       if (STATE.includeAdmin) sum.wages_dollars += toNum(row.wages_admin_dollars);
-      if (STATE.includeLeave) sum.wages_dollars += toNum(row.leave_dollars);
+      // Closed-week leave only — open-week leave is provisional (unapproved).
+      if (STATE.includeLeave && date < openWeekStart) sum.wages_dollars += toNum(row.leave_dollars);
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
       sum.eatclub_giveaway_ex_gst += toNum(row.eatclub_giveaway_ex_gst);
@@ -2611,7 +2637,7 @@ function renderVenueBreakdown() {
     if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
     const day = rollup(rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay));
     if (!day) return '';
-    const rev = toNum(day.revenue_ex_gst);
+    const rev = grossRev(day);   // gross, to match the rest of the redesign
     const yoy = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
     const w = pnlWindow(day, vk);
     const a = actualCogs(vk, winEnd(day));
@@ -2619,20 +2645,25 @@ function renderVenueBreakdown() {
       ? `<span class="${yoy >= 0 ? 'vb-pos' : 'vb-neg'}">${(yoy >= 0 ? '+' : '−') + Math.abs(yoy).toFixed(1)}%</span>` : '—';
     const profitCell = w
       ? `<span class="${w.profit >= 0 ? 'vb-pos' : 'vb-neg'}">${(w.profit < 0 ? '−$' : '$') + Math.round(Math.abs(w.profit)).toLocaleString()}</span>` : '—';
-    return `<tr onclick="switchVenue('${vk}')">
-      <td>${lbl}</td>
+    const marginPct = w && w.rev ? w.profit / w.rev * 100 : null;
+    const marginCell = marginPct !== null
+      ? `<span class="${marginPct >= 0 ? 'vb-pos' : 'vb-neg'}">${fmtPct(marginPct)}</span>` : '—';
+    return `<tr class="vbx-row ${vk}" onclick="switchVenue('${vk}')">
+      <td class="vbx-venue"><span class="vbx-dot"></span>${lbl}</td>
       <td>${fmtDollars(rev)}</td>
       <td>${yoyCell}</td>
       <td>${hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—'}</td>
       <td>${a ? fmtPct(a.pct) : hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—'}</td>
       <td>${profitCell}</td>
-      <td>${w && w.rev ? fmtPct(w.profit / w.rev * 100) : '—'}</td>
+      <td>${marginCell}</td>
     </tr>`;
   }).join('');
   if (!body) return;
-  el.innerHTML = `<div style="overflow-x:auto;"><table class="vb-table">
+  el.innerHTML = `<div class="vbx">
+    <p class="vbx-title">Per-venue breakdown</p>
+    <div class="vbx-scroll"><table class="vb-table vbx-table">
     <thead><tr><th>Venue</th><th>Revenue</th><th>vs LY</th><th>Wages</th><th>COGS</th><th>Exp. profit</th><th>Margin</th></tr></thead>
-    <tbody>${body}</tbody></table></div>`;
+    <tbody>${body}</tbody></table></div></div>`;
 }
 
 // Pipeline health: is every number on this page trustworthy right now?
@@ -2904,22 +2935,32 @@ async function fetchLastUpdate() {
 // nothing to render when we're on a venue view or there's no admin/leave in scope.
 function overheadChips() {
   if (STATE.currentVenue !== 'group') return { chips: '', note: '' };
-  let adm = 0, lve = 0;
+  // Open week = on/after this Monday. Its leave is provisional (salaried
+  // timesheets aren't approved yet), so we never offer the leave toggle for a
+  // window that touches it — and we flag the provisional leave with a note.
+  const openWeekStart = isoDate(weekStart(sydneyToday()));
+  let adm = 0, lve = 0, lveOpen = 0, winEndDate = '';
   for (const v of REAL_VENUES) {
     for (const r of rowsForTimeframe(STATE.histories[v] || [], STATE.currentTimeframe, STATE.currentDay)) {
       adm += toNum(r.wages_admin_dollars);
       lve += toNum(r.leave_dollars);
+      if (r.date >= openWeekStart) lveOpen += toNum(r.leave_dollars);
+      if (r.date > winEndDate) winEndDate = r.date;
     }
   }
+  const windowInOpenWeek = winEndDate !== '' && winEndDate >= openWeekStart;
   const chip = (on, label, dollars, fn) =>
     `<button class="oh-chip${on ? ' on' : ''}" onclick="${fn}()">${label} ${fmtDollars(dollars)}</button>`;
   const parts = [];
   if (adm > 0.005) parts.push(chip(STATE.includeAdmin, 'include admin', adm, 'toggleAdmin'));
-  if (lve > 0.005) parts.push(chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'));
-  if (!parts.length) return { chips: '', note: '' };
+  // Leave chip only for windows entirely in past/closed weeks.
+  if (lve > 0.005 && !windowInOpenWeek) parts.push(chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'));
+  const notes = [];
+  if (parts.length) notes.push("admin and leave aren't rostered against trade");
+  if (windowInOpenWeek && lveOpen > 0.005) notes.push('leave finalises after timesheet approval');
   return {
-    chips: `<span class="oh-chips">${parts.join('')}</span>`,
-    note: `<p class="pcard-ohnote">admin and leave aren't rostered against trade</p>`,
+    chips: parts.length ? `<span class="oh-chips">${parts.join('')}</span>` : '',
+    note: notes.length ? `<p class="pcard-ohnote">${notes.join(' · ')}</p>` : '',
   };
 }
 
