@@ -444,8 +444,12 @@ tbody tr:hover { background: var(--group-tint); }
   <!-- Group only: venue wage lines are operational by definition. -->
   <div id="oh-toggle-wrap" class="oh-wrap" style="display:none;">
     <label class="oh-lab">
-      <input type="checkbox" id="oh-toggle" onchange="toggleOverhead()">
-      <span>Include admin &amp; leave</span>
+      <input type="checkbox" id="oh-toggle-admin" onchange="toggleAdmin()">
+      <span>Include admin</span>
+    </label>
+    <label class="oh-lab">
+      <input type="checkbox" id="oh-toggle-leave" onchange="toggleLeave()">
+      <span>Include leave</span>
     </label>
     <span class="oh-note" id="oh-note"></span>
   </div>
@@ -586,7 +590,7 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], inclOverhead: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [], uberDirect: [] };
+const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], includeAdmin: false, includeLeave: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [], uberDirect: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
@@ -1367,10 +1371,8 @@ function synthesizeGroupHistory(histories) {
       // the toggle, and it's the ONLY place the two bases differ, so group and
       // venues reconcile exactly when it's off. Default off (Zak, 2026-07-17):
       // the overhead answers "what does payroll cost?", not "how did we trade?".
-      if (STATE.inclOverhead) {
-        sum.wages_dollars += toNum(row.wages_admin_dollars);
-        sum.wages_dollars += toNum(row.leave_dollars);
-      }
+      if (STATE.includeAdmin) sum.wages_dollars += toNum(row.wages_admin_dollars);
+      if (STATE.includeLeave) sum.wages_dollars += toNum(row.leave_dollars);
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
       sum.eatclub_giveaway_ex_gst += toNum(row.eatclub_giveaway_ex_gst);
@@ -2773,18 +2775,28 @@ function renderOverheadToggle() {
   const isGroup = STATE.currentVenue === 'group';
   wrap.style.display = isGroup ? 'flex' : 'none';
   if (!isGroup) return;
-  const box = document.getElementById('oh-toggle');
-  if (box) box.checked = STATE.inclOverhead;
-  let oh = 0;
+  const ab = document.getElementById('oh-toggle-admin');
+  const lb = document.getElementById('oh-toggle-leave');
+  if (ab) ab.checked = STATE.includeAdmin;
+  if (lb) lb.checked = STATE.includeLeave;
+  let adm = 0, lve = 0;
   for (const v of REAL_VENUES) {
     for (const r of rowsForTimeframe(STATE.histories[v] || [], STATE.currentTimeframe, STATE.currentDay)) {
-      oh += toNum(r.wages_admin_dollars) + toNum(r.leave_dollars);
+      adm += toNum(r.wages_admin_dollars);
+      lve += toNum(r.leave_dollars);
     }
   }
   const note = document.getElementById('oh-note');
-  if (note) note.textContent = oh
-    ? `${STATE.inclOverhead ? 'including' : 'excluding'} ${fmtDollars(oh)} — not rostered against trade`
-    : 'no admin or leave in this window';
+  if (note) {
+    if (!adm && !lve) {
+      note.textContent = 'no admin or leave in this window';
+    } else {
+      const parts = [];
+      if (adm) parts.push(`admin ${fmtDollars(adm)} ${STATE.includeAdmin ? 'in' : 'out'}`);
+      if (lve) parts.push(`leave ${fmtDollars(lve)} ${STATE.includeLeave ? 'in' : 'out'}`);
+      note.textContent = parts.join(' · ') + ' — not rostered against trade';
+    }
+  }
 }
 
 function render() {
@@ -2820,8 +2832,13 @@ function switchVenue(venue) {
 // the question "which of these two numbers is my wage bill?".
 // The group rows are SYNTHESISED from the venue rows, so flipping this has to
 // rebuild them — nothing is cached from the raw CSVs.
-function toggleOverhead() {
-  STATE.inclOverhead = !STATE.inclOverhead;
+function toggleAdmin() {
+  STATE.includeAdmin = !STATE.includeAdmin;
+  STATE.histories.group = synthesizeGroupHistory(STATE.histories);
+  render();
+}
+function toggleLeave() {
+  STATE.includeLeave = !STATE.includeLeave;
   STATE.histories.group = synthesizeGroupHistory(STATE.histories);
   render();
 }
