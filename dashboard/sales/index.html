@@ -448,6 +448,14 @@ tbody tr:hover { background: var(--group-tint); }
 .pbrk-row.total { border-top: 1px solid var(--line); margin-top: 5px; padding-top: 8px; }
 .pbrk-row.total .pbrk-l { font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 .pbrk-row.total .pbrk-p { font-size: 15px; }
+
+/* ---- Verbal daily wrap ---- */
+.daywrap { margin: 2px 0 16px; padding: 2px 2px 0; }
+.daywrap p { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.62;
+  color: var(--ink-soft); margin: 0; max-width: 68ch; }
+.daywrap p .dw-pos { color: #1D9E75; font-weight: 600; }
+.daywrap p .dw-neg { color: #E24B4A; font-weight: 600; }
+.daywrap p strong { color: var(--ink); font-weight: 600; }
 </style>
 </head>
 <script>
@@ -522,9 +530,18 @@ tbody tr:hover { background: var(--group-tint); }
     <p id="verdict" class="verdict"></p>
 
     <div id="profit-card" style="margin-top: 2px;"></div>
+    <!-- Verbal daily wrap (single-day only) — prose read of the day, admin view. -->
+    <div id="daily-wrap"></div>
     <div class="grid" id="snapshot"></div>
     <div class="grid" id="split-snapshot" style="margin-top: 10px;"></div>
     <div id="dollar-strip" style="margin-top: 14px;"></div>
+
+    <!-- Hourly sales vs labour (single real venue + single day only). -->
+    <div class="section" id="hourly-section" style="display:none">
+      <h2 id="hourly-title">Hourly sales vs labour</h2>
+      <p id="hourly-note" style="font-size:13px;color:var(--ink-soft);margin:-6px 0 14px;line-height:1.5"></p>
+      <div class="chart-wrap"><canvas id="hourly-chart"></canvas></div>
+    </div>
 
     <!-- Per-venue breakdown now sits ABOVE the stacked trend chart (group only). -->
     <div id="venue-breakdown"></div>
@@ -1434,8 +1451,10 @@ function synthesizeGroupHistory(histories) {
       // venues reconcile exactly when it's off. Default off (Zak, 2026-07-17):
       // the overhead answers "what does payroll cost?", not "how did we trade?".
       if (STATE.includeAdmin) sum.wages_dollars += toNum(row.wages_admin_dollars);
-      // Closed-week leave only — open-week leave is provisional (unapproved).
-      if (STATE.includeLeave && date < openWeekStart) sum.wages_dollars += toNum(row.leave_dollars);
+      // Leave IS a real cost — booked leave (IsLeave timesheets, in the person's
+      // hours) plus the estimated salaried-shortfall leave. Include it when toggled.
+      // Open-week leave is an estimate that firms up as timesheets are approved.
+      if (STATE.includeLeave) sum.wages_dollars += toNum(row.leave_dollars);
       sum.delivery_dollars += toNum(row.delivery_dollars);
       sum.gp_dollars       += toNum(row.gp_dollars);
       sum.eatclub_giveaway_ex_gst += toNum(row.eatclub_giveaway_ex_gst);
@@ -2713,6 +2732,7 @@ function renderDataHealth() {
 }
 
 let CHART_INSTANCE = null;
+let HOURLY_CHART = null;
 function renderChart() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
@@ -2953,15 +2973,325 @@ function overheadChips() {
     `<button class="oh-chip${on ? ' on' : ''}" onclick="${fn}()">${label} ${fmtDollars(dollars)}</button>`;
   const parts = [];
   if (adm > 0.005) parts.push(chip(STATE.includeAdmin, 'include admin', adm, 'toggleAdmin'));
-  // Leave chip only for windows entirely in past/closed weeks.
-  if (lve > 0.005 && !windowInOpenWeek) parts.push(chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'));
+  if (lve > 0.005) parts.push(chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'));
   const notes = [];
   if (parts.length) notes.push("admin and leave aren't rostered against trade");
-  if (windowInOpenWeek && lveOpen > 0.005) notes.push('leave finalises after timesheet approval');
+  if (windowInOpenWeek && lveOpen > 0.005) notes.push('open-week leave is an estimate until timesheets are approved');
   return {
     chips: parts.length ? `<span class="oh-chips">${parts.join('')}</span>` : '',
     note: notes.length ? `<p class="pcard-ohnote">${notes.join(' · ')}</p>` : '',
   };
+}
+
+// ===================================================================
+// SINGLE-DAY EXTRAS: hourly sales-vs-labour chart + verbal daily wrap.
+// Both are day-only; they fetch per-venue hourly revenue + Deputy shift
+// dumps that the rest of the dashboard doesn't load, so they live in
+// their own async pass (renderDaySingle) fired from render(). A token
+// guards against a stale fetch landing after the user has moved on.
+// ===================================================================
+
+// Where each venue's hourly ex-GST revenue lives. Marilyna's trades inside
+// the Stowaway site, so its hourly rows sit in the stow_hourly file under a
+// `marilynas` key — we try a dedicated mari_hourly file first, then fall back.
+const HOURLY_SOURCES = {
+  stow: [{ prefix: 'stow', key: 'stowaway_proper' }],
+  mari: [{ prefix: 'mari', key: null }, { prefix: 'stow', key: 'marilynas' }],
+  hg:   [{ prefix: 'hg', key: null }],
+};
+
+// Pull one `by_hour` map out of a hourly JSON payload: an explicit sub-venue
+// key when given, else the top-level by_hour. Returns { hour(int): exGst$ }.
+function extractByHour(json, key) {
+  const node = key ? (json && json[key]) : json;
+  const bh = node && node.by_hour;
+  if (!bh) return null;
+  const out = {};
+  for (const h of Object.keys(bh)) {
+    const v = toNum(bh[h].ex_gst);
+    if (isFinite(v)) out[parseInt(h, 10)] = v;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function loadHourlyRevenue(venue, date) {
+  for (const src of (HOURLY_SOURCES[venue] || [])) {
+    try {
+      const r = await fetch(`/data/${src.prefix}_hourly_${date}.json?t=` + Date.now());
+      if (!r.ok) continue;
+      const map = extractByHour(await r.json(), src.key);
+      if (map) return map;
+    } catch (e) { /* try next source */ }
+  }
+  return null;
+}
+
+// Deputy shift dump -> labour $ per clock hour, spreading each shift's cost
+// evenly across the Sydney-local (UTC+10) hours it spans. Also returns the
+// day's blended labour rate (sum cost / sum hours) for the wrap's "hours over".
+const SYD_OFFSET_SEC = 10 * 3600;   // AEST, no DST in the July data
+async function loadHourlyLabour(venue, date) {
+  let shifts;
+  try {
+    const r = await fetch(`/data/deputy_${venue}_${date}.json?t=` + Date.now());
+    if (!r.ok) return null;
+    shifts = await r.json();
+  } catch (e) { return null; }
+  if (!Array.isArray(shifts) || !shifts.length) return null;
+  const byHour = {};
+  let totCost = 0, totHours = 0;
+  for (const s of shifts) {
+    const cost = toNum(s.cost);
+    const st = toNum(s.start_time), en = toNum(s.end_time);
+    totCost += cost;
+    totHours += toNum(s.hours);
+    if (!(en > st) || !cost) continue;
+    const a = st + SYD_OFFSET_SEC, b = en + SYD_OFFSET_SEC;   // Sydney-local seconds
+    const span = b - a;
+    const h0 = Math.floor(a / 3600), h1 = Math.floor((b - 1) / 3600);
+    for (let h = h0; h <= h1; h++) {
+      const lo = Math.max(a, h * 3600), hi = Math.min(b, (h + 1) * 3600);
+      const frac = (hi - lo) / span;
+      if (frac <= 0) continue;
+      const hod = ((h % 24) + 24) % 24;
+      byHour[hod] = (byHour[hod] || 0) + cost * frac;
+    }
+  }
+  return { byHour, avgRate: totHours > 0 ? totCost / totHours : null };
+}
+
+// Colour a bar by how hard the labour in that hour is working: strong (green)
+// when labour is a small share of the hour's take, weak (red) when labour-heavy,
+// amber in between. Hours with revenue but ~no labour read strong.
+function hourStrengthColor(rev, labour) {
+  if (!(rev > 0)) return '#888780';
+  if (!(labour > 0)) return '#1D9E75';
+  const share = labour / rev;              // labour as a fraction of that hour's rev
+  if (share <= 0.35) return '#1D9E75';     // green — strong
+  if (share >= 0.75) return '#E24B4A';     // red — labour-heavy
+  return '#E8A82B';                        // amber — middling
+}
+
+function hourLabel(h) {
+  const hr = ((h % 24) + 24) % 24;
+  const ampm = hr < 12 ? 'am' : 'pm';
+  const h12 = hr % 12 === 0 ? 12 : hr % 12;
+  return h12 + ampm;
+}
+
+async function renderHourly(venue, date, showLabour) {
+  const sec = document.getElementById('hourly-section');
+  const noteEl = document.getElementById('hourly-note');
+  if (HOURLY_CHART) { HOURLY_CHART.destroy(); HOURLY_CHART = null; }
+  STATE._hourlyInsight = null;
+  const rev = await loadHourlyRevenue(venue, date);
+  if (!rev) { sec.style.display = 'none'; return; }
+  const lab = showLabour ? await loadHourlyLabour(venue, date) : null;
+  const labByHour = (lab && lab.byHour) || {};
+  if (lab && lab.avgRate) STATE._avgLabourRate = lab.avgRate;
+
+  const hoursPresent = new Set([...Object.keys(rev), ...Object.keys(labByHour)].map(Number));
+  if (!hoursPresent.size) { sec.style.display = 'none'; return; }
+  const lo = Math.min(...hoursPresent), hi = Math.max(...hoursPresent);
+  const hours = [];
+  for (let h = lo; h <= hi; h++) hours.push(h);
+
+  const revArr = hours.map(h => Math.round(rev[h] || 0));
+  const labArr = hours.map(h => Math.round(labByHour[h] || 0));
+  const barColors = hours.map((h, i) => hourStrengthColor(rev[h] || 0, labByHour[h] || 0));
+
+  // Insight: peak-trade hour + the most labour-heavy hour that still did real
+  // trade. Stashed for the verbal wrap to reuse (avoids a second fetch).
+  let peakH = null, peakRev = -1, weakH = null, weakShare = -1, strongH = null, strongRatio = -1;
+  for (const h of hours) {
+    const rv = rev[h] || 0, lb = labByHour[h] || 0;
+    if (rv > peakRev) { peakRev = rv; peakH = h; }
+    if (rv >= 150 && lb > 0) {
+      const share = lb / rv;
+      if (share > weakShare) { weakShare = share; weakH = h; }
+      const ratio = rv / lb;
+      if (ratio > strongRatio) { strongRatio = ratio; strongH = h; }
+    }
+  }
+  STATE._hourlyInsight = {
+    peakH, peakRev,
+    weakH, weakShare, weakLabour: weakH != null ? (labByHour[weakH] || 0) : 0, weakRev: weakH != null ? (rev[weakH] || 0) : 0,
+    strongH, strongRev: strongH != null ? (rev[strongH] || 0) : 0, strongLabour: strongH != null ? (labByHour[strongH] || 0) : 0,
+    hasLabour: showLabour && Object.keys(labByHour).length > 0,
+  };
+
+  // Plain-language line under the title.
+  const bits = [];
+  if (peakH != null) bits.push(`Peak trade ${hourLabel(peakH)} on ${fmtDollars(peakRev)}`);
+  if (STATE._hourlyInsight.hasLabour && weakH != null && weakShare >= 0.6)
+    bits.push(`the ${hourLabel(weakH)} block ran labour-heavy (${fmtDollars(STATE._hourlyInsight.weakLabour)} wages on ${fmtDollars(STATE._hourlyInsight.weakRev)})`);
+  else if (STATE._hourlyInsight.hasLabour && strongH != null)
+    bits.push(`the ${hourLabel(strongH)} hour did the most per labour dollar`);
+  noteEl.textContent = bits.length ? bits.join('; ') + '.' : '';
+  noteEl.style.display = bits.length ? '' : 'none';
+
+  const tickColor = IS_DARK ? '#B7B1A4' : '#5A544C';
+  const gridColor = IS_DARK ? 'rgba(120,110,90,0.2)' : 'rgba(232,223,207,0.4)';
+  const datasets = [
+    { type: 'bar', label: 'Revenue (ex-GST)', data: revArr, backgroundColor: barColors,
+      borderWidth: 0, yAxisID: 'y', order: 2 },
+  ];
+  if (STATE._hourlyInsight.hasLabour) {
+    datasets.push({ type: 'line', label: 'Labour $', data: labArr, borderColor: '#7F77DD',
+      backgroundColor: '#7F77DD20', borderWidth: 2.5, pointRadius: 3, pointBackgroundColor: '#7F77DD',
+      tension: 0.25, yAxisID: 'y2', order: 1 });
+  }
+  const ctx = document.getElementById('hourly-chart').getContext('2d');
+  HOURLY_CHART = new Chart(ctx, {
+    data: { labels: hours.map(hourLabel), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => '$' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v), font: { family: 'Inter', size: 11 }, color: tickColor }, grid: { color: gridColor } },
+        y2: { position: 'right', beginAtZero: true, display: STATE._hourlyInsight.hasLabour, ticks: { callback: v => '$' + v, font: { family: 'Inter', size: 11 }, color: '#7F77DD' }, grid: { display: false } },
+        x: { ticks: { font: { family: 'Inter', size: 11 }, color: tickColor }, grid: { display: false } }
+      },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 14, boxHeight: 8, font: { family: 'Space Grotesk', size: 12, weight: '500' }, color: tickColor, padding: 16 } },
+        tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmtDollars(c.parsed.y) } }
+      }
+    }
+  });
+  sec.style.display = '';
+}
+
+// Small helper: choose a light/varied opener so repeated days don't read alike.
+function pickPhrase(arr, seed) { return arr[Math.abs(seed) % arr.length]; }
+
+// Verbal daily wrap — 2-4 sentences of plain, slightly cheeky prose built from
+// pnlWindow + targets. Admin + single-day only.
+function renderDailyWrap(day) {
+  const el = document.getElementById('daily-wrap');
+  if (!el) return;
+  el.innerHTML = '';
+  if (CURRENT_ROLE !== 'admin' || !day) return;
+  const w = pnlWindow(day);
+  if (!w) return;
+
+  const eat = toNum(day.eatclub_giveaway_ex_gst);
+  const gross = w.rev + eat;
+  if (!gross) return;
+  const pct = x => x / gross * 100;
+  const profit = w.profit;
+  const margin = pct(profit);
+  const venueLabel = (VENUE_CONFIG[STATE.currentVenue] || {}).label || 'The venue';
+  const cogsD = w.rev * w.cogsPct / 100;
+  const cogsPctG = pct(cogsD);
+  const wagesPctG = pct(w.wages);
+  const wTgt = wageTargetFor(day);
+  const fmtP = x => (x < 0 ? '−$' : '$') + Math.round(Math.abs(x)).toLocaleString();
+  const seed = parseInt(String(day.date).replace(/\D/g, '').slice(-4) || '0', 10);
+
+  // --- Sentence 1: did it make money? ---
+  let s1;
+  if (profit >= 0) {
+    const opener = pickPhrase([
+      `${venueLabel} banked`, `${venueLabel} kept`, `${venueLabel} put`, `${venueLabel} walked away with`,
+    ], seed);
+    s1 = `${opener} <span class="dw-pos">${fmtP(profit)}</span> on the day — a <strong>${fmtPct(margin)}</strong> margin on ${fmtDollars(gross)} through the till.`;
+  } else {
+    const opener = pickPhrase([
+      `${venueLabel} went backwards`, `${venueLabel} dropped`, `${venueLabel} bled`, `${venueLabel} came up short`,
+    ], seed);
+    s1 = `${opener} <span class="dw-neg">${fmtP(profit)}</span> — a <strong>${fmtPct(margin)}</strong> margin on ${fmtDollars(gross)} through the till.`;
+  }
+
+  // --- Sentence 2: revenue vs typical / LY ---
+  const rows = STATE.histories[STATE.currentVenue] || [];
+  let anchorDay = STATE.currentDay;
+  if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+  const yy = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
+  const dow = /^\d{4}-\d{2}-\d{2}$/.test(String(day.date)) ? new Date(day.date).getDay() : null;
+  const typical = dow != null ? dowForecast(STATE.currentVenue, dow) : null;
+  let s2 = '';
+  if (typical && w.rev) {
+    const d = (w.rev - typical) / typical * 100;
+    const wd = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dow];
+    if (d >= 8) s2 = `Trade ran <span class="dw-pos">${Math.round(d)}% above</span> a typical ${wd} (${fmtDollars(typical)})`;
+    else if (d <= -8) s2 = `Trade sat <span class="dw-neg">${Math.round(Math.abs(d))}% under</span> a typical ${wd} (${fmtDollars(typical)})`;
+    else s2 = `Trade landed about where a ${wd} usually does (${fmtDollars(typical)})`;
+    if (yy !== null) s2 += `, and ${yy >= 0 ? `<span class="dw-pos">${yy.toFixed(0)}% up</span>` : `<span class="dw-neg">${Math.abs(yy).toFixed(0)}% down</span>`} on the same week last year.`;
+    else s2 += '.';
+  } else if (yy !== null) {
+    s2 = `Revenue was ${yy >= 0 ? `<span class="dw-pos">${yy.toFixed(0)}% up</span>` : `<span class="dw-neg">${Math.abs(yy).toFixed(0)}% down</span>`} on the same week last year.`;
+  }
+
+  // --- Sentence 3: the single biggest lever ---
+  const avgRate = STATE._avgLabourRate && STATE._avgLabourRate > 0 ? STATE._avgLabourRate : 45;
+  const wageOver = wTgt != null ? (wagesPctG - wTgt) / 100 * gross : 0;
+  const cogsOver = (cogsPctG - 22) / 100 * gross;
+  let s3 = '';
+  if (wageOver > 40 && wageOver >= cogsOver) {
+    const hrs = wageOver / avgRate;
+    const insight = STATE._hourlyInsight;
+    let trim = '';
+    if (insight && insight.hasLabour && insight.weakH != null && insight.weakShare >= 0.6)
+      trim = ` — the ${hourLabel(insight.weakH)} block was the soft spot (${fmtDollars(insight.weakLabour)} wages on ${fmtDollars(insight.weakRev)})`;
+    s3 = `The lever was labour: wages ran <span class="dw-neg">${fmtP(wageOver)}</span> (~${hrs.toFixed(hrs < 10 ? 1 : 0)} hours) over the ${fmtPct(wTgt)} target for the day${trim}. Pull that back and the day hits its number.`;
+  } else if (cogsOver > 40 && cogsOver > wageOver) {
+    s3 = `Cost of goods was the drag — <span class="dw-neg">${fmtP(cogsOver)}</span> over the 22% line at ${fmtPct(cogsPctG)}. That's the difference between this result and a clean day.`;
+  } else if (profit >= 0) {
+    // Profitable: praise the strongest thing.
+    const insight = STATE._hourlyInsight;
+    if (cogsPctG <= 20)
+      s3 = `COGS behaved beautifully at <span class="dw-pos">${fmtPct(cogsPctG)}</span>, well under the 22% target — that's where the margin came from.`;
+    else if (wTgt != null && wagesPctG <= wTgt - 2)
+      s3 = `Wages came in tight at <span class="dw-pos">${fmtPct(wagesPctG)}</span> against a ${fmtPct(wTgt)} target — the roster earned its keep.`;
+    else if (insight && insight.hasLabour && insight.strongH != null)
+      s3 = `The ${hourLabel(insight.strongH)} hour did ${fmtDollars(insight.strongRev)} on ${fmtDollars(insight.strongLabour)} of labour — lean into that window.`;
+    else
+      s3 = `Nothing ran hot: COGS at ${fmtPct(cogsPctG)} and wages at ${fmtPct(wagesPctG)} both sat close to target.`;
+  } else {
+    // Loss but no single big lever — name the nearest one.
+    if (wageOver >= cogsOver && wTgt != null)
+      s3 = `Costs were close to line — wages at ${fmtPct(wagesPctG)} vs ${fmtPct(wTgt)} the main watch item; it was mostly a light-trade day.`;
+    else
+      s3 = `Costs held near target — this was a revenue problem more than a cost one.`;
+  }
+
+  el.innerHTML = `<div class="daywrap"><p>${[s1, s2, s3].filter(Boolean).join(' ')}</p></div>`;
+}
+
+// Single-day async pass: fetch hourly + Deputy, draw the chart and the wrap.
+// Guarded by a token so a slow fetch can't overwrite a newer selection.
+async function renderDaySingle() {
+  const sec = document.getElementById('hourly-section');
+  const wrapEl = document.getElementById('daily-wrap');
+  const isDay = STATE.currentTimeframe === 'day' && STATE.currentDay;
+  const venue = STATE.currentVenue;
+  const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
+  // Clear both features for anything that isn't a single day.
+  if (!isDay) {
+    if (HOURLY_CHART) { HOURLY_CHART.destroy(); HOURLY_CHART = null; }
+    if (sec) sec.style.display = 'none';
+    if (wrapEl) wrapEl.innerHTML = '';
+    return;
+  }
+  const token = (STATE._daySingleToken = (STATE._daySingleToken || 0) + 1);
+  const date = STATE.currentDay;
+  STATE._avgLabourRate = null;   // per-day/venue; wrap falls back to ~$45/h if unset
+
+  // Feature 1 — hourly chart: real venues only (never group), needs hourly data.
+  if (REAL_VENUES.includes(venue)) {
+    await renderHourly(venue, date, !!roleCfg.show_dollar_amounts);
+    if (token !== STATE._daySingleToken) return;   // stale — a newer render started
+  } else if (sec) {
+    if (HOURLY_CHART) { HOURLY_CHART.destroy(); HOURLY_CHART = null; }
+    sec.style.display = 'none';
+  }
+
+  // Feature 2 — verbal wrap: all venues incl. group, admin only. Renders after
+  // the hourly pass so it can weave in the strong/weak-hour callout.
+  const rows = STATE.histories[venue] || [];
+  const rangeRows = rowsForTimeframe(rows, STATE.currentTimeframe, date);
+  const day = rollup(rangeRows);
+  if (day) renderDailyWrap(day);
+  else if (wrapEl) wrapEl.innerHTML = '';
 }
 
 function render() {
@@ -2971,6 +3301,7 @@ function render() {
   renderDayPicker();
   renderSnapshot();
   renderChart();
+  renderDaySingle();
   fetchLastUpdate();
 }
 
