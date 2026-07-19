@@ -29,6 +29,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install deps
+        # build_site.py now generates the recipe feeds, which import the cost
+        # engine (PyYAML). Without this the build fails with ModuleNotFoundError
+        # even though it works locally. Same deps as the test job.
+        run: pip install -r requirements.txt
       - name: Build _site
         # ONE definition of the site layout, shared with local preview:
         #   python3 scripts/build_site.py --serve
