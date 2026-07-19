@@ -1,6 +1,6 @@
 {
  "_comment": "Wage on-costs for the dashboard P&L. The dashboard uses owner_weekly_inc_super for the corp-payroll line and computes payroll tax + workers-comp LIVE as lumpy actuals (group_payroll - staff wages - owners), NOT from oncost_rate. oncost_rate is retained for reference only. Zak, 2026-07-18: 'don't estimate ... treat them as lumpy expenses'.",
- "_generated": "2026-07-18T07:35:10+00:00",
+ "_generated": "2026-07-19T21:39:05+00:00",
  "_months_used": [
   "2026-04",
   "2026-05",
@@ -8,13 +8,13 @@
   "2026-07"
  ],
  "_note_rate_unused": "oncost_rate is informational. The dashboard does not apply a rate to wages; payroll tax + WC flow through as actual dollars, smoothed over trailing 3 months like every other lumpy overhead.",
- "oncost_rate": 0.0891,
+ "oncost_rate": 0.0671,
  "owner_weekly_inc_super": 2024.62,
  "_basis": {
   "group_payroll": 480978.31,
-  "venue_wages_incl_leave": 413743.52,
+  "venue_wages_incl_leave": 422262.95,
   "owner_pay_incl_super": 30369.3,
-  "oncost_dollars": 36865.49,
+  "oncost_dollars": 28346.06,
   "owner_weeks_paid": 15
  }
 }

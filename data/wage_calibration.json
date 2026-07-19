@@ -57,13 +57,13 @@
   "factor": 1.0144,
   "weeks": 8,
   "name": "Samuel Hall",
-  "rate_per_hour": 35.7834
+  "rate_per_hour": 35.8203
  },
  "78": {
   "factor": 1.0084,
   "weeks": 8,
   "name": "Sushant Acharya",
-  "rate_per_hour": 35.3194
+  "rate_per_hour": 35.3329
  },
  "83": {
   "factor": 1.0,
@@ -81,7 +81,7 @@
   "factor": 1.0656,
   "weeks": 8,
   "name": "Toby Williams",
-  "rate_per_hour": 23.7613
+  "rate_per_hour": 23.8274
  },
  "106": {
   "factor": 1.0135,
@@ -429,7 +429,7 @@
   "factor": 1.0913,
   "weeks": 8,
   "name": "David Armour",
-  "rate_per_hour": 35.4863
+  "rate_per_hour": 35.4919
  },
  "243": {
   "factor": 1.0,
@@ -525,7 +525,7 @@
   "factor": 1.0,
   "weeks": 0,
   "name": null,
-  "rate_per_hour": 27.7755
+  "rate_per_hour": 27.7926
  },
  "262": {
   "factor": 1.4,
@@ -543,7 +543,7 @@
   "factor": 1.08,
   "weeks": 8,
   "name": "Reef Houston",
-  "rate_per_hour": 19.0741
+  "rate_per_hour": 19.1596
  },
  "268": {
   "factor": 1.0,
@@ -663,7 +663,7 @@
   "factor": 1.021,
   "weeks": 8,
   "name": "Sophie Campbell",
-  "rate_per_hour": 36.5115
+  "rate_per_hour": 36.7073
  },
  "294": {
   "factor": 1.2645,
@@ -675,7 +675,7 @@
   "factor": 1.009,
   "weeks": 8,
   "name": "denis ferreira rodrigues",
-  "rate_per_hour": 37.7729
+  "rate_per_hour": 38.5595
  },
  "296": {
   "factor": 1.0096,
@@ -705,7 +705,7 @@
   "factor": 1.0391,
   "weeks": 3,
   "name": "Annarita Dagostino",
-  "rate_per_hour": 35.7885
+  "rate_per_hour": 36.2148
  },
  "302": {
   "factor": 1.0,
