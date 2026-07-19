@@ -32,12 +32,15 @@
 </head>
 <body>
 <div id="gate"></div>
-<div class="wrap" id="app" style="display:none;margin:0 auto;padding:24px">
-  <div style="display:flex;justify-content:space-between;align-items:baseline">
-    <h1 style="margin:0">Team</h1>
-    <div class="muted"><a href="/">← home</a> · <span id="who"></span></div>
-  </div>
-  <p class="muted">Invite people, and set what each can do. Chefs need a kitchen
+<div id="app" style="display:none">
+  <header class="app-header"><div class="app-header-inner">
+    <a class="brand-row" href="/"><img src="/logo_512.png" alt=""><span class="group-brand">Stowaway Hospitality Group</span></a>
+    <div class="who"><span id="who"></span><a href="/">home</a></div>
+  </div></header>
+  <div class="wrap">
+  <h1>Team</h1>
+  <p class="sub">Invite people, set what each can do, and link them to their
+    Deputy record so prep time is costed at their real rate. Chefs need a kitchen
     role before they can save recipes.</p>
 
   <div class="card">
@@ -55,6 +58,7 @@
   <div class="hd"><h2>People</h2><span class="muted" id="count"></span></div>
   <div id="list"><div class="muted">Loading…</div></div>
   <div class="msg" id="list-msg"></div>
+  </div>
 </div>
 
 <script type="module">

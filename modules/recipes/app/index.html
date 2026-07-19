@@ -26,10 +26,10 @@
 <style>
 .grid{display:grid;grid-template-columns:1fr 430px;gap:14px;align-items:start}
 @media(max-width:900px){.grid{grid-template-columns:1fr}}
-.tabs{display:flex;gap:6px;margin-bottom:10px}
-.tabs button{flex:0 0 auto;font-size:12px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);
-  background:var(--paper);color:var(--ink-soft);cursor:pointer}
-.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:0 0 auto;font-size:11px;padding:7px 14px;border-radius:99px;border:1px solid var(--line);
+  background:transparent;color:var(--ink-soft);cursor:pointer;letter-spacing:.08em}
+.tabs button.on{background:var(--group);color:var(--paper);border-color:var(--group)}
 .search{margin-bottom:10px}
 select{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
 .scroll{max-height:440px;overflow-y:auto;padding-right:4px}
@@ -50,13 +50,14 @@ select{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:8px
 .tot{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;
   border-top:1px solid var(--line);margin-top:8px}
 .tot.big{font-size:16px;font-weight:600;border-top:2px solid var(--ink);padding-top:10px}
-.gps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.gpbox{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
-.gpbox .lbl{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
-.gp{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1}
-.gp.good{color:var(--green)} .gp.warn{color:var(--amber)} .gp.bad{color:var(--red)}
-.timer{display:flex;align-items:center;gap:8px;margin:4px 0 2px}
-.timer .clock{font-size:22px;font-variant-numeric:tabular-nums;font-weight:600;min-width:78px}
+.gps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.gpbox{border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center;background:var(--parchment)}
+.gpbox .lbl{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:4px}
+.gp{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.05}
+.gp.good{color:var(--pos)} .gp.warn{color:var(--amber)} .gp.bad{color:var(--neg)}
+.timer{display:flex;align-items:center;gap:9px;margin:4px 0 2px}
+.timer .clock{font-family:'Space Grotesk',sans-serif;font-size:24px;font-variant-numeric:tabular-nums;font-weight:600;min-width:70px}
+.timer button{background:var(--stow);text-transform:none;letter-spacing:0}
 .timer button{font-size:12px;padding:6px 12px}
 .mins{width:70px}
 .yieldrow{display:grid;grid-template-columns:1fr 90px 80px;gap:6px;align-items:end}
@@ -66,9 +67,13 @@ textarea{width:100%;height:170px;font-family:ui-monospace,Menlo,monospace;font-s
 </head>
 <body>
 <div id="gate"></div>
-<div class="wrap" id="app" style="display:none">
+<div id="app" style="display:none">
+  <header class="app-header"><div class="app-header-inner">
+    <a class="brand-row" href="/"><img src="/logo_512.png" alt=""><span class="group-brand">Stowaway Hospitality Group</span></a>
+    <div class="who"><span id="who"></span><a href="#" onclick="Auth.logout().then(()=>location.reload());return false">sign out</a></div>
+  </div></header>
+  <div class="wrap">
   <h1>Recipe builder</h1>
-  <div class="muted" style="float:right;margin-top:-28px"><span id="who"></span> · <a href="#" onclick="Auth.logout().then(()=>location.reload())">sign out</a></div>
   <div class="sub" id="sub">Loading…</div>
 
   <div class="grid">
@@ -154,6 +159,7 @@ textarea{width:100%;height:170px;font-family:ui-monospace,Menlo,monospace;font-s
         </details>
       </div>
     </div>
+  </div>
   </div>
 </div>
 

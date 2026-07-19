@@ -1,10 +1,20 @@
-/* The design system. One source of truth for --stow, --hg, --ink, .card.
-   index.html and recipes.html had already diverged copies; a prep timer would
-   have been the third. Extracted 2026-07-17 (MODULES.md phase 1).
-   index.html still carries its own copy — it is live and 138KB, and churning a
-   working page for tidiness is how 6am things break. It adopts this when it is
-   next opened for a real reason. */
+/* ============================================================================
+   Stowaway Hospitality Group — shared design system.
+
+   ONE source of truth for the app shell (home, recipes, team) so every tool
+   looks like the dashboard, not a bolted-on afterthought. Adaptive light/dark
+   (follows the OS, exactly like the dashboard), Space Grotesk for structure +
+   Inter for prose, gold accent, venue colours.
+
+   The dashboard (index.html) still carries its own copy of these tokens because
+   it is 138KB and live at 6am; it adopts this the next time it's opened for a
+   real reason. Values here are kept identical to it on purpose.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
 :root{
+  color-scheme: light dark;
   --group:#0B0B0B; --group-tint:#F2F0EA;
   --stow:#1B4D3E;  --stow-tint:#E7EEEB;
   --hg:#C8452B;    --hg-tint:#FBE9E3;
@@ -13,30 +23,92 @@
   --ink:#1A1A1A;   --ink-soft:#5A544C;
   --line:#E8DFCF;  --accent:#E8A82B;
   --green:#0F6E56; --amber:#D97706; --red:#A32D2D; --grey:#C9C2B3;
+  --pos:#1D9E75;   --neg:#E24B4A;
+  --logo-filter:none;
+  --shadow:0 1px 3px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 40px -12px rgba(0,0,0,.14),0 2px 6px rgba(0,0,0,.05);
 }
+@media (prefers-color-scheme: dark){
+  :root{
+    --group:#F2F0EA; --group-tint:#201E1A;
+    --stow:#3A9578;  --stow-tint:#12241E;
+    --hg:#E86A47;    --hg-tint:#2A140B;
+    --mari:#E64663;  --mari-tint:#2E1116;
+    --paper:#1D1B17; --parchment:#12100D;
+    --ink:#F2F0EA;   --ink-soft:#B7B1A4;
+    --line:#2F2C26;  --accent:#F5C25A;
+    --green:#4CB399; --amber:#F2A03F; --red:#E64663; --grey:#3F3C34;
+    --pos:#4CB399;   --neg:#E86A6A;
+    --logo-filter:none;
+    --shadow:0 1px 3px rgba(0,0,0,.4);
+    --shadow-lg:0 14px 44px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.4);
+  }
+}
+
 *{box-sizing:border-box}
 body{margin:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   background:var(--parchment);color:var(--ink);-webkit-font-smoothing:antialiased}
-.wrap{max-width:1200px;margin:0 auto;padding:24px}
-h1{font-size:24px;margin:0 0 2px}
+.wrap{max-width:1120px;margin:0 auto;padding:24px}
+
+h1{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;
+  letter-spacing:-.01em;margin:0 0 2px}
+h2{font-family:'Space Grotesk',sans-serif;font-weight:600}
 .sub{color:var(--ink-soft);font-size:13px;margin-bottom:18px}
 .muted{color:var(--ink-soft);font-size:12px}
-.card{background:var(--paper);border-radius:12px;padding:15px 17px;
-  box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:4px solid var(--grey);margin-bottom:14px}
+a{color:var(--ink)}
+
+/* ---- app header: logo + wordmark + who, on every tool page ---------------- */
+.app-header{background:var(--paper);border-bottom:1px solid var(--line)}
+.app-header-inner{max-width:1120px;margin:0 auto;padding:16px 24px;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.brand-row{display:flex;align-items:center;gap:11px;text-decoration:none}
+.brand-row img{width:34px;height:34px;object-fit:contain;filter:var(--logo-filter);image-rendering:pixelated}
+.brand-row .group-brand{font-family:'Space Grotesk',sans-serif;font-weight:700;
+  font-size:15px;letter-spacing:.005em;color:var(--ink);text-transform:uppercase;line-height:1}
+.app-header .who{font-size:13px;color:var(--ink-soft);display:flex;align-items:center;gap:10px}
+.app-header .who strong{color:var(--ink);font-weight:600}
+.app-header .who a{color:var(--ink);text-decoration:none;cursor:pointer;font-weight:500;
+  border-bottom:1px solid var(--line);padding-bottom:1px}
+.app-header .who a:hover{border-bottom-color:var(--ink)}
+
+/* ---- cards --------------------------------------------------------------- */
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;box-shadow:var(--shadow);border-top:4px solid var(--grey);margin-bottom:14px}
 .card.stow{border-top-color:var(--stow)} .card.hg{border-top-color:var(--hg)}
-.card.mari{border-top-color:var(--mari)}
+.card.mari{border-top-color:var(--mari)} .card.group{border-top-color:var(--group)}
+.hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.hd h2{font-size:14px;margin:0;letter-spacing:.01em}
+
+/* ---- form controls ------------------------------------------------------- */
 input,select,button,textarea{font:inherit}
-input,select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;
-  background:var(--paper);color:var(--ink);width:100%}
-input:focus,select:focus{outline:none;border-color:var(--ink)}
-button{padding:8px 14px;border:0;border-radius:8px;background:var(--ink);color:#fff;cursor:pointer}
+input,select,textarea{padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;
+  background:var(--paper);color:var(--ink);width:100%;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ink)}
+input::placeholder,textarea::placeholder{color:var(--ink-soft);opacity:.7}
+label{display:block;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin:14px 0 5px}
+button{padding:11px 18px;border:0;border-radius:9px;background:var(--group);color:var(--paper);
+  cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;
+  letter-spacing:.06em;text-transform:uppercase;transition:opacity .15s}
 button:hover{opacity:.85}
-button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
-  color:var(--ink-soft);margin:10px 0 4px}
-.hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-.hd h2{font-size:15px;margin:0}
-.login-wrap{max-width:420px;margin:60px auto;padding:0 20px}
-.login-card{background:var(--paper);border-radius:12px;padding:28px;
-  box-shadow:0 14px 44px rgba(0,0,0,.12)}
-.login-card .err{color:var(--red);font-size:12px;margin-top:8px;min-height:16px}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);text-transform:none;letter-spacing:0}
+button.ghost:hover{border-color:var(--ink);opacity:1}
+
+/* ---- login / auth screens (matches the dashboard's branded login) -------- */
+.login-wrap{max-width:430px;margin:56px auto;padding:0 20px}
+.login-card{background:var(--paper);border:1px solid var(--line);border-radius:16px;
+  padding:40px 34px 32px;box-shadow:var(--shadow-lg);border-top:6px solid var(--group)}
+.login-card .group-mark{text-align:center;margin-bottom:22px}
+.login-card .brand-logo{width:120px;height:120px;display:block;margin:0 auto 12px;
+  object-fit:contain;filter:var(--logo-filter);image-rendering:pixelated}
+.login-card .brand-sub{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:11px;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--ink-soft)}
+.login-card .venues{display:flex;justify-content:center;gap:7px;margin-top:16px}
+.login-card .venue-chip{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;padding:4px 11px;border-radius:20px;color:#fff}
+.venue-chip.stow{background:var(--stow)} .venue-chip.hg{background:var(--hg)} .venue-chip.mari{background:var(--mari)}
+.login-card label{margin:16px 0 6px}
+.login-card input{font-size:15px}
+.login-card button{width:100%;margin-top:22px;padding:14px;font-size:14px;font-weight:700;letter-spacing:.1em}
+.login-card .err{color:var(--red);font-size:12px;text-align:center;margin-top:12px;min-height:16px;font-weight:500}

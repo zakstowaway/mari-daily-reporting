@@ -152,7 +152,17 @@ export const Auth = (() => {
     onOk(c);
   }
 
-  const card = (inner) => `<div class="login-wrap"><div class="login-card">${inner}</div></div>`;
+  const brandMark = `
+    <div class="group-mark">
+      <img class="brand-logo" src="/logo_512.png" alt="Stowaway Hospitality Group">
+      <div class="brand-sub">Stowaway Hospitality Group</div>
+      <div class="venues">
+        <span class="venue-chip stow">Stowaway</span>
+        <span class="venue-chip hg">Harry Gatos</span>
+        <span class="venue-chip mari">Marilyna's</span>
+      </div>
+    </div>`;
+  const card = (inner) => `<div class="login-wrap"><div class="login-card">${brandMark}${inner}</div></div>`;
 
   function renderSignIn(mount, onOk, roles) {
     mount.style.display = "";
