@@ -3090,21 +3090,31 @@ async function renderHourly(venue, date, showLabour) {
   const labByHour = (lab && lab.byHour) || {};
   if (lab && lab.avgRate) STATE._avgLabourRate = lab.avgRate;
 
-  const hoursPresent = new Set([...Object.keys(rev), ...Object.keys(labByHour)].map(Number));
-  if (!hoursPresent.size) { sec.style.display = 'none'; return; }
-  const lo = Math.min(...hoursPresent), hi = Math.max(...hoursPresent);
+  // Trading-day window for the axis: drop pre-dawn (0–5am) hours — they only
+  // appear because a close shift crosses midnight and wraps to hour 0. Fold that
+  // post-midnight labour into the last trading hour so it's still counted, and
+  // clamp any stray labour to the window edges.
+  const dayHours = [...Object.keys(rev), ...Object.keys(labByHour)].map(Number).filter(h => h >= 6);
+  if (!dayHours.length) { sec.style.display = 'none'; return; }
+  const lo = Math.min(...dayHours), hi = Math.max(...dayHours);
   const hours = [];
   for (let h = lo; h <= hi; h++) hours.push(h);
+  const labFold = {};
+  for (const [hs, v] of Object.entries(labByHour)) {
+    let h = Number(hs);
+    if (h < 6) h = hi; else if (h < lo) h = lo; else if (h > hi) h = hi;
+    labFold[h] = (labFold[h] || 0) + v;
+  }
 
   const revArr = hours.map(h => Math.round(rev[h] || 0));
-  const labArr = hours.map(h => Math.round(labByHour[h] || 0));
-  const barColors = hours.map((h, i) => hourStrengthColor(rev[h] || 0, labByHour[h] || 0));
+  const labArr = hours.map(h => Math.round(labFold[h] || 0));
+  const barColors = hours.map((h) => hourStrengthColor(rev[h] || 0, labFold[h] || 0));
 
   // Insight: peak-trade hour + the most labour-heavy hour that still did real
   // trade. Stashed for the verbal wrap to reuse (avoids a second fetch).
   let peakH = null, peakRev = -1, weakH = null, weakShare = -1, strongH = null, strongRatio = -1;
   for (const h of hours) {
-    const rv = rev[h] || 0, lb = labByHour[h] || 0;
+    const rv = rev[h] || 0, lb = labFold[h] || 0;
     if (rv > peakRev) { peakRev = rv; peakH = h; }
     if (rv >= 150 && lb > 0) {
       const share = lb / rv;
@@ -3115,8 +3125,8 @@ async function renderHourly(venue, date, showLabour) {
   }
   STATE._hourlyInsight = {
     peakH, peakRev,
-    weakH, weakShare, weakLabour: weakH != null ? (labByHour[weakH] || 0) : 0, weakRev: weakH != null ? (rev[weakH] || 0) : 0,
-    strongH, strongRev: strongH != null ? (rev[strongH] || 0) : 0, strongLabour: strongH != null ? (labByHour[strongH] || 0) : 0,
+    weakH, weakShare, weakLabour: weakH != null ? (labFold[weakH] || 0) : 0, weakRev: weakH != null ? (rev[weakH] || 0) : 0,
+    strongH, strongRev: strongH != null ? (rev[strongH] || 0) : 0, strongLabour: strongH != null ? (labFold[strongH] || 0) : 0,
     hasLabour: showLabour && Object.keys(labByHour).length > 0,
   };
 
