@@ -243,23 +243,16 @@ body {
 
 .control-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
 .timeframe-toggle {
-  display: inline-flex; flex-wrap: wrap; background: var(--paper);
-  border-radius: 10px; padding: 4px; border: 1px solid var(--line);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px;
 }
-.timeframe-toggle button {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--ink-soft);
-  padding: 8px 14px; border: none; background: transparent;
-  border-radius: 6px; cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+.timeframe-toggle select {
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600;
+  color: var(--ink-soft); background: var(--paper); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 12px; cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.timeframe-toggle button:hover { color: var(--ink); }
-.timeframe-toggle button.active { background: var(--group); color: var(--paper); }
-.timeframe-toggle select { background: transparent; color: var(--ink-soft); border: 0; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; cursor: pointer; }
-.timeframe-toggle select:hover { color: var(--ink); }
-.timeframe-toggle select.active { background: var(--group); color: var(--paper); }
+.timeframe-toggle select:hover { color: var(--ink); border-color: var(--ink-soft); }
+.timeframe-toggle select.active { background: var(--group); color: var(--paper); border-color: var(--group); }
 .timeframe-toggle select option { color: initial; }
 .range-picker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .range-picker input[type="date"] { background: transparent; color: var(--ink); border: 1px solid rgba(128,128,128,.35); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; color-scheme: light dark; }
@@ -375,26 +368,25 @@ tbody tr:hover { background: var(--group-tint); }
 .placeholder-card { grid-column: 1 / -1; text-align: center; padding: 60px 24px; }
 
 /* ---- Redesigned timeframe / day selector ---- */
-.timeframe-toggle { gap: 6px; align-items: center; }
-.tf-wklabel { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); padding: 0 4px; }
-.tf-chips { display: inline-flex; gap: 3px; flex-wrap: wrap; }
-.tf-chip { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; line-height: 1.15;
-  padding: 5px 8px; border: 1px solid var(--line); background: var(--paper); color: var(--ink);
-  border-radius: 7px; cursor: pointer; text-align: center; min-width: 36px; }
-.tf-chip .tf-wd { display: block; font-size: 8px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--ink-soft); margin-bottom: 1px; }
-.tf-chip:hover:not([disabled]) { border-color: var(--ink); }
-.tf-chip.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.tf-scrub { display: inline-flex; gap: 3px; background: var(--group-tint);
+  border-radius: 10px; padding: 3px; }
+.tf-chip { font-family: 'Space Grotesk', sans-serif; display: inline-flex; flex-direction: column;
+  align-items: center; gap: 1px; line-height: 1.1; min-width: 34px;
+  padding: 5px 9px; border: none; background: transparent; color: var(--ink);
+  border-radius: 8px; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.tf-chip .tf-wd { font-size: 10px; font-weight: 600; letter-spacing: 0.4px;
+  text-transform: uppercase; color: var(--ink-soft); }
+.tf-chip .tf-dt { font-size: 14px; font-weight: 500; }
+.tf-chip:hover:not([disabled]):not(.active) { background: var(--paper); }
+.tf-chip.active { background: var(--group); color: var(--paper); }
 .tf-chip.active .tf-wd { color: rgba(255,255,255,0.72); }
-.tf-chip.muted { opacity: 0.4; }
-.tf-chip[disabled] { cursor: default; }
-.tf-div { width: 1px; align-self: stretch; background: var(--line); margin: 3px 4px; }
-.tf-btn { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--ink-soft); padding: 8px 12px; border: none; background: transparent;
-  border-radius: 6px; cursor: pointer; transition: background 0.15s, color 0.15s; }
-.tf-btn:hover { color: var(--ink); }
-.tf-btn.active { background: var(--group); color: var(--paper); }
+.tf-chip.future { opacity: 0.5; cursor: default; }
+.tf-div { width: 1px; height: 26px; background: var(--line); flex: none; }
+.tf-btn { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--ink-soft); padding: 7px 13px; border: 1px solid var(--line); background: var(--paper);
+  border-radius: 999px; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.tf-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+.tf-btn.active { background: var(--group); color: var(--paper); border-color: var(--group); }
 
 /* ---- Expected / actual profit card ---- */
 .pcard { background: var(--paper); border-radius: 12px; padding: 18px 20px; margin: 0 0 16px;
@@ -407,6 +399,14 @@ tbody tr:hover { background: var(--group-tint); }
   letter-spacing: -0.03em; line-height: 1; color: var(--green); margin: 0 0 14px; }
 .pcard-hero.neg { color: var(--mari); }
 .pcard-margin { font-size: 15px; font-weight: 600; color: var(--ink-soft); letter-spacing: 0; }
+.oh-chips { margin-left: auto; display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.oh-chip { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+  transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.oh-chip:hover { border-color: var(--ink-soft); }
+.oh-chip.on { background: var(--accent); border-color: var(--accent); color: #1A1A1A; }
+.pcard-ohnote { font-size: 11px; color: var(--ink-soft); margin: -8px 0 12px; }
 .pmini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 14px; }
 @media (max-width: 500px) { .pmini { grid-template-columns: 1fr; } }
 .pmini-c { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; }
@@ -477,18 +477,7 @@ tbody tr:hover { background: var(--group-tint); }
     </div>
   </div>
 
-  <!-- Group only: venue wage lines are operational by definition. -->
-  <div id="oh-toggle-wrap" class="oh-wrap" style="display:none;">
-    <label class="oh-lab">
-      <input type="checkbox" id="oh-toggle-admin" onchange="toggleAdmin()">
-      <span>Include admin</span>
-    </label>
-    <label class="oh-lab">
-      <input type="checkbox" id="oh-toggle-leave" onchange="toggleLeave()">
-      <span>Include leave</span>
-    </label>
-    <span class="oh-note" id="oh-note"></span>
-  </div>
+  <!-- Group admin/leave toggles now live on the profit card (renderProfitCard). -->
   <div class="venue-strip" id="venue-strip"></div>
 
   <div class="wrap">
@@ -1966,38 +1955,35 @@ function currentWeekDays() {
   for (let i = 0; i < 7; i++) out.push(addDays(mon, i));
   return out;
 }
-// One-row selector: "This week" + 7 day chips (click = that date), a divider,
-// This week / Last week / This month buttons, then a More… select for the rest.
+// One-row selector: a 7-day scrubber (Mon->Sun of this week, click = that date),
+// a thin divider, then This week / Last week / This month pills and a More pill
+// (a styled select) for the rest. Future days are muted and not clickable.
 function renderTimeframeToggle() {
   const el = document.getElementById('timeframe-toggle');
   if (!el) return;
   const tf = STATE.currentTimeframe;
-  const rows = STATE.histories[STATE.currentVenue] || [];
-  const byDate = Object.fromEntries(rows.map(r => [r.date, r]));
   const todayIso = isoDate(sydneyToday());
   const chips = currentWeekDays().map(d => {
     const iso = isoDate(d);
     const future = iso > todayIso;
-    const has = !!byDate[iso] && !!byDate[iso].revenue_ex_gst;
     const active = tf === 'day' && iso === STATE.currentDay;
     const cls = ['tf-chip'];
     if (active) cls.push('active');
-    if (future || !has) cls.push('muted');
+    if (future) cls.push('future');
     const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
-    return `<button class="${cls.join(' ')}"${future ? ' disabled title="no data yet"' : ` onclick="switchDay('${iso}')"`}>` +
-           `<span class="tf-wd">${wd}</span>${d.getDate()}</button>`;
+    return `<button class="${cls.join(' ')}"${future ? ' disabled' : ` onclick="switchDay('${iso}')"`}>` +
+           `<span class="tf-wd">${wd}</span><span class="tf-dt">${d.getDate()}</span></button>`;
   }).join('');
   const btn = (t, lbl) => `<button class="tf-btn${tf === t ? ' active' : ''}" onclick="switchTimeframe('${t}')">${lbl}</button>`;
   const moreOpts = [['lastmonth', 'Last month'], ['quarter', 'This quarter'], ['lastquarter', 'Last quarter'],
     ['thisfy', 'This FY'], ['lastfy', 'Last FY'], ['last12', 'Last 12 months'], ['all', 'All time'], ['range', 'Custom range…']];
   const moreOn = moreOpts.some(o => o[0] === tf);
   const moreSel = `<select id="tf-more" class="${moreOn ? 'active' : ''}" onchange="if(this.value)switchTimeframe(this.value)">` +
-    `<option value="">More…</option>` +
+    `<option value="">More ▾</option>` +
     moreOpts.map(o => `<option value="${o[0]}"${moreOn && tf === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('') +
     `</select>`;
   el.innerHTML =
-    `<span class="tf-wklabel">This week</span>` +
-    `<div class="tf-chips">${chips}</div>` +
+    `<div class="tf-scrub">${chips}</div>` +
     `<span class="tf-div"></span>` +
     btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') +
     moreSel;
@@ -2036,10 +2022,12 @@ function cardsForCurrentView() {
   const venueCfg = VENUE_CONFIG[STATE.currentVenue];
   const roleCfg = ROLE_CONFIG[CURRENT_ROLE] || ROLE_CONFIG.admin;
   const base = (roleCfg.cards || venueCfg.cards);
-  // Admin: revenue / COGS / wages / profit now live in the dedicated #profit-card
-  // hero block (renderProfitCard). The plain grid keeps the supporting cost cards.
+  // Admin: revenue / COGS / wages / profit AND the delivery-fee / overhead cost
+  // lines now all live in the dedicated #profit-card hero block (renderProfitCard).
+  // The plain snapshot grid is therefore empty for admin — the kitchen roles keep
+  // their own cards untouched.
   let list = (CURRENT_ROLE === 'admin')
-    ? ['delivery_fees', 'overheads']
+    ? []
     : base.slice();
   // Retired cards: standalone GP (just 100 − COGS) and the EatClub give-away
   // (now folded into the profit breakdown as a cost line, not its own card).
@@ -2064,6 +2052,9 @@ function renderSnapshot() {
   titleEl.textContent = `${venueCfg.label} · ${tfLabel}`;
   const snapshotEl = document.getElementById('snapshot');
   snapshotEl.className = 'grid' + (cards.length > 4 ? ' six' : '');
+  // Empty card list (admin) — collapse the grid entirely so no empty bordered
+  // box or leftover bottom margin sits between the profit card and the trend.
+  snapshotEl.style.display = cards.length ? '' : 'none';
   if (!day) {
     dateEl.textContent = 'No data';
     staleEl.innerHTML = '';
@@ -2173,10 +2164,12 @@ function renderProfitCard(day, cfg) {
     if (ap.fin) bits.push(`interest & dep ${fmtDollars(ap.fin)}`);
     if (dlt !== null) bits.push(`expected said ${fmtP(w0.profit)} (Δ ${fmtP(dlt)})`);
     bits.push(`${ap.nMonths} closed month${ap.nMonths > 1 ? 's' : ''}, stock journals posted`);
+    const oc = overheadChips();
     el.innerHTML =
       `<div class="pcard${ap.profit >= 0 ? '' : ' neg'}">` +
-      `<div class="pcard-head"><span class="pcard-lbl">Actual profit</span> ${pill('closed · Xero', 'green')}</div>` +
+      `<div class="pcard-head"><span class="pcard-lbl">Actual profit</span> ${pill('closed · Xero', 'green')}${oc.chips}</div>` +
       `<div class="pcard-hero${ap.profit >= 0 ? '' : ' neg'}">${fmtP(ap.profit)}<span class="pcard-margin"> · ${fmtPct(margin)} margin</span></div>` +
+      oc.note +
       `<div class="pbrk"><div class="pbrk-row"><span class="pbrk-l" style="font-size:12px;color:var(--ink-soft)">${bits.join(' · ')}</span></div></div>` +
       `</div>`;
     return;
@@ -2257,11 +2250,13 @@ function renderProfitCard(day, cfg) {
     `<span class="pbrk-l">Expected profit</span><span class="pbrk-p">${fmtPct(margin)}</span>` +
     `<span class="pbrk-r">${fmtP(w.profit)}</span></div>`;
 
+  const oc = overheadChips();
   el.innerHTML =
     `<div class="pcard${w.profit >= 0 ? '' : ' neg'}">` +
     `<div class="pcard-head"><span class="pcard-lbl">Expected profit</span> ${pill('open period', 'warn')}` +
-    (w.partial ? ` <span style="font-size:11px;color:var(--ink-soft)">${w.wdays} of ${w.daysAll} days costed</span>` : '') + `</div>` +
+    (w.partial ? ` <span style="font-size:11px;color:var(--ink-soft)">${w.wdays} of ${w.daysAll} days costed</span>` : '') + oc.chips + `</div>` +
     `<div class="pcard-hero${w.profit >= 0 ? '' : ' neg'}">${fmtP(w.profit)}<span class="pcard-margin"> · ${fmtPct(margin)} margin</span></div>` +
+    oc.note +
     mini + bar + `<div class="pbrk">${list}</div>` +
     `</div>`;
 }
@@ -2893,19 +2888,13 @@ async function fetchLastUpdate() {
   }
 }
 
-// Show the switch on group only, and say what it's worth for the window in
-// view — a checkbox that silently moves a headline number is worse than no
-// checkbox. The $ is the admin+leave actually in scope, not a global constant.
-function renderOverheadToggle() {
-  const wrap = document.getElementById('oh-toggle-wrap');
-  if (!wrap) return;
-  const isGroup = STATE.currentVenue === 'group';
-  wrap.style.display = isGroup ? 'flex' : 'none';
-  if (!isGroup) return;
-  const ab = document.getElementById('oh-toggle-admin');
-  const lb = document.getElementById('oh-toggle-leave');
-  if (ab) ab.checked = STATE.includeAdmin;
-  if (lb) lb.checked = STATE.includeLeave;
+// Admin/leave chip toggles for the group profit card. These fold admin + leave
+// $ into the group wage line — a switch that silently moves a headline number is
+// worse than no switch, so each chip shows the $ actually in scope for the window
+// and a filled state when it's on. Returns HTML fragments to slot into the pcard;
+// nothing to render when we're on a venue view or there's no admin/leave in scope.
+function overheadChips() {
+  if (STATE.currentVenue !== 'group') return { chips: '', note: '' };
   let adm = 0, lve = 0;
   for (const v of REAL_VENUES) {
     for (const r of rowsForTimeframe(STATE.histories[v] || [], STATE.currentTimeframe, STATE.currentDay)) {
@@ -2913,23 +2902,21 @@ function renderOverheadToggle() {
       lve += toNum(r.leave_dollars);
     }
   }
-  const note = document.getElementById('oh-note');
-  if (note) {
-    if (!adm && !lve) {
-      note.textContent = 'no admin or leave in this window';
-    } else {
-      const parts = [];
-      if (adm) parts.push(`admin ${fmtDollars(adm)} ${STATE.includeAdmin ? 'in' : 'out'}`);
-      if (lve) parts.push(`leave ${fmtDollars(lve)} ${STATE.includeLeave ? 'in' : 'out'}`);
-      note.textContent = parts.join(' · ') + ' — not rostered against trade';
-    }
-  }
+  const chip = (on, label, dollars, fn) =>
+    `<button class="oh-chip${on ? ' on' : ''}" onclick="${fn}()">${label} ${fmtDollars(dollars)}</button>`;
+  const parts = [];
+  if (adm > 0.005) parts.push(chip(STATE.includeAdmin, 'include admin', adm, 'toggleAdmin'));
+  if (lve > 0.005) parts.push(chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'));
+  if (!parts.length) return { chips: '', note: '' };
+  return {
+    chips: `<span class="oh-chips">${parts.join('')}</span>`,
+    note: `<p class="pcard-ohnote">admin and leave aren't rostered against trade</p>`,
+  };
 }
 
 function render() {
   renderVenueTabs();
   renderVenueStrip();
-  renderOverheadToggle();
   renderTimeframeToggle();
   renderDayPicker();
   renderSnapshot();
