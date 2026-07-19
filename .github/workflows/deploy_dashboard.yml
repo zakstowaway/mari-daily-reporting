@@ -8,6 +8,9 @@ on:
     branches: [main]
     paths:
       - 'dashboard/**'
+      - 'modules/recipes/**'   # the recipe builder app + its feed pipelines
+      - 'core/**'              # the cost/identity engine the feeds build on
+      - 'data/recipes/**'      # saved recipes feed the sub-recipe index
   workflow_dispatch:
 
 permissions:

@@ -277,7 +277,9 @@ window.addSub = (enc) => {
   calc();
 };
 
-window.setQty = (k, v) => { const l = LINES[k]; if (l) l.qty = +v || 0; calc(); };
+// Update the number only — do NOT rebuild the rows, or the input the chef is
+// typing into is destroyed mid-keystroke and only the first digit lands.
+window.setQty = (k, v) => { const l = LINES[k]; if (l) l.qty = +v || 0; recompute(); };
 window.del = (k) => { LINES.splice(k, 1); calc(); };
 
 // ---- prep timer ----
@@ -306,19 +308,33 @@ function lineCost(l) {
   const i = ING.find(x => x.id === l.id);
   return (i && !i.needs_pack_review) ? (+i.cost_per_base_unit) * l.qty : 0;
 }
+function lineMeta(l) {
+  if (l.kind === 'sub') return { name: l.product + ' (recipe)', unit: l.unit };
+  const i = ING.find(x => x.id === l.id);
+  return { name: i.description, unit: i.pack_unit === 'g' ? 'g' : i.pack_unit === 'ml' ? 'mL' : i.pack_unit };
+}
 
-function calc() {
+// renderLines rebuilds the row markup — only on add/remove. recompute updates
+// costs/GP in place without touching the inputs, so typing a quantity is safe.
+function renderLines() {
   const box = document.getElementById('lines');
   box.innerHTML = LINES.length ? LINES.map((l, k) => {
-    let name, unit;
-    if (l.kind === 'sub') { name = l.product + ' (recipe)'; unit = l.unit; }
-    else { const i = ING.find(x => x.id === l.id); name = i.description; unit = i.pack_unit === 'g' ? 'g' : i.pack_unit === 'ml' ? 'mL' : i.pack_unit; }
+    const { name, unit } = lineMeta(l);
     return `<div class="row">
       <div class="nm" title="${name}">${name}</div>
       <div><input type="number" step="any" value="${l.qty || ''}" placeholder="0" oninput="setQty(${k},this.value)"></div>
-      <div class="ct">${unit} · ${money(lineCost(l))}</div>
+      <div class="ct" id="ct-${k}">${unit} · ${money(lineCost(l))}</div>
       <button class="x" onclick="del(${k})" title="remove">×</button></div>`;
   }).join('') : '<div class="muted">Nothing added yet.</div>';
+}
+
+function calc() { renderLines(); recompute(); }
+
+function recompute() {
+  LINES.forEach((l, k) => {
+    const cell = document.getElementById('ct-' + k);
+    if (cell) cell.textContent = `${lineMeta(l).unit} · ${money(lineCost(l))}`;
+  });
 
   const food = LINES.reduce((a, l) => a + lineCost(l), 0);
   const labour = prepMin * RATE;
