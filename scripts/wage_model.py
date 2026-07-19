@@ -114,12 +114,21 @@ def allocate_week(shifts, salaried, weeks_per_year=52, week_days=None,
         # $219,008 off the venue lines (HG 59.8% -> 53.7%) purely because
         # salaried staff log a little under their contract. This rule exists for
         # unapproved timesheets and a live roster, not for restating history.
-        denom = max(total_h, CONTRACT_HOURS) if shortfall_leave else total_h
+        # shortfall_leave may be a bool (applies to every salaried person) OR a
+        # collection of employee_ids for whom a sub-contract week is GENUINE
+        # leave. Anyone not named is assumed to have worked their contract — a
+        # salaried manager who logs 20h didn't take 20h of leave, they just
+        # didn't clock; their whole salary spreads across the shifts they did
+        # log and none of it is relabelled as leave (Zak, 2026-07-19: only staff
+        # on the leave register are genuinely away).
+        sl = shortfall_leave if isinstance(shortfall_leave, bool) \
+            else (str(eid) in shortfall_leave)
+        denom = max(total_h, CONTRACT_HOURS) if sl else total_h
         for s in group:
             share = (s.get("hours") or 0) / denom
             out.append({**s, "cost_final": week_cost * share})
 
-        short_h = (CONTRACT_HOURS - total_h) if shortfall_leave else 0
+        short_h = (CONTRACT_HOURS - total_h) if sl else 0
         if short_h > 0.01:
             leave_cost = week_cost * (short_h / denom)
             # Leave is a weekly quantity — it didn't happen on a day. Spread it

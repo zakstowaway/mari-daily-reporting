@@ -1,0 +1,12 @@
+{
+  "_comment": "Salaried staff genuinely away in the OPEN week. Read by rebuild_wages.py: a salaried person under contract hours is only booked as leave if listed here for those dates; everyone else is assumed to have worked (unclocked/unapproved), so their full salary lands on the venue line. Closed weeks state real leave via Xero and ignore this file. Add an entry when someone goes on leave; remove or let it lapse when they're back. Dates inclusive.",
+  "entries": [
+    {
+      "employee_id": "1",
+      "name": "Kris Hegarty",
+      "from": "2026-07-15",
+      "to": "2026-07-20",
+      "reason": "annual leave"
+    }
+  ]
+}

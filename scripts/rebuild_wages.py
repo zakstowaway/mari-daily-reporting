@@ -144,6 +144,28 @@ _rr_f = DATA_DIR / "roster_realization.json"
 _RR = json.loads(_rr_f.read_text()) if _rr_f.exists() else {}
 _RR_DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
+# Salaried leave register. A salaried person under contract hours in the OPEN
+# week is only booked as leave if they're on this list for those dates —
+# otherwise they're assumed to have worked (unclocked/unapproved), so their full
+# salary lands on the venue line, not leave. Xero states real leave for closed
+# weeks; this covers the gap before payroll runs. Managers add an entry when
+# someone is genuinely away. Format: {"entries":[{"employee_id","from","to"}]}.
+_sl_f = DATA_DIR / "salaried_leave.json"
+_SAL_LEAVE = (json.loads(_sl_f.read_text()).get("entries", []) if _sl_f.exists() else [])
+
+
+def genuine_leave_for(wk_start, wk_end):
+    """employee_ids on genuine leave any time during [wk_start, wk_end]."""
+    out = set()
+    for e in _SAL_LEAVE:
+        try:
+            f = date.fromisoformat(e["from"]); t = date.fromisoformat(e["to"])
+        except Exception:
+            continue
+        if f <= wk_end and t >= wk_start:
+            out.add(str(e["employee_id"]))
+    return out
+
 
 def realize(eid, dstr):
     if str(eid) in SAL:
@@ -431,6 +453,10 @@ while cur <= d_to:
     # and a live roster. A closed week states its leave as real timesheets.
     is_open = wk_end >= today
     week_days = [(cur + timedelta(days=i)).isoformat() for i in range(7)]
+    # In the open week, only people on the leave register turn a short week into
+    # leave; everyone else is assumed to have worked their contract. Empty set in
+    # a closed week -> allocate_week sees no one, i.e. no synthesised leave.
+    open_leave = genuine_leave_for(cur, wk_end) if is_open else set()
 
     def cost_week(base_shifts, stand_ins):
         """Cost one payroll week. Xero for whoever payroll has paid, the salaried
@@ -462,7 +488,7 @@ while cur <= d_to:
 
         if not paid:
             c, w = allocate_week(base_shifts + stand_ins, SAL, WPY,
-                                 week_days=week_days, shortfall_leave=is_open)
+                                 week_days=week_days, shortfall_leave=open_leave)
             for s_ in c:
                 s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"],
                                          estimated=True)
@@ -494,7 +520,7 @@ while cur <= d_to:
         # shift must never absorb a share of real money.
         rest.extend(r for r in stand_ins if r["employee_id"] not in paid)
         c2, w = allocate_week(rest, SAL, WPY,
-                              week_days=week_days, shortfall_leave=is_open)
+                              week_days=week_days, shortfall_leave=open_leave)
         for s_ in c2:
             s_["cost_final"] = gross(s_["employee_id"], s_["cost_final"],
                                      estimated=True)
