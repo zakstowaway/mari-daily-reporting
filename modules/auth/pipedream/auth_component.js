@@ -63,18 +63,23 @@ export default defineComponent({
     });
     if (!who.ok) return reply(401, { error: "Invalid or expired session" });
     const user = await who.json();
-    const meta = { ...(user.app_metadata || {}), ...(user.user_metadata || {}) };
-    const role = meta.role || null;
-    const name = meta.name || user.email;
+    const app = user.app_metadata || {};
+    const usr = user.user_metadata || {};
+    // PRIVILEGE fields (role, venue) come ONLY from app_metadata — which only a
+    // service-role/SQL admin can write. Reading them from user_metadata would let
+    // a chef set their own role at signup (options.data goes to user_metadata).
+    // Name is not a privilege, so it may come from either.
+    const role = app.role || null;
+    const allowedVenue = app.venue || null;   // which venue this person may edit
+    const name = usr.name || app.name || user.email;
 
-    // Role comes from Supabase app_metadata (admin-set), never the request body.
     if (!KITCHEN.includes(role)) return reply(403, { error: "Your role cannot edit recipes" });
 
     const { venue, product, yaml } = req.body || {};
     if (!venue || !product || !yaml) return reply(400, { error: "venue, product and yaml required" });
     if (!/^[a-z_]+$/.test(venue)) return reply(400, { error: "bad venue" });
-    if (!["admin", "bigchef"].includes(role) && meta.venue && meta.venue !== venue) {
-      return reply(403, { error: `You can only edit ${meta.venue}` });
+    if (!["admin", "bigchef"].includes(role) && allowedVenue && allowedVenue !== venue) {
+      return reply(403, { error: `You can only edit ${allowedVenue}` });
     }
 
     // ── commit to GitHub, as the person ────────────────────────────────────
