@@ -37,10 +37,13 @@ export default defineComponent({
 
   async run({ steps, $ }) {
     const req = steps.trigger.event;
-    const reply = (status, body) => {
-      $.respond({ status, headers: { "content-type": "application/json", ...CORS }, body });
-      return body;
-    };
+    // MUST await $.respond — Pipedream flushes the custom response only when the
+    // promise resolves. Without await the workflow succeeds but the client gets
+    // a generic "Error in workflow" 400. Every caller does `return reply(...)`,
+    // so run() awaits this before completing.
+    const reply = (status, body) =>
+      $.respond({ status, headers: { "content-type": "application/json", ...CORS }, body })
+        .then(() => body);
 
     if (req.method === "OPTIONS") return reply(204, "");
     if (req.method !== "POST") return reply(405, { error: "POST only" });
