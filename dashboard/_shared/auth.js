@@ -27,7 +27,7 @@
  * unchanged from the previous version, so pages that used it don't change.
  */
 
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./config.js";
+import { SUPABASE_URL, SUPABASE_ANON_KEY, WORKER_URL } from "./config.js";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 export const Auth = (() => {
@@ -126,8 +126,12 @@ export const Auth = (() => {
       return;
     }
 
-    // Returning from a reset email? Supabase has put a recovery session in place.
-    if (location.hash.includes("reset")) return renderReset(mount, onOk, roles);
+    // Returning from a reset OR invite email? Both need the user to set a
+    // password. Supabase (detectSessionInUrl) has already put a session in place.
+    if (location.hash.includes("reset") || location.hash.includes("type=recovery") ||
+        location.hash.includes("type=invite")) {
+      return renderReset(mount, onOk, roles);
+    }
 
     const c = await current();
     if (c) return admit(c, mount, onOk, roles);
@@ -238,9 +242,29 @@ export const Auth = (() => {
     });
   }
 
+  // ── admin API (admin only) ───────────────────────────────────────────────
+  // These POST to the Pipedream worker with the admin's token; the worker
+  // verifies admin, then uses the service key (server-side) to act on Supabase.
+  // The service key never touches the browser.
+  async function adminCall(pathSuffix, body) {
+    const token = requireToken();
+    const r = await fetch(`${WORKER_URL}/admin/${pathSuffix}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+      body: JSON.stringify(body || {}),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+    return j;
+  }
+  const listUsers  = () => adminCall("users", {}).then((j) => j.users || []);
+  const inviteUser = (email, role, venue) => adminCall("invite", { email, role, venue });
+  const setUserRole = (email, role, venue) => adminCall("role", { email, role, venue });
+
   return {
     login, signUp, forgotPassword, completePasswordReset, logout,
     current, requireToken, canWrite, hasRole, gate, KITCHEN_ROLES,
     configured, SUPABASE_URL,
+    listUsers, inviteUser, setUserRole,
   };
 })();

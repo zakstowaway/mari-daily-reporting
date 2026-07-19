@@ -40,6 +40,7 @@ LAYOUT: list[tuple[str, str]] = [
     ("dashboard/_shared",      "_shared"),   # shared JS/CSS -> /_shared/
     ("dashboard/home",         ""),          # the app HOME (sign in here) -> /
     ("dashboard/sales",        "sales"),     # the daily-reporting dashboard -> /sales/
+    ("dashboard/admin",        "admin"),     # -> /admin/ (admin only)
     ("modules/recipes/app",    "recipes"),   # -> /recipes/
     ("data",                   "data"),      # feeds -> /data/
     ("baselines",              "baselines"),
