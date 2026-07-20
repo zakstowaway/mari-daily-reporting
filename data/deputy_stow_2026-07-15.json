@@ -16,13 +16,13 @@
     "timesheet_id": 35321,
     "employee_id": 5,
     "employee_name": "Nicola Bisato",
-    "ou_name": "Admin",
+    "ou_name": "Stow Bar",
     "company": "Stowaway",
-    "dept": "Admin",
+    "dept": "FOH",
     "start_time": 1784091600,
     "end_time": 1784119500,
-    "hours": 6.525,
-    "cost": 219.59,
+    "hours": 7.25,
+    "cost": 243.99,
     "salaried_synth": true
   },
   {
