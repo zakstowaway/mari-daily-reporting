@@ -8,8 +8,8 @@
     "dept": "Kitchen",
     "start_time": 1784512800,
     "end_time": 1784547900,
-    "hours": 9.25,
-    "cost": 311.3,
+    "hours": 9.75,
+    "cost": 328.12,
     "salaried_synth": true
   },
   {
@@ -22,7 +22,7 @@
     "start_time": 1784523600,
     "end_time": 1784548800,
     "hours": 6.5,
-    "cost": 0.0,
+    "cost": 239.26,
     "salaried_synth": false
   },
   {
@@ -35,21 +35,8 @@
     "start_time": 1784525400,
     "end_time": 1784547000,
     "hours": 6.0,
-    "cost": 0.0,
+    "cost": 203.1,
     "salaried_synth": false
-  },
-  {
-    "timesheet_id": 35416,
-    "employee_id": 16,
-    "employee_name": "Stephanie Kunde",
-    "ou_name": "Admin",
-    "company": "Stowaway",
-    "dept": "Admin",
-    "start_time": 1784527200,
-    "end_time": 1784548800,
-    "hours": 0.6,
-    "cost": 21.0,
-    "salaried_synth": true
   },
   {
     "timesheet_id": 35420,
@@ -61,7 +48,7 @@
     "start_time": 1784527200,
     "end_time": 1784547000,
     "hours": 5.0,
-    "cost": 0.0,
+    "cost": 174.8,
     "salaried_synth": false
   },
   {
@@ -74,7 +61,7 @@
     "start_time": 1784530800,
     "end_time": 1784547000,
     "hours": 4.5,
-    "cost": 0.0,
+    "cost": 152.32,
     "salaried_synth": false
   },
   {
@@ -87,7 +74,7 @@
     "start_time": 1784533500,
     "end_time": 1784545200,
     "hours": 3.25,
-    "cost": 0.0,
+    "cost": 105.01,
     "salaried_synth": false
   },
   {
@@ -100,7 +87,7 @@
     "start_time": 1784534400,
     "end_time": 1784547000,
     "hours": 3.5,
-    "cost": 0.0,
+    "cost": 70.0,
     "salaried_synth": false
   }
 ]
