@@ -1,3 +1,7 @@
 2026-07-18T22:16:11Z uber-eats-daily-fees: pulled Jul 14-18 2026 for both shops (hg, mari). HG Jul14 had no orders (no card). Session active (no login prompt).
 2026-07-18T22:16:11Z   marketing: no ads invoice overlaps captured days yet - latest 'Uber to shop' invoice is week 07/06-07/12 for both shops (issued 2026-07-15); week 07/13-07/19 not yet issued. uber_marketing_weekly.csv unchanged.
 2026-07-18T22:16:11Z   Uber Direct: none observed in Payouts view.
+2026-07-20T22:16:54Z uber-eats-daily-fees: pulled Jul 15-19 2026 for both shops (hg, mari). Jul 20 skipped (card marked 'Live', Mari sales A$0.00 - not settled). Session active (no login prompt).
+2026-07-20T22:16:54Z   HG Jul 19: sales A$0.00, payout -A$2.00 = a net order error adjustment (refund on order 76B19, Ally K, 07/19). Recorded sales=0/payout=-2.00; offers set to 0.00 (not a funded promo). commission=0.
+2026-07-20T22:16:54Z   marketing: no ads invoice overlaps captured days. Latest 'Uber to shop' invoice is week 07/06-07/12 (issued 2026-07-15) for both shops (HG inv ...0000028, Mari inv ...0000030); week 07/13-07/19 not yet issued. uber_marketing_weekly.csv unchanged.
+2026-07-20T22:16:54Z   Uber Direct: none observed in Payouts view.
