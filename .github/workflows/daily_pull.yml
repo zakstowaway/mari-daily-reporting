@@ -147,7 +147,18 @@ jobs:
           if [[ "${{ github.event_name }}" == "schedule" ]]; then
             VENUES="marilynas stowaway harry"
           else
-            VENUES="${{ steps.venue.outputs.venue }}"
+            V="${{ steps.venue.outputs.venue }}"
+            T="${{ steps.date.outputs.target }}"
+            VENUES="$V"
+            # Stow & HG share a till — HG food rings through the Stow POS. The two
+            # Insights payloads land up to ~30 min apart, so whichever aggregates
+            # first misses the sibling's cross-till rows (2026-07-20: HG lost
+            # $1,205 that was stripped off Stow but never added to HG). Fix: when
+            # one lands, ALSO re-aggregate the sibling — but only if the sibling's
+            # raw CSV is already committed, so the later payload repairs the
+            # earlier one and we never blank a venue that hasn't landed yet.
+            if [[ "$V" == "stowaway" && -f "data/insights_hg_${T}.csv" ]];   then VENUES="stowaway harry"; fi
+            if [[ "$V" == "harry"    && -f "data/insights_stow_${T}.csv" ]]; then VENUES="harry stowaway"; fi
           fi
           for V in $VENUES; do
             echo "=== $V ==="
