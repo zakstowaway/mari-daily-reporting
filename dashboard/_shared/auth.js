@@ -101,6 +101,16 @@ export const Auth = (() => {
     return error ? { ok: false, error: error.message } : { ok: true };
   }
 
+  // Microsoft 365 / Outlook "Safe Links" opens one-time recovery LINKS to scan
+  // them and burns the token before the user ever clicks. The same email also
+  // carries a 6-digit code ({{ .Token }}) that no scanner consumes — verifying it
+  // establishes the recovery session without relying on the link (Zak 2026-07-21).
+  async function verifyRecoveryCode(email, code) {
+    if (!sb) throw new Error("Auth not configured yet.");
+    const { error } = await sb.auth.verifyOtp({ email: (email || "").trim(), token: (code || "").trim(), type: "recovery" });
+    return error ? { ok: false, error: error.message } : { ok: true };
+  }
+
   async function logout() {
     if (sb) await sb.auth.signOut();
     CACHE = null;
@@ -130,7 +140,11 @@ export const Auth = (() => {
     // Returning from a reset OR invite email? Both need the user to set a
     // password. Supabase (detectSessionInUrl) has already put a session in place.
     if (location.hash.includes("reset") || location.hash.includes("type=recovery") ||
-        location.hash.includes("type=invite")) {
+        location.hash.includes("type=invite") ||
+        // A burned/expired one-time link lands here with an error hash instead of
+        // a session. Still route to the reset screen so the 6-digit-code fallback
+        // is offered rather than dumping the user on a bare sign-in page.
+        location.hash.includes("otp_expired") || location.hash.includes("access_denied")) {
       return renderReset(mount, onOk, roles);
     }
 
@@ -218,9 +232,12 @@ export const Auth = (() => {
     mount.innerHTML = card(`
       <form id="_ff">
         <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
-        <button type="submit">Email me a reset link</button>
+        <button type="submit">Email me a reset link + code</button>
         <div class="err" id="_er"></div>
-        <div class="muted" style="margin-top:10px"><a href="#" id="_back">Back to sign in</a></div>
+        <div class="muted" style="margin-top:10px;display:flex;justify-content:space-between">
+          <a href="#" id="_back">Back to sign in</a>
+          <a href="#" id="_code">Have a code already?</a>
+        </div>
       </form>`);
     const err = mount.querySelector("#_er");
     mount.querySelector("#_ff").addEventListener("submit", async (e) => {
@@ -228,28 +245,47 @@ export const Auth = (() => {
       const r = await forgotPassword(mount.querySelector("#_e").value);
       err.style.color = "var(--green)";
       // Same message whether or not the email exists — don't leak who has an account.
-      err.textContent = "If that email has an account, a reset link is on its way.";
+      err.textContent = "If that email has an account, a reset link + 6-digit code are on their way.";
     });
     mount.querySelector("#_back").onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
+    // Straight to the code-entry screen (for a burned/scanned link).
+    mount.querySelector("#_code").onclick = (e) => { e.preventDefault(); renderReset(mount, onOk, roles); };
   }
 
-  function renderReset(mount, onOk, roles) {
+  async function renderReset(mount, onOk, roles) {
     mount.style.display = "";
+    // Did the emailed LINK already establish a session? If a scanner burned the
+    // one-time link (or it expired), there's no session — fall back to asking for
+    // the 6-digit code from the same email, which nothing can pre-consume.
+    const linked = !!(await current());
+    const codeFields = linked ? "" : `
+        <div class="muted" style="margin:-2px 0 10px">Your reset link couldn't be used
+        (some email scanners open it first). Enter the <b>6-digit code</b> from that same email:</div>
+        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
+        <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8">`;
     mount.innerHTML = card(`
       <form id="_rf">
+        ${codeFields}
         <label for="_p">New password (8+ chars)</label>
-        <input id="_p" type="password" autocomplete="new-password" autofocus>
+        <input id="_p" type="password" autocomplete="new-password" ${linked ? "autofocus" : ""}>
         <button type="submit">Set new password</button>
         <div class="err" id="_er"></div>
       </form>`);
     const err = mount.querySelector("#_er");
     mount.querySelector("#_rf").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const r = await completePasswordReset(mount.querySelector("#_p").value);
-      if (!r.ok) { err.textContent = r.error; return; }
-      history.replaceState(null, "", location.pathname);   // drop #reset
-      const c = await current();
-      admit(c, mount, onOk, roles);
+      e.preventDefault(); err.style.color = "var(--red)"; err.textContent = "";
+      const btn = e.target.querySelector("button"); btn.disabled = true;
+      try {
+        if (!linked) {
+          const v = await verifyRecoveryCode(mount.querySelector("#_e").value, mount.querySelector("#_c").value);
+          if (!v.ok) { err.textContent = v.error || "That code didn't work — check it and try again."; return; }
+        }
+        const r = await completePasswordReset(mount.querySelector("#_p").value);
+        if (!r.ok) { err.textContent = r.error; return; }
+        history.replaceState(null, "", location.pathname);   // drop the hash
+        const c = await current();
+        admit(c, mount, onOk, roles);
+      } finally { btn.disabled = false; }
     });
   }
 
