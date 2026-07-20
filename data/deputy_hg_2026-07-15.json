@@ -26,19 +26,6 @@
     "salaried_synth": true
   },
   {
-    "timesheet_id": 35321,
-    "employee_id": 5,
-    "employee_name": "Nicola Bisato",
-    "ou_name": "Admin",
-    "company": "Stowaway",
-    "dept": "Admin",
-    "start_time": 1784091600,
-    "end_time": 1784119500,
-    "hours": 0.725,
-    "cost": 24.4,
-    "salaried_synth": true
-  },
-  {
     "timesheet_id": 35322,
     "employee_id": 16,
     "employee_name": "Stephanie Kunde",
