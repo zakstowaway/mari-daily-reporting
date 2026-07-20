@@ -3084,11 +3084,32 @@ async function renderHourly(venue, date, showLabour) {
   const noteEl = document.getElementById('hourly-note');
   if (HOURLY_CHART) { HOURLY_CHART.destroy(); HOURLY_CHART = null; }
   STATE._hourlyInsight = null;
-  const rev = await loadHourlyRevenue(venue, date);
-  if (!rev) { sec.style.display = 'none'; return; }
-  const lab = showLabour ? await loadHourlyLabour(venue, date) : null;
-  const labByHour = (lab && lab.byHour) || {};
-  if (lab && lab.avgRate) STATE._avgLabourRate = lab.avgRate;
+  // Build the by-hour revenue + labour maps. For the group, sum every venue that
+  // has an hourly feed (Stow + Mari today; HG once its own hourly pull lands) and
+  // remember which venues had none, so the note can stay honest.
+  const HVLABEL = { stow: 'Stowaway', hg: 'Harry Gatos', mari: "Marilyna's" };
+  let rev = {}, labByHour = {}, hourlyMissing = [];
+  if (venue === 'group') {
+    let any = false;
+    for (const v of REAL_VENUES) {
+      const rv = await loadHourlyRevenue(v, date);
+      if (!rv) { hourlyMissing.push(HVLABEL[v] || v); continue; }
+      any = true;
+      for (const [h, val] of Object.entries(rv)) rev[h] = (rev[h] || 0) + val;
+      if (showLabour) {
+        const lb = await loadHourlyLabour(v, date);
+        if (lb && lb.byHour) for (const [h, val] of Object.entries(lb.byHour)) labByHour[h] = (labByHour[h] || 0) + val;
+      }
+    }
+    if (!any) { sec.style.display = 'none'; return; }
+  } else {
+    const rv = await loadHourlyRevenue(venue, date);
+    if (!rv) { sec.style.display = 'none'; return; }
+    rev = rv;
+    const lab = showLabour ? await loadHourlyLabour(venue, date) : null;
+    labByHour = (lab && lab.byHour) || {};
+    if (lab && lab.avgRate) STATE._avgLabourRate = lab.avgRate;
+  }
 
   // Trading-day window for the axis: drop pre-dawn (0–5am) hours — they only
   // appear because a close shift crosses midnight and wraps to hour 0. Fold that
@@ -3137,6 +3158,7 @@ async function renderHourly(venue, date, showLabour) {
     bits.push(`the ${hourLabel(weakH)} block ran labour-heavy (${fmtDollars(STATE._hourlyInsight.weakLabour)} wages on ${fmtDollars(STATE._hourlyInsight.weakRev)})`);
   else if (STATE._hourlyInsight.hasLabour && strongH != null)
     bits.push(`the ${hourLabel(strongH)} hour did the most per labour dollar`);
+  if (hourlyMissing.length) bits.push(`${hourlyMissing.join(' & ')} not in this chart yet (no hourly feed)`);
   noteEl.textContent = bits.length ? bits.join('; ') + '.' : '';
   noteEl.style.display = bits.length ? '' : 'none';
 
@@ -3286,8 +3308,9 @@ async function renderDaySingle() {
   const date = STATE.currentDay;
   STATE._avgLabourRate = null;   // per-day/venue; wrap falls back to ~$45/h if unset
 
-  // Feature 1 — hourly chart: real venues only (never group), needs hourly data.
-  if (REAL_VENUES.includes(venue)) {
+  // Feature 1 — hourly chart: per venue, or the group (sums every venue with an
+  // hourly feed). Needs hourly data for the day, else the section hides itself.
+  if (REAL_VENUES.includes(venue) || venue === 'group') {
     await renderHourly(venue, date, !!roleCfg.show_dollar_amounts);
     if (token !== STATE._daySingleToken) return;   // stale — a newer render started
   } else if (sec) {
