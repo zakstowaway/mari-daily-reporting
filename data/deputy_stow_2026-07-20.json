@@ -9,20 +9,20 @@
     "start_time": 1784526300,
     "end_time": 1784548800,
     "hours": 5.75,
-    "cost": 0.0,
+    "cost": 160.83,
     "salaried_synth": false
   },
   {
     "timesheet_id": 35416,
     "employee_id": 16,
     "employee_name": "Stephanie Kunde",
-    "ou_name": "Admin",
+    "ou_name": "Stow Bar",
     "company": "Stowaway",
-    "dept": "Admin",
+    "dept": "FOH",
     "start_time": 1784527200,
     "end_time": 1784548800,
-    "hours": 5.4,
-    "cost": 189.0,
+    "hours": 6.0,
+    "cost": 210.0,
     "salaried_synth": true
   },
   {
@@ -48,7 +48,7 @@
     "start_time": 1784530800,
     "end_time": 1784547000,
     "hours": 4.0,
-    "cost": 0.0,
+    "cost": 135.4,
     "salaried_synth": false
   }
 ]
