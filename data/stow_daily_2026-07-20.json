@@ -1,0 +1,253 @@
+{
+  "date": "2026-07-20",
+  "generated_at": "2026-07-20T19:31:03.293001Z",
+  "venue": "stowaway",
+  "venue_display": "Stowaway Bar",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 1368.5,
+    "revenue_ex_gst": 1244.09,
+    "cogs_dollars": 291.86,
+    "cogs_pct": 23.5,
+    "gp_dollars": 952.23,
+    "gp_pct": 76.5,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 0.0,
+    "eatclub_covers": 0,
+    "revenue_ex_gst_before_eatclub": null,
+    "food_ex_gst": 35.36,
+    "bev_ex_gst": 1208.73,
+    "food_cogs": 4.11,
+    "bev_cogs": 287.75,
+    "food_cogs_pct": 11.6,
+    "bev_cogs_pct": 23.8,
+    "food_gp_pct": 88.4,
+    "bev_gp_pct": 76.2,
+    "mari_rideon_ex_gst": 1.45,
+    "hg_food_out_ex_gst": 1205.64,
+    "stow_food_out_ex_gst": 0.0
+  },
+  "wages": {
+    "kitchen_dollars": 0,
+    "foh_dollars": 543.45,
+    "driver_dollars": 0,
+    "admin_dollars": 221.07,
+    "leave_dollars": 0,
+    "total_dollars": 764.52,
+    "wages_pct": 61.5,
+    "net_wage_pct": null,
+    "kitchen_hours": 0,
+    "foh_hours": 12.8,
+    "wages_kitchen_pct": 0.0,
+    "wages_foh_pct": 45.0,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "red",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "yellow",
+    "wages_kitchen": "green",
+    "wages_foh": "red"
+  },
+  "targets": {
+    "cogs": {
+      "target": 28.0,
+      "amber": 32.0,
+      "red": 35.0,
+      "note": "Blended food+bev COGS; bar-heavy Stow typically lands ~28-30% \u2014 refine after 8 weeks of daily data"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 70% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 15.0,
+      "rev": 263.07,
+      "cost": 70.77,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Petits Detours Ros\u00e9 - Regular",
+      "qty": 6.0,
+      "rev": 96.53,
+      "cost": 20.98,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 6.0,
+      "rev": 75.0,
+      "cost": 14.71,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 8.0,
+      "rev": 68.5,
+      "cost": 14.62,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 4.0,
+      "rev": 68.0,
+      "cost": 16.1,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Aperol Spritz",
+      "qty": 3.0,
+      "rev": 54.46,
+      "cost": 10.66,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Status Quo - Pint",
+      "qty": 3.0,
+      "rev": 53.66,
+      "cost": 12.49,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 4.0,
+      "rev": 52.85,
+      "cost": 12.99,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Bottle",
+      "qty": 1.0,
+      "rev": 50.61,
+      "cost": 12.06,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Version Two Pinot Grigio - Regular",
+      "qty": 4.0,
+      "rev": 39.01,
+      "cost": 7.07,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Pepsi Glass",
+      "qty": 8.0,
+      "rev": 36.0,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Crankshaft IPA - Pint",
+      "qty": 2.0,
+      "rev": 35.0,
+      "cost": 7.82,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Ottelia Cab Sav - Regular",
+      "qty": 2.0,
+      "rev": 34.0,
+      "cost": 9.22,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Grifter Pale - Schooner",
+      "qty": 3.7,
+      "rev": 33.55,
+      "cost": 9.18,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Grifter Pale - Pint",
+      "qty": 3.0,
+      "rev": 33.0,
+      "cost": 9.99,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Lemon Meringue Martini",
+      "qty": 2.0,
+      "rev": 32.0,
+      "cost": 6.99,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fresh is Best Summer Lager - Schooner",
+      "qty": 4.0,
+      "rev": 31.0,
+      "cost": 6.35,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Regular",
+      "qty": 3.0,
+      "rev": 28.6,
+      "cost": 7.24,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Peroni 0%",
+      "qty": 3.0,
+      "rev": 27.0,
+      "cost": 5.56,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Lemon, Lime & Bitters",
+      "qty": 5.0,
+      "rev": 25.16,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    }
+  ]
+}
