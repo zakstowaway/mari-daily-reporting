@@ -49,6 +49,14 @@ COGS_ACCOUNTS = {
 }
 # Excluded from overheads entirely:
 OH_EXCLUDE_SUBSTR = ["wages", "salaries", "superannuation", "depreciation", "amortisation",
+                     # Payroll tax + workers comp are payroll ON-COSTS: they already
+                     # come through group_payroll -> the wage on-cost residual on the
+                     # dashboard, so they must NOT also sit in overheads or they get
+                     # counted twice. (Zak, 2026-07-20: was overstating group OH by
+                     # ~$3.2k Apr, ~$27.7k May incl a 'Workers Compensation - Prior
+                     # Year' true-up, ~$5.0k Jun.) "workers compensation" also catches
+                     # the prior-year variant.
+                     "payroll tax", "workers compensation",
                      "interest", "purchases", "cost of sales", "rent - ",
                      # P&L summary rows (the walk flattens sections):
                      "gross profit", "net profit", "operating profit", "total ",
@@ -221,13 +229,20 @@ def main():
     existing = {}
     pat = PAT_FILE.read_text().strip()
     def gh(method, path, body=None):
-        req = urllib.request.Request(f"https://api.github.com/repos/{REPO}/{path}", method=method,
-            headers={"Authorization": f"Bearer {pat}", "Accept": "application/vnd.github+json", "User-Agent": "x"})
         data = json.dumps(body).encode() if body else None
-        if data: req.add_header("Content-Type", "application/json")
-        try:
-            with urllib.request.urlopen(req, data) as r: return r.status, json.loads(r.read() or "{}")
-        except urllib.error.HTTPError as e: return e.code, json.loads(e.read() or "{}")
+        for attempt in range(4):
+            req = urllib.request.Request(f"https://api.github.com/repos/{REPO}/{path}", method=method,
+                headers={"Authorization": f"Bearer {pat}", "Accept": "application/vnd.github+json", "User-Agent": "x"})
+            if data: req.add_header("Content-Type", "application/json")
+            try:
+                with urllib.request.urlopen(req, data) as r: return r.status, json.loads(r.read() or "{}")
+            except urllib.error.HTTPError as e:
+                # GitHub 5xx is transient (the 2026-07-20 pull failed all three
+                # pushes on a 503 blip). Retry with backoff rather than fail silent.
+                if e.code in (500, 502, 503, 504) and attempt < 3:
+                    print(f"  GitHub {e.code} on {path} — retry {attempt+1}/3"); time.sleep((attempt + 1) * 4); continue
+                return e.code, json.loads(e.read() or "{}")
+        return 0, {}
 
     st, info = gh("GET", "contents/data/xero_cogs_weekly.csv")
     sha = None

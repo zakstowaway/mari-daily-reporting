@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<!-- build-touch 2026-07-19: publish salaried leave register (open-week leave = registered staff only) -->
-
 <html lang="en">
 <head>
 <!-- deploy marker: 2026-07-19 refresh — apply HG 18 Jul EatClub give-away to _site data -->
@@ -3297,13 +3295,8 @@ async function renderDaySingle() {
     sec.style.display = 'none';
   }
 
-  // Feature 2 — verbal wrap: all venues incl. group, admin only. Renders after
-  // the hourly pass so it can weave in the strong/weak-hour callout.
-  const rows = STATE.histories[venue] || [];
-  const rangeRows = rowsForTimeframe(rows, STATE.currentTimeframe, date);
-  const day = rollup(rangeRows);
-  if (day) renderDailyWrap(day);
-  else if (wrapEl) wrapEl.innerHTML = '';
+  // Verbal wrap removed at Zak's request (2026-07-21) — keep the slot empty.
+  if (wrapEl) wrapEl.innerHTML = '';
 }
 
 function render() {
