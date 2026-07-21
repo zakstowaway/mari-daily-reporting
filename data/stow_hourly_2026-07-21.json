@@ -1,0 +1,75 @@
+{
+  "date": "2026-07-21",
+  "source_csv": "stow_hourly_2026-07-21.csv",
+  "rows_ingested": 66,
+  "stowaway_proper": {
+    "by_hour": {
+      "16": {
+        "inc_gst": "134.80",
+        "ex_gst": "122.49"
+      },
+      "17": {
+        "inc_gst": "360.00",
+        "ex_gst": "327.31"
+      },
+      "18": {
+        "inc_gst": "462.70",
+        "ex_gst": "420.70"
+      },
+      "19": {
+        "inc_gst": "507.35",
+        "ex_gst": "461.30"
+      },
+      "20": {
+        "inc_gst": "299.40",
+        "ex_gst": "272.19"
+      },
+      "21": {
+        "inc_gst": "14.00",
+        "ex_gst": "12.73"
+      }
+    },
+    "dinner_window_1700_2059_inc_gst": "1629.45",
+    "dinner_window_1700_2059_ex_gst": "1481.50",
+    "lunch_window_1200_1559_inc_gst": "0.00",
+    "lunch_window_1200_1559_ex_gst": "0.00",
+    "window_1700_2059_inc_gst": "1629.45",
+    "window_1700_2059_ex_gst": "1481.50",
+    "day_total_inc_gst": "1778.25"
+  },
+  "marilynas": {
+    "by_hour": {
+      "16": {
+        "inc_gst": "36.00",
+        "ex_gst": "32.72"
+      },
+      "17": {
+        "inc_gst": "281.00",
+        "ex_gst": "255.44"
+      },
+      "18": {
+        "inc_gst": "484.86",
+        "ex_gst": "439.72"
+      },
+      "19": {
+        "inc_gst": "267.23",
+        "ex_gst": "243.02"
+      },
+      "20": {
+        "inc_gst": "46.00",
+        "ex_gst": "41.82"
+      },
+      "21": {
+        "inc_gst": "110.00",
+        "ex_gst": "100.00"
+      }
+    },
+    "dinner_window_1700_2059_inc_gst": "1079.09",
+    "dinner_window_1700_2059_ex_gst": "980.00",
+    "lunch_window_1200_1559_inc_gst": "0.00",
+    "lunch_window_1200_1559_ex_gst": "0.00",
+    "window_1700_2059_inc_gst": "1079.09",
+    "window_1700_2059_ex_gst": "980.00",
+    "day_total_inc_gst": "1225.09"
+  }
+}
