@@ -1,6 +1,6 @@
 {
   "date": "2026-07-22",
-  "generated_at": "2026-07-22T19:31:55.941587Z",
+  "generated_at": "2026-07-22T22:38:55.119246Z",
   "venue": "harry",
   "venue_display": "Harry Gatos",
   "lane_config": [
@@ -39,18 +39,18 @@
     "stow_food_out_ex_gst": 0.0
   },
   "wages": {
-    "kitchen_dollars": 699.7,
-    "foh_dollars": 206.19,
+    "kitchen_dollars": 698.76,
+    "foh_dollars": 202.53,
     "driver_dollars": 0,
-    "admin_dollars": 35.75,
+    "admin_dollars": 5.8,
     "leave_dollars": 0,
-    "total_dollars": 941.64,
-    "wages_pct": 53.5,
+    "total_dollars": 907.09,
+    "wages_pct": 51.6,
     "net_wage_pct": null,
     "kitchen_hours": 15.2,
     "foh_hours": 4.8,
     "wages_kitchen_pct": 56.4,
-    "wages_foh_pct": 39.7,
+    "wages_foh_pct": 39.0,
     "includes_super": true,
     "salaried_synthesized": true
   },

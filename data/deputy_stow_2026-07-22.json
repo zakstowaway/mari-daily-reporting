@@ -7,9 +7,9 @@
     "company": "Stowaway",
     "dept": "Admin",
     "start_time": 1784691000,
-    "end_time": 1784724300,
-    "hours": 8.325,
-    "cost": 280.17,
+    "end_time": 1784696400,
+    "hours": 1.35,
+    "cost": 45.43,
     "salaried_synth": true
   },
   {
@@ -48,7 +48,7 @@
     "start_time": 1784698200,
     "end_time": 1784722500,
     "hours": 6.25,
-    "cost": 0.0,
+    "cost": 223.41,
     "salaried_synth": false
   },
   {
@@ -61,7 +61,7 @@
     "start_time": 1784703600,
     "end_time": 1784718000,
     "hours": 4.0,
-    "cost": 0.0,
+    "cost": 135.4,
     "salaried_synth": false
   }
 ]
