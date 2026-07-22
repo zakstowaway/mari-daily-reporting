@@ -91,7 +91,7 @@ tr.prod-row td:first-child { color: var(--ink-soft); }
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
 <script>
-// product history backfilled to Jun 2025; pint/schooner + wine sizes consolidated
+// product history to Jun 2025; sizes consolidated; Units + GP% columns
 const IS_DARK = matchMedia('(prefers-color-scheme: dark)').matches;
 // Admin gate lives in the module script at the bottom — it authenticates through
 // Supabase (Auth.current) like the rest of the app, then calls boot(). The old
@@ -128,7 +128,7 @@ async function boot() {
       const pl = (await pr.text()).trim().split(/\r?\n/);
       PROD_ROWS = pl.slice(1).map(l => {
         const parts = l.includes('"') ? l.match(/(".*?"|[^,]+)/g).map(x => x.replace(/^"|"$/g, '')) : l.split(',');
-        return { we: parts[0], venue: parts[1], rg: parts[2], product: parts[3], amt: toNum(parts[4]), qty: toNum(parts[5]) };
+        return { we: parts[0], venue: parts[1], rg: parts[2], product: parts[3], amt: toNum(parts[4]), qty: toNum(parts[5]), cost: toNum(parts[6]) };
       });
     }
   } catch (e) { /* products view just stays empty */ }
@@ -284,24 +284,28 @@ function renderProducts() {
   document.getElementById('cb-season').style.display = 'none';   // no seasonal index for products
   document.getElementById('left-title').innerHTML = 'Products by reporting group <span class="dim">· share of venue revenue</span>';
   document.querySelector('#movers thead').innerHTML =
-    '<tr><th>Reporting group / product</th><th>$/wk</th><th>Share</th></tr>';
+    '<tr><th>Reporting group / product</th><th>$/wk</th><th>Units</th><th>GP%</th><th>Share</th></tr>';
 
   const rows = prodRows();
   let weeks = [...new Set(PROD_ROWS.map(r => r.we))].sort();
   if (weeks.length && weeks[weeks.length - 1] >= iso(new Date())) weeks = weeks.slice(0, -1);
   const win = weeks.slice(-TF), inWin = new Set(win), nW = win.length || 1;
 
+  // amt = ex-GST sales, qty = units, cost = COGS, swc = sales on rows that carry a
+  // cost (only the daily feed does), so GP% is computed only where cost is known.
   const byRg = {}; let venTot = 0;
   for (const r of rows) {
     if (!inWin.has(r.we)) continue;
     venTot += r.amt;
-    const g = byRg[r.rg] = byRg[r.rg] || { tot: 0, prods: {} };
-    g.tot += r.amt;
-    g.prods[r.product] = (g.prods[r.product] || 0) + r.amt;
+    const g = byRg[r.rg] = byRg[r.rg] || { amt: 0, qty: 0, cost: 0, swc: 0, prods: {} };
+    g.amt += r.amt; g.qty += r.qty; g.cost += r.cost; if (r.cost > 0) g.swc += r.amt;
+    const p = g.prods[r.product] = g.prods[r.product] || { amt: 0, qty: 0, cost: 0, swc: 0 };
+    p.amt += r.amt; p.qty += r.qty; p.cost += r.cost; if (r.cost > 0) p.swc += r.amt;
   }
+  const gpOf = o => o.swc > 0 ? (o.swc - o.cost) / o.swc * 100 : null;
   const groups = Object.entries(byRg).map(([rg, g]) => ({
-    rg, wk: g.tot / nW, share: venTot ? g.tot / venTot * 100 : 0,
-    prods: Object.entries(g.prods).map(([p, a]) => ({ p, wk: a / nW, share: venTot ? a / venTot * 100 : 0 }))
+    rg, wk: g.amt / nW, units: g.qty, gp: gpOf(g), share: venTot ? g.amt / venTot * 100 : 0,
+    prods: Object.entries(g.prods).map(([p, o]) => ({ p, wk: o.amt / nW, units: o.qty, gp: gpOf(o), share: venTot ? o.amt / venTot * 100 : 0 }))
       .sort((a, b) => b.share - a.share),
   })).sort((a, b) => b.share - a.share);
 
@@ -310,19 +314,21 @@ function renderProducts() {
   if (!SELPROD || !allProds.includes(SELPROD)) SELPROD = allProds[0] || null;
 
   const esc = s => s.replace(/'/g, "\\'");
+  const fmtU = n => Math.round(n).toLocaleString();
+  const gpCell = g => g === null ? '<span class="dim">—</span>' : Math.round(g) + '%';
   let html = '';
   for (const grp of groups) {
     const open = EXPANDED.has(grp.rg);
     html += `<tr class="rg-head" onclick="toggleRg('${esc(grp.rg)}')">
-      <td><b>${open ? '▾' : '▸'} ${grp.rg}</b></td><td><b>${fmt$(grp.wk)}</b></td><td><b>${fmtPc(grp.share)}</b></td></tr>`;
+      <td><b>${open ? '▾' : '▸'} ${grp.rg}</b></td><td><b>${fmt$(grp.wk)}</b></td><td><b>${fmtU(grp.units)}</b></td><td><b>${gpCell(grp.gp)}</b></td><td><b>${fmtPc(grp.share)}</b></td></tr>`;
     if (open) for (const pr of grp.prods) {
-      html += `<tr class="prod-row${pr.p === SELPROD ? ' sel' : ''}" onclick="selectProduct('${esc(pr.p)}')"><td style="padding-left:28px">${pr.p}</td><td class="dim">${fmt$(pr.wk)}</td><td>${fmtPc(pr.share)}</td></tr>`;
+      html += `<tr class="prod-row${pr.p === SELPROD ? ' sel' : ''}" onclick="selectProduct('${esc(pr.p)}')"><td style="padding-left:28px">${pr.p}</td><td class="dim">${fmt$(pr.wk)}</td><td class="dim">${fmtU(pr.units)}</td><td>${gpCell(pr.gp)}</td><td>${fmtPc(pr.share)}</td></tr>`;
     }
   }
   document.getElementById('movers-body').innerHTML = html ||
-    '<tr><td colspan="3" class="dim">No product data for this venue yet.</td></tr>';
+    '<tr><td colspan="5" class="dim">No product data for this venue yet.</td></tr>';
   document.getElementById('left-note').textContent =
-    `Each product and group as a % of ${VEN_LABEL[VENUE]} revenue, averaged over the last ${nW} complete week${nW > 1 ? 's' : ''} (${win[0] || '—'} → ${win[win.length - 1] || '—'}). Expand a group, then click a product to chart its weekly % share over time.`;
+    `Over the last ${nW} complete week${nW > 1 ? 's' : ''} (${win[0] || '—'} → ${win[win.length - 1] || '—'}). $/wk = avg weekly ex-GST · Units = total sold in the period · GP% = margin (from weeks with cost data — “—” where cost isn’t recorded) · Share = of ${VEN_LABEL[VENUE]} revenue. Expand a group, then click a product to chart its weekly % share over time.`;
 
   if (SELPROD) productDetail(SELPROD); else clearDetail();
 }

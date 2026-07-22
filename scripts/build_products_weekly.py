@@ -123,7 +123,9 @@ def ingest_looker_backfill(agg, skip_weeks):
             if not name or not ex:
                 continue
             venue = rgv.get(rg, "stow")
-            agg[(we, venue, rg, normalize_product(name))][0] += ex
+            k = (we, venue, rg, normalize_product(name))
+            agg[k][0] += ex
+            agg[k][1] += parse_num(r.get("Sales Data Product Quantity"))   # units (cost is null in Looker)
             n += 1
     return n
 
@@ -148,7 +150,7 @@ def load_rg_names():
 def main():
     dmap = load_dept_map()
     rgnames = load_rg_names()
-    agg = defaultdict(lambda: [0.0, 0.0])   # (we, venue, rg, product) -> [ex_gst, qty]
+    agg = defaultdict(lambda: [0.0, 0.0, 0.0])   # (we, venue, rg, product) -> [ex_gst, qty, cost]
 
     # Stow + HG till files only. Mari's revenue rides in on the Stow 'm' slice.
     for path in sorted(glob.glob(os.path.join(DATA, "insights_*.csv"))):
@@ -174,6 +176,7 @@ def main():
                 k = (we, venue, rg, normalize_product(name))
                 agg[k][0] += ex
                 agg[k][1] += qty
+                agg[k][2] += parse_num(row.get("Cost"))     # for GP% (daily feed carries cost)
 
     # Historical backfill (Lightspeed Insights export) for every week the daily
     # feed doesn't already cover — extends product trends back ~13 months.
@@ -183,13 +186,13 @@ def main():
         print(f"backfill: folded {n_back} Looker rows for pre-daily weeks")
 
     rows = [{"week_ending": we, "venue": v, "reporting_group": rg, "product_name": p,
-             "sales_ex_gst": round(a[0], 2), "qty": round(a[1], 2)}
+             "sales_ex_gst": round(a[0], 2), "qty": round(a[1], 2), "cost": round(a[2], 2)}
             for (we, v, rg, p), a in agg.items()]
     rows.sort(key=lambda r: (r["week_ending"], r["venue"], r["reporting_group"], -r["sales_ex_gst"]))
 
     out = os.path.join(DATA, "products_weekly.csv")
     with open(out, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["week_ending", "venue", "reporting_group", "product_name", "sales_ex_gst", "qty"], lineterminator="\n")
+        w = csv.DictWriter(f, fieldnames=["week_ending", "venue", "reporting_group", "product_name", "sales_ex_gst", "qty", "cost"], lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
 
