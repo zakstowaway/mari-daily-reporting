@@ -228,41 +228,42 @@ export const Auth = (() => {
     mount.querySelector("#_back").onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
   }
 
+  // ONE obvious path: enter email → we send a 6-digit code → land straight on the
+  // code-entry screen (below). No "link vs code" fork, no separate "have a code?"
+  // step to notice. (The email still contains a link, but Outlook Safe Links burns
+  // one-time links, so we lead with the code, which nothing can pre-consume.)
   function renderForgot(mount, onOk, roles) {
     mount.innerHTML = card(`
       <form id="_ff">
+        <div class="muted" style="margin:-2px 0 12px">Enter your email and we'll send a 6-digit reset code.</div>
         <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
-        <button type="submit">Email me a reset link + code</button>
+        <button type="submit">Send reset code</button>
         <div class="err" id="_er"></div>
-        <div class="muted" style="margin-top:10px;display:flex;justify-content:space-between">
-          <a href="#" id="_back">Back to sign in</a>
-          <a href="#" id="_code">Have a code already?</a>
-        </div>
+        <div class="muted" style="margin-top:10px"><a href="#" id="_back">Back to sign in</a></div>
       </form>`);
     const err = mount.querySelector("#_er");
     mount.querySelector("#_ff").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const r = await forgotPassword(mount.querySelector("#_e").value);
-      err.style.color = "var(--green)";
-      // Same message whether or not the email exists — don't leak who has an account.
-      err.textContent = "If that email has an account, a reset link + 6-digit code are on their way.";
+      const email = mount.querySelector("#_e").value.trim();
+      if (!email) { err.style.color = "var(--red)"; err.textContent = "Enter your email first."; return; }
+      const btn = e.target.querySelector("button"); btn.disabled = true; btn.textContent = "Sending…";
+      try { await forgotPassword(email); } catch (_) { /* don't leak whether the email exists */ }
+      renderReset(mount, onOk, roles, email);   // advance straight to code + new password
     });
     mount.querySelector("#_back").onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
-    // Straight to the code-entry screen (for a burned/scanned link).
-    mount.querySelector("#_code").onclick = (e) => { e.preventDefault(); renderReset(mount, onOk, roles); };
   }
 
-  async function renderReset(mount, onOk, roles) {
+  async function renderReset(mount, onOk, roles, prefillEmail) {
     mount.style.display = "";
     // Did the emailed LINK already establish a session? If a scanner burned the
-    // one-time link (or it expired), there's no session — fall back to asking for
-    // the 6-digit code from the same email, which nothing can pre-consume.
+    // one-time link (or it expired), there's no session — ask for the 6-digit code
+    // from the same email, which nothing can pre-consume.
     const linked = !!(await current());
+    const emailVal = (prefillEmail || "").replace(/"/g, "&quot;");
     const codeFields = linked ? "" : `
-        <div class="muted" style="margin:-2px 0 10px">Your reset link couldn't be used
-        (some email scanners open it first). Enter the <b>6-digit code</b> from that same email:</div>
-        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
-        <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8">`;
+        <div class="muted" style="margin:-2px 0 12px">Check your email for a <b>6-digit code</b>${prefillEmail ? " (sent to <b>" + emailVal + "</b>)" : ""} and enter it below with a new password. It can take a minute to arrive — check spam too.</div>
+        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" value="${emailVal}" ${prefillEmail ? "" : "autofocus"}>
+        <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" ${prefillEmail ? "autofocus" : ""}>`;
     mount.innerHTML = card(`
       <form id="_rf">
         ${codeFields}
@@ -270,8 +271,10 @@ export const Auth = (() => {
         <input id="_p" type="password" autocomplete="new-password" ${linked ? "autofocus" : ""}>
         <button type="submit">Set new password</button>
         <div class="err" id="_er"></div>
+        ${linked ? "" : '<div class="muted" style="margin-top:10px"><a href="#" id="_back">Back to sign in</a></div>'}
       </form>`);
     const err = mount.querySelector("#_er");
+    const _bk = mount.querySelector("#_back"); if (_bk) _bk.onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
     mount.querySelector("#_rf").addEventListener("submit", async (e) => {
       e.preventDefault(); err.style.color = "var(--red)"; err.textContent = "";
       const btn = e.target.querySelector("button"); btn.disabled = true;
