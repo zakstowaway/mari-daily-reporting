@@ -410,10 +410,10 @@ tbody tr:hover { background: var(--group-tint); }
   border-radius: 999px; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
 .tf-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
 .tf-btn.active { background: var(--group); color: var(--paper); border-color: var(--group); }
-.tf-anyday { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink-soft);
-  padding: 6px 10px; border: 1px solid var(--line); background: var(--paper); border-radius: 999px;
-  cursor: pointer; color-scheme: light dark; }
-.tf-anyday.active { border-color: var(--group); color: var(--ink); }
+.day-picker { display: none; align-items: center; gap: 8px; }
+.day-picker .dp-lbl { font-size: 13px; color: var(--ink-soft); }
+.day-picker input[type="date"] { background: transparent; color: var(--ink); border: 1px solid rgba(128,128,128,.35);
+  border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; color-scheme: light dark; }
 
 /* ---- Expected / actual profit card ---- */
 .pcard { background: var(--paper); border-radius: 12px; padding: 18px 20px; margin: 0 0 16px;
@@ -2042,38 +2042,27 @@ function renderTimeframeToggle() {
   if (!el) return;
   const tf = STATE.currentTimeframe;
   const todayIso = isoDate(sydneyToday());
-  const chips = currentWeekDays().map(d => {
-    const iso = isoDate(d);
-    const future = iso > todayIso;
-    const active = tf === 'day' && iso === STATE.currentDay;
-    const cls = ['tf-chip'];
-    if (active) cls.push('active');
-    if (future) cls.push('future');
-    const wd = d.toLocaleDateString('en-AU', { weekday: 'short' });
-    return `<button class="${cls.join(' ')}"${future ? ' disabled' : ` onclick="switchDay('${iso}')"`}>` +
-           `<span class="tf-wd">${wd}</span><span class="tf-dt">${d.getDate()}</span></button>`;
-  }).join('');
   const btn = (t, lbl) => `<button class="tf-btn${tf === t ? ' active' : ''}" onclick="switchTimeframe('${t}')">${lbl}</button>`;
-  const moreOpts = [['lastmonth', 'Last month'], ['quarter', 'This quarter'], ['lastquarter', 'Last quarter'],
-    ['thisfy', 'This FY'], ['lastfy', 'Last FY'], ['last12', 'Last 12 months'], ['all', 'All time'], ['range', 'Custom range…']];
-  const moreOn = moreOpts.some(o => o[0] === tf);
-  const moreSel = `<select id="tf-more" class="${moreOn ? 'active' : ''}" onchange="if(this.value)switchTimeframe(this.value)">` +
-    `<option value="">More ▾</option>` +
-    moreOpts.map(o => `<option value="${o[0]}"${moreOn && tf === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('') +
+  // Compact so the whole selector fits on the venue nav line. "Today" is one click;
+  // any other day comes from "Pick a day…" in the More menu (same pattern as Custom
+  // range) — it reveals a single date picker in the control row below.
+  const todayOn = tf === 'day' && STATE.currentDay === todayIso;
+  const dayOn = tf === 'day' && STATE.currentDay !== todayIso;   // a past day is being viewed
+  const todayBtn = `<button class="tf-btn${todayOn ? ' active' : ''}" onclick="switchDay('${todayIso}')">Today</button>`;
+  const moreOpts = [['pickday', 'Pick a day…'], ['lastmonth', 'Last month'], ['quarter', 'This quarter'],
+    ['lastquarter', 'Last quarter'], ['thisfy', 'This FY'], ['lastfy', 'Last FY'],
+    ['last12', 'Last 12 months'], ['all', 'All time'], ['range', 'Custom range…']];
+  const moreOn = dayOn || tf === 'range' || moreOpts.some(o => o[0] === tf);
+  const moreSel = `<select id="tf-more" class="${moreOn ? 'active' : ''}" onchange="tfMore(this.value)">` +
+    `<option value="">${dayOn ? 'Day ▾' : 'More ▾'}</option>` +
+    moreOpts.map(o => `<option value="${o[0]}"${tf === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('') +
     `</select>`;
-  // "Pick any day" — the scrubber only covers this week, so this jumps to any past
-  // day. On change -> switchDay(iso). Bounded by the data range.
-  const dRows = STATE.histories[STATE.currentVenue] || [];
-  const minD = dRows.length ? dRows[0].date : '';
-  const dayVal = tf === 'day' && STATE.currentDay ? STATE.currentDay : '';
-  const anyDay = `<input type="date" id="tf-anyday" class="tf-anyday${tf === 'day' ? ' active' : ''}" ` +
-    `${minD ? `min="${minD}" ` : ''}max="${todayIso}" value="${dayVal}" title="Pick any day" ` +
-    `onchange="if(this.value)switchDay(this.value)">`;
-  el.innerHTML =
-    `<div class="tf-scrub">${chips}</div>` +
-    `<span class="tf-div"></span>` +
-    btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') +
-    moreSel + anyDay;
+  el.innerHTML = todayBtn + btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') + moreSel;
+}
+function tfMore(v) {
+  if (!v) return;
+  if (v === 'pickday') switchDay(STATE.currentDay || isoDate(sydneyToday()));
+  else switchTimeframe(v);
 }
 function renderRangePicker() {
   const el = document.getElementById('range-picker');
@@ -2099,7 +2088,17 @@ function applyRange() {
 // toggle now select the day. This just keeps the custom-range inputs working.
 function renderDayPicker() {
   const picker = document.getElementById('day-picker');
-  if (picker) { picker.style.display = 'none'; picker.innerHTML = ''; }
+  if (picker) {
+    if (STATE.currentTimeframe === 'day') {
+      const rows = STATE.histories[STATE.currentVenue] || [];
+      const minD = rows.length ? rows[0].date : '';
+      const maxD = isoDate(sydneyToday());
+      picker.style.display = 'flex';
+      picker.innerHTML = `<span class="dp-lbl">Day</span>` +
+        `<input type="date" id="day-pick-input" ${minD ? `min="${minD}" ` : ''}max="${maxD}" ` +
+        `value="${STATE.currentDay || maxD}" onchange="if(this.value)switchDay(this.value)">`;
+    } else { picker.style.display = 'none'; picker.innerHTML = ''; }
+  }
   renderRangePicker();
 }
 
