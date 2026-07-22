@@ -63,12 +63,14 @@ OH_EXCLUDE_SUBSTR = ["wages", "salaries", "superannuation", "depreciation", "amo
                      # delivery lane lives on the dashboard separately (canon:
                      # overheads exclude delivery + uber commission):
                      "service & delivery fees", "uber direct", "surcharge fees", "doordash"]
-# Rent: Olly's BEP plan basis, NOT Xero actuals (Zak, 2026-07-16 — leave as is).
-# For the record, the 2026-07-16 audit found HG matches Xero to the dollar
-# ($5,245/mo) while Stow's Xero rent runs $12,554/mo against this $15,000. That
-# is intentional: these constants are the plan the breakeven is built on, so
-# don't "correct" them to actuals without Olly.
-RENT_MONTHLY = {"stow": 15000.0, "hg": 5245.0, "mari": 0.0}
+# Rent: Olly's BEP plan basis, NOT Xero actuals. Total is $20,245/mo — the single
+# lease for the whole Freshwater premises, per Olly's BEP ("Entire Venue", 21 Jul).
+# It's ONE lease, so Mari (which trades out of Stow's kitchen) doesn't pay separate
+# rent — its share is carved from the shared total, not added on top. Zak (2026-07-22)
+# set Mari at $3,000/mo; that comes out of Stow's portion so the group total stays
+# $20,245 and still ties to Olly's BEP. (2026-07-16 audit: HG matches Xero to the
+# dollar; Stow's Xero rent runs ~$12,554/mo, so $12k here is close to actual.)
+RENT_MONTHLY = {"stow": 12000.0, "hg": 5245.0, "mari": 3000.0}   # = $20,245/mo (Olly BEP)
 PLAN_OH_SHARE = {"stow": 0.656, "hg": 0.213, "mari": 0.131}   # FIXED_OH_WEEKLY ratios (BEP)
 # Payroll on-costs. Defined once, at module scope: the finance lane has to skip
 # these BEFORE claiming anything matching "interest", or 'Super Guarantee
