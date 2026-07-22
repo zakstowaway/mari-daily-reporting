@@ -166,6 +166,12 @@ jobs:
             python scripts/daily_aggregator.py --venue "$V" ${{ steps.date.outputs.target }}
           done
 
+      - name: Rebuild product-level weekly rollup
+        run: |
+          # Menu Trends "Products" view. Reads the committed Sales-by-Product
+          # exports, reattributes cross-till rows, joins the reporting-group name.
+          python scripts/build_products_weekly.py || echo "::warning::products rollup failed (non-fatal)"
+
       - name: Commit updated data
         run: |
           git config user.name "Daily Pull"

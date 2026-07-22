@@ -39,6 +39,9 @@ td { padding: 6px 8px; text-align: right; border-top: 1px solid var(--line); fon
 tbody tr { cursor: pointer; }
 tbody tr:hover td { background: rgba(127,119,221,.08); }
 tbody tr.sel td { background: rgba(127,119,221,.14); }
+tr.rg-head td { background: rgba(127,119,221,.06); }
+tr.prod-row { cursor: default; } tr.prod-row:hover td { background: transparent; }
+tr.prod-row td:first-child { color: var(--ink-soft); }
 .pos { color: var(--pos); } .neg { color: var(--neg); } .dim { color: var(--ink-soft); }
 .chart-box { height: 230px; position: relative; margin-bottom: 18px; }
 .chart-box.small { height: 180px; }
@@ -51,6 +54,8 @@ tbody tr.sel td { background: rgba(127,119,221,.14); }
 <div class="bar"><div class="bar-inner">
   <a href="index.html">&larr; Dashboard</a>
   <h1>Menu Trends</h1>
+  <span id="view-chips"></span>
+  <span style="width:1px;height:20px;background:var(--line)"></span>
   <span id="venue-chips"></span>
   <span style="margin-left:auto; font-size:11px; color:var(--ink-soft);" id="feed-note"></span>
 </div></div>
@@ -58,7 +63,7 @@ tbody tr.sel td { background: rgba(127,119,221,.14); }
 <div class="wrap">
   <div class="layout">
     <div class="panel">
-      <h2>Reporting groups — momentum <span class="dim" id="sort-note"></span></h2>
+      <h2 id="left-title">Reporting groups — momentum <span class="dim" id="sort-note"></span></h2>
       <table id="movers">
         <thead><tr>
           <th data-s="name">Group</th>
@@ -69,9 +74,9 @@ tbody tr.sel td { background: rgba(127,119,221,.14); }
         </tr></thead>
         <tbody id="movers-body"></tbody>
       </table>
-      <p class="note">$/wk = avg weekly ex-GST sales over the last 8 complete weeks · share = of venue revenue · vs prior 8w and vs same-8-weeks-last-year compare SHARE (popularity net of overall trade) · sorted by the biggest movers first — those are where the energy goes. Click any group for its story.</p>
+      <p class="note" id="left-note">$/wk = avg weekly ex-GST sales over the last 8 complete weeks · share = of venue revenue · vs prior 8w and vs same-8-weeks-last-year compare SHARE (popularity net of overall trade) · sorted by the biggest movers first — those are where the energy goes. Click any group for its story.</p>
     </div>
-    <div class="panel">
+    <div class="panel" id="detail-panel">
       <p id="detail-title">—</p>
       <p id="detail-sub"></p>
       <div class="chart-box"><canvas id="c-weekly"></canvas></div>
@@ -91,7 +96,7 @@ try {
 } catch (e) { location.href = 'index.html'; }
 
 const VEN_LABEL = { all: 'All venues', stow: 'Stowaway', hg: 'Harry Gatos', mari: "Marilyna's" };
-let ROWS = [], VENUE = 'all', SORT = 'mom', SEL = null;
+let ROWS = [], PROD_ROWS = [], VENUE = 'all', VIEW = 'groups', SORT = 'mom', SEL = null, EXPANDED = new Set();
 let charts = {};
 
 const toNum = x => { const n = parseFloat(x); return isFinite(n) ? n : 0; };
@@ -113,6 +118,19 @@ async function boot() {
     } else parts = l.split(',');
     return { we: parts[0], venue: parts[1], rg: parts[2], amt: toNum(parts[3]), qty: toNum(parts[4]) };
   });
+  try {
+    const pr = await fetch('data/products_weekly.csv?t=' + Date.now());
+    if (pr.ok) {
+      const pl = (await pr.text()).trim().split(/\r?\n/);
+      PROD_ROWS = pl.slice(1).map(l => {
+        const parts = l.includes('"') ? l.match(/(".*?"|[^,]+)/g).map(x => x.replace(/^"|"$/g, '')) : l.split(',');
+        return { we: parts[0], venue: parts[1], rg: parts[2], product: parts[3], amt: toNum(parts[4]), qty: toNum(parts[5]) };
+      });
+    }
+  } catch (e) { /* products view just stays empty */ }
+  document.getElementById('view-chips').innerHTML =
+    `<button class="chip${VIEW === 'groups' ? ' active' : ''}" onclick="setView('groups')">Reporting groups</button>
+     <button class="chip${VIEW === 'products' ? ' active' : ''}" onclick="setView('products')">Products</button>`;
   document.getElementById('venue-chips').innerHTML = Object.keys(VEN_LABEL).map(v =>
     `<button class="chip${v === VENUE ? ' active' : ''}" onclick="setVenue('${v}')">${VEN_LABEL[v]}</button>`).join(' ');
   const weeks = allWeeks();
@@ -120,7 +138,8 @@ async function boot() {
   render();
 }
 
-function setVenue(v) { VENUE = v; SEL = null; document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.textContent === VEN_LABEL[v])); render(); }
+function setVenue(v) { VENUE = v; SEL = null; document.querySelectorAll('#venue-chips .chip').forEach(c => c.classList.toggle('active', c.textContent === VEN_LABEL[v])); render(); }
+function setView(v) { VIEW = v; SEL = null; document.querySelectorAll('#view-chips .chip').forEach((c, i) => c.classList.toggle('active', (i === 0 ? 'groups' : 'products') === v)); render(); }
 
 function rowsFor() { return VENUE === 'all' ? ROWS : ROWS.filter(r => r.venue === VENUE); }
 function allWeeks() { return [...new Set(ROWS.map(r => r.we))].sort(); }
@@ -173,6 +192,13 @@ function stats() {
 }
 
 function render() {
+  if (VIEW === 'products') return renderProducts();
+  document.getElementById('detail-panel').style.display = '';
+  document.querySelector('.layout').style.gridTemplateColumns = '';
+  document.querySelector('#movers thead').innerHTML =
+    '<tr><th data-s="name">Group</th><th data-s="wk">$/wk (8w)</th><th data-s="share">Share</th><th data-s="mom">vs prior 8w</th><th data-s="yoy">vs LY</th></tr>';
+  document.getElementById('left-title').innerHTML = 'Reporting groups — momentum <span class="dim" id="sort-note"></span>';
+  document.getElementById('left-note').textContent = '$/wk = avg weekly ex-GST sales over the last 8 complete weeks · share = of venue revenue · vs prior 8w and vs same-8-weeks-last-year compare SHARE (popularity net of overall trade) · sorted by the biggest movers first. Click any group for its story.';
   const st = stats();
   const key = SORT;
   st.sort((a, b) => key === 'name' ? a.rg.localeCompare(b.rg)
@@ -240,6 +266,52 @@ function detail(rg) {
     { label: 'Share of venue revenue % (4-wk avg)', data: sm, borderColor: '#D4537E', borderWidth: 2, pointRadius: 0, tension: .3, spanGaps: true },
   ]}, options: base });
 }
+
+function prodRows() { return VENUE === 'all' ? PROD_ROWS : PROD_ROWS.filter(r => r.venue === VENUE); }
+
+function renderProducts() {
+  document.getElementById('detail-panel').style.display = 'none';
+  document.querySelector('.layout').style.gridTemplateColumns = '1fr';
+  document.getElementById('left-title').innerHTML = 'Products by reporting group <span class="dim">· share of venue revenue</span>';
+  document.querySelector('#movers thead').innerHTML =
+    '<tr><th>Reporting group / product</th><th>$/wk</th><th>Share</th></tr>';
+
+  const rows = prodRows();
+  let weeks = [...new Set(PROD_ROWS.map(r => r.we))].sort();
+  if (weeks.length && weeks[weeks.length - 1] >= iso(new Date())) weeks = weeks.slice(0, -1);
+  const win = weeks.slice(-8), inWin = new Set(win), nW = win.length || 1;
+
+  const byRg = {}; let venTot = 0;
+  for (const r of rows) {
+    if (!inWin.has(r.we)) continue;
+    venTot += r.amt;
+    const g = byRg[r.rg] = byRg[r.rg] || { tot: 0, prods: {} };
+    g.tot += r.amt;
+    g.prods[r.product] = (g.prods[r.product] || 0) + r.amt;
+  }
+  const groups = Object.entries(byRg).map(([rg, g]) => ({
+    rg, wk: g.tot / nW, share: venTot ? g.tot / venTot * 100 : 0,
+    prods: Object.entries(g.prods).map(([p, a]) => ({ p, wk: a / nW, share: venTot ? a / venTot * 100 : 0 }))
+      .sort((a, b) => b.share - a.share),
+  })).sort((a, b) => b.share - a.share);
+
+  const esc = s => s.replace(/'/g, "\\'");
+  let html = '';
+  for (const grp of groups) {
+    const open = EXPANDED.has(grp.rg);
+    html += `<tr class="rg-head" onclick="toggleRg('${esc(grp.rg)}')">
+      <td><b>${open ? '▾' : '▸'} ${grp.rg}</b></td><td><b>${fmt$(grp.wk)}</b></td><td><b>${fmtPc(grp.share)}</b></td></tr>`;
+    if (open) for (const pr of grp.prods) {
+      html += `<tr class="prod-row"><td style="padding-left:28px">${pr.p}</td><td class="dim">${fmt$(pr.wk)}</td><td>${fmtPc(pr.share)}</td></tr>`;
+    }
+  }
+  document.getElementById('movers-body').innerHTML = html ||
+    '<tr><td colspan="3" class="dim">No product data for this venue yet.</td></tr>';
+  document.getElementById('left-note').textContent =
+    `Each product and group as a % of ${VEN_LABEL[VENUE]} revenue, averaged over the last ${nW} complete week${nW > 1 ? 's' : ''} (${win[0] || '—'} → ${win[win.length - 1] || '—'}). Product-level history starts 6 Jul 2026 and grows each day. Click a group to expand its products.`;
+}
+
+function toggleRg(rg) { EXPANDED.has(rg) ? EXPANDED.delete(rg) : EXPANDED.add(rg); renderProducts(); }
 
 function mkChart(id, cfg) {
   if (charts[id]) charts[id].destroy();
