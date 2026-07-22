@@ -79,10 +79,10 @@ tr.prod-row td:first-child { color: var(--ink-soft); }
     <div class="panel" id="detail-panel">
       <p id="detail-title">—</p>
       <p id="detail-sub"></p>
-      <div class="chart-box"><canvas id="c-weekly"></canvas></div>
-      <div class="chart-box small"><canvas id="c-season"></canvas></div>
-      <div class="chart-box small"><canvas id="c-share"></canvas></div>
-      <p class="note">Top: weekly sales with the previous year overlaid (52-week shift) — the direct seasonality read for timing menu changes. Middle: seasonal index — average weekly sales by calendar month vs the group's own average (100 = typical); plan changes into the shoulder months before peaks. Bottom: share of venue revenue, 4-week smoothed — the popularity trend independent of how busy the venue was.</p>
+      <div class="chart-box" id="cb-weekly"><canvas id="c-weekly"></canvas></div>
+      <div class="chart-box small" id="cb-season"><canvas id="c-season"></canvas></div>
+      <div class="chart-box small" id="cb-share"><canvas id="c-share"></canvas></div>
+      <p class="note" id="detail-note">Top: weekly sales with the previous year overlaid (52-week shift) — the direct seasonality read for timing menu changes. Middle: seasonal index — average weekly sales by calendar month vs the group's own average (100 = typical); plan changes into the shoulder months before peaks. Bottom: share of venue revenue, 4-week smoothed — the popularity trend independent of how busy the venue was.</p>
     </div>
   </div>
 </div>
@@ -96,7 +96,7 @@ const IS_DARK = matchMedia('(prefers-color-scheme: dark)').matches;
 // once login moved to Supabase, because that key is only set after index.html runs.
 
 const VEN_LABEL = { all: 'All venues', stow: 'Stowaway', hg: 'Harry Gatos', mari: "Marilyna's" };
-let ROWS = [], PROD_ROWS = [], VENUE = 'all', VIEW = 'groups', SORT = 'mom', SEL = null, EXPANDED = new Set();
+let ROWS = [], PROD_ROWS = [], VENUE = 'all', VIEW = 'groups', SORT = 'mom', SEL = null, SELPROD = null, EXPANDED = new Set();
 let charts = {};
 
 const toNum = x => { const n = parseFloat(x); return isFinite(n) ? n : 0; };
@@ -195,6 +195,8 @@ function render() {
   if (VIEW === 'products') return renderProducts();
   document.getElementById('detail-panel').style.display = '';
   document.querySelector('.layout').style.gridTemplateColumns = '';
+  document.getElementById('cb-season').style.display = '';
+  document.getElementById('detail-note').textContent = 'Top: weekly sales with the previous year overlaid (52-week shift) — the direct seasonality read for timing menu changes. Middle: seasonal index — average weekly sales by calendar month vs the group’s own average (100 = typical); plan changes into the shoulder months before peaks. Bottom: share of venue revenue, 4-week smoothed — the popularity trend independent of how busy the venue was.';
   document.querySelector('#movers thead').innerHTML =
     '<tr><th data-s="name">Group</th><th data-s="wk">$/wk (8w)</th><th data-s="share">Share</th><th data-s="mom">vs prior 8w</th><th data-s="yoy">vs LY</th></tr>';
   document.getElementById('left-title').innerHTML = 'Reporting groups — momentum <span class="dim" id="sort-note"></span>';
@@ -270,8 +272,9 @@ function detail(rg) {
 function prodRows() { return VENUE === 'all' ? PROD_ROWS : PROD_ROWS.filter(r => r.venue === VENUE); }
 
 function renderProducts() {
-  document.getElementById('detail-panel').style.display = 'none';
-  document.querySelector('.layout').style.gridTemplateColumns = '1fr';
+  document.getElementById('detail-panel').style.display = '';
+  document.querySelector('.layout').style.gridTemplateColumns = '';
+  document.getElementById('cb-season').style.display = 'none';   // no seasonal index for products
   document.getElementById('left-title').innerHTML = 'Products by reporting group <span class="dim">· share of venue revenue</span>';
   document.querySelector('#movers thead').innerHTML =
     '<tr><th>Reporting group / product</th><th>$/wk</th><th>Share</th></tr>';
@@ -295,6 +298,10 @@ function renderProducts() {
       .sort((a, b) => b.share - a.share),
   })).sort((a, b) => b.share - a.share);
 
+  // keep the current selection valid; otherwise default to the biggest product
+  const allProds = groups.flatMap(g => g.prods.map(p => p.p));
+  if (!SELPROD || !allProds.includes(SELPROD)) SELPROD = allProds[0] || null;
+
   const esc = s => s.replace(/'/g, "\\'");
   let html = '';
   for (const grp of groups) {
@@ -302,16 +309,63 @@ function renderProducts() {
     html += `<tr class="rg-head" onclick="toggleRg('${esc(grp.rg)}')">
       <td><b>${open ? '▾' : '▸'} ${grp.rg}</b></td><td><b>${fmt$(grp.wk)}</b></td><td><b>${fmtPc(grp.share)}</b></td></tr>`;
     if (open) for (const pr of grp.prods) {
-      html += `<tr class="prod-row"><td style="padding-left:28px">${pr.p}</td><td class="dim">${fmt$(pr.wk)}</td><td>${fmtPc(pr.share)}</td></tr>`;
+      html += `<tr class="prod-row${pr.p === SELPROD ? ' sel' : ''}" onclick="selectProduct('${esc(pr.p)}')"><td style="padding-left:28px">${pr.p}</td><td class="dim">${fmt$(pr.wk)}</td><td>${fmtPc(pr.share)}</td></tr>`;
     }
   }
   document.getElementById('movers-body').innerHTML = html ||
     '<tr><td colspan="3" class="dim">No product data for this venue yet.</td></tr>';
   document.getElementById('left-note').textContent =
-    `Each product and group as a % of ${VEN_LABEL[VENUE]} revenue, averaged over the last ${nW} complete week${nW > 1 ? 's' : ''} (${win[0] || '—'} → ${win[win.length - 1] || '—'}). Product-level history starts 6 Jul 2026 and grows each day. Click a group to expand its products.`;
+    `Each product and group as a % of ${VEN_LABEL[VENUE]} revenue, averaged over the last ${nW} complete week${nW > 1 ? 's' : ''} (${win[0] || '—'} → ${win[win.length - 1] || '—'}). Expand a group, then click a product to chart its weekly % share over time.`;
+
+  if (SELPROD) productDetail(SELPROD); else clearDetail();
 }
 
 function toggleRg(rg) { EXPANDED.has(rg) ? EXPANDED.delete(rg) : EXPANDED.add(rg); renderProducts(); }
+function selectProduct(p) { SELPROD = p; renderProducts(); }
+function clearDetail() {
+  document.getElementById('detail-title').textContent = '—';
+  document.getElementById('detail-sub').textContent = '';
+}
+
+// Weekly trend for one product: its $ and its % of venue revenue, over every
+// complete week we have product data for. History starts 6 Jul 2026, so the line
+// is short now and lengthens with each daily pull.
+function productDetail(name) {
+  const rows = prodRows();
+  let weeks = [...new Set(PROD_ROWS.map(r => r.we))].sort();
+  if (weeks.length && weeks[weeks.length - 1] >= iso(new Date())) weeks = weeks.slice(0, -1);
+  const byWe = {}, venByWe = {};
+  for (const r of rows) {
+    venByWe[r.we] = (venByWe[r.we] || 0) + r.amt;
+    if (r.product === name) byWe[r.we] = (byWe[r.we] || 0) + r.amt;
+  }
+  const dollars = weeks.map(w => byWe[w] ?? null);
+  const share = weeks.map(w => venByWe[w] ? (byWe[w] || 0) / venByWe[w] * 100 : null);
+  const lastShare = [...share].reverse().find(x => x !== null);
+  const avgShare = share.filter(x => x !== null).reduce((a, b, _, arr) => a + b / arr.length, 0);
+
+  document.getElementById('detail-title').textContent = name;
+  document.getElementById('detail-sub').textContent =
+    `${VEN_LABEL[VENUE]} · latest ${lastShare != null ? fmtPc(lastShare) : '—'} of venue revenue · ${weeks.length}-week trend`;
+
+  const tick = IS_DARK ? '#B7B1A4' : '#5A544C';
+  const grid = IS_DARK ? 'rgba(120,110,90,.2)' : 'rgba(232,223,207,.4)';
+  const base = { responsive: true, maintainAspectRatio: false,
+    scales: { y: { ticks: { color: tick, font: { size: 10 } }, grid: { color: grid } },
+              x: { ticks: { color: tick, font: { size: 10 }, maxTicksLimit: 14 }, grid: { display: false } } },
+    plugins: { legend: { labels: { color: tick, boxWidth: 12, boxHeight: 3, usePointStyle: true, pointStyle: 'line', font: { size: 11 } } } } };
+  const labels = weeks.map(w => w.slice(2));
+
+  mkChart('c-weekly', { type: 'line', data: { labels, datasets: [
+    { label: 'Share of venue revenue %', data: share, borderColor: '#D4537E', backgroundColor: '#D4537E22', borderWidth: 2, pointRadius: 3, tension: .3, spanGaps: true, fill: true },
+  ]}, options: base });
+  mkChart('c-share', { type: 'line', data: { labels, datasets: [
+    { label: 'Weekly ex-GST sales $', data: dollars, borderColor: '#378ADD', borderWidth: 2, pointRadius: 3, tension: .3, spanGaps: true },
+  ]}, options: base });
+
+  document.getElementById('detail-note').textContent =
+    `Top: ${name} as a % of ${VEN_LABEL[VENUE]} revenue, week by week — the popularity trend. Bottom: its weekly ex-GST dollars. Product-level history starts 6 Jul 2026 (${weeks.length} complete week${weeks.length === 1 ? '' : 's'} so far) and extends automatically with each daily pull.`;
+}
 
 function mkChart(id, cfg) {
   if (charts[id]) charts[id].destroy();
