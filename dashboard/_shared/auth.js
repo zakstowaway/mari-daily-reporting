@@ -259,11 +259,22 @@ export const Auth = (() => {
     // one-time link (or it expired), there's no session — ask for the 6-digit code
     // from the same email, which nothing can pre-consume.
     const linked = !!(await current());
-    const emailVal = (prefillEmail || "").replace(/"/g, "&quot;");
-    const codeFields = linked ? "" : `
-        <div class="muted" style="margin:-2px 0 12px">Check your email for a <b>6-digit code</b>${prefillEmail ? " (sent to <b>" + emailVal + "</b>)" : ""} and enter it below with a new password. It can take a minute to arrive — check spam too.</div>
-        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" value="${emailVal}" ${prefillEmail ? "" : "autofocus"}>
-        <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" ${prefillEmail ? "autofocus" : ""}>`;
+    const esc = s => (s || "").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    let codeFields = "";
+    if (!linked && prefillEmail) {
+      // Straight from "Send reset code": we already know the email, so ask only for
+      // the code + new password — no redundant email re-entry.
+      codeFields = `
+        <div class="muted" style="margin:-2px 0 12px">We just emailed a <b>6-digit code</b> to <b>${esc(prefillEmail)}</b>. Enter it below with a new password. (Can take a minute — check spam.)</div>
+        <input id="_e" type="hidden" value="${esc(prefillEmail)}">
+        <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8" autofocus>`;
+    } else if (!linked) {
+      // Arrived via a reset LINK (maybe burned by a scanner) — email unknown, ask for it.
+      codeFields = `
+        <div class="muted" style="margin:-2px 0 12px">Enter the <b>6-digit code</b> from your reset email, plus a new password.</div>
+        <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
+        <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8">`;
+    }
     mount.innerHTML = card(`
       <form id="_rf">
         ${codeFields}
