@@ -3054,9 +3054,13 @@ function overheadChips() {
   const windowInOpenWeek = winEndDate !== '' && winEndDate >= openWeekStart;
   const chip = (on, label, dollars, fn) =>
     `<button class="oh-chip${on ? ' on' : ''}" onclick="${fn}()">${label} ${fmtDollars(dollars)}</button>`;
-  const parts = [];
-  if (adm > 0.005) parts.push(chip(STATE.includeAdmin, 'include admin', adm, 'toggleAdmin'));
-  if (lve > 0.005) parts.push(chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'));
+  // Always show BOTH toggles on the group view (Zak wants the leave toggle to be
+  // dependably present, next to admin — even when the selected period happens to
+  // have no leave, in which case it reads $0). Group-only; venue views returned early.
+  const parts = [
+    chip(STATE.includeAdmin, 'include admin', adm, 'toggleAdmin'),
+    chip(STATE.includeLeave, 'include leave', lve, 'toggleLeave'),
+  ];
   const notes = [];
   if (parts.length) notes.push("admin and leave aren't rostered against trade");
   if (windowInOpenWeek && lveOpen > 0.005) notes.push('open-week leave is an estimate until timesheets are approved');
