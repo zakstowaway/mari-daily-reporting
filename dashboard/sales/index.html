@@ -448,7 +448,9 @@ tbody tr:hover { background: var(--group-tint); }
 .pbrk-dot { width: 9px; height: 9px; border-radius: 2px; flex: none; align-self: center; }
 .pbrk-l { flex: 1; color: var(--ink); }
 .pbrk-p { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 52px; text-align: right; }
-.pbrk-r { min-width: 118px; text-align: right; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pbrk-d { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 82px; text-align: right; color: var(--ink); }
+.pbrk-r { min-width: 92px; text-align: right; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pbrk-row.total .pbrk-d { font-size: 15px; }
 .pbrk-row.total { border-top: 1px solid var(--line); margin-top: 5px; padding-top: 8px; }
 .pbrk-row.total .pbrk-l { font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
 .pbrk-row.total .pbrk-p { font-size: 15px; }
@@ -2364,25 +2366,25 @@ function renderProfitCard(day, cfg) {
 
   // --- breakdown list: each cost as a % of gross, with its target reference ---
   const refCol = st => st === 'red' ? 'var(--red)' : st === 'green' ? 'var(--green)' : 'var(--amber)';
-  const line = (color, label, p, ref) =>
+  const line = (color, label, p, dollars, ref) =>
     `<div class="pbrk-row"><span class="pbrk-dot" style="background:${color}"></span>` +
     `<span class="pbrk-l">${label}</span><span class="pbrk-p">${fmtPct(p)}</span>` +
-    `<span class="pbrk-r">${ref || ''}</span></div>`;
+    `<span class="pbrk-d">${fmtP(dollars)}</span><span class="pbrk-r">${ref || ''}</span></div>`;
   const cogsRef = `<span style="color:${refCol(cogsStatus(cogsPctG))}">tgt ${fmtPct(COGS_TARGET_PCT)}</span>`;
   const wageSt = wTgt === null ? 'amber' : wagesPctG > wTgt + 2 ? 'red' : wagesPctG < wTgt - 2 ? 'green' : 'amber';
   const wageRef = wTgt !== null ? `<span style="color:${refCol(wageSt)}">tgt ${fmtPct(wTgt)}</span>` : '';
   let list = '';
-  list += line('#D85A30', 'COGS', cogsPctG, cogsRef);
-  list += line('#7F77DD', wagesLbl, wagesPctG, wageRef);
-  list += line('#888780', 'Overheads', pct(w.oh), '');
-  list += line('#EF9F27', 'Delivery platforms', pct(w.df), '');
-  if (eat > 0.005) list += line('#C86FA0', 'EatClub give-away', pct(eat), `· ${covers} cover${covers === 1 ? '' : 's'}`);
-  if (w.cp > 0.005) list += line('#D4537E', "Owners' salary", pct(w.cp), '');
-  if (w.fin > 0.005) list += line('#5A5A70', 'Interest & dep', pct(w.fin), '');
+  list += line('#D85A30', 'COGS', cogsPctG, cogsD, cogsRef);
+  list += line('#7F77DD', wagesLbl, wagesPctG, w.wages, wageRef);
+  list += line('#888780', 'Overheads', pct(w.oh), w.oh, '');
+  list += line('#EF9F27', 'Delivery platforms', pct(w.df), w.df, '');
+  if (eat > 0.005) list += line('#C86FA0', 'EatClub give-away', pct(eat), eat, `· ${covers} cover${covers === 1 ? '' : 's'}`);
+  if (w.cp > 0.005) list += line('#D4537E', "Owners' salary", pct(w.cp), w.cp, '');
+  if (w.fin > 0.005) list += line('#5A5A70', 'Interest & dep', pct(w.fin), w.fin, '');
   list +=
     `<div class="pbrk-row total"><span class="pbrk-dot" style="background:${profitPct >= 0 ? '#1D9E75' : '#E24B4A'}"></span>` +
     `<span class="pbrk-l">Expected profit</span><span class="pbrk-p">${fmtPct(margin)}</span>` +
-    `<span class="pbrk-r">${fmtP(w.profit)}</span></div>`;
+    `<span class="pbrk-d">${fmtP(w.profit)}</span><span class="pbrk-r"></span></div>`;
 
   const oc = overheadChips();
   el.innerHTML =
