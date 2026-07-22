@@ -90,10 +90,10 @@ tr.prod-row td:first-child { color: var(--ink-soft); }
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js"></script>
 <script>
 const IS_DARK = matchMedia('(prefers-color-scheme: dark)').matches;
-try {
-  const s = JSON.parse(sessionStorage.getItem('mari_session') || 'null');
-  if (!s || s.role !== 'admin') location.href = 'index.html';
-} catch (e) { location.href = 'index.html'; }
+// Admin gate lives in the module script at the bottom — it authenticates through
+// Supabase (Auth.current) like the rest of the app, then calls boot(). The old
+// synchronous sessionStorage.mari_session check bounced every direct navigation
+// once login moved to Supabase, because that key is only set after index.html runs.
 
 const VEN_LABEL = { all: 'All venues', stow: 'Stowaway', hg: 'Harry Gatos', mari: "Marilyna's" };
 let ROWS = [], PROD_ROWS = [], VENUE = 'all', VIEW = 'groups', SORT = 'mom', SEL = null, EXPANDED = new Set();
@@ -318,7 +318,16 @@ function mkChart(id, cfg) {
   charts[id] = new Chart(document.getElementById(id).getContext('2d'), cfg);
 }
 
-boot().catch(e => { console.error(e); document.getElementById('detail-title').textContent = 'Failed to load feed'; });
+window.__startMenuTrends = () => boot().catch(e => { console.error(e); document.getElementById('detail-title').textContent = 'Failed to load feed'; });
+</script>
+<script type="module">
+  // Gate through the real auth (Supabase) exactly like index.html. Admin only;
+  // anyone else is sent to the dashboard, which hosts the sign-in card.
+  import { Auth } from '/_shared/auth.js';
+  let me = null;
+  try { me = await Auth.current(); } catch (e) { console.error('auth', e); }
+  if (!me || me.role !== 'admin') location.replace('index.html');
+  else window.__startMenuTrends();
 </script>
 </body>
 </html>
