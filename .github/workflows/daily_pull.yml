@@ -172,10 +172,18 @@ jobs:
           # exports, reattributes cross-till rows, joins the reporting-group name.
           python scripts/build_products_weekly.py || echo "::warning::products rollup failed (non-fatal)"
 
+      - name: Rebuild product Sales API (dashboard/sales/products/*.json)
+        run: |
+          # Path B: JSON endpoints for cross-surface Claude access — served from
+          # app.stowawaybar.com/sales/products/. Read by any Claude chat via
+          # web_fetch (see dashboard/sales/products/SCHEMA.md). Depends on
+          # data/products_weekly.csv from the previous step.
+          python scripts/build_products_api.py || echo "::warning::products API build failed (non-fatal)"
+
       - name: Commit updated data
         run: |
           git config user.name "Daily Pull"
           git config user.email "hello@stowawaybar.com"
-          git add data/
+          git add data/ dashboard/sales/products/
           git diff --quiet --staged || git commit -m "Daily pull ${{ steps.venue.outputs.venue }} ${{ steps.date.outputs.target }}"
           for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done

@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-07-22T20:18:20+10:00",
+  "coverage": {
+    "stow": {
+      "label": "Stowaway",
+      "first_week_ending": "2025-06-01",
+      "last_week_ending": "2026-07-19",
+      "weeks": 60,
+      "products": 501
+    },
+    "hg": {
+      "label": "Harry Gatos",
+      "first_week_ending": "2025-06-01",
+      "last_week_ending": "2026-07-19",
+      "weeks": 60,
+      "products": 186
+    },
+    "mari": {
+      "label": "Marilyna's",
+      "first_week_ending": "2025-06-01",
+      "last_week_ending": "2026-07-19",
+      "weeks": 60,
+      "products": 505
+    }
+  },
+  "endpoints": {
+    "index": "https://app.stowawaybar.com/sales/products/index.json",
+    "stow": "https://app.stowawaybar.com/sales/products/rollup_stow.json",
+    "hg": "https://app.stowawaybar.com/sales/products/rollup_hg.json",
+    "mari": "https://app.stowawaybar.com/sales/products/rollup_mari.json",
+    "schema_doc": "https://github.com/zakstowaway/mari-daily-reporting/blob/main/dashboard/sales/products/SCHEMA.md"
+  },
+  "notes": "All revenue ex-GST. week_ending = Sunday of Mon-Sun trading week. Fetch index.json first to find product names, then rollup_<venue>.json for full weekly history."
+}
