@@ -963,21 +963,27 @@ function pnlWindow(day, venue = STATE.currentVenue) {
 // months before the window end (overheads are lumpy — quarterly power,
 // annual insurance — so never a single month). null -> caller falls back to
 // the plan-basis constant.
+// Olly's BEP overhead is a trailing ~15-week Xero average, so we mirror that: take
+// the last up-to-4 COMPLETE months (~17 weeks; partial current month is excluded
+// because its costs aren't all posted yet) and use the MEDIAN daily rate, not the
+// mean. Median makes it robust to a one-off month — e.g. May 2026 ran ~$90k vs
+// ~$51k for Apr/Jun (a ~$40k capital/annual lump miscoded to opex); a mean would
+// let that single spike inflate every week's overhead, a median ignores it. As
+// more months accumulate the window naturally converges on Olly's 15-week basis.
 function overheadsDailyRate(venue, endIso) {
   const feed = STATE.xeroOH;
   if (!feed.length) return null;
   const endMonth = String(endIso || '').slice(0, 7);
-  const months = feed.filter(r => r.month && r.month < endMonth).sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
+  const months = feed.filter(r => r.month && r.month < endMonth).sort((a, b) => a.month.localeCompare(b.month)).slice(-4);
   if (!months.length) return null;
-  const col = venue === 'group' ? null : `${venue}_overheads`;
-  let dollars = 0, days = 0;
-  for (const r of months) {
-    const [y, m] = r.month.split('-').map(Number);
-    days += new Date(y, m, 0).getDate();
-    if (col) dollars += toNum(r[col]);
-    else dollars += toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads);
-  }
-  return days ? { rate: dollars / days, months: months.length } : null;
+  const val = r => venue === 'group'
+    ? toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads)
+    : toNum(r[`${venue}_overheads`]);
+  const daysIn = r => { const [y, m] = r.month.split('-').map(Number); return new Date(y, m, 0).getDate(); };
+  const rates = months.map(r => val(r) / daysIn(r)).sort((a, b) => a - b);
+  const n = rates.length;
+  const median = n % 2 ? rates[(n - 1) / 2] : (rates[n / 2 - 1] + rates[n / 2]) / 2;
+  return { rate: median, months: n };
 }
 
 // Delivery fees as a % of venue revenue, from the Xero monthly feed
@@ -3544,5 +3550,3 @@ tryResume().catch(e => console.error(e));
 
 </body>
 </html>
-
-<!-- rebuild 1784721172 -->
