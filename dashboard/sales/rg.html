@@ -57,6 +57,8 @@ tr.prod-row td:first-child { color: var(--ink-soft); }
   <span id="view-chips"></span>
   <span style="width:1px;height:20px;background:var(--line)"></span>
   <span id="venue-chips"></span>
+  <span style="width:1px;height:20px;background:var(--line)"></span>
+  <span id="tf-chips"></span>
   <span style="margin-left:auto; font-size:11px; color:var(--ink-soft);" id="feed-note"></span>
 </div></div>
 
@@ -96,7 +98,8 @@ const IS_DARK = matchMedia('(prefers-color-scheme: dark)').matches;
 // once login moved to Supabase, because that key is only set after index.html runs.
 
 const VEN_LABEL = { all: 'All venues', stow: 'Stowaway', hg: 'Harry Gatos', mari: "Marilyna's" };
-let ROWS = [], PROD_ROWS = [], VENUE = 'all', VIEW = 'groups', SORT = 'mom', SEL = null, SELPROD = null, EXPANDED = new Set();
+const TF_OPTS = [['4W', 4], ['8W', 8], ['13W', 13], ['26W', 26], ['52W', 52], ['All', 9999]];  // trend window, in complete weeks
+let ROWS = [], PROD_ROWS = [], VENUE = 'all', VIEW = 'groups', SORT = 'mom', SEL = null, SELPROD = null, TF = 52, EXPANDED = new Set();
 let charts = {};
 
 const toNum = x => { const n = parseFloat(x); return isFinite(n) ? n : 0; };
@@ -131,6 +134,8 @@ async function boot() {
   document.getElementById('view-chips').innerHTML =
     `<button class="chip${VIEW === 'groups' ? ' active' : ''}" onclick="setView('groups')">Reporting groups</button>
      <button class="chip${VIEW === 'products' ? ' active' : ''}" onclick="setView('products')">Products</button>`;
+  document.getElementById('tf-chips').innerHTML = TF_OPTS.map(([lbl, w]) =>
+    `<button class="chip${w === TF ? ' active' : ''}" onclick="setTF(${w})">${lbl}</button>`).join(' ');
   document.getElementById('venue-chips').innerHTML = Object.keys(VEN_LABEL).map(v =>
     `<button class="chip${v === VENUE ? ' active' : ''}" onclick="setVenue('${v}')">${VEN_LABEL[v]}</button>`).join(' ');
   const weeks = allWeeks();
@@ -140,6 +145,7 @@ async function boot() {
 
 function setVenue(v) { VENUE = v; SEL = null; document.querySelectorAll('#venue-chips .chip').forEach(c => c.classList.toggle('active', c.textContent === VEN_LABEL[v])); render(); }
 function setView(v) { VIEW = v; SEL = null; document.querySelectorAll('#view-chips .chip').forEach((c, i) => c.classList.toggle('active', (i === 0 ? 'groups' : 'products') === v)); render(); }
+function setTF(w) { TF = w; document.querySelectorAll('#tf-chips .chip').forEach((c, i) => c.classList.toggle('active', TF_OPTS[i][1] === w)); render(); }
 
 function rowsFor() { return VENUE === 'all' ? ROWS : ROWS.filter(r => r.venue === VENUE); }
 function allWeeks() { return [...new Set(ROWS.map(r => r.we))].sort(); }
@@ -237,8 +243,8 @@ function detail(rg) {
               x: { ticks: { color: tick, font: { size: 10 }, maxTicksLimit: 14 }, grid: { display: false } } },
     plugins: { legend: { labels: { color: tick, boxWidth: 12, boxHeight: 3, usePointStyle: true, pointStyle: 'line', font: { size: 11 } } } } };
 
-  // 1: last 52 weeks + prior year overlay
-  const cur = weeks.slice(-52);
+  // 1: selected-timeframe window + prior year overlay
+  const cur = weeks.slice(-TF);
   const curD = cur.map(we => byWe[we] ?? null);
   const lyD = cur.map(we => { const p = iso(addDays(new Date(we), -364)); return byWe[p] ?? null; });
   mkChart('c-weekly', { type: 'line', data: { labels: cur.map(w2 => w2.slice(2)), datasets: [
@@ -282,7 +288,7 @@ function renderProducts() {
   const rows = prodRows();
   let weeks = [...new Set(PROD_ROWS.map(r => r.we))].sort();
   if (weeks.length && weeks[weeks.length - 1] >= iso(new Date())) weeks = weeks.slice(0, -1);
-  const win = weeks.slice(-8), inWin = new Set(win), nW = win.length || 1;
+  const win = weeks.slice(-TF), inWin = new Set(win), nW = win.length || 1;
 
   const byRg = {}; let venTot = 0;
   for (const r of rows) {
@@ -334,6 +340,7 @@ function productDetail(name) {
   const rows = prodRows();
   let weeks = [...new Set(PROD_ROWS.map(r => r.we))].sort();
   if (weeks.length && weeks[weeks.length - 1] >= iso(new Date())) weeks = weeks.slice(0, -1);
+  weeks = weeks.slice(-TF);
   const byWe = {}, venByWe = {};
   for (const r of rows) {
     venByWe[r.we] = (venByWe[r.we] || 0) + r.amt;

@@ -2133,9 +2133,13 @@ function renderSnapshot() {
   if (STATE.currentTimeframe === 'day') {
     dateEl.textContent = new Date(day.date).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
   } else {
-    const [s, e] = day.date.split(' — ');
+    // A one-day range collapses to a single raw row (rollup returns it as-is),
+    // so day.date has no " — " and no days_included — handle that, else the
+    // label read "Invalid Date (undefined days)".
+    const [s, e] = String(day.date).includes(' — ') ? day.date.split(' — ') : [day.date, day.date];
     const fmt = d => new Date(d).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
-    dateEl.textContent = `${fmt(s)} — ${fmt(e)} (${day.days_included} days)`;
+    const nDays = day.days_included || 1;
+    dateEl.textContent = s === e ? `${fmt(s)} (1 day)` : `${fmt(s)} — ${fmt(e)} (${nDays} days)`;
   }
   staleEl.innerHTML = '';
   if (STATE.currentTimeframe === 'day') {
