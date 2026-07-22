@@ -1,0 +1,54 @@
+[
+  {
+    "timesheet_id": 35441,
+    "employee_id": 15,
+    "employee_name": "Marssheel Marssheel",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1784685600,
+    "end_time": 1784722500,
+    "hours": 10.25,
+    "cost": 433.65,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35442,
+    "employee_id": 5,
+    "employee_name": "Nicola Bisato",
+    "ou_name": "Admin",
+    "company": "Stowaway",
+    "dept": "Admin",
+    "start_time": 1784691000,
+    "end_time": 1784724300,
+    "hours": 0.925,
+    "cost": 31.13,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35449,
+    "employee_id": 296,
+    "employee_name": "Olivia",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1784700000,
+    "end_time": 1784719800,
+    "hours": 5.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35453,
+    "employee_id": 298,
+    "employee_name": "Kiana Dettmann",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1784705400,
+    "end_time": 1784722500,
+    "hours": 4.75,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]
