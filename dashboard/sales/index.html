@@ -410,6 +410,10 @@ tbody tr:hover { background: var(--group-tint); }
   border-radius: 999px; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
 .tf-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
 .tf-btn.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.tf-anyday { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink-soft);
+  padding: 6px 10px; border: 1px solid var(--line); background: var(--paper); border-radius: 999px;
+  cursor: pointer; color-scheme: light dark; }
+.tf-anyday.active { border-color: var(--group); color: var(--ink); }
 
 /* ---- Expected / actual profit card ---- */
 .pcard { background: var(--paper); border-radius: 12px; padding: 18px 20px; margin: 0 0 16px;
@@ -944,10 +948,10 @@ function pnlWindow(day, venue = STATE.currentVenue) {
     df = venueDeliveryEst(venue, _win[0], _win[1], endIso).df;
   }
   const cp = corpPayrollDaily(venue, endIso) * ohf;   // owners' salary, DOW-weighted
-  const fin = financeDaily(venue, endIso) * ohf;      // interest + depreciation
-  // Operating profit drives breakeven and every trading decision — it must stay
-  // free of interest/depreciation (you can't roster your way out of a loan).
-  // Net profit is what the accountant sees. Keep both, and never confuse them.
+  // Interest + depreciation are OUT of the P&L (Zak/Olly BEP, 2026-07-22): both are
+  // $0 in Olly's plan — depreciation isn't a cash cost we pay, and interest is a
+  // balance-sheet item, not a day-to-day trading cost. So profit = operating profit.
+  const fin = 0;
   const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
   const profit = opProfit - fin;
   return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
@@ -1247,12 +1251,11 @@ function actualProfitWindow(day) {
     df += v === 'mari' ? toNum(r.mari_uber_fees)
         : v === 'group' ? toNum(r.mari_uber_fees) + toNum(r.meu_fees)
         : toNum(r.meu_fees) * meuShare;
-    // Interest + depreciation, on the same plan share as payroll. Actual months
-    // are closed months, so this is the statutory figure — and it MUST be here:
-    // the card compares actual profit against pnlWindow's expected profit, and
-    // that one is now net. Two 'profits' with different definitions sitting a
-    // few pixels apart is worse than not showing either.
-    fin += toNum(r.group_finance) * (PLAN_WAGE_SHARE[v] || 1);
+    // Interest + depreciation are OUT of the P&L (Olly BEP = $0 for both). Kept
+    // consistent with pnlWindow so the 'actual' and 'expected' profits share one
+    // definition (operating profit, no finance). group_finance stays in the feed
+    // for reference but never hits profit.
+    fin += 0;
   }
   // group_payroll bundles staff wages, owner salary, payroll tax and workers-
   // comp. Split it to match the operational card and Zak's rule, with NO
@@ -2056,11 +2059,19 @@ function renderTimeframeToggle() {
     `<option value="">More ▾</option>` +
     moreOpts.map(o => `<option value="${o[0]}"${moreOn && tf === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('') +
     `</select>`;
+  // "Pick any day" — the scrubber only covers this week, so this jumps to any past
+  // day. On change -> switchDay(iso). Bounded by the data range.
+  const dRows = STATE.histories[STATE.currentVenue] || [];
+  const minD = dRows.length ? dRows[0].date : '';
+  const dayVal = tf === 'day' && STATE.currentDay ? STATE.currentDay : '';
+  const anyDay = `<input type="date" id="tf-anyday" class="tf-anyday${tf === 'day' ? ' active' : ''}" ` +
+    `${minD ? `min="${minD}" ` : ''}max="${todayIso}" value="${dayVal}" title="Pick any day" ` +
+    `onchange="if(this.value)switchDay(this.value)">`;
   el.innerHTML =
     `<div class="tf-scrub">${chips}</div>` +
     `<span class="tf-div"></span>` +
     btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') +
-    moreSel;
+    moreSel + anyDay;
 }
 function renderRangePicker() {
   const el = document.getElementById('range-picker');
