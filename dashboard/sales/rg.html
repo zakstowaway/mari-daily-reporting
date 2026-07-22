@@ -106,7 +106,7 @@ const addDays = (d, n) => { const c = new Date(d); c.setDate(c.getDate() + n); r
 const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
 async function boot() {
-  const r = await fetch('data/rg_weekly.csv?t=' + Date.now());
+  const r = await fetch('/data/rg_weekly.csv?t=' + Date.now());
   const lines = (await r.text()).trim().split(/\r?\n/);
   const head = lines[0].split(',');
   ROWS = lines.slice(1).map(l => {
@@ -119,7 +119,7 @@ async function boot() {
     return { we: parts[0], venue: parts[1], rg: parts[2], amt: toNum(parts[3]), qty: toNum(parts[4]) };
   });
   try {
-    const pr = await fetch('data/products_weekly.csv?t=' + Date.now());
+    const pr = await fetch('/data/products_weekly.csv?t=' + Date.now());
     if (pr.ok) {
       const pl = (await pr.text()).trim().split(/\r?\n/);
       PROD_ROWS = pl.slice(1).map(l => {
