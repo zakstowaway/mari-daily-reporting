@@ -1320,6 +1320,26 @@ function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); retu
 function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Date(d.getFullYear(), q * 3, 1); }
 function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
 function weekStart(d) { const day = d.getDay(); const offset = day === 0 ? -6 : 1 - day; return addDays(d, offset); }
+// Is the selected period still in progress (its calendar end is today or later)?
+// Profit/margin only makes sense once a period has fully closed — today, "this
+// week", "this month" shouldn't carry a profit line; a completed/closed period
+// does. (Zak, 2026-07: KPIs while it's live, profit once it's closed.)
+function periodIsOpen() {
+  const tf = STATE.currentTimeframe;
+  if (tf === 'day') return true;                       // daily is always KPI-only
+  const today = sydneyToday();
+  const rows = STATE.histories[STATE.currentVenue] || STATE.histories.stow || [];
+  const anchor = STATE.currentDay ? new Date(STATE.currentDay)
+    : (rows.length ? new Date(rows[rows.length - 1].date) : today);
+  let end;
+  if (tf === 'week') end = addDays(weekStart(anchor), 6);
+  else if (tf === 'month') end = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0);
+  else if (tf === 'quarter') { const q = quarterStart(anchor); end = new Date(q.getFullYear(), q.getMonth() + 3, 0); }
+  else if (tf === 'thisfy') { const fy = today.getMonth() >= 6 ? today.getFullYear() : today.getFullYear() - 1; end = new Date(fy + 1, 5, 30); }
+  else if (tf === 'range') end = STATE.rangeEnd ? new Date(STATE.rangeEnd) : today;
+  else return false;   // lastweek / lastmonth / lastquarter / lastfy / last12 / all → complete
+  return end >= today;
+}
 
 // A venue's wage line is what that venue can ROSTER (Zak, 2026-07-17). Admin and
 // leave are neither: nobody rosters against them, and no venue decision changes
@@ -2217,10 +2237,14 @@ function renderProfitCard(day, cfg) {
   // so folding it into a single day paints a false picture. Those live on the
   // weekly view. (Zak, 2026-07: "daily KPIs re wages, turnover and COGS are the
   // most important — instant reflection, then adjust labour.")
-  if (STATE.currentTimeframe === 'day') {
+  if (periodIsOpen()) {
+    const kpiLbl = STATE.currentTimeframe === 'day' ? 'Daily KPIs'
+      : STATE.currentTimeframe === 'week' ? 'This week — KPIs'
+      : STATE.currentTimeframe === 'month' ? 'This month — KPIs'
+      : 'KPIs — period in progress';
     const w = pnlWindow(day);
     if (!w) {
-      el.innerHTML = `<div class="pcard"><div class="pcard-head"><span class="pcard-lbl">Daily KPIs</span></div>` +
+      el.innerHTML = `<div class="pcard"><div class="pcard-head"><span class="pcard-lbl">${kpiLbl}</span></div>` +
         `<div class="pcard-hero" style="color:var(--ink-soft);font-size:22px">—</div>` +
         `<div class="pbrk-row"><span class="pbrk-l" style="font-size:12px;color:var(--ink-soft)">needs revenue + wages</span></div></div>`;
       return;
@@ -2241,9 +2265,9 @@ function renderProfitCard(day, cfg) {
     const wagesLbl = 'Labour' + (STATE.currentVenue === 'group' ? ' (excl. admin)' : '');
     el.innerHTML =
       `<div class="pcard">` +
-      `<div class="pcard-head"><span class="pcard-lbl">Daily KPIs</span></div>` +
+      `<div class="pcard-head"><span class="pcard-lbl">${kpiLbl}</span></div>` +
       `<div class="pmini">` +
-      `<div class="pmini-c"><p class="pmini-l">Turnover (gross)</p><p class="pmini-v">${fmtDollars(grpDisp)}</p><p class="pmini-s">${revSub}</p></div>` +
+      `<div class="pmini-c"><p class="pmini-l">Turnover (gross)</p><p class="pmini-v">${fmtDollars(grpDisp)}</p><p class="pmini-s"></p></div>` +
       `<div class="pmini-c"><p class="pmini-l">COGS</p><p class="pmini-v">${fmtPct(cogsPctG)}</p><p class="pmini-s">${fmtDollars(cogsD)} · ${vsTarget(cogsPctG, COGS_TARGET_PCT)}</p></div>` +
       `<div class="pmini-c"><p class="pmini-l">${wagesLbl}</p><p class="pmini-v">${fmtPct(wagesPctG)}</p><p class="pmini-s">${fmtDollars(w.wages)}${wTgt !== null ? ' · ' + vsTarget(wagesPctG, wTgt) : ''}</p></div>` +
       `</div></div>`;
@@ -2693,7 +2717,9 @@ function renderVenueBreakdown() {
   if (!el) return;
   el.innerHTML = '';
   if (STATE.currentVenue !== 'group') return;
-  const showProfit = STATE.currentTimeframe !== 'day';   // daily = KPIs only, no profit/margin
+  const open = periodIsOpen();
+  const showProfit = !open;   // open period (this week / today) = KPIs only, no profit/margin
+  const showLY = !open;       // vs-LY on an in-progress period is misleading (partial vs full)
   const body = [['stow', 'Stowaway'], ['hg', 'Harry Gatos'], ['mari', "Marilyna's"]].map(([vk, lbl]) => {
     const rows = STATE.histories[vk] || [];
     let anchorDay = STATE.currentDay;
@@ -2714,7 +2740,7 @@ function renderVenueBreakdown() {
     return `<tr class="vbx-row ${vk}" onclick="switchVenue('${vk}')">
       <td class="vbx-venue"><span class="vbx-dot"></span>${lbl}</td>
       <td>${fmtDollars(rev)}</td>
-      <td>${yoyCell}</td>
+      ${showLY ? '<td>' + yoyCell + '</td>' : ''}
       <td>${hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—'}</td>
       <td>${a ? fmtPct(a.pct) : hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—'}</td>
       ${showProfit ? `<td>${profitCell}</td><td>${marginCell}</td>` : ''}
@@ -2724,7 +2750,7 @@ function renderVenueBreakdown() {
   el.innerHTML = `<div class="vbx">
     <p class="vbx-title">Per-venue breakdown</p>
     <div class="vbx-scroll"><table class="vb-table vbx-table">
-    <thead><tr><th>Venue</th><th>Revenue</th><th>vs LY</th><th>Wages</th><th>COGS</th>${showProfit ? '<th>Exp. profit</th><th>Margin</th>' : ''}</tr></thead>
+    <thead><tr><th>Venue</th><th>Revenue</th>${showLY ? '<th>vs LY</th>' : ''}<th>Wages</th><th>COGS</th>${showProfit ? '<th>Exp. profit</th><th>Margin</th>' : ''}</tr></thead>
     <tbody>${body}</tbody></table></div></div>`;
 }
 
