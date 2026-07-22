@@ -1,26 +1,26 @@
 {
-  "generated_at": "2026-07-22T21:43:02+10:00",
+  "generated_at": "2026-07-22T22:13:53+10:00",
   "coverage": {
     "stow": {
       "label": "Stowaway",
-      "first_week_ending": "2025-06-01",
-      "last_week_ending": "2026-07-19",
-      "weeks": 60,
-      "products": 668
+      "first_week_ending": "2024-10-06",
+      "last_week_ending": "2026-07-26",
+      "weeks": 93,
+      "products": 553
     },
     "hg": {
       "label": "Harry Gatos",
-      "first_week_ending": "2025-06-01",
-      "last_week_ending": "2026-07-19",
-      "weeks": 60,
-      "products": 186
+      "first_week_ending": "2024-10-27",
+      "last_week_ending": "2026-07-26",
+      "weeks": 92,
+      "products": 187
     },
     "mari": {
       "label": "Marilyna's",
-      "first_week_ending": "2025-06-01",
-      "last_week_ending": "2026-07-19",
-      "weeks": 60,
-      "products": 520
+      "first_week_ending": "2024-10-27",
+      "last_week_ending": "2026-07-26",
+      "weeks": 92,
+      "products": 542
     }
   },
   "endpoints": {
