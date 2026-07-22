@@ -16,13 +16,13 @@
     "timesheet_id": 35429,
     "employee_id": 16,
     "employee_name": "Stephanie Kunde",
-    "ou_name": "Admin",
+    "ou_name": "Stow Floor",
     "company": "Stowaway",
-    "dept": "Admin",
+    "dept": "FOH",
     "start_time": 1784611800,
     "end_time": 1784638800,
-    "hours": 6.3,
-    "cost": 220.5,
+    "hours": 7.0,
+    "cost": 245.0,
     "salaried_synth": true
   },
   {
@@ -48,7 +48,7 @@
     "start_time": 1784620800,
     "end_time": 1784630700,
     "hours": 2.75,
-    "cost": 0.0,
+    "cost": 93.09,
     "salaried_synth": false
   }
 ]

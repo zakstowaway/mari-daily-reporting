@@ -22565,336 +22565,352 @@ week_ending,venue,reporting_group,product_name,sales_ex_gst,qty,cost
 2026-07-05,stow,White Wine,Kuku Sauvignon Blanc,155.43,9.0,0.0
 2026-07-05,stow,White Wine,A. Rodda Chardonnay,52.6,2.0,0.0
 2026-07-05,stow,White Wine,Ottelia Chardonnay,29.1,2.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Chicken,20.92,6.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Tofu,10.92,3.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Fried Egg,10.0,3.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Extra Pork.,9.1,2.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,1/2 Marinated Egg,5.46,3.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,GFO [GF Ramen Noodles],5.46,2.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Chilli Bomb,5.1,3.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Black Garlic Oil,3.64,2.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Bamboo Shoots,1.82,1.0,0.0
-2026-07-12,hg,Add-ons - Kitchen,Chicken.,1.82,1.0,0.0
-2026-07-12,hg,Big Plates,Shredded Beef,283.68,12.0,0.0
-2026-07-12,hg,Big Plates,Tonkotsu,237.24,9.0,37.48
-2026-07-12,hg,Big Plates,Mie Goreng,232.74,11.0,35.01
-2026-07-12,hg,Big Plates,Chicken Katsu Curry,222.75,10.0,28.57
-2026-07-12,hg,Big Plates,BBQ Meat Platter,145.44,4.0,0.0
-2026-07-12,hg,Big Plates,Miso,126.52,5.0,0.0
-2026-07-12,hg,Big Plates,Fried Rice,85.46,4.0,10.72
-2026-07-12,hg,Big Plates,Shoyu,79.09,3.0,0.0
-2026-07-12,hg,Big Plates,Meat Platter,72.72,2.0,0.0
-2026-07-12,hg,Big Plates,Seitan Katsu Curry [vegan],49.1,2.0,1.8
-2026-07-12,hg,Bottles / Cans Alcoholic,Tsingtao Longneck,46.36,3.0,13.75
-2026-07-12,hg,Bottles / Cans Alcoholic,Little Dragon Ginger Beer Can,25.46,2.0,6.76
-2026-07-12,hg,Bottles / Cans Alcoholic,Two Bays GF Rice Lager Can [HG],12.73,1.0,4.99
-2026-07-12,hg,Bottles / Cans Alcoholic,Grifter Big Sur IPA Can [HG],12.73,1.0,0.0
-2026-07-12,hg,Cocktails - Classic,Classic Margarita,138.16,8.0,26.11
-2026-07-12,hg,Cocktails - Classic,Aperol Spritz,100.16,6.0,20.68
-2026-07-12,hg,Cocktails - Classic,Long Island Iced Tea [HG],20.0,1.0,4.72
-2026-07-12,hg,Cocktails - Classic,Espresso Martini,15.54,1.0,2.93
-2026-07-12,hg,Cocktails - Classic,Limoncello Spritz,13.82,1.0,1.38
-2026-07-12,hg,Cocktails - Classic,Lychee Martini,12.73,1.0,3.14
-2026-07-12,hg,Cocktails - Classic,Sensei Highball,10.91,1.0,1.3
-2026-07-12,hg,Cocktails - Signature,Margato,56.36,4.0,15.38
-2026-07-12,hg,Cocktails - Signature,Demon Slayer,36.27,2.0,8.17
-2026-07-12,hg,Cocktails - Signature,Drunken Koi,31.82,2.0,5.31
-2026-07-12,hg,Cocktails - Signature,Crouching Tiger,19.09,1.0,4.02
-2026-07-12,hg,Cocktails - Signature,Lemon Chu-hi,8.73,1.0,1.52
-2026-07-12,hg,Desserts,Mochi Trio,11.82,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Sapporo - 500ml,278.86,25.0,92.75
+2026-07-12,hg,Bar / FOH (no reporting group),Harry's Lager,198.0,21.0,42.99
+2026-07-12,hg,Bar / FOH (no reporting group),Classic Margarita,138.16,8.0,26.11
+2026-07-12,hg,Bar / FOH (no reporting group),Azurescens Pinot Noir,122.75,9.0,25.2
+2026-07-12,hg,Bar / FOH (no reporting group),Aperol Spritz,100.16,6.0,20.68
+2026-07-12,hg,Bar / FOH (no reporting group),From Sundays Shiraz,92.75,7.0,19.6
+2026-07-12,hg,Bar / FOH (no reporting group),Kuku Sauv Blanc,81.82,4.0,20.8
+2026-07-12,hg,Bar / FOH (no reporting group),Rooster Blanco Tequila [House],70.0,8.0,16.34
+2026-07-12,hg,Bar / FOH (no reporting group),River Retreat Pinot Grigio,65.46,6.0,12.06
+2026-07-12,hg,Bar / FOH (no reporting group),Philter XPA,58.53,6.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Margato,56.36,4.0,15.38
+2026-07-12,hg,Bar / FOH (no reporting group),Geppetto Chardonnay,55.44,1.0,15.57
+2026-07-12,hg,Bar / FOH (no reporting group),Sapporo,47.28,4.0,12.61
+2026-07-12,hg,Bar / FOH (no reporting group),Virgin Margy,47.28,4.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Tsingtao Longneck,46.36,3.0,13.75
+2026-07-12,hg,Bar / FOH (no reporting group),Demon Slayer,36.27,2.0,8.17
+2026-07-12,hg,Bar / FOH (no reporting group),Drunken Koi,31.82,2.0,5.31
+2026-07-12,hg,Bar / FOH (no reporting group),Angas & Bremer Grenache,31.16,5.0,8.77
+2026-07-12,hg,Bar / FOH (no reporting group),White Light Pure Vodka [House],26.0,3.0,4.56
+2026-07-12,hg,Bar / FOH (no reporting group),Little Dragon Ginger Beer Can,25.46,2.0,6.76
+2026-07-12,hg,Bar / FOH (no reporting group),Chicken,20.92,6.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Long Island Iced Tea [HG],20.0,1.0,4.72
+2026-07-12,hg,Bar / FOH (no reporting group),Crouching Tiger,19.09,1.0,4.02
+2026-07-12,hg,Bar / FOH (no reporting group),Angas & Bremer Rosé,17.46,2.0,3.86
+2026-07-12,hg,Bar / FOH (no reporting group),Padrillos Malbec,16.36,1.0,3.56
+2026-07-12,hg,Bar / FOH (no reporting group),Espresso Martini,15.54,1.0,2.93
+2026-07-12,hg,Bar / FOH (no reporting group),Limoncello Spritz,13.82,1.0,1.38
+2026-07-12,hg,Bar / FOH (no reporting group),Lychee Martini,12.73,1.0,3.14
+2026-07-12,hg,Bar / FOH (no reporting group),Two Bays GF Rice Lager Can [HG],12.73,1.0,4.99
+2026-07-12,hg,Bar / FOH (no reporting group),Grifter Big Sur IPA Can [HG],12.73,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Kids Miso,11.82,2.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Sensei Highball,10.91,1.0,1.3
+2026-07-12,hg,Bar / FOH (no reporting group),Vinada Sparkling Wine,10.0,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Lemon Chu-hi,8.73,1.0,1.52
+2026-07-12,hg,Bar / FOH (no reporting group),Yuzu Orange Soda,8.18,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Sailor Jerry Spiced Rum [House],8.0,1.0,1.88
+2026-07-12,hg,Bar / FOH (no reporting group),Carafe Sparkling Water,4.55,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Lemonade Glass,4.09,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Orange Juice Glass,3.65,1.0,0.0
+2026-07-12,hg,Bar / FOH (no reporting group),Chicken.,1.82,1.0,0.0
 2026-07-12,hg,Harry Gatos Food,Fried Rice,8.36,1.0,0.0
-2026-07-12,hg,Kids,Kids Miso,11.82,2.0,0.0
-2026-07-12,hg,Kids,Kids Mie Goreng,11.82,1.0,0.0
-2026-07-12,hg,Kids,Kids Fried Rice,11.82,1.0,0.0
-2026-07-12,hg,Mocktails,Virgin Margy,47.28,4.0,0.0
-2026-07-12,hg,Non-Alcoholic,Vinada Sparkling Wine,10.0,1.0,0.0
-2026-07-12,hg,Non-Alcoholic,Yuzu Orange Soda,8.18,1.0,0.0
-2026-07-12,hg,Non-Alcoholic,Carafe Sparkling Water,4.55,1.0,0.0
-2026-07-12,hg,Non-Alcoholic,Lemonade Glass,4.09,1.0,0.0
-2026-07-12,hg,Non-Alcoholic,Orange Juice Glass,3.65,1.0,0.0
-2026-07-12,hg,Red Wine,Azurescens Pinot Noir,122.75,9.0,25.2
-2026-07-12,hg,Red Wine,From Sundays Shiraz,92.75,7.0,19.6
-2026-07-12,hg,Red Wine,Angas & Bremer Grenache,31.16,5.0,8.77
-2026-07-12,hg,Red Wine,Padrillos Malbec,16.36,1.0,3.56
-2026-07-12,hg,Rose Wine,Angas & Bremer Rosé,17.46,2.0,3.86
-2026-07-12,hg,Rums,Sailor Jerry Spiced Rum [House],8.0,1.0,1.88
-2026-07-12,hg,Sides,Jasmine Rice,18.19,4.0,0.0
-2026-07-12,hg,Small Plates,Dumplings - Prawn Har Gow [GF],325.4,19.0,83.86
-2026-07-12,hg,Small Plates,Dumplings - Veg Gyoza,114.57,9.0,17.65
-2026-07-12,hg,Small Plates,Popcorn Cauliflower,108.21,8.0,7.83
-2026-07-12,hg,Small Plates,Chicken Karaage,108.15,7.0,0.0
-2026-07-12,hg,Small Plates,Duck Spring Roll,101.85,7.0,25.0
-2026-07-12,hg,Small Plates,Edamame,60.0,6.0,0.0
-2026-07-12,hg,Small Plates,Devon's Prawn Toast,58.21,4.0,15.55
-2026-07-12,hg,Small Plates,Dumplings - Beef & Cabbage,50.92,4.0,5.89
-2026-07-12,hg,Small Plates,BBQ Pork Buns,40.92,3.0,10.5
-2026-07-12,hg,Tap Beer,Sapporo - 500ml,278.86,25.0,92.75
-2026-07-12,hg,Tap Beer,Harry's Lager,198.0,21.0,42.99
-2026-07-12,hg,Tap Beer,Philter XPA,58.53,6.0,0.0
-2026-07-12,hg,Tap Beer,Sapporo,47.28,4.0,12.61
-2026-07-12,hg,Tequila,Rooster Blanco Tequila [House],70.0,8.0,16.34
-2026-07-12,hg,Vodkas,White Light Pure Vodka [House],26.0,3.0,4.56
-2026-07-12,hg,White Wine,Kuku Sauv Blanc,81.82,4.0,20.8
-2026-07-12,hg,White Wine,River Retreat Pinot Grigio,65.46,6.0,12.06
-2026-07-12,hg,White Wine,Geppetto Chardonnay,55.44,1.0,15.57
-2026-07-12,mari,Add-ons - Pizza,Online Surcharge,21.95,18.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Bacon,7.52,2.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Ham,5.46,2.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Mushrooms,4.08,3.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Olives,4.08,3.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Prawns,3.76,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Kahlua,3.76,1.0,1.44
-2026-07-12,mari,Add-ons - Pizza,Add Calabrese,3.64,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Vegan Cheese [Pizza],2.73,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Pineapple,2.72,2.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Anchovies,1.82,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Chicken,1.46,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add BBQ Sauce,1.4,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Cherry Tomatoes,1.36,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Capsicum,1.36,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Eggplant,1.36,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Rocket,1.36,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Sour Cream,0.91,1.0,0.0
-2026-07-12,mari,Add-ons - Pizza,Add Chilli,0.91,1.0,0.0
-2026-07-12,mari,Delivery Alcohol,Grifter Serpents Kiss Can,9.39,1.0,3.19
-2026-07-12,mari,Delivery Alcohol,Big Sur IPA D (old),7.27,1.0,3.66
-2026-07-12,mari,Dine-in Pizza,Regular Little Italy [Dine-in],96.89,4.0,19.22
-2026-07-12,mari,Dine-in Pizza,"Regular No Chorizo, No Cry [Dine-in]",48.06,2.0,5.82
-2026-07-12,mari,Dine-in Pizza,Regular Jimmy Jury [Dine-in],25.36,1.0,3.34
-2026-07-12,mari,Dine-in Pizza,Regular Hail Africa [Dine-in],25.36,1.0,2.91
-2026-07-12,mari,Dine-in Pizza,Regular Sanchez [Dine-in],24.41,1.0,3.39
-2026-07-12,mari,Dine-in Pizza,Regular New Yorker [Dine-in],22.53,1.0,3.59
-2026-07-12,mari,Marilyna's Pizza,Large Super House Special,135.44,6.0,44.28
-2026-07-12,mari,Marilyna's Pizza,Large Little Italy,109.09,4.0,34.33
-2026-07-12,mari,Marilyna's Pizza,Large Margherita,99.08,5.0,11.48
-2026-07-12,mari,Marilyna's Pizza,Regular Super House Special,85.46,4.0,21.14
-2026-07-12,mari,Marilyna's Pizza,$45 FEAST,81.82,2.0,0.0
-2026-07-12,mari,Marilyna's Pizza,Large Meatlovers,81.81,4.0,29.0
-2026-07-12,mari,Marilyna's Pizza,Regular Cosmopolitan,80.91,4.0,19.36
-2026-07-12,mari,Marilyna's Pizza,Large Hawaiian,69.08,3.0,9.79
-2026-07-12,mari,Marilyna's Pizza,Large Cosmopolitan,68.19,4.0,27.04
-2026-07-12,mari,Marilyna's Pizza,Large Tandoori Chicken,68.19,3.0,9.91
-2026-07-12,mari,Marilyna's Pizza,Regular Meatlovers,68.19,3.0,15.57
-2026-07-12,mari,Marilyna's Pizza,Regular Little Italy,66.37,3.0,14.41
-2026-07-12,mari,Marilyna's Pizza,Regular New Yorker,63.41,3.0,10.76
-2026-07-12,mari,Marilyna's Pizza,Large Pepperoni,61.81,5.0,22.82
-2026-07-12,mari,Marilyna's Pizza,Gluten-free Little Italy,56.36,2.0,20.49
-2026-07-12,mari,Marilyna's Pizza,$60 BANQUET,54.55,1.0,0.0
-2026-07-12,mari,Marilyna's Pizza,Large Sorrento,51.82,2.0,14.34
-2026-07-12,mari,Marilyna's Pizza,Large BBQ Chicken Pizza,50.46,3.0,13.03
-2026-07-12,mari,Marilyna's Pizza,Large Jimmy Jury,49.1,2.0,12.37
-2026-07-12,mari,Marilyna's Pizza,Large Uber Margherita,47.28,2.0,8.92
-2026-07-12,mari,Marilyna's Pizza,Regular Margherita,46.35,3.0,3.69
-2026-07-12,mari,Marilyna's Pizza,Feast Deal Pizzas,40.91,1.0,0.0
-2026-07-12,mari,Marilyna's Pizza,Large Bubba Gump,29.09,1.0,5.8
-2026-07-12,mari,Marilyna's Pizza,Large Bubba Gump Wings Deal,27.27,1.0,5.8
-2026-07-12,mari,Marilyna's Pizza,Large New Yorker,27.27,1.0,5.01
-2026-07-12,mari,Marilyna's Pizza,WINGS DEAL,27.27,1.0,0.0
-2026-07-12,mari,Marilyna's Pizza,Large Sanchez,24.55,2.0,10.98
-2026-07-12,mari,Marilyna's Pizza,"Large No Chorizo, No Cry",24.55,1.0,6.31
-2026-07-12,mari,Marilyna's Pizza,Gluten-free Uber Margherita,24.09,1.0,7.29
-2026-07-12,mari,Marilyna's Pizza,Large Roma Special,22.73,1.0,6.22
-2026-07-12,mari,Marilyna's Pizza,Regular Jimmy Jury,21.82,1.0,3.34
-2026-07-12,mari,Marilyna's Pizza,Regular Roma Special,21.82,1.0,4.45
-2026-07-12,mari,Marilyna's Pizza,Regular Sanchez VEGAN,21.59,1.0,3.02
-2026-07-12,mari,Marilyna's Pizza,Regular Hail Africa,20.91,1.0,2.91
-2026-07-12,mari,Marilyna's Pizza,Regular Pepperoni,20.0,1.0,2.13
-2026-07-12,mari,Marilyna's Pizza,Regular Uber Margherita,19.09,1.0,3.19
-2026-07-12,mari,Marilyna's Pizza,Large Vegetarian,18.18,1.0,4.11
-2026-07-12,mari,Marilyna's Pizza,Garlic Bread,16.37,4.0,5.68
-2026-07-12,mari,Marilyna's Pizza,Cheesy Garlic Bread,14.55,2.0,3.55
-2026-07-12,mari,Marilyna's Pizza,Delivery Fee - Freshwater / Queenscliff,13.65,3.0,0.0
-2026-07-12,mari,Marilyna's Pizza,Regular Garlic Cheese Pizza,12.73,1.0,1.39
-2026-07-12,mari,Marilyna's Soft Drinks,Sprite 1.25L,12.72,2.0,7.32
-2026-07-12,mari,Marilyna's Soft Drinks,Coke Zero 1.25L,12.72,2.0,8.53
-2026-07-12,mari,Marilyna's Soft Drinks,Coke 1.25L,5.45,1.0,3.69
-2026-07-12,mari,Marilyna's Soft Drinks,Coke Zero Can,3.64,1.0,1.89
-2026-07-12,mari,Marilyna's Soft Drinks,Sprite Can,3.64,1.0,1.91
-2026-07-12,stow,Add-ons - Kitchen,Add Grilled Chicken,12.0,3.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,$2 BBQ Wing,7.52,4.0,1.57
-2026-07-12,stow,Add-ons - Kitchen,Extra Taco,6.36,1.0,1.09
-2026-07-12,stow,Add-ons - Kitchen,Make it Vegan [patty + cheese + bun],4.7,1.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Swap for Sweet Potato Fries,3.76,2.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Side Aioli,3.22,7.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Caramelised Onion Jam,2.82,1.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Roasted Tomato Coulis,2.82,1.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Side Chipotle Mayo,1.88,2.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Swap Fries for Sweet Potato Fries,1.88,1.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,2x Aioli,0.94,1.0,0.0
-2026-07-12,stow,Add-ons - Kitchen,Jalapeños Inside Burrito,0.91,1.0,0.0
-2026-07-12,stow,Amaro / Aperitif / Fortified Wine,Aperol,50.7,6.0,7.48
-2026-07-12,stow,Big Plates,American Standard Burger,270.1,14.0,81.82
-2026-07-12,stow,Big Plates,Fancy Pants Parmy - Classic,202.96,8.0,64.84
-2026-07-12,stow,Big Plates,Beef Burrito,88.41,4.0,27.09
-2026-07-12,stow,Big Plates,Chicken Burrito,81.4,3.0,20.4
-2026-07-12,stow,Big Plates,Stow Schnitty,74.95,3.0,15.98
-2026-07-12,stow,Big Plates,Chicken Shindig Burger,67.59,4.0,19.07
-2026-07-12,stow,Big Plates,Fish Burrito,64.77,3.0,17.01
-2026-07-12,stow,Big Plates,Pie,61.78,2.0,0.0
-2026-07-12,stow,Big Plates,Eggplant Parmy,54.45,2.0,0.0
-2026-07-12,stow,Big Plates,Cauliflower Burrito,27.13,1.0,5.14
-2026-07-12,stow,Bottles / Cans Alcoholic,Monteith's Apple Cider Bottle,19.41,2.0,6.22
-2026-07-12,stow,Bottles / Cans Alcoholic,Fellr Watermelon Seltzer Tin,11.27,1.0,3.41
-2026-07-12,stow,Bottles / Cans Alcoholic,Young Henrys Cloudy Cider Can,10.91,1.0,2.82
-2026-07-12,stow,Bottles / Cans Alcoholic,Corona,9.55,1.0,2.58
-2026-07-12,stow,Cocktails - Classic,Aperol Spritz,305.39,20.0,71.05
-2026-07-12,stow,Cocktails - Classic,Classic Margarita,252.69,14.0,57.15
-2026-07-12,stow,Cocktails - Classic,Jalapeño Marg,171.38,8.0,6.08
-2026-07-12,stow,Cocktails - Classic,Lychee Martini,156.88,9.0,32.61
-2026-07-12,stow,Cocktails - Classic,Espresso Martini,136.94,8.0,25.88
-2026-07-12,stow,Cocktails - Classic,Coconut Margarita,85.7,4.0,16.87
-2026-07-12,stow,Cocktails - Classic,Tommy's Margarita,83.64,4.0,20.55
-2026-07-12,stow,Cocktails - Classic,Negroni,78.59,5.0,19.33
-2026-07-12,stow,Cocktails - Classic,Gin Martini,40.66,2.0,8.12
-2026-07-12,stow,Cocktails - Classic,Vodka Martini,40.0,2.0,6.02
-2026-07-12,stow,Cocktails - Classic,Old Fashioned,40.0,2.0,9.53
-2026-07-12,stow,Cocktails - Classic,Whisky Sour,19.09,1.0,4.58
-2026-07-12,stow,Cocktails - Classic,Moscow Mule,19.09,1.0,3.4
-2026-07-12,stow,Cocktails - Classic,Cosmo,18.18,1.0,3.22
-2026-07-12,stow,Cocktails - Signature,Mulled Wine,249.12,18.0,37.26
-2026-07-12,stow,Cocktails - Signature,Flower Child,101.3,5.0,14.53
-2026-07-12,stow,Cocktails - Signature,Beetle Juice,76.66,5.0,18.35
-2026-07-12,stow,Cocktails - Signature,Puerto Sunset,64.8,3.0,14.52
-2026-07-12,stow,Cocktails - Signature,Island Time,45.09,2.0,8.66
-2026-07-12,stow,Cocktails - Signature,Biscoff Espresso,41.82,2.0,6.31
-2026-07-12,stow,Cocktails - Signature,Lemon Meringue Martini,22.54,1.0,3.5
-2026-07-12,stow,Cocktails - Signature,Mezcal Paloma,22.53,1.0,5.14
-2026-07-12,stow,Delivery Cocktails,Jala Marg Duo (2) - PartyJar [6 serves],50.0,1.0,0.0
-2026-07-12,stow,Delivery Kitchen,Chicken Burrito D,68.19,3.0,20.4
-2026-07-12,stow,Delivery Kitchen,Fish Tacos D,32.72,2.0,4.37
-2026-07-12,stow,Delivery Kitchen,Beef Cheek D,31.82,1.0,0.0
-2026-07-12,stow,Delivery Kitchen,Brownie D,30.0,7.0,13.63
-2026-07-12,stow,Delivery Kitchen,Buffalo Wings D,30.0,2.0,7.8
-2026-07-12,stow,Delivery Kitchen,BBQ Wings D,29.1,3.0,9.42
-2026-07-12,stow,Delivery Kitchen,Rocket Man D,26.37,2.0,0.0
-2026-07-12,stow,Delivery Kitchen,Farmhouse Salad D,19.09,1.0,0.0
-2026-07-12,stow,Delivery Kitchen,Bang Bang Cauli D,17.27,1.0,2.76
-2026-07-12,stow,Delivery Kitchen,Fries D,10.91,1.0,0.0
-2026-07-12,stow,Delivery Kitchen,Lepinja Bread D,8.18,1.0,0.0
-2026-07-12,stow,Gin,Brookie's Byron Dry Gin Tonica,76.99,4.0,20.91
-2026-07-12,stow,Gin,Hendrick's Gin,38.61,3.0,8.05
-2026-07-12,stow,Gin,Bombay Dry [House],22.93,3.0,6.46
-2026-07-12,stow,Gin,Four Pillars Rare Dry,13.61,1.0,2.45
-2026-07-12,stow,Kids Meals,Kids Hawaiian Pizza,12.22,1.0,0.0
-2026-07-12,stow,Kids Meals,Kids Icecream,4.7,1.0,0.74
+2026-07-12,hg,Kitchen (no reporting group),Dumplings - Prawn Har Gow [GF],325.4,19.0,83.86
+2026-07-12,hg,Kitchen (no reporting group),Shredded Beef,283.68,12.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Tonkotsu,237.24,9.0,37.48
+2026-07-12,hg,Kitchen (no reporting group),Mie Goreng,232.74,11.0,35.01
+2026-07-12,hg,Kitchen (no reporting group),Chicken Katsu Curry,222.75,10.0,28.57
+2026-07-12,hg,Kitchen (no reporting group),BBQ Meat Platter,145.44,4.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Miso,126.52,5.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Dumplings - Veg Gyoza,114.57,9.0,17.65
+2026-07-12,hg,Kitchen (no reporting group),Popcorn Cauliflower,108.21,8.0,7.83
+2026-07-12,hg,Kitchen (no reporting group),Chicken Karaage,108.15,7.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Duck Spring Roll,101.85,7.0,25.0
+2026-07-12,hg,Kitchen (no reporting group),Fried Rice,85.46,4.0,10.72
+2026-07-12,hg,Kitchen (no reporting group),Shoyu,79.09,3.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Meat Platter,72.72,2.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Edamame,60.0,6.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Devon's Prawn Toast,58.21,4.0,15.55
+2026-07-12,hg,Kitchen (no reporting group),Dumplings - Beef & Cabbage,50.92,4.0,5.89
+2026-07-12,hg,Kitchen (no reporting group),Seitan Katsu Curry [vegan],49.1,2.0,1.8
+2026-07-12,hg,Kitchen (no reporting group),BBQ Pork Buns,40.92,3.0,10.5
+2026-07-12,hg,Kitchen (no reporting group),Jasmine Rice,18.19,4.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Mochi Trio,11.82,1.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Kids Mie Goreng,11.82,1.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Kids Fried Rice,11.82,1.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Tofu,10.92,3.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Fried Egg,10.0,3.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Extra Pork.,9.1,2.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),1/2 Marinated Egg,5.46,3.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),GFO [GF Ramen Noodles],5.46,2.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Chilli Bomb,5.1,3.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Black Garlic Oil,3.64,2.0,0.0
+2026-07-12,hg,Kitchen (no reporting group),Bamboo Shoots,1.82,1.0,0.0
+2026-07-12,mari,Marilyna's,Large Super House Special,135.44,6.0,44.28
+2026-07-12,mari,Marilyna's,Large Little Italy,109.09,4.0,34.33
+2026-07-12,mari,Marilyna's,Large Margherita,99.08,5.0,11.48
+2026-07-12,mari,Marilyna's,Regular Little Italy [Dine-in],96.89,4.0,19.22
+2026-07-12,mari,Marilyna's,Regular Super House Special,85.46,4.0,21.14
+2026-07-12,mari,Marilyna's,$45 FEAST,81.82,2.0,0.0
+2026-07-12,mari,Marilyna's,Large Meatlovers,81.81,4.0,29.0
+2026-07-12,mari,Marilyna's,Regular Cosmopolitan,80.91,4.0,19.36
+2026-07-12,mari,Marilyna's,Large Hawaiian,69.08,3.0,9.79
+2026-07-12,mari,Marilyna's,Large Cosmopolitan,68.19,4.0,27.04
+2026-07-12,mari,Marilyna's,Large Tandoori Chicken,68.19,3.0,9.91
+2026-07-12,mari,Marilyna's,Regular Meatlovers,68.19,3.0,15.57
+2026-07-12,mari,Marilyna's,Regular Little Italy,66.37,3.0,14.41
+2026-07-12,mari,Marilyna's,Regular New Yorker,63.41,3.0,10.76
+2026-07-12,mari,Marilyna's,Large Pepperoni,61.81,5.0,22.82
+2026-07-12,mari,Marilyna's,Gluten-free Little Italy,56.36,2.0,20.49
+2026-07-12,mari,Marilyna's,$60 BANQUET,54.55,1.0,0.0
+2026-07-12,mari,Marilyna's,Large Sorrento,51.82,2.0,14.34
+2026-07-12,mari,Marilyna's,Large BBQ Chicken Pizza,50.46,3.0,13.03
+2026-07-12,mari,Marilyna's,Large Jimmy Jury,49.1,2.0,12.37
+2026-07-12,mari,Marilyna's,"Regular No Chorizo, No Cry [Dine-in]",48.06,2.0,5.82
+2026-07-12,mari,Marilyna's,Large Uber Margherita,47.28,2.0,8.92
+2026-07-12,mari,Marilyna's,Regular Margherita,46.35,3.0,3.69
+2026-07-12,mari,Marilyna's,Feast Deal Pizzas,40.91,1.0,0.0
+2026-07-12,mari,Marilyna's,Large Bubba Gump,29.09,1.0,5.8
+2026-07-12,mari,Marilyna's,Large Bubba Gump Wings Deal,27.27,1.0,5.8
+2026-07-12,mari,Marilyna's,Large New Yorker,27.27,1.0,5.01
+2026-07-12,mari,Marilyna's,WINGS DEAL,27.27,1.0,0.0
+2026-07-12,mari,Marilyna's,Regular Jimmy Jury [Dine-in],25.36,1.0,3.34
+2026-07-12,mari,Marilyna's,Regular Hail Africa [Dine-in],25.36,1.0,2.91
+2026-07-12,mari,Marilyna's,Large Sanchez,24.55,2.0,10.98
+2026-07-12,mari,Marilyna's,"Large No Chorizo, No Cry",24.55,1.0,6.31
+2026-07-12,mari,Marilyna's,Regular Sanchez [Dine-in],24.41,1.0,3.39
+2026-07-12,mari,Marilyna's,Gluten-free Uber Margherita,24.09,1.0,7.29
+2026-07-12,mari,Marilyna's,Large Roma Special,22.73,1.0,6.22
+2026-07-12,mari,Marilyna's,Regular New Yorker [Dine-in],22.53,1.0,3.59
+2026-07-12,mari,Marilyna's,Online Surcharge,21.95,18.0,0.0
+2026-07-12,mari,Marilyna's,Regular Jimmy Jury,21.82,1.0,3.34
+2026-07-12,mari,Marilyna's,Regular Roma Special,21.82,1.0,4.45
+2026-07-12,mari,Marilyna's,Regular Sanchez VEGAN,21.59,1.0,3.02
+2026-07-12,mari,Marilyna's,Regular Hail Africa,20.91,1.0,2.91
+2026-07-12,mari,Marilyna's,Regular Pepperoni,20.0,1.0,2.13
+2026-07-12,mari,Marilyna's,Regular Uber Margherita,19.09,1.0,3.19
+2026-07-12,mari,Marilyna's,Large Vegetarian,18.18,1.0,4.11
+2026-07-12,mari,Marilyna's,Garlic Bread,16.37,4.0,5.68
+2026-07-12,mari,Marilyna's,Cheesy Garlic Bread,14.55,2.0,3.55
+2026-07-12,mari,Marilyna's,Delivery Fee - Freshwater / Queenscliff,13.65,3.0,0.0
+2026-07-12,mari,Marilyna's,Regular Garlic Cheese Pizza,12.73,1.0,1.39
+2026-07-12,mari,Marilyna's,Sprite 1.25L,12.72,2.0,7.32
+2026-07-12,mari,Marilyna's,Coke Zero 1.25L,12.72,2.0,8.53
+2026-07-12,mari,Marilyna's,Grifter Serpents Kiss Can,9.39,1.0,3.19
+2026-07-12,mari,Marilyna's,Add Bacon,7.52,2.0,0.0
+2026-07-12,mari,Marilyna's,Big Sur IPA D (old),7.27,1.0,3.66
+2026-07-12,mari,Marilyna's,Add Ham,5.46,2.0,0.0
+2026-07-12,mari,Marilyna's,Coke 1.25L,5.45,1.0,3.69
+2026-07-12,mari,Marilyna's,Add Mushrooms,4.08,3.0,0.0
+2026-07-12,mari,Marilyna's,Add Olives,4.08,3.0,0.0
+2026-07-12,mari,Marilyna's,Add Prawns,3.76,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Kahlua,3.76,1.0,1.44
+2026-07-12,mari,Marilyna's,Add Calabrese,3.64,1.0,0.0
+2026-07-12,mari,Marilyna's,Coke Zero Can,3.64,1.0,1.89
+2026-07-12,mari,Marilyna's,Sprite Can,3.64,1.0,1.91
+2026-07-12,mari,Marilyna's,Vegan Cheese [Pizza],2.73,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Pineapple,2.72,2.0,0.0
+2026-07-12,mari,Marilyna's,Add Anchovies,1.82,1.0,0.0
+2026-07-12,mari,Marilyna's,Chicken,1.46,1.0,0.0
+2026-07-12,mari,Marilyna's,Add BBQ Sauce,1.4,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Cherry Tomatoes,1.36,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Capsicum,1.36,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Eggplant,1.36,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Rocket,1.36,1.0,0.0
+2026-07-12,mari,Marilyna's,Sour Cream,0.91,1.0,0.0
+2026-07-12,mari,Marilyna's,Add Chilli,0.91,1.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),Fresh is Best Lager,398.92,47.0,96.53
+2026-07-12,stow,Bar / FOH (no reporting group),Kirin,363.7,25.0,107.42
+2026-07-12,stow,Bar / FOH (no reporting group),Stone & Wood,358.64,27.0,98.52
+2026-07-12,stow,Bar / FOH (no reporting group),Guinness Draught,311.84,21.0,96.56
+2026-07-12,stow,Bar / FOH (no reporting group),Aperol Spritz,305.39,20.0,71.05
+2026-07-12,stow,Bar / FOH (no reporting group),Classic Margarita,252.69,14.0,57.15
+2026-07-12,stow,Bar / FOH (no reporting group),Mulled Wine,249.12,18.0,37.26
+2026-07-12,stow,Bar / FOH (no reporting group),Kuku Sauvignon Blanc,240.93,12.0,60.24
+2026-07-12,stow,Bar / FOH (no reporting group),Grifter Pale,239.46,25.0,65.52
+2026-07-12,stow,Bar / FOH (no reporting group),Petits Detours Rosé,208.37,13.0,50.66
+2026-07-12,stow,Bar / FOH (no reporting group),Status Quo,196.32,13.0,50.34
+2026-07-12,stow,Bar / FOH (no reporting group),Version Two Sparkling,195.0,9.0,37.1
+2026-07-12,stow,Bar / FOH (no reporting group),Jalapeño Marg,171.38,8.0,6.08
+2026-07-12,stow,Bar / FOH (no reporting group),Mother's Milk Shiraz,164.58,12.0,38.6
+2026-07-12,stow,Bar / FOH (no reporting group),Lychee Martini,156.88,9.0,32.61
+2026-07-12,stow,Bar / FOH (no reporting group),Petits Detours Rosé Mediterranee,151.27,3.0,49.49
+2026-07-12,stow,Bar / FOH (no reporting group),Casa Gheller Prosecco,146.46,10.0,33.46
+2026-07-12,stow,Bar / FOH (no reporting group),Espresso Martini,136.94,8.0,25.88
+2026-07-12,stow,Bar / FOH (no reporting group),Version Two Pinot Grigio,128.93,8.0,22.37
+2026-07-12,stow,Bar / FOH (no reporting group),Whispering Angel Rosé,103.47,4.0,26.2
+2026-07-12,stow,Bar / FOH (no reporting group),Flower Child,101.3,5.0,14.53
+2026-07-12,stow,Bar / FOH (no reporting group),Philter XPA,99.35,10.0,29.33
+2026-07-12,stow,Bar / FOH (no reporting group),Crankshaft IPA,92.34,6.0,22.48
+2026-07-12,stow,Bar / FOH (no reporting group),Coconut Margarita,85.7,4.0,16.87
+2026-07-12,stow,Bar / FOH (no reporting group),Tommy's Margarita,83.64,4.0,20.55
+2026-07-12,stow,Bar / FOH (no reporting group),Fresh is Best Summer Lager,81.63,12.0,20.68
+2026-07-12,stow,Bar / FOH (no reporting group),Villa Fresco Sangiovese,78.73,7.0,18.54
+2026-07-12,stow,Bar / FOH (no reporting group),Negroni,78.59,5.0,19.33
+2026-07-12,stow,Bar / FOH (no reporting group),Brookie's Byron Dry Gin Tonica,76.99,4.0,20.91
+2026-07-12,stow,Bar / FOH (no reporting group),Beetle Juice,76.66,5.0,18.35
+2026-07-12,stow,Bar / FOH (no reporting group),Trentham Estate Rosé,65.82,6.0,12.66
+2026-07-12,stow,Bar / FOH (no reporting group),Puerto Sunset,64.8,3.0,14.52
+2026-07-12,stow,Bar / FOH (no reporting group),Sibiliana Nero D'Avola,61.82,1.0,16.34
+2026-07-12,stow,Bar / FOH (no reporting group),A. Rodda Chardonnay,50.9,2.0,12.33
+2026-07-12,stow,Bar / FOH (no reporting group),Aperol,50.7,6.0,7.48
+2026-07-12,stow,Bar / FOH (no reporting group),Jala Marg Duo (2) - PartyJar [6 serves],50.0,1.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),White Light Pure Vodka [House],45.36,5.0,7.6
+2026-07-12,stow,Bar / FOH (no reporting group),Island Time,45.09,2.0,8.66
+2026-07-12,stow,Bar / FOH (no reporting group),Ottelia Chardonnay,43.65,3.0,10.38
+2026-07-12,stow,Bar / FOH (no reporting group),Biscoff Espresso,41.82,2.0,6.31
+2026-07-12,stow,Bar / FOH (no reporting group),Geppetto Pinot Noir,41.37,3.0,10.6
+2026-07-12,stow,Bar / FOH (no reporting group),Gin Martini,40.66,2.0,8.12
+2026-07-12,stow,Bar / FOH (no reporting group),Vodka Martini,40.0,2.0,6.02
+2026-07-12,stow,Bar / FOH (no reporting group),Old Fashioned,40.0,2.0,9.53
+2026-07-12,stow,Bar / FOH (no reporting group),Hendrick's Gin,38.61,3.0,8.05
+2026-07-12,stow,Bar / FOH (no reporting group),Philter Red,37.28,3.0,9.33
+2026-07-12,stow,Bar / FOH (no reporting group),Trutta Streamside Shiraz [Chilled],33.8,2.0,7.48
+2026-07-12,stow,Bar / FOH (no reporting group),Aether Vodka,32.38,3.0,7.56
+2026-07-12,stow,Bar / FOH (no reporting group),Heaps Normal Tin,30.0,3.0,8.01
+2026-07-12,stow,Bar / FOH (no reporting group),"Lemon, Lime & Bitters",27.89,6.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),San Pellegrino 500ml,25.08,3.0,6.96
+2026-07-12,stow,Bar / FOH (no reporting group),Virgin Margy,24.43,2.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),1800 Coconut,24.42,2.0,5.4
+2026-07-12,stow,Bar / FOH (no reporting group),Bombay Dry [House],22.93,3.0,6.46
+2026-07-12,stow,Bar / FOH (no reporting group),Lemon Meringue Martini,22.54,1.0,3.5
+2026-07-12,stow,Bar / FOH (no reporting group),Mezcal Paloma,22.53,1.0,5.14
+2026-07-12,stow,Bar / FOH (no reporting group),Fresh Lime Soda,22.47,7.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),Buffalo Trace Bourbon [House],20.0,2.0,4.58
+2026-07-12,stow,Bar / FOH (no reporting group),Monteith's Apple Cider Bottle,19.41,2.0,6.22
+2026-07-12,stow,Bar / FOH (no reporting group),Whisky Sour,19.09,1.0,4.58
+2026-07-12,stow,Bar / FOH (no reporting group),Moscow Mule,19.09,1.0,3.4
+2026-07-12,stow,Bar / FOH (no reporting group),Sigurd GSM Red Blend,18.77,1.0,4.62
+2026-07-12,stow,Bar / FOH (no reporting group),Cosmo,18.18,1.0,3.22
+2026-07-12,stow,Bar / FOH (no reporting group),Padrillos Malbec,16.36,1.0,4.48
+2026-07-12,stow,Bar / FOH (no reporting group),Year Wines 'Zagara' Orange,15.03,1.0,3.42
+2026-07-12,stow,Bar / FOH (no reporting group),Das Juice Pink Pet Nat,15.03,1.0,3.3
+2026-07-12,stow,Bar / FOH (no reporting group),Stow's Irish Coffee,14.09,1.0,0.92
+2026-07-12,stow,Bar / FOH (no reporting group),Four Pillars Rare Dry,13.61,1.0,2.45
+2026-07-12,stow,Bar / FOH (no reporting group),Trade Winds,13.15,1.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),Seadrift Coast Non-alc G&T,11.82,1.0,2.41
+2026-07-12,stow,Bar / FOH (no reporting group),Vinada Sparkling Rose,11.27,1.0,2.51
+2026-07-12,stow,Bar / FOH (no reporting group),Fellr Watermelon Seltzer Tin,11.27,1.0,3.41
+2026-07-12,stow,Bar / FOH (no reporting group),Young Henrys Cloudy Cider Can,10.91,1.0,2.82
+2026-07-12,stow,Bar / FOH (no reporting group),Glaetzer Anaperenna Shiraz Cab,10.0,1.0,7.5
+2026-07-12,stow,Bar / FOH (no reporting group),Peroni 0%,9.82,2.0,3.71
+2026-07-12,stow,Bar / FOH (no reporting group),Corona,9.55,1.0,2.58
+2026-07-12,stow,Bar / FOH (no reporting group),Rooster Rojo Blanco Tequila [House],9.29,1.0,2.43
+2026-07-12,stow,Bar / FOH (no reporting group),Pepsi Glass,8.31,2.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),Lemonade Glass,8.18,2.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),Apple Juice Glass,4.7,1.0,0.66
+2026-07-12,stow,Bar / FOH (no reporting group),Bundaberg Ginger Beer,4.55,1.0,0.96
+2026-07-12,stow,Bar / FOH (no reporting group),Pepsi Max Glass,4.22,1.0,0.0
+2026-07-12,stow,Bar / FOH (no reporting group),Pink Lemonade Glass,4.22,1.0,0.14
+2026-07-12,stow,Kitchen (no reporting group),American Standard Burger,270.1,14.0,81.82
+2026-07-12,stow,Kitchen (no reporting group),Fancy Pants Parmy - Classic,202.96,8.0,64.84
+2026-07-12,stow,Kitchen (no reporting group),Arancini Balls [5pc],122.07,6.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Beef Cheek,112.42,3.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Sensei Calamari,107.5,6.0,13.83
+2026-07-12,stow,Kitchen (no reporting group),Rosemary Salted Fries,95.36,8.0,14.84
+2026-07-12,stow,Kitchen (no reporting group),Bang Bang Cauli,95.24,6.0,16.57
+2026-07-12,stow,Kitchen (no reporting group),BBQ Wings,92.62,6.0,18.85
+2026-07-12,stow,Kitchen (no reporting group),Baked Camembert,92.04,4.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Beef Burrito,88.41,4.0,27.09
+2026-07-12,stow,Kitchen (no reporting group),Buffalo Wings,82.15,5.0,19.51
+2026-07-12,stow,Kitchen (no reporting group),Chicken Burrito,81.4,3.0,20.4
+2026-07-12,stow,Kitchen (no reporting group),Stow Schnitty,74.95,3.0,15.98
+2026-07-12,stow,Kitchen (no reporting group),Chicken Burrito D,68.19,3.0,20.4
+2026-07-12,stow,Kitchen (no reporting group),Chicken Shindig Burger,67.59,4.0,19.07
+2026-07-12,stow,Kitchen (no reporting group),Fish Burrito,64.77,3.0,17.01
+2026-07-12,stow,Kitchen (no reporting group),Pie,61.78,2.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Sweet Potato Fries,61.04,5.0,12.64
+2026-07-12,stow,Kitchen (no reporting group),Cauliflower Tacos,56.34,3.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Fish Tacos,56.32,3.0,6.55
+2026-07-12,stow,Kitchen (no reporting group),Eggplant Parmy,54.45,2.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Farmhouse Salad,46.79,2.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Onion Rings,45.09,4.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Fish Tacos D,32.72,2.0,4.37
+2026-07-12,stow,Kitchen (no reporting group),Beef Cheek D,31.82,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Brownie D,30.0,7.0,13.63
+2026-07-12,stow,Kitchen (no reporting group),Buffalo Wings D,30.0,2.0,7.8
+2026-07-12,stow,Kitchen (no reporting group),BBQ Wings D,29.1,3.0,9.42
+2026-07-12,stow,Kitchen (no reporting group),Cauliflower Burrito,27.13,1.0,5.14
+2026-07-12,stow,Kitchen (no reporting group),Rocket Man D,26.37,2.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Farmhouse Salad D,19.09,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Lepinja Bread,18.77,2.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Bang Bang Cauli D,17.27,1.0,2.76
+2026-07-12,stow,Kitchen (no reporting group),Kids Hawaiian Pizza,12.22,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Add Grilled Chicken,12.0,3.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Fries D,10.91,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Amalfi Olives,10.79,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Lepinja Bread D,8.18,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),$2 BBQ Wing,7.52,4.0,1.57
+2026-07-12,stow,Kitchen (no reporting group),Rocket Man,6.54,1.0,3.2
+2026-07-12,stow,Kitchen (no reporting group),Extra Taco,6.36,1.0,1.09
+2026-07-12,stow,Kitchen (no reporting group),Kids Icecream,4.7,1.0,0.74
+2026-07-12,stow,Kitchen (no reporting group),Make it Vegan [patty + cheese + bun],4.7,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Swap for Sweet Potato Fries,3.76,2.0,0.0
 2026-07-12,stow,Kitchen (no reporting group),Make it Vegetarian [plant-based patty],3.76,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Side Aioli,3.22,7.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Caramelised Onion Jam,2.82,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Roasted Tomato Coulis,2.82,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Side Chipotle Mayo,1.88,2.0,0.0
 2026-07-12,stow,Kitchen (no reporting group),Make it Gluten-free [gf/vg bun w sweet pot. fries],1.88,1.0,0.0
-2026-07-12,stow,Kitchen Specials,Beef Cheek,112.42,3.0,0.0
-2026-07-12,stow,Mocktails,Virgin Margy,24.43,2.0,0.0
-2026-07-12,stow,Mocktails,Stow's Irish Coffee,14.09,1.0,0.92
-2026-07-12,stow,Mocktails,Trade Winds,13.15,1.0,0.0
-2026-07-12,stow,Mocktails,Seadrift Coast Non-alc G&T,11.82,1.0,2.41
-2026-07-12,stow,Non-alcoholic,Heaps Normal Tin,30.0,3.0,8.01
-2026-07-12,stow,Non-alcoholic,"Lemon, Lime & Bitters",27.89,6.0,0.0
-2026-07-12,stow,Non-alcoholic,San Pellegrino 500ml,25.08,3.0,6.96
-2026-07-12,stow,Non-alcoholic,Fresh Lime Soda,22.47,7.0,0.0
-2026-07-12,stow,Non-alcoholic,Vinada Sparkling Rose,11.27,1.0,2.51
-2026-07-12,stow,Non-alcoholic,Peroni 0%,9.82,2.0,3.71
-2026-07-12,stow,Non-alcoholic,Pepsi Glass,8.31,2.0,0.0
-2026-07-12,stow,Non-alcoholic,Lemonade Glass,8.18,2.0,0.0
-2026-07-12,stow,Non-alcoholic,Apple Juice Glass,4.7,1.0,0.66
-2026-07-12,stow,Non-alcoholic,Bundaberg Ginger Beer,4.55,1.0,0.96
-2026-07-12,stow,Non-alcoholic,Pepsi Max Glass,4.22,1.0,0.0
-2026-07-12,stow,Non-alcoholic,Pink Lemonade Glass,4.22,1.0,0.14
-2026-07-12,stow,Orange / Skins Wine,Year Wines 'Zagara' Orange,15.03,1.0,3.42
-2026-07-12,stow,Pet Nat Wine,Das Juice Pink Pet Nat,15.03,1.0,3.3
-2026-07-12,stow,Red Wine,Mother's Milk Shiraz,164.58,12.0,38.6
-2026-07-12,stow,Red Wine,Villa Fresco Sangiovese,78.73,7.0,18.54
-2026-07-12,stow,Red Wine,Sibiliana Nero D'Avola,61.82,1.0,16.34
-2026-07-12,stow,Red Wine,Geppetto Pinot Noir,41.37,3.0,10.6
-2026-07-12,stow,Red Wine,Trutta Streamside Shiraz [Chilled],33.8,2.0,7.48
-2026-07-12,stow,Red Wine,Sigurd GSM Red Blend,18.77,1.0,4.62
-2026-07-12,stow,Red Wine,Padrillos Malbec,16.36,1.0,4.48
-2026-07-12,stow,Red Wine,Glaetzer Anaperenna Shiraz Cab,10.0,1.0,7.5
-2026-07-12,stow,Rose Wine,Petits Detours Rosé,208.37,13.0,50.66
-2026-07-12,stow,Rose Wine,Petits Detours Rosé Mediterranee,151.27,3.0,49.49
-2026-07-12,stow,Rose Wine,Whispering Angel Rosé,103.47,4.0,26.2
-2026-07-12,stow,Rose Wine,Trentham Estate Rosé,65.82,6.0,12.66
-2026-07-12,stow,Salads,Farmhouse Salad,46.79,2.0,0.0
-2026-07-12,stow,Salads,Rocket Man,6.54,1.0,3.2
-2026-07-12,stow,Sides,Onion Rings,45.09,4.0,0.0
-2026-07-12,stow,Sides,Lepinja Bread,18.77,2.0,0.0
-2026-07-12,stow,Small Plates,Arancini Balls [5pc],122.07,6.0,0.0
-2026-07-12,stow,Small Plates,Sensei Calamari,107.5,6.0,13.83
-2026-07-12,stow,Small Plates,Rosemary Salted Fries,95.36,8.0,14.84
-2026-07-12,stow,Small Plates,Bang Bang Cauli,95.24,6.0,16.57
-2026-07-12,stow,Small Plates,BBQ Wings,92.62,6.0,18.85
-2026-07-12,stow,Small Plates,Baked Camembert,92.04,4.0,0.0
-2026-07-12,stow,Small Plates,Buffalo Wings,82.15,5.0,19.51
-2026-07-12,stow,Small Plates,Sweet Potato Fries,61.04,5.0,12.64
-2026-07-12,stow,Small Plates,Cauliflower Tacos,56.34,3.0,0.0
-2026-07-12,stow,Small Plates,Fish Tacos,56.32,3.0,6.55
-2026-07-12,stow,Small Plates,Amalfi Olives,10.79,1.0,0.0
-2026-07-12,stow,Sparkling Wine,Version Two Sparkling,195.0,9.0,37.1
-2026-07-12,stow,Sparkling Wine,Casa Gheller Prosecco,146.46,10.0,33.46
-2026-07-12,stow,Stow Food,Nuggets & Chips [HG],11.82,1.0,0.0
-2026-07-12,stow,Tap Beer,Fresh is Best Lager,398.92,47.0,96.53
-2026-07-12,stow,Tap Beer,Kirin,363.7,25.0,107.42
-2026-07-12,stow,Tap Beer,Stone & Wood,358.64,27.0,98.52
-2026-07-12,stow,Tap Beer,Guinness Draught,311.84,21.0,96.56
-2026-07-12,stow,Tap Beer,Grifter Pale,239.46,25.0,65.52
-2026-07-12,stow,Tap Beer,Status Quo,196.32,13.0,50.34
-2026-07-12,stow,Tap Beer,Philter XPA,99.35,10.0,29.33
-2026-07-12,stow,Tap Beer,Crankshaft IPA,92.34,6.0,22.48
-2026-07-12,stow,Tap Beer,Fresh is Best Summer Lager,81.63,12.0,20.68
-2026-07-12,stow,Tap Beer,Philter Red,37.28,3.0,9.33
-2026-07-12,stow,Tequila,1800 Coconut,24.42,2.0,5.4
-2026-07-12,stow,Tequila,Rooster Rojo Blanco Tequila [House],9.29,1.0,2.43
-2026-07-12,stow,Vodka,White Light Pure Vodka [House],45.36,5.0,7.6
-2026-07-12,stow,Vodka,Aether Vodka,32.38,3.0,7.56
-2026-07-12,stow,Whisky,Buffalo Trace Bourbon [House],20.0,2.0,4.58
-2026-07-12,stow,White Wine,Kuku Sauvignon Blanc,240.93,12.0,60.24
-2026-07-12,stow,White Wine,Version Two Pinot Grigio,128.93,8.0,22.37
-2026-07-12,stow,White Wine,A. Rodda Chardonnay,50.9,2.0,12.33
-2026-07-12,stow,White Wine,Ottelia Chardonnay,43.65,3.0,10.38
-2026-07-19,hg,Add-ons - Kitchen,Chicken,76.84,24.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Fried Egg,29.65,9.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,1/2 Marinated Egg,25.48,19.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Extra Piece Prawn Toast,13.65,3.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Chilli Bomb,8.92,5.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Extra Pork.,8.19,2.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,GFO [GF Ramen Noodles],8.19,4.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Tofu,7.28,2.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Extra  Piece,4.55,1.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Extra Piece,3.64,1.0,0.0
-2026-07-19,hg,Add-ons - Kitchen,Bamboo Shoots,1.82,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Swap Fries for Sweet Potato Fries,1.88,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),2x Aioli,0.94,1.0,0.0
+2026-07-12,stow,Kitchen (no reporting group),Jalapeños Inside Burrito,0.91,1.0,0.0
+2026-07-12,stow,Stowaway Food,Nuggets & Chips [HG],11.82,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Sapporo - 500ml,467.43,39.0,147.56
+2026-07-19,hg,Bar / FOH (no reporting group),Harry's Lager,249.95,29.0,54.89
+2026-07-19,hg,Bar / FOH (no reporting group),River Retreat Pinot Grigio,228.19,16.0,48.24
+2026-07-19,hg,Bar / FOH (no reporting group),Margato,152.72,9.0,34.6
+2026-07-19,hg,Bar / FOH (no reporting group),Azurescens Pinot Noir,136.4,10.0,28.0
+2026-07-19,hg,Bar / FOH (no reporting group),Classic Margarita,128.19,9.0,29.38
+2026-07-19,hg,Bar / FOH (no reporting group),Lychee Martini,116.35,7.0,21.98
+2026-07-19,hg,Bar / FOH (no reporting group),Drunken Koi,114.54,6.0,15.92
+2026-07-19,hg,Bar / FOH (no reporting group),Palloncino Prosecco,100.0,10.0,23.0
 2026-07-19,hg,Bar / FOH (no reporting group),Gado Gado,100.0,5.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),From Sundays Shiraz,95.47,7.0,19.6
+2026-07-19,hg,Bar / FOH (no reporting group),Sapporo,94.56,8.0,25.69
+2026-07-19,hg,Bar / FOH (no reporting group),Tsingtao Longneck,77.27,5.0,22.91
+2026-07-19,hg,Bar / FOH (no reporting group),Chicken,76.84,24.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Dragon Juice,72.99,5.0,12.97
+2026-07-19,hg,Bar / FOH (no reporting group),Geppetto Chardonnay,69.09,2.0,18.68
+2026-07-19,hg,Bar / FOH (no reporting group),Pepsi Max Glass,61.35,15.0,19.65
+2026-07-19,hg,Bar / FOH (no reporting group),White Light Pure Vodka [House],52.73,6.0,9.12
 2026-07-19,hg,Bar / FOH (no reporting group),Rice Pudding,51.84,6.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Jinro Strawberry - 360ml,51.82,2.0,23.12
+2026-07-19,hg,Bar / FOH (no reporting group),Negroni,49.09,3.0,14.3
+2026-07-19,hg,Bar / FOH (no reporting group),Ottelia Cab Sav,49.08,3.0,14.19
+2026-07-19,hg,Bar / FOH (no reporting group),Aperol Spritz,47.27,3.0,11.88
+2026-07-19,hg,Bar / FOH (no reporting group),Monkey Shoulder Scotch Whisky [House],45.45,6.0,14.45
+2026-07-19,hg,Bar / FOH (no reporting group),Vodka Martini [HG],34.54,2.0,6.02
+2026-07-19,hg,Bar / FOH (no reporting group),Demon Slayer,34.36,3.0,12.26
+2026-07-19,hg,Bar / FOH (no reporting group),Padrillos Malbec,31.08,2.0,7.12
+2026-07-19,hg,Bar / FOH (no reporting group),Veuve Clicquot,29.09,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Jinro Chamisul - 360ml,29.09,1.0,12.55
+2026-07-19,hg,Bar / FOH (no reporting group),Pepsi Glass,24.54,6.0,7.86
+2026-07-19,hg,Bar / FOH (no reporting group),Lemon Chu-hi,21.82,2.0,3.04
+2026-07-19,hg,Bar / FOH (no reporting group),Buffalo Trace Bourbon Whisky [House],20.0,2.0,4.61
+2026-07-19,hg,Bar / FOH (no reporting group),Asahi 3.5%,20.0,2.0,4.65
+2026-07-19,hg,Bar / FOH (no reporting group),Bintang,20.0,2.0,5.46
+2026-07-19,hg,Bar / FOH (no reporting group),Crouching Tiger,19.09,1.0,4.02
+2026-07-19,hg,Bar / FOH (no reporting group),Birdseye Chilli Marg,19.09,1.0,3.26
+2026-07-19,hg,Bar / FOH (no reporting group),Bombay Dry Gin [House],19.06,3.0,6.47
+2026-07-19,hg,Bar / FOH (no reporting group),Manhattan - Dry [HG],17.27,1.0,4.58
+2026-07-19,hg,Bar / FOH (no reporting group),Cosmo [HG],17.27,1.0,3.09
+2026-07-19,hg,Bar / FOH (no reporting group),Espresso Martini,17.27,1.0,2.93
+2026-07-19,hg,Bar / FOH (no reporting group),Yuzu Orange Soda,16.36,2.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Lemonade Glass,16.36,4.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Status Quo,15.91,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),L'esprit Rosé,14.55,1.0,3.6
+2026-07-19,hg,Bar / FOH (no reporting group),Esoterico Orange,13.64,1.0,2.69
+2026-07-19,hg,Bar / FOH (no reporting group),Angas & Bremer Grenache,12.73,2.0,3.51
+2026-07-19,hg,Bar / FOH (no reporting group),Little Dragon Ginger Beer Can,12.73,1.0,3.38
+2026-07-19,hg,Bar / FOH (no reporting group),Two Bays GF Rice Lager Can [HG],12.73,1.0,4.99
+2026-07-19,hg,Bar / FOH (no reporting group),Kids Miso,11.82,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Virgin Margy,11.82,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Kuku Sauv Blanc,11.82,1.0,2.6
+2026-07-19,hg,Bar / FOH (no reporting group),Orange Juice Glass,10.92,3.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Soju Bomb,10.91,1.0,2.19
+2026-07-19,hg,Bar / FOH (no reporting group),Sensei Highball,10.91,1.0,1.3
+2026-07-19,hg,Bar / FOH (no reporting group),Tengumai Junmai - 60ml [SERVE WARM],10.91,1.0,2.37
+2026-07-19,hg,Bar / FOH (no reporting group),Angas & Bremer Rosé,10.91,1.0,1.93
+2026-07-19,hg,Bar / FOH (no reporting group),Corona,10.0,1.0,2.66
+2026-07-19,hg,Bar / FOH (no reporting group),Asahi Zero,9.55,1.0,2.1
+2026-07-19,hg,Bar / FOH (no reporting group),Dragon Soda,8.18,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Soda & Lime Glass,5.46,2.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Carafe Sparkling Water,4.55,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Lemon Lime Bitters,4.09,1.0,0.0
+2026-07-19,hg,Bar / FOH (no reporting group),Apple Juice Glass,3.64,1.0,0.0
 2026-07-19,hg,Bar / FOH (no reporting group),Black Mushroom,1.82,1.0,0.0
-2026-07-19,hg,Big Plates,Unlimited BBQ,572.74,14.0,120.18
-2026-07-19,hg,Big Plates,Tonkotsu,500.86,21.0,87.44
-2026-07-19,hg,Big Plates,Mie Goreng,475.39,23.0,73.2
-2026-07-19,hg,Big Plates,Chicken Katsu Curry,420.05,18.0,51.43
-2026-07-19,hg,Big Plates,Shredded Beef,402.69,17.0,0.0
-2026-07-19,hg,Big Plates,BBQ Meat Platter,399.96,11.0,0.0
-2026-07-19,hg,Big Plates,Fried Rice,387.47,19.0,50.92
-2026-07-19,hg,Big Plates,Shoyu,313.68,13.0,0.0
-2026-07-19,hg,Big Plates,Miso,308.41,13.0,0.0
-2026-07-19,hg,Big Plates,Seitan Katsu Curry [vegan],122.75,5.0,4.5
-2026-07-19,hg,Bottles / Cans Alcoholic,Tsingtao Longneck,77.27,5.0,22.91
-2026-07-19,hg,Bottles / Cans Alcoholic,Asahi 3.5%,20.0,2.0,4.65
-2026-07-19,hg,Bottles / Cans Alcoholic,Bintang,20.0,2.0,5.46
-2026-07-19,hg,Bottles / Cans Alcoholic,Little Dragon Ginger Beer Can,12.73,1.0,3.38
-2026-07-19,hg,Bottles / Cans Alcoholic,Two Bays GF Rice Lager Can [HG],12.73,1.0,4.99
-2026-07-19,hg,Bottles / Cans Alcoholic,Corona,10.0,1.0,2.66
-2026-07-19,hg,Cocktails - Classic,Classic Margarita,128.19,9.0,29.38
-2026-07-19,hg,Cocktails - Classic,Lychee Martini,116.35,7.0,21.98
-2026-07-19,hg,Cocktails - Classic,Negroni,49.09,3.0,14.3
-2026-07-19,hg,Cocktails - Classic,Aperol Spritz,47.27,3.0,11.88
-2026-07-19,hg,Cocktails - Classic,Vodka Martini [HG],34.54,2.0,6.02
-2026-07-19,hg,Cocktails - Classic,Manhattan - Dry [HG],17.27,1.0,4.58
-2026-07-19,hg,Cocktails - Classic,Cosmo [HG],17.27,1.0,3.09
-2026-07-19,hg,Cocktails - Classic,Espresso Martini,17.27,1.0,2.93
-2026-07-19,hg,Cocktails - Classic,Sensei Highball,10.91,1.0,1.3
-2026-07-19,hg,Cocktails - Signature,Margato,152.72,9.0,34.6
-2026-07-19,hg,Cocktails - Signature,Drunken Koi,114.54,6.0,15.92
-2026-07-19,hg,Cocktails - Signature,Dragon Juice,72.99,5.0,12.97
-2026-07-19,hg,Cocktails - Signature,Demon Slayer,34.36,3.0,12.26
-2026-07-19,hg,Cocktails - Signature,Lemon Chu-hi,21.82,2.0,3.04
-2026-07-19,hg,Cocktails - Signature,Crouching Tiger,19.09,1.0,4.02
-2026-07-19,hg,Cocktails - Signature,Birdseye Chilli Marg,19.09,1.0,3.26
-2026-07-19,hg,Desserts,Mochi Trio,70.92,6.0,0.0
-2026-07-19,hg,Gins,Bombay Dry Gin [House],19.06,3.0,6.47
 2026-07-19,hg,Harry Gatos Food,Unlimited Dumplings,1854.69,86.0,0.0
 2026-07-19,hg,Harry Gatos Food,Fried Rice,105.93,5.0,0.0
 2026-07-19,hg,Harry Gatos Food,Shredded Beef,71.7,3.0,0.0
@@ -22914,397 +22930,559 @@ week_ending,venue,reporting_group,product_name,sales_ex_gst,qty,cost
 2026-07-19,hg,Harry Gatos Food,Jasmine Rice,3.76,1.0,0.0
 2026-07-19,hg,Harry Gatos Food,Fried Egg,3.64,1.0,0.0
 2026-07-19,hg,Harry Gatos Food,Extra Marinated Tofu,0.91,1.0,0.0
-2026-07-19,hg,Kids,Kids Mie Goreng,23.64,2.0,0.0
-2026-07-19,hg,Kids,Kids Fried Rice,11.82,1.0,0.0
-2026-07-19,hg,Kids,Kids Miso,11.82,1.0,0.0
-2026-07-19,hg,Mocktails,Virgin Margy,11.82,1.0,0.0
-2026-07-19,hg,Non-Alcoholic,Pepsi Max Glass,61.35,15.0,19.65
-2026-07-19,hg,Non-Alcoholic,Pepsi Glass,24.54,6.0,7.86
-2026-07-19,hg,Non-Alcoholic,Yuzu Orange Soda,16.36,2.0,0.0
-2026-07-19,hg,Non-Alcoholic,Lemonade Glass,16.36,4.0,0.0
-2026-07-19,hg,Non-Alcoholic,Orange Juice Glass,10.92,3.0,0.0
-2026-07-19,hg,Non-Alcoholic,Asahi Zero,9.55,1.0,2.1
-2026-07-19,hg,Non-Alcoholic,Dragon Soda,8.18,1.0,0.0
-2026-07-19,hg,Non-Alcoholic,Soda & Lime Glass,5.46,2.0,0.0
-2026-07-19,hg,Non-Alcoholic,Carafe Sparkling Water,4.55,1.0,0.0
-2026-07-19,hg,Non-Alcoholic,Lemon Lime Bitters,4.09,1.0,0.0
-2026-07-19,hg,Non-Alcoholic,Apple Juice Glass,3.64,1.0,0.0
-2026-07-19,hg,Orange / Skins Wine,Esoterico Orange,13.64,1.0,2.69
-2026-07-19,hg,Red Wine,Azurescens Pinot Noir,136.4,10.0,28.0
-2026-07-19,hg,Red Wine,From Sundays Shiraz,95.47,7.0,19.6
-2026-07-19,hg,Red Wine,Ottelia Cab Sav,49.08,3.0,14.19
-2026-07-19,hg,Red Wine,Padrillos Malbec,31.08,2.0,7.12
-2026-07-19,hg,Red Wine,Angas & Bremer Grenache,12.73,2.0,3.51
-2026-07-19,hg,Rose Wine,L'esprit Rosé,14.55,1.0,3.6
-2026-07-19,hg,Rose Wine,Angas & Bremer Rosé,10.91,1.0,1.93
-2026-07-19,hg,Sake & Soju,Jinro Strawberry - 360ml,51.82,2.0,23.12
-2026-07-19,hg,Sake & Soju,Jinro Chamisul - 360ml,29.09,1.0,12.55
-2026-07-19,hg,Sake & Soju,Soju Bomb,10.91,1.0,2.19
-2026-07-19,hg,Sake & Soju,Tengumai Junmai - 60ml [SERVE WARM],10.91,1.0,2.37
-2026-07-19,hg,Sides,Fries [HG],43.64,4.0,0.0
-2026-07-19,hg,Sides,Jasmine Rice,13.65,3.0,0.0
-2026-07-19,hg,Small Plates,Dumplings - Prawn Har Gow [GF],340.72,20.0,88.27
-2026-07-19,hg,Small Plates,Devon's Prawn Toast,304.1,21.0,81.66
-2026-07-19,hg,Small Plates,Chicken Karaage,278.1,20.0,0.0
-2026-07-19,hg,Small Plates,BBQ Pork Buns,231.88,17.0,59.5
-2026-07-19,hg,Small Plates,Popcorn Cauliflower,230.52,17.0,16.64
-2026-07-19,hg,Small Plates,Dumplings - Veg Gyoza,229.14,18.0,35.3
-2026-07-19,hg,Small Plates,Edamame,197.33,21.0,0.0
-2026-07-19,hg,Small Plates,Duck Spring Roll,189.13,14.0,50.01
-2026-07-19,hg,Small Plates,Dumplings - Beef & Cabbage,178.66,14.0,20.63
-2026-07-19,hg,Small Plates,Vegetarian Spring Rolls,54.12,4.0,6.61
-2026-07-19,hg,Small Plates,Extra BBQ Pork,13.64,1.0,0.0
-2026-07-19,hg,Sparkling Wine,Palloncino Prosecco,100.0,10.0,23.0
-2026-07-19,hg,Sparkling Wine,Veuve Clicquot,29.09,1.0,0.0
-2026-07-19,hg,Tap Beer,Sapporo - 500ml,467.43,39.0,147.56
-2026-07-19,hg,Tap Beer,Harry's Lager,249.95,29.0,54.89
-2026-07-19,hg,Tap Beer,Sapporo,94.56,8.0,25.69
-2026-07-19,hg,Tap Beer,Status Quo,15.91,1.0,0.0
-2026-07-19,hg,Vodkas,White Light Pure Vodka [House],52.73,6.0,9.12
-2026-07-19,hg,Whiskies,Monkey Shoulder Scotch Whisky [House],45.45,6.0,14.45
-2026-07-19,hg,Whiskies,Buffalo Trace Bourbon Whisky [House],20.0,2.0,4.61
-2026-07-19,hg,White Wine,River Retreat Pinot Grigio,228.19,16.0,48.24
-2026-07-19,hg,White Wine,Geppetto Chardonnay,69.09,2.0,18.68
-2026-07-19,hg,White Wine,Kuku Sauv Blanc,11.82,1.0,2.6
-2026-07-19,mari,Add-ons - Pizza,Online Surcharge,48.96,45.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Prawns,28.45,8.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Vegan Cheese [Pizza],16.65,6.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Pepperoni,13.65,5.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Chicken,11.28,3.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Chilli,8.22,9.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Anchovies,8.19,5.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Calabrese,7.28,2.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Extra Mozzarella,6.88,3.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Garlic,6.8,5.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Mushrooms,6.8,5.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Ham,5.46,2.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Pineapple,5.44,4.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Bacon,5.1,2.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Capsicum,4.13,3.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Olives,4.12,3.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Jalapenos,3.66,4.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Chicken.,3.64,2.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Chicken,3.64,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Sour Cream,2.76,3.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Pesto,2.73,3.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Fetta,2.73,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Bocconcini,2.73,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Basil,1.82,2.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Rocket,1.36,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Minted Yoghurt,1.36,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Sour Cream,1.36,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Cherry Tomatoes,1.36,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Add Oregano,0.45,1.0,0.0
-2026-07-19,mari,Add-ons - Pizza,Online Discount,-102.05,10.0,0.0
-2026-07-19,mari,Delivery Alcohol,Grifter Pale Ale 4-pack D,36.36,2.0,26.12
-2026-07-19,mari,Delivery Alcohol,Kuku Sauvignon Blanc D,19.19,1.0,14.57
-2026-07-19,mari,Delivery Alcohol,VB Can D,16.35,3.0,7.01
-2026-07-19,mari,Delivery Alcohol,Btl Fever-Tree Mediterannean Tonic D,6.36,1.0,4.31
-2026-07-19,mari,Delivery Alcohol,Grifter Pale Ale Cans D,6.36,1.0,3.26
-2026-07-19,mari,Dine-in Pizza,Regular Little Italy [Dine-in],477.9,21.0,100.89
-2026-07-19,mari,Dine-in Pizza,Regular Sanchez [Dine-in],382.41,17.0,57.67
-2026-07-19,mari,Dine-in Pizza,Regular Jimmy Jury [Dine-in],196.58,10.0,33.36
-2026-07-19,mari,Dine-in Pizza,Regular Truffalo Soldier [Dine-in],177.15,8.0,26.15
-2026-07-19,mari,Dine-in Pizza,Regular Hail Africa [Dine-in],173.5,8.0,23.3
-2026-07-19,mari,Dine-in Pizza,Regular New Yorker [Dine-in],152.11,7.0,25.11
-2026-07-19,mari,Dine-in Pizza,"Regular No Chorizo, No Cry [Dine-in]",149.58,7.0,20.37
-2026-07-19,mari,Dine-in Pizza,Regular El Patron [Dine-in],138.98,6.0,21.84
-2026-07-19,mari,Dine-in Pizza,Under the Bridge Pizza,122.05,5.0,21.11
-2026-07-19,mari,Dine-in Pizza,Regular Uber Margherita [Dine-in],103.31,5.0,15.96
-2026-07-19,mari,Dine-in Pizza,Regular Tandoori Chicken [Dine-in],57.23,4.0,9.46
-2026-07-19,mari,Dine-in Pizza,Regular Super House Special [Dine-in],56.36,3.0,16.1
-2026-07-19,mari,Dine-in Pizza,Regular Meatlovers [Dine-in],47.28,2.0,10.38
-2026-07-19,mari,Dine-in Pizza,Regular Cosmopolitan [Dine-in],32.72,2.0,9.68
-2026-07-19,mari,Dine-in Pizza,Regular The Paddock [Dine-in],32.72,2.0,6.56
-2026-07-19,mari,Dine-in Pizza,Regular Sanchez VEGAN [Dine-in],24.41,1.0,3.02
-2026-07-19,mari,Dine-in Pizza,"Gluten-free No Chorizo, No Cry [Dine-in]",19.09,1.0,8.62
-2026-07-19,mari,Dine-in Pizza,Regular Bubba Gump [Dine-in],16.36,1.0,4.15
-2026-07-19,mari,Dine-in Pizza,Regular Vegetarian [Dine-in],16.36,1.0,2.37
-2026-07-19,mari,Dine-in Pizza,Regular Hawaiian [Dine-in],16.36,1.0,1.25
-2026-07-19,mari,Marilyna's Pizza,Large Super House Special,459.04,22.0,164.06
-2026-07-19,mari,Marilyna's Pizza,Large Pepperoni,418.13,19.0,86.73
-2026-07-19,mari,Marilyna's Pizza,$45 FEAST,368.19,9.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Large Sanchez,312.75,13.0,71.37
-2026-07-19,mari,Marilyna's Pizza,Large Hawaiian,312.68,17.0,55.47
-2026-07-19,mari,Marilyna's Pizza,Regular Super House Special,271.39,13.0,69.18
-2026-07-19,mari,Marilyna's Pizza,Large BBQ Chicken Pizza,252.3,14.0,60.12
-2026-07-19,mari,Marilyna's Pizza,Large Margherita,237.27,16.0,36.75
-2026-07-19,mari,Marilyna's Pizza,Regular Meatlovers,204.57,9.0,46.51
-2026-07-19,mari,Marilyna's Pizza,Feast Deal Pizzas,204.55,5.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Large Tandoori Chicken,186.36,8.0,26.41
-2026-07-19,mari,Marilyna's Pizza,Regular Little Italy,171.84,8.0,38.43
-2026-07-19,mari,Marilyna's Pizza,$90 PIZZA PARTY,163.64,2.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Regular Hawaiian,140.37,8.0,9.97
-2026-07-19,mari,Marilyna's Pizza,"Regular No Chorizo, No Cry",140.01,7.0,20.38
-2026-07-19,mari,Marilyna's Pizza,Large Meatlovers,132.71,9.0,64.66
-2026-07-19,mari,Marilyna's Pizza,Garlic Bread,130.3,37.0,52.54
-2026-07-19,mari,Marilyna's Pizza,Large Paddock,130.01,7.0,36.61
-2026-07-19,mari,Marilyna's Pizza,Large Hail Africa,126.38,5.0,31.22
-2026-07-19,mari,Marilyna's Pizza,Large Sorrento,125.47,5.0,35.85
-2026-07-19,mari,Marilyna's Pizza,Banquet Deal Pizzas,109.1,2.0,0.0
-2026-07-19,mari,Marilyna's Pizza,$60 BANQUET,109.1,2.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Large Jimmy Jury,101.83,4.0,24.75
-2026-07-19,mari,Marilyna's Pizza,Regular Tandoori Chicken,99.1,5.0,11.75
-2026-07-19,mari,Marilyna's Pizza,Regular Pepperoni,83.93,5.0,10.65
-2026-07-19,mari,Marilyna's Pizza,Axl Rose Pizza,82.65,4.0,0.0
-2026-07-19,mari,Marilyna's Pizza,WINGS DEAL,81.81,3.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Large Bubba Gump,80.0,4.0,22.93
-2026-07-19,mari,Marilyna's Pizza,Large New Yorker,79.09,3.0,15.03
-2026-07-19,mari,Marilyna's Pizza,Regular Vegetarian,77.29,5.0,11.85
-2026-07-19,mari,Marilyna's Pizza,Large El Patron,77.28,3.0,17.56
-2026-07-19,mari,Marilyna's Pizza,Regular Margherita,75.45,5.0,6.15
-2026-07-19,mari,Marilyna's Pizza,Large Cosmopolitan,74.55,3.0,19.98
-2026-07-19,mari,Marilyna's Pizza,"Large No Chorizo, No Cry",73.65,3.0,18.23
-2026-07-19,mari,Marilyna's Pizza,Cheesy Garlic Bread,70.87,11.0,19.51
-2026-07-19,mari,Marilyna's Pizza,Regular Sorrento,66.37,3.0,12.32
-2026-07-19,mari,Marilyna's Pizza,Regular New Yorker,64.55,3.0,10.77
-2026-07-19,mari,Marilyna's Pizza,Regular Hail Africa,61.83,5.0,14.56
-2026-07-19,mari,Marilyna's Pizza,Regular El Patron,61.37,3.0,10.92
-2026-07-19,mari,Marilyna's Pizza,Gluten-free BBQ Chicken Pizza,55.46,2.0,14.63
-2026-07-19,mari,Marilyna's Pizza,Regular Roma Special,50.46,3.0,13.36
-2026-07-19,mari,Marilyna's Pizza,Large Little Italy,49.1,2.0,17.16
-2026-07-19,mari,Marilyna's Pizza,Regular Cosmopolitan,47.28,2.0,9.57
-2026-07-19,mari,Marilyna's Pizza,Large Uber Margherita,47.28,2.0,8.92
-2026-07-19,mari,Marilyna's Pizza,Regular Bubba Gump,47.28,2.0,8.31
-2026-07-19,mari,Marilyna's Pizza,Large Truffalo Soldier,45.46,2.0,9.12
-2026-07-19,mari,Marilyna's Pizza,Large Roma Special,45.46,2.0,11.85
-2026-07-19,mari,Marilyna's Pizza,Delivery Fee - Freshwater / Queenscliff,44.4,10.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Regular BBQ Chicken Pizza,41.36,2.0,6.22
-2026-07-19,mari,Marilyna's Pizza,Regular Uber Margherita,35.91,2.0,6.38
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Cosmopolitan,29.09,1.0,9.17
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Meatlovers,28.18,1.0,9.29
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Little Italy,28.18,1.0,10.77
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Sanchez,27.73,1.0,8.03
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Super House Special,27.27,1.0,9.38
-2026-07-19,mari,Marilyna's Pizza,Large Margherita Wings Deal,27.27,1.0,2.3
-2026-07-19,mari,Marilyna's Pizza,Large BBQ Chicken Wings Deal,27.27,1.0,4.34
-2026-07-19,mari,Marilyna's Pizza,Large Super House Special Wings Deal,27.27,1.0,7.38
-2026-07-19,mari,Marilyna's Pizza,Regular Garlic Cheese Pizza,24.54,3.0,4.17
-2026-07-19,mari,Marilyna's Pizza,Delivery Fee - Curl Curl / Manly / Dee Why,23.64,4.0,0.0
-2026-07-19,mari,Marilyna's Pizza,Regular Paddock,22.73,1.0,3.1
-2026-07-19,mari,Marilyna's Pizza,Regular Sanchez,22.73,1.0,3.39
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Truffalo Soldier,21.82,1.0,7.37
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Margherita,20.91,1.0,6.08
-2026-07-19,mari,Marilyna's Pizza,Large Vegetarian,18.18,1.0,4.11
-2026-07-19,mari,Marilyna's Pizza,Large Garlic Cheese Pizza,16.36,1.0,2.11
-2026-07-19,mari,Marilyna's Pizza,Gluten-free Base,9.4,2.0,8.2
-2026-07-19,mari,Marilyna's Soft Drinks,Coke 1.25L,41.79,8.0,29.52
-2026-07-19,mari,Marilyna's Soft Drinks,Coke Zero Can,29.12,8.0,15.12
-2026-07-19,mari,Marilyna's Soft Drinks,Coke Zero 1.25L,12.72,4.0,16.78
-2026-07-19,mari,Marilyna's Soft Drinks,Sprite Can,10.92,3.0,5.69
-2026-07-19,mari,Marilyna's Soft Drinks,Coke Can,8.39,3.0,5.67
-2026-07-19,mari,Marilyna's Soft Drinks,Bundaberg Ginger Beer D,7.27,1.0,3.59
-2026-07-19,mari,Marilyna's Soft Drinks,Solo 1.25L,6.36,1.0,3.59
-2026-07-19,mari,Marilyna's Soft Drinks,Sunkist 1.25L,6.36,1.0,2.04
-2026-07-19,stow,Add-ons - Bar,+$3 Premium Spirit,7.65,3.0,0.0
-2026-07-19,stow,Add-ons - Bar,Fever-Tree Light Tonic [mixer],3.76,4.0,0.0
-2026-07-19,stow,Add-ons - Bar,Fever-Tree Mediterannean  [mixer],2.82,3.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,$2 Buffalo Wing,25.69,14.0,6.83
-2026-07-19,stow,Add-ons - Kitchen,Open Food,23.64,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Aioli,17.23,41.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,$2 BBQ Wing,13.16,7.0,2.75
-2026-07-19,stow,Add-ons - Kitchen,Extra Taco,12.93,2.0,2.18
-2026-07-19,stow,Add-ons - Kitchen,Side Gravy,12.52,11.0,3.71
-2026-07-19,stow,Add-ons - Kitchen,Add Grilled Chicken,12.0,3.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Add Lepinja Bread,11.26,2.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Swap Fries for Sweet Potato Fries,9.4,5.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Add Grilled Fish,7.51,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Chipotle Mayo,6.55,7.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Hot Honey,5.64,2.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Caramelised Onion Jam,5.46,2.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,2x Aioli,4.71,5.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Make it Vegan [patty + cheese + bun],4.7,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,GF Flatbread,3.76,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Extra Arancini Ball,3.76,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Spicy Salsa,3.73,4.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Blue Cheese Dip,2.82,3.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Sour Cream,1.88,2.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Swap for Sweet Potato Fries,1.88,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Guac,1.85,2.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Side Guacamole,1.4,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Jalapeños Inside Burrito,0.94,1.0,0.0
-2026-07-19,stow,Add-ons - Kitchen,Add Side Guac,0.94,1.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Unlimited BBQ,572.74,14.0,120.18
+2026-07-19,hg,Kitchen (no reporting group),Tonkotsu,500.86,21.0,87.44
+2026-07-19,hg,Kitchen (no reporting group),Mie Goreng,475.39,23.0,73.2
+2026-07-19,hg,Kitchen (no reporting group),Chicken Katsu Curry,420.05,18.0,51.43
+2026-07-19,hg,Kitchen (no reporting group),Shredded Beef,402.69,17.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),BBQ Meat Platter,399.96,11.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Fried Rice,387.47,19.0,50.92
+2026-07-19,hg,Kitchen (no reporting group),Dumplings - Prawn Har Gow [GF],340.72,20.0,88.27
+2026-07-19,hg,Kitchen (no reporting group),Shoyu,313.68,13.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Miso,308.41,13.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Devon's Prawn Toast,304.1,21.0,81.66
+2026-07-19,hg,Kitchen (no reporting group),Chicken Karaage,278.1,20.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),BBQ Pork Buns,231.88,17.0,59.5
+2026-07-19,hg,Kitchen (no reporting group),Popcorn Cauliflower,230.52,17.0,16.64
+2026-07-19,hg,Kitchen (no reporting group),Dumplings - Veg Gyoza,229.14,18.0,35.3
+2026-07-19,hg,Kitchen (no reporting group),Edamame,197.33,21.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Duck Spring Roll,189.13,14.0,50.01
+2026-07-19,hg,Kitchen (no reporting group),Dumplings - Beef & Cabbage,178.66,14.0,20.63
+2026-07-19,hg,Kitchen (no reporting group),Seitan Katsu Curry [vegan],122.75,5.0,4.5
+2026-07-19,hg,Kitchen (no reporting group),Mochi Trio,70.92,6.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Vegetarian Spring Rolls,54.12,4.0,6.61
+2026-07-19,hg,Kitchen (no reporting group),Fries [HG],43.64,4.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Fried Egg,29.65,9.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),1/2 Marinated Egg,25.48,19.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Kids Mie Goreng,23.64,2.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Extra Piece Prawn Toast,13.65,3.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Jasmine Rice,13.65,3.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Extra BBQ Pork,13.64,1.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Kids Fried Rice,11.82,1.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Chilli Bomb,8.92,5.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Extra Pork.,8.19,2.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),GFO [GF Ramen Noodles],8.19,4.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Tofu,7.28,2.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Extra  Piece,4.55,1.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Extra Piece,3.64,1.0,0.0
+2026-07-19,hg,Kitchen (no reporting group),Bamboo Shoots,1.82,1.0,0.0
+2026-07-19,mari,Marilyna's,Regular Little Italy [Dine-in],529.9,23.0,110.5
+2026-07-19,mari,Marilyna's,Large Super House Special,515.31,25.0,187.22
+2026-07-19,mari,Marilyna's,Large Pepperoni,443.58,20.0,91.29
+2026-07-19,mari,Marilyna's,$45 FEAST,413.19,10.0,0.0
+2026-07-19,mari,Marilyna's,Regular Sanchez [Dine-in],382.41,17.0,57.67
+2026-07-19,mari,Marilyna's,Large Hawaiian,378.13,21.0,68.52
+2026-07-19,mari,Marilyna's,Large Sanchez,340.93,14.0,76.86
+2026-07-19,mari,Marilyna's,Regular Super House Special,293.21,14.0,74.71
+2026-07-19,mari,Marilyna's,Large Margherita,257.27,17.0,39.05
+2026-07-19,mari,Marilyna's,Large BBQ Chicken Pizza,252.3,14.0,60.12
+2026-07-19,mari,Marilyna's,Regular Meatlovers,224.07,10.0,51.49
+2026-07-19,mari,Marilyna's,Regular Little Italy,210.84,10.0,48.04
+2026-07-19,mari,Marilyna's,Feast Deal Pizzas,204.55,5.0,0.0
+2026-07-19,mari,Marilyna's,Regular Hail Africa [Dine-in],201.41,9.0,26.21
+2026-07-19,mari,Marilyna's,Regular Jimmy Jury [Dine-in],196.58,10.0,33.36
+2026-07-19,mari,Marilyna's,Large Tandoori Chicken,186.36,8.0,26.41
+2026-07-19,mari,Marilyna's,Regular Truffalo Soldier [Dine-in],177.15,8.0,26.15
+2026-07-19,mari,Marilyna's,Regular New Yorker [Dine-in],176.11,8.0,28.7
+2026-07-19,mari,Marilyna's,Regular Uber Margherita [Dine-in],163.9,8.0,25.54
+2026-07-19,mari,Marilyna's,$90 PIZZA PARTY,163.64,2.0,0.0
+2026-07-19,mari,Marilyna's,Regular Hawaiian,160.37,9.0,11.22
+2026-07-19,mari,Marilyna's,Large Paddock,158.19,8.0,41.72
+2026-07-19,mari,Marilyna's,"Regular No Chorizo, No Cry [Dine-in]",149.58,7.0,20.37
+2026-07-19,mari,Marilyna's,"Regular No Chorizo, No Cry",140.01,7.0,20.38
+2026-07-19,mari,Marilyna's,Regular El Patron [Dine-in],138.98,6.0,21.84
+2026-07-19,mari,Marilyna's,Large Meatlovers,132.71,9.0,64.66
+2026-07-19,mari,Marilyna's,Under the Bridge Pizza,132.45,6.0,25.19
+2026-07-19,mari,Marilyna's,Garlic Bread,130.3,37.0,52.54
+2026-07-19,mari,Marilyna's,Large Jimmy Jury,128.83,5.0,30.94
+2026-07-19,mari,Marilyna's,Large Hail Africa,126.38,5.0,31.22
+2026-07-19,mari,Marilyna's,Large Sorrento,125.47,5.0,35.85
+2026-07-19,mari,Marilyna's,WINGS DEAL,111.81,4.0,0.0
+2026-07-19,mari,Marilyna's,Banquet Deal Pizzas,109.1,2.0,0.0
+2026-07-19,mari,Marilyna's,$60 BANQUET,109.1,2.0,0.0
+2026-07-19,mari,Marilyna's,Large Bubba Gump,108.18,5.0,28.46
+2026-07-19,mari,Marilyna's,Large Little Italy,104.28,4.0,34.84
+2026-07-19,mari,Marilyna's,Regular Tandoori Chicken,99.1,5.0,11.75
+2026-07-19,mari,Marilyna's,Regular Pepperoni,98.93,6.0,12.78
+2026-07-19,mari,Marilyna's,Regular Hail Africa,96.56,7.0,20.38
+2026-07-19,mari,Marilyna's,Regular Margherita,89.45,6.0,7.38
+2026-07-19,mari,Marilyna's,Regular El Patron,84.1,4.0,14.56
+2026-07-19,mari,Marilyna's,Axl Rose Pizza,82.65,4.0,0.0
+2026-07-19,mari,Marilyna's,Large New Yorker,79.09,3.0,15.03
+2026-07-19,mari,Marilyna's,Cheesy Garlic Bread,78.14,12.0,21.28
+2026-07-19,mari,Marilyna's,Regular Vegetarian,77.29,5.0,11.85
+2026-07-19,mari,Marilyna's,Large El Patron,77.28,3.0,17.56
+2026-07-19,mari,Marilyna's,Large Cosmopolitan,74.55,3.0,19.98
+2026-07-19,mari,Marilyna's,"Large No Chorizo, No Cry",73.65,3.0,18.23
+2026-07-19,mari,Marilyna's,Regular Bubba Gump,70.92,3.0,12.27
+2026-07-19,mari,Marilyna's,Large Roma Special,70.46,3.0,17.48
+2026-07-19,mari,Marilyna's,Regular Cosmopolitan,66.78,3.0,14.3
+2026-07-19,mari,Marilyna's,Regular Sorrento,66.37,3.0,12.32
+2026-07-19,mari,Marilyna's,Regular New Yorker,64.55,3.0,10.77
+2026-07-19,mari,Marilyna's,Regular Tandoori Chicken [Dine-in],57.23,4.0,9.46
+2026-07-19,mari,Marilyna's,Regular Super House Special [Dine-in],56.36,3.0,16.1
+2026-07-19,mari,Marilyna's,Gluten-free BBQ Chicken Pizza,55.46,2.0,14.63
+2026-07-19,mari,Marilyna's,Online Surcharge,52.34,48.0,0.0
+2026-07-19,mari,Marilyna's,Regular Roma Special,50.46,3.0,13.36
+2026-07-19,mari,Marilyna's,Delivery Fee - Freshwater / Queenscliff,49.4,11.0,0.0
+2026-07-19,mari,Marilyna's,Large Uber Margherita,47.28,2.0,8.92
+2026-07-19,mari,Marilyna's,Regular Meatlovers [Dine-in],47.28,2.0,10.38
+2026-07-19,mari,Marilyna's,Large Truffalo Soldier,45.46,2.0,9.12
+2026-07-19,mari,Marilyna's,Regular Sanchez,45.46,2.0,6.78
+2026-07-19,mari,Marilyna's,Regular Paddock,42.23,2.0,6.2
+2026-07-19,mari,Marilyna's,Coke 1.25L,41.79,8.0,29.52
+2026-07-19,mari,Marilyna's,Regular BBQ Chicken Pizza,41.36,2.0,6.22
+2026-07-19,mari,Marilyna's,Grifter Pale Ale 4-pack D,36.36,2.0,26.12
+2026-07-19,mari,Marilyna's,Regular Uber Margherita,35.91,2.0,6.38
+2026-07-19,mari,Marilyna's,Regular Cosmopolitan [Dine-in],32.72,2.0,9.68
+2026-07-19,mari,Marilyna's,Regular The Paddock [Dine-in],32.72,2.0,6.56
+2026-07-19,mari,Marilyna's,Regular Garlic Cheese Pizza,32.72,4.0,5.56
+2026-07-19,mari,Marilyna's,Delivery Fee - Curl Curl / Manly / Dee Why,30.14,5.0,0.0
+2026-07-19,mari,Marilyna's,Coke Zero Can,29.12,8.0,15.12
+2026-07-19,mari,Marilyna's,Gluten-free Cosmopolitan,29.09,1.0,9.17
+2026-07-19,mari,Marilyna's,Add Prawns,28.45,8.0,0.0
+2026-07-19,mari,Marilyna's,Gluten-free Meatlovers,28.18,1.0,9.29
+2026-07-19,mari,Marilyna's,Gluten-free Little Italy,28.18,1.0,10.77
+2026-07-19,mari,Marilyna's,Gluten-free Sanchez,27.73,1.0,8.03
+2026-07-19,mari,Marilyna's,Gluten-free Super House Special,27.27,1.0,9.38
+2026-07-19,mari,Marilyna's,Large Margherita Wings Deal,27.27,1.0,2.3
+2026-07-19,mari,Marilyna's,Large BBQ Chicken Wings Deal,27.27,1.0,4.34
+2026-07-19,mari,Marilyna's,Large Super House Special Wings Deal,27.27,1.0,7.38
+2026-07-19,mari,Marilyna's,Regular Sanchez VEGAN [Dine-in],24.41,1.0,3.02
+2026-07-19,mari,Marilyna's,Gluten-free Truffalo Soldier,21.82,1.0,7.37
+2026-07-19,mari,Marilyna's,Regular Truffalo Soldier,21.82,1.0,3.27
+2026-07-19,mari,Marilyna's,Gluten-free Margherita,20.91,1.0,6.08
+2026-07-19,mari,Marilyna's,Kuku Sauvignon Blanc D,19.19,1.0,14.57
+2026-07-19,mari,Marilyna's,"Gluten-free No Chorizo, No Cry [Dine-in]",19.09,1.0,8.62
+2026-07-19,mari,Marilyna's,Large Vegetarian,18.18,1.0,4.11
+2026-07-19,mari,Marilyna's,Vegan Cheese [Pizza],16.65,6.0,0.0
+2026-07-19,mari,Marilyna's,Regular Bubba Gump [Dine-in],16.36,1.0,4.15
+2026-07-19,mari,Marilyna's,Regular Vegetarian [Dine-in],16.36,1.0,2.37
+2026-07-19,mari,Marilyna's,Regular Hawaiian [Dine-in],16.36,1.0,1.25
+2026-07-19,mari,Marilyna's,Large Garlic Cheese Pizza,16.36,1.0,2.11
+2026-07-19,mari,Marilyna's,VB Can D,16.35,3.0,7.01
+2026-07-19,mari,Marilyna's,Add Pepperoni,13.65,5.0,0.0
+2026-07-19,mari,Marilyna's,Coke Zero 1.25L,12.72,4.0,16.78
+2026-07-19,mari,Marilyna's,Sunkist 1.25L,12.72,2.0,4.08
+2026-07-19,mari,Marilyna's,Add Anchovies,12.19,7.0,0.0
+2026-07-19,mari,Marilyna's,Coke Can,12.03,4.0,7.56
+2026-07-19,mari,Marilyna's,Chicken,11.28,3.0,0.0
+2026-07-19,mari,Marilyna's,Sprite Can,10.92,3.0,5.69
+2026-07-19,mari,Marilyna's,Gluten-free Base,9.4,2.0,8.2
+2026-07-19,mari,Marilyna's,Add Chilli,9.22,10.0,0.0
+2026-07-19,mari,Marilyna's,Add Bacon,9.1,3.0,0.0
+2026-07-19,mari,Marilyna's,Add Mushrooms,8.3,6.0,0.0
+2026-07-19,mari,Marilyna's,Add Calabrese,7.28,2.0,0.0
+2026-07-19,mari,Marilyna's,Bundaberg Ginger Beer D,7.27,1.0,3.59
+2026-07-19,mari,Marilyna's,Extra Mozzarella,6.88,3.0,0.0
+2026-07-19,mari,Marilyna's,Add Garlic,6.8,5.0,0.0
+2026-07-19,mari,Marilyna's,Add Prosciutto,6.4,2.0,0.0
+2026-07-19,mari,Marilyna's,Solo 1.25L,6.36,1.0,3.59
+2026-07-19,mari,Marilyna's,Btl Fever-Tree Mediterannean Tonic D,6.36,1.0,4.31
+2026-07-19,mari,Marilyna's,Grifter Pale Ale Cans D,6.36,1.0,3.26
+2026-07-19,mari,Marilyna's,Add Fetta,5.73,2.0,0.0
+2026-07-19,mari,Marilyna's,Add Olives,5.62,4.0,0.0
+2026-07-19,mari,Marilyna's,Add Ham,5.46,2.0,0.0
+2026-07-19,mari,Marilyna's,Add Pineapple,5.44,4.0,0.0
+2026-07-19,mari,Marilyna's,Add Capsicum,4.13,3.0,0.0
+2026-07-19,mari,Marilyna's,Add Jalapenos,3.66,4.0,0.0
+2026-07-19,mari,Marilyna's,Chicken.,3.64,2.0,0.0
+2026-07-19,mari,Marilyna's,Add Chicken,3.64,1.0,0.0
+2026-07-19,mari,Marilyna's,Add Rocket,2.86,2.0,0.0
+2026-07-19,mari,Marilyna's,Sour Cream,2.76,3.0,0.0
+2026-07-19,mari,Marilyna's,Add Pesto,2.73,3.0,0.0
+2026-07-19,mari,Marilyna's,Add Bocconcini,2.73,1.0,0.0
+2026-07-19,mari,Marilyna's,Add Basil,1.82,2.0,0.0
+2026-07-19,mari,Marilyna's,Add Pumpkin,1.5,1.0,0.0
+2026-07-19,mari,Marilyna's,Add Minted Yoghurt,1.36,1.0,0.0
+2026-07-19,mari,Marilyna's,Add Sour Cream,1.36,1.0,0.0
+2026-07-19,mari,Marilyna's,Add Cherry Tomatoes,1.36,1.0,0.0
+2026-07-19,mari,Marilyna's,Add Oregano,0.45,1.0,0.0
+2026-07-19,mari,Marilyna's,Online Discount,-102.05,10.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Stone & Wood,1989.25,142.7,538.5
+2026-07-19,stow,Bar / FOH (no reporting group),Fresh is Best Lager,1862.99,198.7,425.07
+2026-07-19,stow,Bar / FOH (no reporting group),Guinness Draught,1503.33,111.7,517.73
+2026-07-19,stow,Bar / FOH (no reporting group),Version Two Pinot Grigio,1326.1,107.7,250.34
+2026-07-19,stow,Bar / FOH (no reporting group),Grifter Pale,1254.87,117.0,350.57
+2026-07-19,stow,Bar / FOH (no reporting group),Mulled Wine,1235.63,88.0,181.89
+2026-07-19,stow,Bar / FOH (no reporting group),Classic Margarita,1220.55,75.0,303.16
+2026-07-19,stow,Bar / FOH (no reporting group),Status Quo,1001.28,67.0,256.48
+2026-07-19,stow,Bar / FOH (no reporting group),Jalapeño Marg,993.38,53.0,40.31
+2026-07-19,stow,Bar / FOH (no reporting group),Kirin,960.06,66.7,280.15
+2026-07-19,stow,Bar / FOH (no reporting group),Kuku Sauvignon Blanc,849.27,58.0,190.42
+2026-07-19,stow,Bar / FOH (no reporting group),Philter XPA,789.17,73.7,190.79
+2026-07-19,stow,Bar / FOH (no reporting group),Villa Fresco Sangiovese,788.91,75.7,200.28
+2026-07-19,stow,Bar / FOH (no reporting group),Petits Detours Rosé,771.32,47.0,183.23
+2026-07-19,stow,Bar / FOH (no reporting group),Geppetto Pinot Noir,728.26,37.0,197.93
+2026-07-19,stow,Bar / FOH (no reporting group),Mother's Milk Shiraz,642.16,42.0,152.23
+2026-07-19,stow,Bar / FOH (no reporting group),Negroni,540.83,29.0,112.81
+2026-07-19,stow,Bar / FOH (no reporting group),Coconut Margarita,520.86,28.0,114.97
+2026-07-19,stow,Bar / FOH (no reporting group),Espresso Martini,515.85,32.0,103.54
+2026-07-19,stow,Bar / FOH (no reporting group),Ottelia Chardonnay,465.92,23.0,118.76
+2026-07-19,stow,Bar / FOH (no reporting group),Crankshaft IPA,464.62,31.0,108.32
+2026-07-19,stow,Bar / FOH (no reporting group),Dom P|rignon Champagne,440.0,1.0,398.59
+2026-07-19,stow,Bar / FOH (no reporting group),White Light Pure Vodka [House],426.04,46.0,69.89
+2026-07-19,stow,Bar / FOH (no reporting group),Trutta Streamside Shiraz [Chilled],384.67,21.0,93.5
+2026-07-19,stow,Bar / FOH (no reporting group),Trentham Estate Rosé,382.7,34.0,88.62
+2026-07-19,stow,Bar / FOH (no reporting group),Scorched As,353.44,19.0,81.14
+2026-07-19,stow,Bar / FOH (no reporting group),Fresh is Best Summer Lager,350.63,43.0,74.25
+2026-07-19,stow,Bar / FOH (no reporting group),Version Two Sparkling,331.62,35.0,68.9
+2026-07-19,stow,Bar / FOH (no reporting group),A. Rodda Chardonnay,323.33,6.0,106.47
+2026-07-19,stow,Bar / FOH (no reporting group),Flower Child,301.61,16.0,46.51
+2026-07-19,stow,Bar / FOH (no reporting group),Das Juice Pink Pet Nat,291.07,7.0,75.9
+2026-07-19,stow,Bar / FOH (no reporting group),Tommy's Margarita,279.32,16.0,79.74
+2026-07-19,stow,Bar / FOH (no reporting group),Casa Gheller Prosecco,269.62,18.0,60.23
+2026-07-19,stow,Bar / FOH (no reporting group),Cri De Couer Pinot Noir,258.17,3.0,136.73
+2026-07-19,stow,Bar / FOH (no reporting group),Year Wines Fiano,258.08,15.0,64.1
+2026-07-19,stow,Bar / FOH (no reporting group),Biscoff Espresso,257.96,12.0,39.03
+2026-07-19,stow,Bar / FOH (no reporting group),Bombay Dry [House],248.93,28.0,60.25
+2026-07-19,stow,Bar / FOH (no reporting group),Philter Red,226.52,17.7,56.1
+2026-07-19,stow,Bar / FOH (no reporting group),Sibiliana Nero D'Avola,223.56,13.0,42.49
+2026-07-19,stow,Bar / FOH (no reporting group),Ottelia Cab Sav,223.35,13.0,62.98
+2026-07-19,stow,Bar / FOH (no reporting group),Lychee Martini,208.81,14.0,50.72
+2026-07-19,stow,Bar / FOH (no reporting group),Sigurd GSM Red Blend,204.28,8.0,55.44
+2026-07-19,stow,Bar / FOH (no reporting group),Aperol Spritz,204.22,14.0,49.73
+2026-07-19,stow,Bar / FOH (no reporting group),Unico Zelo Terra Cotta,200.12,8.0,72.97
+2026-07-19,stow,Bar / FOH (no reporting group),Padrillos Malbec,194.65,12.0,47.02
+2026-07-19,stow,Bar / FOH (no reporting group),Heaps Normal Tin,186.42,18.0,48.06
+2026-07-19,stow,Bar / FOH (no reporting group),Island Time,163.33,8.0,34.62
+2026-07-19,stow,Bar / FOH (no reporting group),Lemon Meringue Martini,162.87,8.0,27.98
+2026-07-19,stow,Bar / FOH (no reporting group),Mezcal Paloma,156.31,7.0,36.0
+2026-07-19,stow,Bar / FOH (no reporting group),Amarretto Sour,153.87,8.0,32.71
+2026-07-19,stow,Bar / FOH (no reporting group),"Lemon, Lime & Bitters",146.47,31.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Glaetzer Anaperenna Shiraz Cab,140.0,5.0,37.5
+2026-07-19,stow,Bar / FOH (no reporting group),Buffalo Trace Bourbon [House],136.34,14.0,32.1
+2026-07-19,stow,Bar / FOH (no reporting group),Pepsi Max Glass,135.67,32.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Peroni 0%,126.53,15.0,27.8
+2026-07-19,stow,Bar / FOH (no reporting group),Hendrick's Gin,125.06,10.0,26.83
+2026-07-19,stow,Bar / FOH (no reporting group),Vodka Martini,121.32,6.0,18.06
+2026-07-19,stow,Bar / FOH (no reporting group),Baileys Irish Cream,120.0,12.0,19.79
+2026-07-19,stow,Bar / FOH (no reporting group),Corona,116.81,12.0,30.92
+2026-07-19,stow,Bar / FOH (no reporting group),Petits Detours Rosé Mediterranee,116.36,2.0,32.64
+2026-07-19,stow,Bar / FOH (no reporting group),A. Rodda Tempranillo,115.82,6.0,37.15
+2026-07-19,stow,Bar / FOH (no reporting group),Pepsi Glass,113.03,27.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Patron Silver Margarita,112.7,5.0,24.99
+2026-07-19,stow,Bar / FOH (no reporting group),Fresh Lime Soda,107.98,33.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Two Tonne Riesling,106.36,3.0,29.9
+2026-07-19,stow,Bar / FOH (no reporting group),Archie Rose Signature Gin,97.68,8.0,21.1
+2026-07-19,stow,Bar / FOH (no reporting group),Davy's Old Fashioned,91.67,5.0,24.37
+2026-07-19,stow,Bar / FOH (no reporting group),Quiet Riot Negroni,87.84,4.0,17.45
+2026-07-19,stow,Bar / FOH (no reporting group),San Giorgio Ciampoleto Rosso di Montalcino 2023,81.71,3.0,24.42
+2026-07-19,stow,Bar / FOH (no reporting group),Little Dragon Can,81.4,7.0,24.76
+2026-07-19,stow,Bar / FOH (no reporting group),Asahi 3.5%,80.57,8.0,19.76
+2026-07-19,stow,Bar / FOH (no reporting group),Hugo Spritz,80.15,4.0,5.39
+2026-07-19,stow,Bar / FOH (no reporting group),Balvenie 14 Year Caribbean Cask,80.0,4.0,22.02
+2026-07-19,stow,Bar / FOH (no reporting group),Gin Martini,76.65,4.0,16.25
+2026-07-19,stow,Bar / FOH (no reporting group),Lemonade Glass,74.66,18.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Hakushu 12yr,67.2,2.0,25.27
+2026-07-19,stow,Bar / FOH (no reporting group),Grey Goose,66.19,5.0,13.4
+2026-07-19,stow,Bar / FOH (no reporting group),Jack Daniels,66.18,6.0,13.56
+2026-07-19,stow,Bar / FOH (no reporting group),Trade Winds,65.32,5.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Old Fashioned,61.32,3.0,14.36
+2026-07-19,stow,Bar / FOH (no reporting group),Hahn Super Dry GF,58.86,6.0,16.08
+2026-07-19,stow,Bar / FOH (no reporting group),Wolf Lane Navy Gin Tonica,54.51,3.0,19.91
+2026-07-19,stow,Bar / FOH (no reporting group),Tiziano Grasso Barolo Briccolina 2019,54.46,1.0,30.8
+2026-07-19,stow,Bar / FOH (no reporting group),Whispering Angel Rosé,53.2,2.0,13.1
+2026-07-19,stow,Bar / FOH (no reporting group),La Petite Mort Albarino 2025,52.0,3.0,13.74
+2026-07-19,stow,Bar / FOH (no reporting group),Tito's Handmade Vodka,50.9,4.0,11.76
+2026-07-19,stow,Bar / FOH (no reporting group),Frozen Marg - Coconut,50.19,3.0,12.77
+2026-07-19,stow,Bar / FOH (no reporting group),Patron Reposodo Margarita,45.07,2.0,11.34
+2026-07-19,stow,Bar / FOH (no reporting group),$21 Custom Cocktail,44.29,4.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Monkey Shoulder Scotch [House],43.44,6.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Oceanside,43.22,3.0,10.76
+2026-07-19,stow,Bar / FOH (no reporting group),Stow Soda - Passionfruit,42.53,5.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Stow Soda - Grapefruit,42.25,5.0,0.42
+2026-07-19,stow,Bar / FOH (no reporting group),San Pellegrino 500ml,41.44,5.0,11.65
+2026-07-19,stow,Bar / FOH (no reporting group),Kraken Dark & Stormy,41.33,2.0,8.2
+2026-07-19,stow,Bar / FOH (no reporting group),Beetle Juice,40.65,2.0,7.34
+2026-07-19,stow,Bar / FOH (no reporting group),Four Pillars Bloody Shiraz Gin Tonica,39.44,2.0,10.73
+2026-07-19,stow,Bar / FOH (no reporting group),Monteith's Apple Cider Bottle,39.15,4.0,12.44
+2026-07-19,stow,Bar / FOH (no reporting group),Bombay Sapphire,38.6,3.0,7.23
+2026-07-19,stow,Bar / FOH (no reporting group),Virgin Margy,38.2,3.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Redbreast 12yr,38.18,2.0,10.21
+2026-07-19,stow,Bar / FOH (no reporting group),Grifter Big Sur IPA Tin,38.06,3.0,10.97
+2026-07-19,stow,Bar / FOH (no reporting group),Rooster Rojo Blanco Tequila [House],38.0,4.0,9.4
+2026-07-19,stow,Bar / FOH (no reporting group),Vinada Sparkling Rose,34.57,3.0,9.15
+2026-07-19,stow,Bar / FOH (no reporting group),Ravensworth Skins Gris,34.54,2.0,8.08
+2026-07-19,stow,Bar / FOH (no reporting group),Apple Juice Glass,33.28,7.0,4.62
+2026-07-19,stow,Bar / FOH (no reporting group),Wolf Lane Navy Gin,33.05,2.0,7.3
+2026-07-19,stow,Bar / FOH (no reporting group),Veuve Clicquot Yellow Label,32.73,1.0,16.15
+2026-07-19,stow,Bar / FOH (no reporting group),Fireball,32.73,3.0,5.07
+2026-07-19,stow,Bar / FOH (no reporting group),Whisky Sour,31.69,2.0,9.17
+2026-07-19,stow,Bar / FOH (no reporting group),Better Beer Tin,30.86,3.0,7.5
+2026-07-19,stow,Bar / FOH (no reporting group),Bundaberg Ginger Beer,30.41,7.0,6.69
+2026-07-19,stow,Bar / FOH (no reporting group),Patron Silver,27.28,2.0,6.56
+2026-07-19,stow,Bar / FOH (no reporting group),Sailor Jerry [House],26.36,3.0,5.74
+2026-07-19,stow,Bar / FOH (no reporting group),Hyoketsu Lemon Can,26.31,2.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Dark & Stormy,25.46,2.0,7.58
+2026-07-19,stow,Bar / FOH (no reporting group),Grey Goose Vodka Martini,25.0,1.0,4.05
+2026-07-19,stow,Bar / FOH (no reporting group),Bombay Sapphire Gin Martini,23.48,1.0,3.69
+2026-07-19,stow,Bar / FOH (no reporting group),Young Henrys Cloudy Cider Can,23.27,2.0,5.64
+2026-07-19,stow,Bar / FOH (no reporting group),Puerto Sunset,21.6,1.0,4.84
+2026-07-19,stow,Bar / FOH (no reporting group),Limoncello Spritz,21.0,1.0,5.32
+2026-07-19,stow,Bar / FOH (no reporting group),Campari,20.33,2.0,3.34
+2026-07-19,stow,Bar / FOH (no reporting group),Campari Spritz,20.0,1.0,4.4
+2026-07-19,stow,Bar / FOH (no reporting group),Daiquiri,19.72,1.0,2.49
+2026-07-19,stow,Bar / FOH (no reporting group),Peroni,19.1,2.0,5.12
+2026-07-19,stow,Bar / FOH (no reporting group),Poor Tom's Strawberry Gin Tonica,19.09,1.0,4.45
+2026-07-19,stow,Bar / FOH (no reporting group),French Martini,18.0,1.0,3.91
+2026-07-19,stow,Bar / FOH (no reporting group),Pink Lemonade Glass,16.9,4.0,0.55
+2026-07-19,stow,Bar / FOH (no reporting group),Two Bays Pale Ale Can,16.9,1.0,5.41
+2026-07-19,stow,Bar / FOH (no reporting group),Johnnie Walker Black,15.95,1.0,2.34
+2026-07-19,stow,Bar / FOH (no reporting group),Angel's Envy Bourbon,15.45,1.0,3.59
+2026-07-19,stow,Bar / FOH (no reporting group),Casamigos Reposado Tequila,15.45,1.0,4.07
+2026-07-19,stow,Bar / FOH (no reporting group),Pornstar Martini,13.2,1.0,3.39
+2026-07-19,stow,Bar / FOH (no reporting group),Ginger Ale,10.92,3.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Fellr Watermelon Seltzer Tin,10.91,1.0,3.41
+2026-07-19,stow,Bar / FOH (no reporting group),Jameson Irish Whiskey,10.91,1.0,2.26
+2026-07-19,stow,Bar / FOH (no reporting group),4 Pines Kolsch Bottle,10.33,1.0,2.65
+2026-07-19,stow,Bar / FOH (no reporting group),Hot Chocolate,10.29,1.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),+$3 Premium Spirit,7.65,3.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Orange Juice Glass,5.0,1.0,0.48
+2026-07-19,stow,Bar / FOH (no reporting group),Fever-Tree Light Tonic [mixer],3.76,4.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Tonic Glass,3.65,1.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Fever-Tree Mediterannean  [mixer],2.82,3.0,0.0
 2026-07-19,stow,Bar / FOH (no reporting group),Swap Fries for Buffalo Wings & Blue Cheese Dip,1.82,1.0,0.0
-2026-07-19,stow,Big Plates,Fancy Pants Parmy - Classic,822.0,34.0,275.59
-2026-07-19,stow,Big Plates,Stow Schnitty,633.94,30.0,159.78
-2026-07-19,stow,Big Plates,American Standard Burger,578.05,26.0,151.95
-2026-07-19,stow,Big Plates,Chicken Burrito,377.7,15.0,101.98
-2026-07-19,stow,Big Plates,Pie,311.04,12.0,0.0
-2026-07-19,stow,Big Plates,Beef Burrito,235.51,11.0,74.48
-2026-07-19,stow,Big Plates,Chicken Shindig Burger,233.61,11.0,52.44
-2026-07-19,stow,Big Plates,Fish Burrito,162.8,6.0,34.02
-2026-07-19,stow,Big Plates,Eggplant Parmy,94.88,5.0,0.0
-2026-07-19,stow,Big Plates,Cauliflower Burrito,81.39,3.0,15.42
-2026-07-19,stow,Big Plates,Eggplant Schnitty,63.04,3.0,12.81
-2026-07-19,stow,Big Plates,Fancy Pants Parmy - Mexicali,28.16,1.0,0.0
-2026-07-19,stow,Bottles / Cans Alcoholic,Corona,84.97,9.0,23.19
-2026-07-19,stow,Bottles / Cans Alcoholic,Little Dragon Can,68.9,6.0,21.22
-2026-07-19,stow,Bottles / Cans Alcoholic,Hahn Super Dry GF,58.86,6.0,16.08
-2026-07-19,stow,Bottles / Cans Alcoholic,Asahi 3.5%,37.87,4.0,9.88
-2026-07-19,stow,Bottles / Cans Alcoholic,Monteith's Apple Cider Bottle,28.65,3.0,9.33
-2026-07-19,stow,Bottles / Cans Alcoholic,Hyoketsu Lemon Can,26.31,2.0,0.0
-2026-07-19,stow,Bottles / Cans Alcoholic,Peroni,19.1,2.0,5.12
-2026-07-19,stow,Bottles / Cans Alcoholic,Two Bays Pale Ale Can,16.9,1.0,5.41
-2026-07-19,stow,Bottles / Cans Alcoholic,Grifter Big Sur IPA Tin,11.46,1.0,3.66
-2026-07-19,stow,Bottles / Cans Alcoholic,Young Henrys Cloudy Cider Can,11.27,1.0,2.82
-2026-07-19,stow,Bottles / Cans Alcoholic,Fellr Watermelon Seltzer Tin,10.91,1.0,3.41
-2026-07-19,stow,Bottles / Cans Alcoholic,4 Pines Kolsch Bottle,10.33,1.0,2.65
-2026-07-19,stow,Bottles / Cans Alcoholic,Better Beer Tin,9.86,1.0,2.5
-2026-07-19,stow,Cocktails - Classic,Classic Margarita,1057.26,67.0,270.96
-2026-07-19,stow,Cocktails - Classic,Jalapeño Marg,770.22,42.0,31.94
-2026-07-19,stow,Cocktails - Classic,Coconut Margarita,497.86,27.0,110.87
-2026-07-19,stow,Cocktails - Classic,Espresso Martini,401.23,26.0,84.13
-2026-07-19,stow,Cocktails - Classic,Negroni,364.11,21.0,81.65
-2026-07-19,stow,Cocktails - Classic,Tommy's Margarita,241.77,14.0,69.79
-2026-07-19,stow,Cocktails - Classic,Lychee Martini,196.81,13.0,47.1
-2026-07-19,stow,Cocktails - Classic,Aperol Spritz,184.22,13.0,46.18
-2026-07-19,stow,Cocktails - Classic,Vodka Martini,121.32,6.0,18.06
-2026-07-19,stow,Cocktails - Classic,Patron Silver Margarita,112.7,5.0,24.99
-2026-07-19,stow,Cocktails - Classic,Gin Martini,76.65,4.0,16.25
-2026-07-19,stow,Cocktails - Classic,Old Fashioned,61.32,3.0,14.36
-2026-07-19,stow,Cocktails - Classic,Hugo Spritz,59.15,3.0,4.04
-2026-07-19,stow,Cocktails - Classic,Amarretto Sour,57.27,3.0,12.27
-2026-07-19,stow,Cocktails - Classic,Frozen Marg - Coconut,50.19,3.0,12.77
-2026-07-19,stow,Cocktails - Classic,Patron Reposodo Margarita,45.07,2.0,11.34
-2026-07-19,stow,Cocktails - Classic,Kraken Dark & Stormy,41.33,2.0,8.2
-2026-07-19,stow,Cocktails - Classic,Dark & Stormy,25.46,2.0,7.58
-2026-07-19,stow,Cocktails - Classic,Bombay Sapphire Gin Martini,23.48,1.0,3.69
-2026-07-19,stow,Cocktails - Classic,Daiquiri,19.72,1.0,2.49
-2026-07-19,stow,Cocktails - Classic,Whisky Sour,19.09,1.0,4.58
-2026-07-19,stow,Cocktails - Classic,$21 Custom Cocktail,19.09,1.0,0.0
-2026-07-19,stow,Cocktails - Signature,Mulled Wine,879.64,64.0,132.3
-2026-07-19,stow,Cocktails - Signature,Scorched As,281.58,15.0,64.08
-2026-07-19,stow,Cocktails - Signature,Flower Child,222.41,12.0,34.89
-2026-07-19,stow,Cocktails - Signature,Biscoff Espresso,210.45,10.0,32.52
-2026-07-19,stow,Cocktails - Signature,Island Time,163.33,8.0,34.62
-2026-07-19,stow,Cocktails - Signature,Lemon Meringue Martini,162.87,8.0,27.98
-2026-07-19,stow,Cocktails - Signature,Mezcal Paloma,156.31,7.0,36.0
-2026-07-19,stow,Cocktails - Signature,Davy's Old Fashioned,66.89,3.0,14.62
-2026-07-19,stow,Cocktails - Signature,Quiet Riot Negroni,64.09,3.0,13.09
-2026-07-19,stow,Cocktails - Signature,Beetle Juice,40.65,2.0,7.34
-2026-07-19,stow,Cocktails - Signature,Oceanside,27.73,2.0,7.17
-2026-07-19,stow,Cocktails - Signature,Puerto Sunset,21.6,1.0,4.84
-2026-07-19,stow,Delivery Kitchen,BBQ Wings D,218.24,19.0,59.68
-2026-07-19,stow,Delivery Kitchen,Buffalo Wings D,161.87,11.0,42.92
-2026-07-19,stow,Delivery Kitchen,Rocket Man D,117.29,9.0,0.0
-2026-07-19,stow,Delivery Kitchen,Chicken Burrito D,90.92,4.0,27.2
-2026-07-19,stow,Delivery Kitchen,Fries D,79.1,7.0,0.0
-2026-07-19,stow,Delivery Kitchen,Beef Burger D,69.1,3.0,0.0
-2026-07-19,stow,Delivery Kitchen,Fish Burrito D,50.0,2.0,11.34
-2026-07-19,stow,Delivery Kitchen,Fish Tacos D,32.72,2.0,4.36
-2026-07-19,stow,Delivery Kitchen,Beef Burrito D,27.27,1.0,6.77
-2026-07-19,stow,Delivery Kitchen,Chicken Parmy D,22.73,1.0,0.0
-2026-07-19,stow,Delivery Kitchen,Chicken Schnitty D,20.0,1.0,0.0
-2026-07-19,stow,Delivery Kitchen,Baked Camembert D,19.09,1.0,0.0
-2026-07-19,stow,Delivery Kitchen,Cauliflower Tacos D,18.18,1.0,0.0
-2026-07-19,stow,Delivery Kitchen,Lepinja Bread D,16.36,2.0,0.0
-2026-07-19,stow,Delivery Kitchen,Arancini Balls 5pcs D,15.91,1.0,0.0
-2026-07-19,stow,Delivery Kitchen,Sweet Potato Fries D,12.73,1.0,2.53
-2026-07-19,stow,Delivery Kitchen,Kids Nuggets D,12.73,1.0,2.25
-2026-07-19,stow,Delivery Kitchen,Brownie D,11.82,6.0,11.68
-2026-07-19,stow,Delivery Kitchen,Onion Rings D,11.73,1.0,0.0
-2026-07-19,stow,Desserts,Brownie,67.27,6.0,16.94
-2026-07-19,stow,Gin,Bombay Dry [House],193.93,23.0,49.49
-2026-07-19,stow,Gin,Hendrick's Gin,116.66,9.0,24.15
-2026-07-19,stow,Gin,Archie Rose Signature Gin,97.68,8.0,21.1
-2026-07-19,stow,Gin,Wolf Lane Navy Gin Tonica,41.31,2.0,13.27
-2026-07-19,stow,Gin,Four Pillars Bloody Shiraz Gin Tonica,39.44,2.0,10.73
-2026-07-19,stow,Gin,Bombay Sapphire,38.6,3.0,7.23
-2026-07-19,stow,Gin,Poor Tom's Strawberry Gin Tonica,19.09,1.0,4.45
-2026-07-19,stow,Kids Meals,Kids Nuggets & Chips,21.28,4.0,8.98
-2026-07-19,stow,Kids Meals,Kids Icecream,14.12,3.0,2.22
-2026-07-19,stow,Kids Meals,Kids Margherita Pizza,12.2,1.0,0.0
+2026-07-19,stow,Bar / FOH (no reporting group),Bry Ol San Pell,0.05,1.0,2.33
+2026-07-19,stow,Kitchen (no reporting group),Lamb Roast,1707.57,57.0,399.96
+2026-07-19,stow,Kitchen (no reporting group),Fancy Pants Parmy - Classic,969.85,39.0,316.12
+2026-07-19,stow,Kitchen (no reporting group),American Standard Burger,769.89,33.0,192.86
+2026-07-19,stow,Kitchen (no reporting group),Stow Schnitty,661.73,31.0,165.11
+2026-07-19,stow,Kitchen (no reporting group),Sensei Calamari,576.12,31.0,71.48
+2026-07-19,stow,Kitchen (no reporting group),Fish Tacos,572.65,30.0,65.54
+2026-07-19,stow,Kitchen (no reporting group),Chicken Roast,549.82,18.0,82.59
+2026-07-19,stow,Kitchen (no reporting group),Arancini Balls [5pc],517.92,25.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Baked Camembert,467.92,22.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Rosemary Salted Fries,467.82,41.0,76.06
+2026-07-19,stow,Kitchen (no reporting group),Pie,457.95,20.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Buffalo Wings,393.01,24.0,93.66
+2026-07-19,stow,Kitchen (no reporting group),Chicken Burrito,377.7,15.0,101.98
+2026-07-19,stow,Kitchen (no reporting group),Beef Cheek,260.87,8.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Sweet Potato Fries,257.83,23.0,58.15
+2026-07-19,stow,Kitchen (no reporting group),BBQ Wings,253.41,16.0,50.26
+2026-07-19,stow,Kitchen (no reporting group),Bang Bang Cauli,252.31,17.0,46.94
+2026-07-19,stow,Kitchen (no reporting group),BBQ Wings D,248.79,22.0,69.1
+2026-07-19,stow,Kitchen (no reporting group),Beef Burrito,235.51,11.0,74.48
+2026-07-19,stow,Kitchen (no reporting group),Chicken Shindig Burger,233.61,11.0,52.44
+2026-07-19,stow,Kitchen (no reporting group),Rocket Man,187.87,12.0,38.36
+2026-07-19,stow,Kitchen (no reporting group),Buffalo Wings D,176.42,12.0,46.82
+2026-07-19,stow,Kitchen (no reporting group),Fish Burrito,162.8,6.0,34.02
+2026-07-19,stow,Kitchen (no reporting group),Nut Roast,147.89,5.0,26.68
+2026-07-19,stow,Kitchen (no reporting group),Eggplant Parmy,124.83,6.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Amalfi Olives,121.32,11.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Rocket Man D,117.29,9.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Cauliflower Tacos,93.92,5.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Chicken Burrito D,90.92,4.0,27.2
+2026-07-19,stow,Kitchen (no reporting group),Eggplant Schnitty,89.9,4.0,17.08
+2026-07-19,stow,Kitchen (no reporting group),Cauliflower Burrito,81.39,3.0,15.42
+2026-07-19,stow,Kitchen (no reporting group),Brownie,79.66,8.0,22.59
+2026-07-19,stow,Kitchen (no reporting group),Fries D,79.1,7.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Lepinja Bread,69.99,8.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Beef Burger D,69.1,3.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Onion Rings,68.72,6.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Kids Nuggets & Chips,60.28,7.0,15.72
+2026-07-19,stow,Kitchen (no reporting group),Cauliflower Cheese,59.98,9.0,0.61
+2026-07-19,stow,Kitchen (no reporting group),Fish Burrito D,50.0,2.0,11.34
+2026-07-19,stow,Kitchen (no reporting group),Farmhouse Salad,46.76,4.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Extra Gravy,36.56,19.0,6.4
+2026-07-19,stow,Kitchen (no reporting group),Fish Tacos D,32.72,2.0,4.36
+2026-07-19,stow,Kitchen (no reporting group),Arancini Balls 5pcs D,29.91,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Fancy Pants Parmy - Mexicali,28.16,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Beef Burrito D,27.27,1.0,6.77
+2026-07-19,stow,Kitchen (no reporting group),Open Food,26.37,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),$2 Buffalo Wing,25.69,14.0,6.83
+2026-07-19,stow,Kitchen (no reporting group),Kids Margherita Pizza,25.63,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Sweet Potato Fries D,25.46,2.0,5.06
+2026-07-19,stow,Kitchen (no reporting group),Lepinja Bread D,25.36,3.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Kids Icecream,24.3,5.0,3.7
+2026-07-19,stow,Kitchen (no reporting group),Chicken Parmy D,22.73,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Extra Yorkshire Pudding,22.42,11.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Brownie D,21.82,9.0,17.52
+2026-07-19,stow,Kitchen (no reporting group),Extra Taco,20.16,3.0,3.27
+2026-07-19,stow,Kitchen (no reporting group),Chicken Schnitty D,20.0,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Eggplant Parmy D,20.0,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Aioli,19.79,46.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Baked Camembert D,19.09,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Cauliflower Tacos D,18.18,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Gravy,14.02,12.0,4.05
+2026-07-19,stow,Kitchen (no reporting group),$2 BBQ Wing,13.16,7.0,2.75
+2026-07-19,stow,Kitchen (no reporting group),Kids Nuggets D,12.73,1.0,2.25
+2026-07-19,stow,Kitchen (no reporting group),Add Grilled Fish,12.67,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Extra Veg,12.4,4.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Add Grilled Chicken,12.0,3.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Onion Rings D,11.73,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Swap Fries for Sweet Potato Fries,11.47,6.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Add Lepinja Bread,11.26,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Chipotle Mayo,6.55,7.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Hot Honey,5.64,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Caramelised Onion Jam,5.46,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),2x Aioli,4.71,5.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Make it Vegan [patty + cheese + bun],4.7,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Blue Cheese Dip,3.82,4.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),GF Flatbread,3.76,1.0,0.0
 2026-07-19,stow,Kitchen (no reporting group),Make it Vegetarian [plant-based patty],3.76,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Extra Arancini Ball,3.76,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Spicy Salsa,3.73,4.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Add Side Guac,1.97,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Sour Cream,1.88,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Swap for Sweet Potato Fries,1.88,1.0,0.0
 2026-07-19,stow,Kitchen (no reporting group),Make it Gluten-free [gf/vg bun w sweet pot. fries],1.88,1.0,0.0
-2026-07-19,stow,Kitchen Specials,Beef Cheek,143.85,5.0,0.0
-2026-07-19,stow,Liqueurs,Baileys Irish Cream,120.0,12.0,19.79
-2026-07-19,stow,Mocktails,Trade Winds,65.32,5.0,0.0
-2026-07-19,stow,Mocktails,Virgin Margy,12.2,1.0,0.0
-2026-07-19,stow,Modifiers,Bry Ol San Pell,0.05,1.0,2.33
-2026-07-19,stow,Non-alcoholic,Heaps Normal Tin,141.32,14.0,37.38
-2026-07-19,stow,Non-alcoholic,"Lemon, Lime & Bitters",106.29,23.0,0.0
-2026-07-19,stow,Non-alcoholic,Peroni 0%,99.24,12.0,22.24
-2026-07-19,stow,Non-alcoholic,Pepsi Max Glass,94.87,23.0,0.0
-2026-07-19,stow,Non-alcoholic,Pepsi Glass,86.03,21.0,0.0
-2026-07-19,stow,Non-alcoholic,Fresh Lime Soda,76.24,24.0,0.0
-2026-07-19,stow,Non-alcoholic,Lemonade Glass,57.11,14.0,0.0
-2026-07-19,stow,Non-alcoholic,San Pellegrino 500ml,41.44,5.0,11.65
-2026-07-19,stow,Non-alcoholic,Stow Soda - Passionfruit,33.53,4.0,0.0
-2026-07-19,stow,Non-alcoholic,Stow Soda - Grapefruit,33.25,4.0,0.34
-2026-07-19,stow,Non-alcoholic,Bundaberg Ginger Beer,30.41,7.0,6.69
-2026-07-19,stow,Non-alcoholic,Vinada Sparkling Rose,22.18,2.0,6.1
-2026-07-19,stow,Non-alcoholic,Pink Lemonade Glass,16.9,4.0,0.55
-2026-07-19,stow,Non-alcoholic,Apple Juice Glass,13.95,3.0,1.98
-2026-07-19,stow,Non-alcoholic,Ginger Ale,10.92,3.0,0.0
-2026-07-19,stow,Non-alcoholic,Hot Chocolate,10.29,1.0,0.0
-2026-07-19,stow,Non-alcoholic,Tonic Glass,3.65,1.0,0.0
-2026-07-19,stow,Orange / Skins Wine,Unico Zelo Terra Cotta,44.12,2.0,11.68
-2026-07-19,stow,Orange / Skins Wine,Ravensworth Skins Gris,34.54,2.0,8.08
-2026-07-19,stow,Pet Nat Wine,Das Juice Pink Pet Nat,146.48,4.0,39.6
-2026-07-19,stow,Red Wine,Villa Fresco Sangiovese,640.9,62.7,168.92
-2026-07-19,stow,Red Wine,Geppetto Pinot Noir,633.99,32.0,175.68
-2026-07-19,stow,Red Wine,Mother's Milk Shiraz,541.65,35.0,129.72
-2026-07-19,stow,Red Wine,Cri De Couer Pinot Noir,258.17,3.0,136.73
-2026-07-19,stow,Red Wine,Trutta Streamside Shiraz [Chilled],244.27,12.0,59.84
-2026-07-19,stow,Red Wine,Padrillos Malbec,194.65,12.0,47.02
-2026-07-19,stow,Red Wine,Sigurd GSM Red Blend,127.28,7.0,32.34
-2026-07-19,stow,Red Wine,Sibiliana Nero D'Avola,97.58,6.0,19.61
-2026-07-19,stow,Red Wine,Ottelia Cab Sav,93.2,6.0,27.65
-2026-07-19,stow,Red Wine,San Giorgio Ciampoleto Rosso di Montalcino 2023,81.71,3.0,24.42
-2026-07-19,stow,Red Wine,Tiziano Grasso Barolo Briccolina 2019,54.46,1.0,30.8
-2026-07-19,stow,Red Wine,A. Rodda Tempranillo,42.64,2.0,14.86
-2026-07-19,stow,Rose Wine,Petits Detours Rosé,574.63,36.0,140.1
-2026-07-19,stow,Rose Wine,Trentham Estate Rosé,331.9,29.0,78.07
-2026-07-19,stow,Rose Wine,Petits Detours Rosé Mediterranee,116.36,2.0,32.64
-2026-07-19,stow,Rum,Sailor Jerry [House],26.36,3.0,5.74
-2026-07-19,stow,Salads,Rocket Man,106.86,7.0,22.38
-2026-07-19,stow,Salads,Farmhouse Salad,46.76,4.0,0.0
-2026-07-19,stow,Sides,Lepinja Bread,59.66,7.0,0.0
-2026-07-19,stow,Sides,Onion Rings,44.72,4.0,0.0
-2026-07-19,stow,Small Plates,Sensei Calamari,438.34,24.0,55.34
-2026-07-19,stow,Small Plates,Baked Camembert,416.48,20.0,0.0
-2026-07-19,stow,Small Plates,Arancini Balls [5pc],388.75,19.0,0.0
-2026-07-19,stow,Small Plates,Rosemary Salted Fries,378.4,34.0,63.07
-2026-07-19,stow,Small Plates,Fish Tacos,367.41,20.0,43.69
-2026-07-19,stow,Small Plates,Bang Bang Cauli,252.31,17.0,46.94
-2026-07-19,stow,Small Plates,Buffalo Wings,250.73,16.0,62.44
-2026-07-19,stow,Small Plates,Sweet Potato Fries,230.97,21.0,53.09
-2026-07-19,stow,Small Plates,BBQ Wings,219.06,14.0,43.98
-2026-07-19,stow,Small Plates,Cauliflower Tacos,93.92,5.0,0.0
-2026-07-19,stow,Small Plates,Amalfi Olives,85.67,8.0,0.0
-2026-07-19,stow,Sparkling Wine,Version Two Sparkling,331.62,35.0,68.9
-2026-07-19,stow,Sparkling Wine,Casa Gheller Prosecco,205.62,14.0,46.85
-2026-07-19,stow,Sparkling Wine,Veuve Clicquot Yellow Label,32.73,1.0,16.15
-2026-07-19,stow,Stow Food,Nuggets & Chips [HG],11.82,1.0,0.0
-2026-07-19,stow,Tap Beer,Fresh is Best Lager,1499.93,166.0,350.95
-2026-07-19,stow,Tap Beer,Stone & Wood,1407.65,103.0,390.78
-2026-07-19,stow,Tap Beer,Guinness Draught,1165.88,76.0,352.53
-2026-07-19,stow,Tap Beer,Grifter Pale,884.02,87.0,265.09
-2026-07-19,stow,Tap Beer,Status Quo,810.28,55.0,209.7
-2026-07-19,stow,Tap Beer,Kirin,755.1,53.7,224.91
-2026-07-19,stow,Tap Beer,Philter XPA,596.29,59.7,152.61
-2026-07-19,stow,Tap Beer,Crankshaft IPA,274.62,19.0,66.36
-2026-07-19,stow,Tap Beer,Fresh is Best Summer Lager,234.83,29.0,50.94
-2026-07-19,stow,Tap Beer,Philter Red,211.03,16.7,52.7
-2026-07-19,stow,Tequila,Rooster Rojo Blanco Tequila [House],38.0,4.0,9.4
-2026-07-19,stow,Tequila,Patron Silver,27.28,2.0,6.56
-2026-07-19,stow,Tequila,Casamigos Reposado Tequila,15.45,1.0,4.07
-2026-07-19,stow,Vodka,White Light Pure Vodka [House],346.84,38.0,57.74
-2026-07-19,stow,Vodka,Tito's Handmade Vodka,50.9,4.0,11.76
-2026-07-19,stow,Vodka,Grey Goose,38.19,3.0,8.04
-2026-07-19,stow,Whisky,Buffalo Trace Bourbon [House],136.34,14.0,32.1
-2026-07-19,stow,Whisky,Balvenie 14 Year Caribbean Cask,80.0,4.0,22.02
-2026-07-19,stow,Whisky,Jack Daniels,66.18,6.0,13.56
-2026-07-19,stow,Whisky,Monkey Shoulder Scotch [House],43.44,6.0,0.0
-2026-07-19,stow,Whisky,Redbreast 12yr,38.18,2.0,10.21
-2026-07-19,stow,Whisky,Fireball,32.73,3.0,5.07
-2026-07-19,stow,Whisky,Johnnie Walker Black,15.95,1.0,2.34
-2026-07-19,stow,Whisky,Angel's Envy Bourbon,15.45,1.0,3.59
-2026-07-19,stow,Whisky,Jameson Irish Whiskey,10.91,1.0,2.26
-2026-07-19,stow,White Wine,Version Two Pinot Grigio,1174.9,94.7,225.02
-2026-07-19,stow,White Wine,Kuku Sauvignon Blanc,649.46,45.0,148.64
-2026-07-19,stow,White Wine,Ottelia Chardonnay,367.11,18.0,96.85
-2026-07-19,stow,White Wine,A. Rodda Chardonnay,323.33,6.0,106.47
-2026-07-19,stow,White Wine,Year Wines Fiano,184.31,11.0,47.01
-2026-07-19,stow,White Wine,Two Tonne Riesling,106.36,3.0,29.9
-2026-07-19,stow,White Wine,La Petite Mort Albarino 2025,16.43,1.0,4.58
+2026-07-19,stow,Kitchen (no reporting group),Side Guac,1.85,2.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Side Guacamole,1.4,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Add Side Queso Dip,1.03,1.0,0.0
+2026-07-19,stow,Kitchen (no reporting group),Jalapeños Inside Burrito,0.94,1.0,0.0
+2026-07-19,stow,Stowaway Food,Nuggets & Chips [HG],11.82,1.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Harry's Lager,81.34,9.0,17.88
+2026-07-26,hg,Bar / FOH (no reporting group),Pepsi Max Glass,69.53,17.0,22.27
+2026-07-26,hg,Bar / FOH (no reporting group),Lychee Martini,38.19,3.0,9.42
+2026-07-26,hg,Bar / FOH (no reporting group),Sapporo,37.26,5.0,16.15
+2026-07-26,hg,Bar / FOH (no reporting group),Geppetto Chardonnay,35.46,2.0,8.3
+2026-07-26,hg,Bar / FOH (no reporting group),Aperol Spritz,30.0,2.0,7.92
+2026-07-26,hg,Bar / FOH (no reporting group),Pepsi Glass,28.63,7.0,9.17
+2026-07-26,hg,Bar / FOH (no reporting group),Yuzu Orange Soda,24.54,3.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Sapporo - 500ml,23.18,2.0,7.6
+2026-07-26,hg,Bar / FOH (no reporting group),Drunken Koi,19.09,1.0,2.65
+2026-07-26,hg,Bar / FOH (no reporting group),Demon Slayer,19.09,1.0,4.09
+2026-07-26,hg,Bar / FOH (no reporting group),Classic Margarita,17.27,1.0,3.26
+2026-07-26,hg,Bar / FOH (no reporting group),Dragon Juice,15.45,1.0,2.59
+2026-07-26,hg,Bar / FOH (no reporting group),L'esprit Rosé,14.55,1.0,3.6
+2026-07-26,hg,Bar / FOH (no reporting group),River Retreat Pinot Grigio,10.91,1.0,2.01
+2026-07-26,hg,Bar / FOH (no reporting group),Pink Lemonade Glass,8.18,2.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Dragon Soda,8.18,1.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Apple Juice Glass,7.28,2.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Lemon Lime Bitters,4.09,1.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Lemonade Glass,4.09,1.0,0.0
+2026-07-26,hg,Bar / FOH (no reporting group),Chicken,3.64,1.0,0.0
+2026-07-26,hg,Harry Gatos Food,Unlimited Dumplings,938.26,43.0,0.0
+2026-07-26,hg,Harry Gatos Food,Katsu Curry,76.06,3.0,0.0
+2026-07-26,hg,Harry Gatos Food,Shredded Beef,48.05,2.0,0.0
+2026-07-26,hg,Harry Gatos Food,Outback Prawn Toast,30.04,2.0,0.0
+2026-07-26,hg,Harry Gatos Food,Karaage Chicken,29.1,2.0,0.0
+2026-07-26,hg,Harry Gatos Food,Fried Rice,20.91,1.0,0.0
+2026-07-26,hg,Harry Gatos Food,Duck Spring Rolls,15.03,1.0,0.0
+2026-07-26,hg,Harry Gatos Food,Veg Spring Rolls,14.09,1.0,0.0
+2026-07-26,hg,Harry Gatos Food,BBQ Pork Buns,13.64,1.0,0.0
+2026-07-26,hg,Harry Gatos Food,Dumplings - Beef & Cabbage,12.21,1.0,0.0
+2026-07-26,hg,Harry Gatos Food,Mie Goreng,8.36,1.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Unlimited Dumplings,1134.64,52.0,364.54
+2026-07-26,hg,Kitchen (no reporting group),Miso,79.08,3.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Chicken Katsu Curry,50.0,3.0,8.57
+2026-07-26,hg,Kitchen (no reporting group),Mie Goreng,48.47,3.0,9.55
+2026-07-26,hg,Kitchen (no reporting group),Dumplings - Prawn Har Gow [GF],32.73,2.0,8.83
+2026-07-26,hg,Kitchen (no reporting group),Chicken Karaage,30.9,2.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Tonkotsu,26.36,1.0,4.16
+2026-07-26,hg,Kitchen (no reporting group),Vegetarian Spring Rolls,25.45,2.0,3.3
+2026-07-26,hg,Kitchen (no reporting group),Fried Rice,20.91,1.0,2.68
+2026-07-26,hg,Kitchen (no reporting group),BBQ Pork Buns,13.64,1.0,3.5
+2026-07-26,hg,Kitchen (no reporting group),Dumplings - Beef & Cabbage,12.73,1.0,1.47
+2026-07-26,hg,Kitchen (no reporting group),Kids Tonkotsu,11.82,1.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Kids Unlimited Dumplings,10.91,1.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Shoyu,10.54,1.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Fried Egg,6.36,2.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Shredded Beef,5.45,1.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),1/2 Marinated Egg,3.64,2.0,0.0
+2026-07-26,hg,Kitchen (no reporting group),Duck Spring Roll,3.36,1.0,3.57
+2026-07-26,hg,Kitchen (no reporting group),GFO [GF Ramen Noodles],2.73,1.0,0.0
+2026-07-26,mari,Marilyna's,Regular Sanchez [Dine-in],82.87,5.0,16.96
+2026-07-26,mari,Marilyna's,Regular Truffalo Soldier [Dine-in],80.16,5.0,16.34
+2026-07-26,mari,Marilyna's,Regular Little Italy [Dine-in],66.52,4.0,19.22
+2026-07-26,mari,Marilyna's,Large Meatlovers,56.36,2.0,13.91
+2026-07-26,mari,Marilyna's,Large Super House Special,54.54,2.0,15.44
+2026-07-26,mari,Marilyna's,Regular Jimmy Jury [Dine-in],43.08,3.0,10.01
+2026-07-26,mari,Marilyna's,Regular Meatlovers,40.46,2.0,9.96
+2026-07-26,mari,Marilyna's,Large Pepperoni,36.36,2.0,9.13
+2026-07-26,mari,Marilyna's,Regular New Yorker [Dine-in],33.79,2.0,7.17
+2026-07-26,mari,Marilyna's,Regular Uber Margherita [Dine-in],33.27,2.0,6.39
+2026-07-26,mari,Marilyna's,Regular Bubba Gump [Dine-in],33.26,2.0,7.92
+2026-07-26,mari,Marilyna's,Regular Hail Africa [Dine-in],33.26,2.0,5.82
+2026-07-26,mari,Marilyna's,Large Meatlovers Wings Deal,30.0,1.0,6.96
+2026-07-26,mari,Marilyna's,Large Little Italy,28.18,1.0,8.84
+2026-07-26,mari,Marilyna's,Large Hail Africa Wings Deal,27.27,1.0,6.24
+2026-07-26,mari,Marilyna's,Large Paddock,24.55,1.0,5.11
+2026-07-26,mari,Marilyna's,Regular Bubba Gump,23.64,1.0,3.96
+2026-07-26,mari,Marilyna's,Large Tandoori Chicken,22.73,1.0,3.21
+2026-07-26,mari,Marilyna's,Large Sanchez,22.1,1.0,5.49
+2026-07-26,mari,Marilyna's,Large Jimmy Jury,22.09,1.0,6.19
+2026-07-26,mari,Marilyna's,Regular Roma Special,21.82,1.0,4.03
+2026-07-26,mari,Marilyna's,Regular Truffalo Soldier,21.82,1.0,3.27
+2026-07-26,mari,Marilyna's,Garlic Bread,20.92,4.0,5.68
+2026-07-26,mari,Marilyna's,Two Bays GF Pale Can D,20.37,2.0,10.82
+2026-07-26,mari,Marilyna's,Regular Hawaiian,20.0,1.0,1.25
+2026-07-26,mari,Marilyna's,Large Margherita,18.18,1.0,2.3
+2026-07-26,mari,Marilyna's,Regular Cosmopolitan,17.73,1.0,4.73
+2026-07-26,mari,Marilyna's,Regular Super House Special [Dine-in],16.91,1.0,5.53
+2026-07-26,mari,Marilyna's,Regular Meatlovers [Dine-in],16.91,1.0,4.98
+2026-07-26,mari,Marilyna's,Regular The Paddock [Dine-in],16.9,1.0,3.1
+2026-07-26,mari,Marilyna's,Axl Rose Pizza,16.89,1.0,0.0
+2026-07-26,mari,Marilyna's,Regular Roma Special [Dine-in],16.36,1.0,4.03
+2026-07-26,mari,Marilyna's,Regular Cosmopolitan [Dine-in],14.72,1.0,4.73
+2026-07-26,mari,Marilyna's,Regular Pepperoni,13.64,1.0,2.13
+2026-07-26,mari,Marilyna's,Regular Garlic Cheese Pizza,8.18,1.0,1.39
+2026-07-26,mari,Marilyna's,Delivery Fee - Curl Curl / Manly / Dee Why,5.91,1.0,0.0
+2026-07-26,mari,Marilyna's,Cheesy Garlic Bread,5.45,1.0,1.77
+2026-07-26,mari,Marilyna's,Delivery Fee - Freshwater / Queenscliff,5.0,1.0,0.0
+2026-07-26,mari,Marilyna's,Add Calabrese,3.64,1.0,0.0
+2026-07-26,mari,Marilyna's,Vegan Cheese [Pizza],2.73,1.0,0.0
+2026-07-26,mari,Marilyna's,Online Surcharge,2.58,3.0,0.0
+2026-07-26,mari,Marilyna's,Add Olives,2.58,2.0,0.0
+2026-07-26,mari,Marilyna's,Add Anchovies,1.82,1.0,0.0
+2026-07-26,mari,Marilyna's,Chicken,1.46,1.0,0.0
+2026-07-26,mari,Marilyna's,Add Pineapple,1.36,1.0,0.0
+2026-07-26,mari,Marilyna's,Add Rocket,1.36,1.0,0.0
+2026-07-26,mari,Marilyna's,Online Discount,-11.59,1.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Guinness Draught,239.17,15.0,70.77
+2026-07-26,stow,Bar / FOH (no reporting group),Fresh is Best Lager,233.07,26.0,54.39
+2026-07-26,stow,Bar / FOH (no reporting group),Grifter Pale,179.57,17.7,51.56
+2026-07-26,stow,Bar / FOH (no reporting group),Villa Fresco Sangiovese,140.75,11.0,36.18
+2026-07-26,stow,Bar / FOH (no reporting group),Classic Margarita,129.09,8.0,32.2
+2026-07-26,stow,Bar / FOH (no reporting group),Mulled Wine,114.57,9.0,18.6
+2026-07-26,stow,Bar / FOH (no reporting group),Fresh is Best Summer Lager,93.4,11.0,19.63
+2026-07-26,stow,Bar / FOH (no reporting group),Petits Detours Rosé,87.78,6.0,20.98
+2026-07-26,stow,Bar / FOH (no reporting group),Jalapeño Marg,85.69,4.0,3.04
+2026-07-26,stow,Bar / FOH (no reporting group),Version Two Pinot Grigio,80.01,10.4,18.38
+2026-07-26,stow,Bar / FOH (no reporting group),Status Quo,75.36,5.0,19.75
+2026-07-26,stow,Bar / FOH (no reporting group),Stone & Wood,71.69,6.0,19.48
+2026-07-26,stow,Bar / FOH (no reporting group),Philter XPA,70.34,8.0,18.65
+2026-07-26,stow,Bar / FOH (no reporting group),Version Two Sparkling,64.53,8.0,14.13
+2026-07-26,stow,Bar / FOH (no reporting group),Kuku Sauvignon Blanc,63.65,5.0,14.57
+2026-07-26,stow,Bar / FOH (no reporting group),Trentham Estate Rosé,57.44,5.0,11.96
+2026-07-26,stow,Bar / FOH (no reporting group),Ottelia Chardonnay,55.29,4.0,13.83
+2026-07-26,stow,Bar / FOH (no reporting group),Aperol Spritz,49.51,3.0,10.66
+2026-07-26,stow,Bar / FOH (no reporting group),White Light Pure Vodka [House],46.08,6.0,9.12
+2026-07-26,stow,Bar / FOH (no reporting group),Crankshaft IPA,44.09,3.0,10.74
+2026-07-26,stow,Bar / FOH (no reporting group),Tommy's Margarita,43.18,2.0,9.95
+2026-07-26,stow,Bar / FOH (no reporting group),Geppetto Pinot Noir,41.37,3.0,10.54
+2026-07-26,stow,Bar / FOH (no reporting group),Negroni,40.0,2.0,7.79
+2026-07-26,stow,Bar / FOH (no reporting group),Stow Vermouth Blend [30ml],32.73,3.0,3.76
+2026-07-26,stow,Bar / FOH (no reporting group),Pepsi Glass,32.72,8.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Espresso Martini,32.72,2.0,6.47
+2026-07-26,stow,Bar / FOH (no reporting group),Ottelia Cab Sav,30.9,2.0,9.22
+2026-07-26,stow,Bar / FOH (no reporting group),Lemon Meringue Martini,29.1,2.0,6.99
+2026-07-26,stow,Bar / FOH (no reporting group),Oceanside,28.18,2.0,7.17
+2026-07-26,stow,Bar / FOH (no reporting group),Mother's Milk Shiraz,27.73,2.0,6.44
+2026-07-26,stow,Bar / FOH (no reporting group),"Lemon, Lime & Bitters",27.6,6.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Peroni 0%,24.54,3.0,5.56
+2026-07-26,stow,Bar / FOH (no reporting group),Fresh Lime Soda,22.67,7.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Pepsi Max Glass,20.45,5.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Gin Martini,20.0,1.0,4.06
+2026-07-26,stow,Bar / FOH (no reporting group),Jameson Irish Whiskey,17.46,2.0,4.53
+2026-07-26,stow,Bar / FOH (no reporting group),Trutta Streamside Shiraz [Chilled],16.36,1.0,3.74
+2026-07-26,stow,Bar / FOH (no reporting group),Padrillos Malbec,16.36,1.0,3.87
+2026-07-26,stow,Bar / FOH (no reporting group),La Petite Mort Rosso 2025,15.91,1.0,4.58
+2026-07-26,stow,Bar / FOH (no reporting group),Lemonade Glass,12.41,3.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Virgin Margy,12.2,1.0,0.0
+2026-07-26,stow,Bar / FOH (no reporting group),Little Dragon Can,9.09,1.0,3.54
+2026-07-26,stow,Bar / FOH (no reporting group),San Pellegrino 500ml,8.18,1.0,2.33
+2026-07-26,stow,Bar / FOH (no reporting group),Bombay Dry [House],6.36,1.0,2.15
+2026-07-26,stow,Bar / FOH (no reporting group),Pineapple Juice Glass,4.55,1.0,0.69
+2026-07-26,stow,Bar / FOH (no reporting group),Pink Lemonade Glass,4.09,1.0,0.14
+2026-07-26,stow,Bar / FOH (no reporting group),+$3 Premium Spirit,2.46,1.0,0.0
+2026-07-26,stow,Kitchen (no reporting group),Rosemary Salted Fries,67.25,6.0,11.14
+2026-07-26,stow,Kitchen (no reporting group),Buffalo Wings,55.15,4.0,15.61
+2026-07-26,stow,Kitchen (no reporting group),Rocket Man,23.45,2.0,6.39
+2026-07-26,stow,Kitchen (no reporting group),Sweet Potato Fries D,12.64,1.0,2.53
+2026-07-26,stow,Kitchen (no reporting group),Kids Nuggets & Chips,11.82,1.0,2.25
+2026-07-26,stow,Kitchen (no reporting group),Sweet Potato Fries,11.82,1.0,2.53
+2026-07-26,stow,Kitchen (no reporting group),Side Aioli,1.27,3.0,0.0
+2026-07-26,stow,Kitchen (no reporting group),2x Aioli,0.94,1.0,0.0
+2026-07-26,stow,Stowaway Food,Nuggets & Chips [HG],11.82,1.0,0.0

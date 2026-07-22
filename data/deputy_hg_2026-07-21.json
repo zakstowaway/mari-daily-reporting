@@ -1,15 +1,1 @@
-[
-  {
-    "timesheet_id": 35429,
-    "employee_id": 16,
-    "employee_name": "Stephanie Kunde",
-    "ou_name": "Admin",
-    "company": "Stowaway",
-    "dept": "Admin",
-    "start_time": 1784611800,
-    "end_time": 1784638800,
-    "hours": 0.7,
-    "cost": 24.5,
-    "salaried_synth": true
-  }
-]
+[]
