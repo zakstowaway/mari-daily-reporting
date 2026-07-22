@@ -43,6 +43,22 @@ def parse_num(x):
     return -v if neg else v
 
 
+# Serving-size variants of the SAME drink split it across rows. Collapse the
+# trailing " - <size>" so beer pints+schooners merge, and wine regular/large/
+# bottle/glass merge. Whitelisted tokens only — never strips flavours ("- Passion-
+# fruit"), delivery zones ("- Freshwater / Queenscliff"), or deal names.
+_SIZE_SUFFIXES = {"pint", "schooner", "regular", "large", "bottle",
+                  "glass", "large glass", "regular glass"}
+
+def normalize_product(name):
+    base, sep, suf = (name or "").rpartition(" - ")
+    if sep:
+        s = re.sub(r"\s*\[[^\]]*\]\s*$", "", suf).strip().lower()   # drop a trailing [HG] etc.
+        if s in _SIZE_SUFFIXES:
+            return base.strip()
+    return name
+
+
 def week_ending(d):                                # Sunday of d's Mon-Sun week
     return d + timedelta(days=(6 - d.weekday()))
 
@@ -107,7 +123,7 @@ def ingest_looker_backfill(agg, skip_weeks):
             if not name or not ex:
                 continue
             venue = rgv.get(rg, "stow")
-            agg[(we, venue, rg, name)][0] += ex
+            agg[(we, venue, rg, normalize_product(name))][0] += ex
             n += 1
     return n
 
@@ -155,7 +171,7 @@ def main():
                 code = dept_for(name, prefix, dmap)
                 venue = DEPT_VENUE.get(code, prefix)             # reattribute cross-till
                 rg = rgnames.get(prefix, {}).get(name) or UNMAPPED.get(code, "Unmapped")
-                k = (we, venue, rg, name)
+                k = (we, venue, rg, normalize_product(name))
                 agg[k][0] += ex
                 agg[k][1] += qty
 
