@@ -2211,6 +2211,45 @@ function renderProfitCard(day, cfg) {
   if (CURRENT_ROLE !== 'admin' || !day) return;
   const fmtP = x => (x < 0 ? '−$' : '$') + Math.round(Math.abs(x)).toLocaleString();
 
+  // DAILY = instant operational read: turnover, COGS, labour only. Fixed costs
+  // (overheads, rent, owners' salary, interest, depreciation) and the profit line
+  // are deliberately left off the day view — rent is paid whether or not we trade,
+  // so folding it into a single day paints a false picture. Those live on the
+  // weekly view. (Zak, 2026-07: "daily KPIs re wages, turnover and COGS are the
+  // most important — instant reflection, then adjust labour.")
+  if (STATE.currentTimeframe === 'day') {
+    const w = pnlWindow(day);
+    if (!w) {
+      el.innerHTML = `<div class="pcard"><div class="pcard-head"><span class="pcard-lbl">Daily KPIs</span></div>` +
+        `<div class="pcard-hero" style="color:var(--ink-soft);font-size:22px">—</div>` +
+        `<div class="pbrk-row"><span class="pbrk-l" style="font-size:12px;color:var(--ink-soft)">needs revenue + wages</span></div></div>`;
+      return;
+    }
+    const eat = toNum(day.eatclub_giveaway_ex_gst);
+    const gross = w.rev + eat;
+    const pct = x => gross ? x / gross * 100 : 0;
+    const cogsD = w.rev * w.cogsPct / 100;
+    const cogsPctG = pct(cogsD), wagesPctG = pct(w.wages);
+    const wTgt = wageTargetFor(day);
+    const grpDisp = grossRev(day);
+    const rows = STATE.histories[STATE.currentVenue] || [];
+    let anchorDay = STATE.currentDay; if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
+    const yy = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
+    const revSub = yy !== null
+      ? `<span class="${yy >= 0 ? 'vs-good' : 'vs-bad'}">${(yy >= 0 ? '+' : '−') + Math.abs(yy).toFixed(1)}%</span><span class="vs-t">vs LY</span>`
+      : '';
+    const wagesLbl = 'Labour' + (STATE.currentVenue === 'group' ? ' (excl. admin)' : '');
+    el.innerHTML =
+      `<div class="pcard">` +
+      `<div class="pcard-head"><span class="pcard-lbl">Daily KPIs</span></div>` +
+      `<div class="pmini">` +
+      `<div class="pmini-c"><p class="pmini-l">Turnover (gross)</p><p class="pmini-v">${fmtDollars(grpDisp)}</p><p class="pmini-s">${revSub}</p></div>` +
+      `<div class="pmini-c"><p class="pmini-l">COGS</p><p class="pmini-v">${fmtPct(cogsPctG)}</p><p class="pmini-s">${fmtDollars(cogsD)} · ${vsTarget(cogsPctG, COGS_TARGET_PCT)}</p></div>` +
+      `<div class="pmini-c"><p class="pmini-l">${wagesLbl}</p><p class="pmini-v">${fmtPct(wagesPctG)}</p><p class="pmini-s">${fmtDollars(w.wages)}${wTgt !== null ? ' · ' + vsTarget(wagesPctG, wTgt) : ''}</p></div>` +
+      `</div></div>`;
+    return;
+  }
+
   const ap = actualProfitWindow(day);
   if (ap) {
     // Closed period — actuals from Xero. Kept working, lightly restyled.
@@ -2654,6 +2693,7 @@ function renderVenueBreakdown() {
   if (!el) return;
   el.innerHTML = '';
   if (STATE.currentVenue !== 'group') return;
+  const showProfit = STATE.currentTimeframe !== 'day';   // daily = KPIs only, no profit/margin
   const body = [['stow', 'Stowaway'], ['hg', 'Harry Gatos'], ['mari', "Marilyna's"]].map(([vk, lbl]) => {
     const rows = STATE.histories[vk] || [];
     let anchorDay = STATE.currentDay;
@@ -2677,15 +2717,14 @@ function renderVenueBreakdown() {
       <td>${yoyCell}</td>
       <td>${hasVal(day.wages_pct) ? fmtPct(toNum(day.wages_pct)) : '—'}</td>
       <td>${a ? fmtPct(a.pct) : hasVal(day.cogs_pct) ? fmtPct(toNum(day.cogs_pct)) : '—'}</td>
-      <td>${profitCell}</td>
-      <td>${marginCell}</td>
+      ${showProfit ? `<td>${profitCell}</td><td>${marginCell}</td>` : ''}
     </tr>`;
   }).join('');
   if (!body) return;
   el.innerHTML = `<div class="vbx">
     <p class="vbx-title">Per-venue breakdown</p>
     <div class="vbx-scroll"><table class="vb-table vbx-table">
-    <thead><tr><th>Venue</th><th>Revenue</th><th>vs LY</th><th>Wages</th><th>COGS</th><th>Exp. profit</th><th>Margin</th></tr></thead>
+    <thead><tr><th>Venue</th><th>Revenue</th><th>vs LY</th><th>Wages</th><th>COGS</th>${showProfit ? '<th>Exp. profit</th><th>Margin</th>' : ''}</tr></thead>
     <tbody>${body}</tbody></table></div></div>`;
 }
 
