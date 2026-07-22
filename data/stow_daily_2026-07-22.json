@@ -1,0 +1,253 @@
+{
+  "date": "2026-07-22",
+  "generated_at": "2026-07-22T19:31:54.242898Z",
+  "venue": "stowaway",
+  "venue_display": "Stowaway Bar",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 4588.39,
+    "revenue_ex_gst": 4171.33,
+    "cogs_dollars": 987.87,
+    "cogs_pct": 23.7,
+    "gp_dollars": 3183.46,
+    "gp_pct": 76.3,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 0.0,
+    "eatclub_covers": 0,
+    "revenue_ex_gst_before_eatclub": null,
+    "food_ex_gst": 1791.24,
+    "bev_ex_gst": 2380.03,
+    "food_cogs": 382.69,
+    "bev_cogs": 605.18,
+    "food_cogs_pct": 21.4,
+    "bev_cogs_pct": 25.4,
+    "food_gp_pct": 78.6,
+    "bev_gp_pct": 74.6,
+    "mari_rideon_ex_gst": 487.86,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 0.0
+  },
+  "wages": {
+    "kitchen_dollars": 707.19,
+    "foh_dollars": 429.65,
+    "driver_dollars": 0,
+    "admin_dollars": 321.78,
+    "leave_dollars": 0,
+    "total_dollars": 1458.61,
+    "wages_pct": 35.0,
+    "net_wage_pct": null,
+    "kitchen_hours": 14.8,
+    "foh_hours": 10.2,
+    "wages_kitchen_pct": 39.5,
+    "wages_foh_pct": 18.1,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "amber",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "amber",
+    "wages_kitchen": "red",
+    "wages_foh": "yellow"
+  },
+  "targets": {
+    "cogs": {
+      "target": 28.0,
+      "amber": 32.0,
+      "red": 35.0,
+      "note": "Blended food+bev COGS; bar-heavy Stow typically lands ~28-30% \u2014 refine after 8 weeks of daily data"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 70% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Stow Schnitty",
+      "qty": 22.0,
+      "rev": 470.95,
+      "cost": 117.17,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fancy Pants Parmy - Classic",
+      "qty": 17.0,
+      "rev": 415.84,
+      "cost": 137.8,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Glaetzer Anaperenna Shiraz Cab - Regular",
+      "qty": 6.0,
+      "rev": 173.66,
+      "cost": 45.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 9.0,
+      "rev": 157.5,
+      "cost": 42.37,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Kirin - Schooner",
+      "qty": 11.0,
+      "rev": 155.83,
+      "cost": 41.31,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Mother's Milk Shiraz - Bottle",
+      "qty": 2.0,
+      "rev": 130.09,
+      "cost": 32.16,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Status Quo - Pint",
+      "qty": 7.0,
+      "rev": 122.5,
+      "cost": 29.14,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 9.0,
+      "rev": 117.0,
+      "cost": 29.22,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Kuku Sauvignon Blanc - Bottle",
+      "qty": 2.0,
+      "rev": 116.0,
+      "cost": 29.15,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Heaps Normal Tin",
+      "qty": 10.0,
+      "rev": 111.08,
+      "cost": 26.7,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "American Standard Burger",
+      "qty": 4.0,
+      "rev": 108.48,
+      "cost": 23.38,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Bottle",
+      "qty": 2.0,
+      "rev": 99.61,
+      "cost": 24.12,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Villa Fresco Sangiovese - Regular",
+      "qty": 8.0,
+      "rev": 96.0,
+      "cost": 19.3,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fancy Pants Parmy - Mexicali",
+      "qty": 3.0,
+      "rev": 92.97,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Crankshaft IPA - Pint",
+      "qty": 5.0,
+      "rev": 87.5,
+      "cost": 20.73,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Beef Cheek",
+      "qty": 2.0,
+      "rev": 82.42,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 5.0,
+      "rev": 77.06,
+      "cost": 21.78,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Mulled Wine",
+      "qty": 5.0,
+      "rev": 75.98,
+      "cost": 10.33,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Version Two Pinot Grigio - Regular",
+      "qty": 7.0,
+      "rev": 74.0,
+      "cost": 12.37,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Two Bays Pale Ale Can",
+      "qty": 4.0,
+      "rev": 73.18,
+      "cost": 21.64,
+      "cost_source": "lightspeed"
+    }
+  ]
+}
