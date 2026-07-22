@@ -62,6 +62,56 @@ def dept_for(name, prefix, dmap):
     return (dmap.get(vk, {}).get(n) or dmap.get("*", {}).get(n) or "b")
 
 
+def load_rg_venue_map():
+    """reporting_group -> venue, by which venue dominates it in rg_weekly.csv
+    (the authoritative, Lightspeed-reconciled history). Used to attribute the
+    Looker product backfill. Shared groups (Tap Beer, Cocktails) resolve to Stow,
+    which is correct for the backfill because it only covers the Stowaway Bar
+    site — HG's own-till sales aren't in it."""
+    from collections import defaultdict as _dd
+    tot = _dd(lambda: _dd(float))
+    path = os.path.join(DATA, "rg_weekly.csv")
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        for r in csv.DictReader(f):
+            tot[r["reporting_group"]][r["venue"]] += float(r.get("sales_ex_gst") or 0)
+    return {rg: max(vs, key=vs.get) for rg, vs in tot.items()}
+
+
+def ingest_looker_backfill(agg, skip_weeks):
+    """Fold data/looker_product_backfill.csv (a 13-month Lightspeed Insights
+    export: Product Name, Reporting Group, Sale Closed Week [Mon start], Total Ex
+    Tax) into agg, but ONLY for week-endings the daily insights feed doesn't
+    already cover — daily stays authoritative for recent weeks. Quantity isn't in
+    the export, so qty stays 0 for backfilled rows."""
+    path = os.path.join(DATA, "looker_product_backfill.csv")
+    if not os.path.exists(path):
+        return 0
+    rgv = load_rg_venue_map()
+    n = 0
+    with open(path, encoding="utf-8-sig") as f:
+        for r in csv.DictReader(f):
+            wk = (r.get("Sales Data Sale Closed Week") or "").strip()
+            if not wk or wk == "None":
+                continue
+            try:
+                we = (date.fromisoformat(wk) + timedelta(days=6)).isoformat()  # Mon -> Sun week-ending
+            except ValueError:
+                continue
+            if we in skip_weeks:
+                continue
+            name = (r.get("Products Product Name") or "").strip()
+            rg = (r.get("Products Reporting Group Name") or "").strip() or "Unmapped"
+            ex = parse_num(r.get("Sales Data Total Ex Tax"))
+            if not name or not ex:
+                continue
+            venue = rgv.get(rg, "stow")
+            agg[(we, venue, rg, name)][0] += ex
+            n += 1
+    return n
+
+
 def load_rg_names():
     """source-till prefix -> { product_name -> reporting_group_name }."""
     out = {"stow": {}, "hg": {}}
@@ -108,6 +158,13 @@ def main():
                 k = (we, venue, rg, name)
                 agg[k][0] += ex
                 agg[k][1] += qty
+
+    # Historical backfill (Lightspeed Insights export) for every week the daily
+    # feed doesn't already cover — extends product trends back ~13 months.
+    insights_weeks = {we for (we, _v, _rg, _p) in agg}
+    n_back = ingest_looker_backfill(agg, insights_weeks)
+    if n_back:
+        print(f"backfill: folded {n_back} Looker rows for pre-daily weeks")
 
     rows = [{"week_ending": we, "venue": v, "reporting_group": rg, "product_name": p,
              "sales_ex_gst": round(a[0], 2), "qty": round(a[1], 2)}
