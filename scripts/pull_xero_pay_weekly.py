@@ -116,7 +116,7 @@ for i, r in enumerate(runs):
         pid = s.get("PayslipID")
         if pid:
             try:
-                det = (get(f"https://api.xero.com/payroll.xro/1.0/Payslips/{pid}").get("Payslips") or [{}])[0]
+                det = get(f"https://api.xero.com/payroll.xro/1.0/Payslip/{pid}").get("Payslip") or {}
                 la = leave_amount(det)
                 if la:
                     lev[nm][wk] = round(lev[nm].get(wk, 0) + la, 2)
