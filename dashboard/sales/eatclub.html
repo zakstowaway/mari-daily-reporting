@@ -35,11 +35,15 @@ tr.tot td{border-top:2px solid #333;background:#fafafa;font-weight:700}
   a{color:#85b7eb}
 }
 </style></head><body>
-<script>
-try {
-  var _s = JSON.parse(sessionStorage.getItem('mari_session') || 'null');
-  if (!_s || _s.role !== 'admin') location.replace('/');
-} catch (e) { location.replace('/'); }
+<script>document.documentElement.style.visibility = 'hidden';</script>
+<script type="module">
+  // Admin gate via Supabase (same as the rest of the app). The old synchronous
+  // sessionStorage.mari_session check bounced everyone once login moved to Supabase.
+  import { Auth } from '/_shared/auth.js';
+  let me = null;
+  try { me = await Auth.current(); } catch (e) { console.error('auth', e); }
+  if (!me || me.role !== 'admin') location.replace('/');
+  else document.documentElement.style.visibility = '';
 </script>
 <div style="margin-bottom:14px"><a href="/" style="font-size:14px;color:#666;text-decoration:none">&larr; Back to dashboard</a></div>
 
