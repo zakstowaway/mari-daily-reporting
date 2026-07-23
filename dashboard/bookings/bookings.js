@@ -42,45 +42,72 @@ function fmtBooked(iso) {
 }
 
 // ---------------------------------------------------------------- rendering
-function renderCaps(remaining) {
-  $('caps').innerHTML = Object.entries(remaining).map(([t, sizes]) =>
-    `<div class="cap"><b>${t} — next party fits?</b>` +
-    Object.entries(sizes).map(([s, ok]) =>
-      `${s}p <span class="${ok ? 'yes' : 'no'}">${ok ? '✓' : '✗'}</span>`).join(' · ') +
-    '</div>').join('');
+const T12 = (t) => t.replace('12:00', '12pm').replace('14:00', '2pm');
+
+function rowHtml(b) {
+  const covers = b.adults + b.kids;
+  const flags = [
+    b.dogs ? `<span class="pill dog">${b.dogs > 1 ? b.dogs + ' dogs' : 'dog'}</span>` : '',
+    b.kids ? `<span class="pill kid">${b.kids} kid${b.kids > 1 ? 's' : ''}</span>` : '',
+    b.babies ? `<span class="pill kid">high chair</span>` : '',
+    b.status === 'pending_deposit' ? `<span class="pill">deposit pending</span>` : '',
+  ].join('');
+  const note = b.notes ? `<span class="bnote">${b.notes}</span> · ` : '';
+  return `<div class="brow${b.status === 'pending_deposit' ? ' pending' : ''}">
+    <div class="btable">${b.suggested_table || '—'}</div>
+    <div class="bmain">
+      <div class="bname">${b.name} ${flags}</div>
+      <div class="bsub">${note}${b.phone || ''} · booked ${fmtBooked(b.created_at)}</div>
+    </div>
+    <div class="bpax">${covers}<small>pax</small></div>
+    <div class="bacts">
+      <button class="mini" data-edit="${b.id}">edit</button>
+      <button class="mini danger" data-cancel="${b.id}">cancel</button>
+    </div>
+  </div>`;
 }
 
 function renderDay(d) {
-  // Active bookings first (by sitting, then when they booked); cancelled sink
-  // to the bottom — they're history, not service.
-  const ordered = [...d.bookings].sort((a, b) =>
-    ((a.status === 'cancelled') - (b.status === 'cancelled')) ||
-    a.time.localeCompare(b.time) ||
-    String(a.created_at).localeCompare(String(b.created_at)));
-  const rows = ordered.map(b => {
-    const covers = b.adults + b.kids;
-    const pills =
-      (b.dogs ? `<span class="pill dog">${b.dogs} DOG</span>` : '') +
-      (b.kids ? `<span class="pill kid">${b.kids} KID</span>` : '') +
-      (b.babies ? `<span class="pill kid">BABY</span>` : '');
-    const cls = b.status === 'cancelled' ? 'cancelled'
-              : b.status === 'pending_deposit' ? 'pending' : '';
-    const actions = b.status !== 'cancelled'
-      ? `<button class="ghost" data-edit="${b.id}">edit</button>
-         <button class="warn" data-cancel="${b.id}">cancel</button>` : '';
-    return `<tr class="${cls}">
-      <td>${b.time}</td><td><b>${b.suggested_table || '—'}</b></td>
-      <td>${b.name}</td><td>${covers}</td><td>${pills}</td>
-      <td>${b.phone || ''}</td><td>${(b.notes || '').slice(0, 60)}</td>
-      <td style="white-space:nowrap">${fmtBooked(b.created_at)}</td>
-      <td>${b.status}</td>
-      <td style="white-space:nowrap">${actions}</td></tr>`;
-  }).join('');
-  $('daywrap').innerHTML = `<table><tr><th>Sitting</th><th>Table</th><th>Name</th>
-    <th>Pax</th><th>Flags</th><th>Phone</th><th>Notes</th><th>Booked</th><th>Status</th><th></th></tr>${rows}</table>`;
-  $('daywrap').querySelectorAll('[data-edit]').forEach(el =>
+  // One block per sitting (covers + capacity in its header), rows inside
+  // ordered by when they booked. Cancelled collapse at the bottom — they're
+  // history, not service.
+  const wrap = $('daywrap');
+  wrap.innerHTML = '';
+  const active = d.bookings.filter(b => b.status !== 'cancelled');
+  const cancelled = d.bookings.filter(b => b.status === 'cancelled');
+
+  d.sittings.forEach(t => {
+    const rows = active.filter(b => b.time === t)
+      .sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+    const covers = rows.reduce((n, b) => n + b.adults + b.kids, 0);
+    const sizes = d.remaining[t] || {};
+    const fitting = Object.entries(sizes).filter(([, ok]) => ok).map(([s]) => +s);
+    const fit = !fitting.length ? '<span class="no">FULL</span>'
+      : Object.values(sizes).every(Boolean) ? '<span class="yes">any party fits</span>'
+      : `<span class="yes">room up to ${Math.max(...fitting)}p</span>`;
+    const block = document.createElement('div');
+    block.className = 'sitting-block';
+    block.innerHTML = `<div class="sitting-head">
+        <span class="sit-time">${T12(t)}</span>
+        <span class="sit-meta">${rows.length} bookings · ${covers} covers</span>
+        <span class="sit-fit">${fit}</span>
+      </div>` + (rows.map(rowHtml).join('') ||
+        '<div class="bsub" style="padding:14px 18px">No bookings yet.</div>');
+    wrap.appendChild(block);
+  });
+
+  if (cancelled.length) {
+    const det = document.createElement('details');
+    det.className = 'cancelled-list';
+    det.innerHTML = `<summary>${cancelled.length} cancelled</summary>` +
+      cancelled.map(b =>
+        `<div class="crow">${T12(b.time)} · ${b.name} ×${b.adults + b.kids} · ${b.phone || ''} · ${fmtBooked(b.created_at)}</div>`).join('');
+    wrap.appendChild(det);
+  }
+
+  wrap.querySelectorAll('[data-edit]').forEach(el =>
     el.addEventListener('click', () => openEdit(el.dataset.edit)));
-  $('daywrap').querySelectorAll('[data-cancel]').forEach(el =>
+  wrap.querySelectorAll('[data-cancel]').forEach(el =>
     el.addEventListener('click', () => cancelBooking(el.dataset.cancel)));
 }
 
@@ -91,7 +118,6 @@ async function loadDay() {
     DAY = await (await call('/api/admin/day/' + SEL.date)).json();
     $('status').textContent = DAY.event +
       (DAY.solvable ? ' · day solves ✓' : ' · ⚠ DAY DOES NOT SOLVE');
-    renderCaps(DAY.remaining);
     renderDay(DAY);
   } catch (e) {
     if (String(e.message).includes('bad admin token')) {
