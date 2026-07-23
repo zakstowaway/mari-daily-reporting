@@ -137,7 +137,8 @@ body {
   display: flex; justify-content: space-between; align-items: center;
   gap: 16px; flex-wrap: wrap;
 }
-.header .brand-row { display: flex; align-items: center; gap: 10px; }
+.header .brand-row { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
+.header a.brand-row:hover .group-brand { opacity: 0.8; }
 .header .header-logo {
   width: 34px; height: 34px; display: inline-block;
   filter: var(--logo-filter);
@@ -511,10 +512,10 @@ tbody tr:hover { background: var(--group-tint); }
 <div id="dashboard" class="hidden">
   <div class="header">
     <div class="header-inner">
-      <div class="brand-row">
+      <a class="brand-row" href="/" title="All modules — back to picker">
         <img class="header-logo" alt="" src="/logo_128.png">
         <span class="group-brand">Stowaway Hospitality Group</span>
-      </div>
+      </a>
       <div class="header-right">
         <nav class="tool-nav" id="tool-nav"></nav>
         <div class="who">
