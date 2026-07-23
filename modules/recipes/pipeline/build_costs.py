@@ -43,9 +43,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
 from core.domain import purchasable_id                                   # noqa: E402
-from modules.recipes.pipeline.build_ingredients import (                 # noqa: E402
-    KITCHEN_SUPPLIERS, out_of_bounds, parse_pack,
-)
+from modules.recipes.pipeline.build_ingredients import resolve_pack      # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
 COGS = ROOT / "data" / "cogs_list.csv"
@@ -66,29 +64,16 @@ def main() -> int:
         desc = r["invoice_description"].strip()
         pack_cost = Decimal(r["cost_per_unit_incl_gst"])
 
-        # Liquor is already priced in the unit a recipe uses: a bottle IS the
-        # unit, a keg IS the unit. Only kitchen goods need pack -> gram.
-        if r["supplier"] not in KITCHEN_SUPPLIERS:
-            basis = (r.get("basis") or "per_unit").replace("per_", "")
-            unit = {"bottle": "bottle", "keg": "keg", "can": "can"}.get(basis, "ea")
-            rows.append(dict(
-                ingredient=purchasable_id(r["supplier"], code),
-                observed_on=r["invoice_date"], cost_per_unit=str(pack_cost), unit=unit,
-                venue=r.get("venue") or "", source_invoice=r.get("source_invoice", ""),
-                pack="1", description=desc,
-            ))
-            continue
-
-        qty, unit, how = parse_pack(desc)
+        # ONE resolver for every line — liquor, weight-priced produce, packs,
+        # discrete units — reading the invoice's basis + note, not just the
+        # description. Refuses (skips) exactly when the ingredient UI would flag.
+        qty, unit, per, how, bad = resolve_pack(
+            desc, pack_cost, basis=r.get("basis", ""), note=r.get("note", ""))
         if not qty or not unit:
             skipped.append((r["supplier"], desc, f"pack unreadable ({how})"))
             continue
-
-        per = (pack_cost / qty).quantize(Decimal("0.000001"))
-        bad = out_of_bounds(per, unit)
         if bad:
-            # Arithmetically fine, physically absurd. Do not publish it.
-            skipped.append((r["supplier"], desc, bad))
+            skipped.append((r["supplier"], desc, bad))   # arithmetically fine, physically absurd
             continue
 
         rows.append(dict(

@@ -99,6 +99,8 @@ _BOUNDS = {
     "punnet":   (Decimal("1.00"),   Decimal("30.00")),
     "ea":       (Decimal("0.05"),   Decimal("100.00")),
     "doz":      (Decimal("2.00"),   Decimal("120.00")),
+    "box":      (Decimal("2.00"),   Decimal("400.00")),
+    "pkt":      (Decimal("0.50"),   Decimal("80.00")),
 }
 
 
@@ -155,6 +157,65 @@ def parse_pack(desc: str) -> tuple[Decimal | None, str | None, str]:
     return None, None, "no pack found in description"
 
 
+# Discrete units an invoice may name in the description OR a note, when there is
+# no weight to parse. "Celeriac ... Each", "Tomatoes Cherry ... Punnet".
+_DISCRETE = [
+    ("BUNCH", "bunch"), ("BCH", "bunch"), ("PUNNET", "punnet"), ("TRAY", "tray"),
+    ("BOX", "box"), ("EACH", "ea"), ("DOZ", "doz"), ("PKT", "pkt"), ("PACKET", "pkt"),
+]
+
+
+def resolve_pack(desc: str, cost, basis: str = "", note: str = ""
+                 ) -> tuple[Decimal | None, str | None, Decimal | None, str, str | None]:
+    """
+    THE one place a supplier line becomes a cost in a unit a chef can use.
+
+    -> (qty_in_base_units, unit, cost_per_unit, how, review_reason|None)
+
+    Uses the invoice's STRUCTURED fields, not just the free-text description —
+    that is the fix for produce like "Cauliflower Florets" (no weight in the
+    name, but the invoice says basis=per_kg) and "Celeriac … Each". Order:
+
+      1. Liquor bases (per_bottle/keg/can): the unit IS the pack.
+      2. Sold by weight/volume (per_kg / per_L): price already per kg/L. Cleanest.
+      3. per_unit: read the pack weight from the description; a carton note
+         (CTN-N) multiplies a single piece — this is what rescues the camembert
+         ($45.60 is a box of 12 x 125g, not one 125g wheel).
+      4. Still no weight: take a discrete unit the invoice names (Each/Punnet/
+         Box/Bunch). Costable in that unit; the chef converts to grams once if
+         they portion by weight.
+      5. Genuinely unknown: ask, never guess.
+    """
+    cost = Decimal(str(cost))
+    b = (basis or "").lower().replace("per_", "")
+    note = note or ""
+
+    if b in ("bottle", "keg", "can"):
+        return Decimal(1), b, cost, b, out_of_bounds(cost, b)
+    if b == "kg":
+        return Decimal(1000), "g", (cost / 1000).quantize(Decimal("0.000001")), "per kg (invoice)", None
+    if b in ("lt", "l", "litre"):
+        return Decimal(1000), "ml", (cost / 1000).quantize(Decimal("0.000001")), "per L (invoice)", None
+
+    qty, unit, how = parse_pack(desc)
+    if qty and unit and unit in ("g", "ml"):
+        ctn = re.search(r"CTN[-\s]?(\d+)", note, re.I)
+        if ctn and "x" not in how:          # a single piece + "carton of N"
+            n = int(ctn.group(1))
+            qty, how = qty * n, f"{how} x CTN-{n} (invoice)"
+        per = (cost / qty).quantize(Decimal("0.000001"))
+        return qty, unit, per, how, out_of_bounds(per, unit)
+    if qty and unit:                          # parse_pack already found a discrete unit
+        return qty, unit, cost, how, out_of_bounds(cost, unit)
+
+    hay = f"{desc} {note}"
+    for word, u in _DISCRETE:
+        if re.search(rf"\b{word}\b", hay, re.I):
+            return Decimal(1), u, cost, f"per {u} (invoice)", out_of_bounds(cost, u)
+
+    return None, None, None, how, "no pack size on the invoice — confirm once"
+
+
 def slug(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
@@ -182,7 +243,8 @@ def main() -> int:
         seen.add(key)
 
         pack_cost = Decimal(r["cost_per_unit_incl_gst"])
-        qty, unit, how = parse_pack(desc)
+        qty, unit, per, how, bad = resolve_pack(
+            desc, pack_cost, basis=r.get("basis", ""), note=r.get("note", ""))
 
         item = {
             "id": key,
@@ -195,22 +257,19 @@ def main() -> int:
             "venue": r["venue"],
         }
         if qty and unit:
-            per = (pack_cost / qty).quantize(Decimal("0.000001"))
-            bad = out_of_bounds(per, unit)
             item["pack_qty"] = str(qty)
             item["pack_unit"] = unit
             item["pack_parsed_as"] = how
             item["cost_per_base_unit"] = str(per)   # the number the UI multiplies by
+            item["needs_pack_review"] = bool(bad)
             if bad:
-                # Arithmetically fine, physically absurd. Do NOT let it through.
-                item["needs_pack_review"] = True
-                item["review_reason"] = bad
+                item["review_reason"] = bad         # arithmetically fine, physically absurd
                 review += 1
             else:
                 item["needs_pack_review"] = False
         else:
             item["needs_pack_review"] = True
-            item["review_reason"] = how
+            item["review_reason"] = bad or how
             review += 1
         out.append(item)
 
