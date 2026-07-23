@@ -13,6 +13,9 @@
   (seating-solver-backed), which holds its own real auth: a bearer token,
   entered once per device and kept in localStorage. The Supabase gate decides
   who may see this page; the token decides what the service will accept.
+
+  Bump the ?v= on bookings.js whenever it changes — same convention as
+  tokens.css. A stale cached module against fresh HTML is a blank page.
 -->
 <style>
   .wrap{max-width:1100px;margin:0 auto;padding:24px}
@@ -126,6 +129,6 @@
   </div>
 </div>
 
-<script type="module" src="./bookings.js"></script>
+<script type="module" src="./bookings.js?v=20260723b"></script>
 </body>
 </html>
