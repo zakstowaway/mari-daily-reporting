@@ -1,0 +1,93 @@
+[
+  {
+    "timesheet_id": 35458,
+    "employee_id": 5,
+    "employee_name": "Nicola Bisato",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784772000,
+    "end_time": 1784803500,
+    "hours": 8.75,
+    "cost": 294.47,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35459,
+    "employee_id": 297,
+    "employee_name": "Pujan Tamang",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784779200,
+    "end_time": 1784808900,
+    "hours": 7.75,
+    "cost": 279.45,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35460,
+    "employee_id": 287,
+    "employee_name": "Min",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784779200,
+    "end_time": 1784808900,
+    "hours": 7.75,
+    "cost": 428.49,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35461,
+    "employee_id": 284,
+    "employee_name": "Olly",
+    "ou_name": "Stow Kitchen",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784782800,
+    "end_time": 1784808900,
+    "hours": 6.75,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35463,
+    "employee_id": 292,
+    "employee_name": "Sophie Campbell",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784784600,
+    "end_time": 1784808000,
+    "hours": 6.0,
+    "cost": 203.1,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35468,
+    "employee_id": 69,
+    "employee_name": "Sam Hall",
+    "ou_name": "Stow Bar",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784790000,
+    "end_time": 1784808900,
+    "hours": 4.75,
+    "cost": 164.3,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35471,
+    "employee_id": 251,
+    "employee_name": "Emily",
+    "ou_name": "Stow Floor",
+    "company": "Stowaway",
+    "dept": "FOH",
+    "start_time": 1784793600,
+    "end_time": 1784806200,
+    "hours": 3.5,
+    "cost": 118.47,
+    "salaried_synth": false
+  }
+]

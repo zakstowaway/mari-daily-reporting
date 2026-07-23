@@ -570,4 +570,4 @@ date,revenue_ex_gst,cogs_dollars,cogs_pct,wages_dollars,wages_pct,delivery_dolla
 2026-07-20,1.46,0.0,0.0,0,0.0,0,0.0,1.46,100.0,0.0,0,green,green,green,unknown,1.46,0.0,0.0,0.0,0.0,,100.0,,0,0,0,0,,0,0.0,,unknown,unknown,unknown,unknown,0,0.0,
 2026-07-21,1075.78,250.79,23.3,518.83,48.2,0,0.0,824.99,76.7,0.0,0,red,red,green,unknown,1075.78,0.0,250.79,0.0,23.3,,76.7,,518.83,0,0,0,518.83,0,48.2,,unknown,unknown,unknown,unknown,0,0.0,
 2026-07-22,487.9,108.52,22.2,512.46,105.0,0,0.0,379.38,77.8,0.0,0,amber,red,green,unknown,487.9,0.0,108.52,0.0,22.2,,77.8,,512.46,0,0,0,512.46,0,105.0,,unknown,unknown,unknown,unknown,0,0.0,
-2026-07-23,,,,67.67,,,,,,,,,,,,,,,,,,,,0.0,0,67.67,0,,,,,,,,,,,
+2026-07-23,,,,,,,,,,0,0,unknown,unknown,unknown,unknown,,,,,,,,,503.57,0,62.08,0,,,,,unknown,unknown,unknown,unknown,0,0.0,

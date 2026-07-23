@@ -1,0 +1,54 @@
+[
+  {
+    "timesheet_id": 35466,
+    "employee_id": 142,
+    "employee_name": "Renan Borba Bagesteiro",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784786400,
+    "end_time": 1784807100,
+    "hours": 5.75,
+    "cost": 207.33,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35467,
+    "employee_id": 78,
+    "employee_name": "Sushant Acharya",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784790000,
+    "end_time": 1784806200,
+    "hours": 4.5,
+    "cost": 152.32,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35469,
+    "employee_id": 267,
+    "employee_name": "Reef Houston",
+    "ou_name": "Driver",
+    "company": "Stowaway",
+    "dept": "Driver",
+    "start_time": 1784791800,
+    "end_time": 1784802600,
+    "hours": 3.0,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35470,
+    "employee_id": 106,
+    "employee_name": "Reef Poole",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784791800,
+    "end_time": 1784802600,
+    "hours": 3.0,
+    "cost": 86.32,
+    "salaried_synth": false
+  }
+]
