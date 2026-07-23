@@ -20,17 +20,18 @@ from modules.invoices.parsers import register
 
 COLS = [("code", 0), ("desc", 60), ("qty", 245), ("uom", 270), ("weight", 320),
         ("price", 360), ("gstflag", 455), ("total", 490)]
-MONEY = re.compile(r"^\$?(-?[\d,]+\.?\d*)$")
+MONEY = re.compile(r"-?\d[\d,]*\.?\d*")   # search, not full-match: weight-priced
+                                          # lines show price as "23.00/kg"
 EXTRA_DESC = re.compile(r"fuel\s*levy|freight|delivery|cartage", re.I)
 
 
 def _m(s):
-    s = (s or "").replace(",", "").strip()
-    m = MONEY.match(s)
+    s = (s or "").replace(",", "").replace("$", "").strip()
+    m = MONEY.search(s)
     if not m:
         return None
     try:
-        return Decimal(m.group(1))
+        return Decimal(m.group(0))
     except InvalidOperation:
         return None
 
@@ -60,15 +61,16 @@ def parse(pdf_bytes: bytes) -> Invoice:
     items = []
     for r in rows[hi + 1:]:
         c = pdf_text.bucket(r, COLS)
-        qty, price, total = _m(c["qty"]), _m(c["price"]), _m(c["total"])
-        if qty is None or price is None or total is None:
+        qty, total = _m(c["qty"]), _m(c["total"])
+        if qty is None or total is None or qty == 0 or total == 0:
             continue
-        if total == 0:
-            continue
+        # A "23.00/kg" cell is a per-kg RATE, not a per-unit price, so qty x it
+        # won't equal the line — derive the unit price from the line total instead.
+        price = None if "/" in c["price"] else _m(c["price"])
         taxable = "GST" in c["gstflag"].upper()
         f = Decimal("1.1") if taxable else Decimal("1")
         incl = (total * f).quantize(Decimal("0.01"))
-        up_incl = (price * f).quantize(Decimal("0.0001"))
+        up_incl = ((price * f) if price is not None else incl / qty).quantize(Decimal("0.0001"))
         desc = c["desc"]
         is_extra = bool(EXTRA_DESC.search(desc))
         uom = c["uom"]

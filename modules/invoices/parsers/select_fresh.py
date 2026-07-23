@@ -21,7 +21,8 @@ from modules.invoices.parsers import register
 
 COLS = [("code", 0), ("desc", 78), ("order", 290), ("supply", 348),
         ("unit", 378), ("price", 460), ("total", 525)]
-MONEY = re.compile(r"^\$?(-?[\d,]+\.?\d*)$")
+MONEY = re.compile(r"-?\d[\d,]*\.?\d*")   # search, not full-match: tolerate trailing
+                                          # markers like "SD" (short delivery) after a value
 UNIT_BASIS = {
     "KG": CostBasis.PER_KG, "LT": CostBasis.PER_KG, "L": CostBasis.PER_KG,
     "BUNCH": CostBasis.PER_UNIT, "EACH": CostBasis.PER_UNIT, "EA": CostBasis.PER_UNIT,
@@ -33,12 +34,12 @@ UNIT_BASIS = {
 
 
 def _m(s):
-    s = (s or "").replace(",", "").strip()
-    m = MONEY.match(s)
+    s = (s or "").replace(",", "").replace("$", "").strip()
+    m = MONEY.search(s)
     if not m:
         return None
     try:
-        return Decimal(m.group(1))
+        return Decimal(m.group(0))
     except InvalidOperation:
         return None
 
