@@ -34,6 +34,7 @@ from modules.invoices.parsers import select_fresh      # noqa: E402,F401
 from modules.invoices.parsers import fresh_fruit_team   # noqa: E402,F401
 from modules.invoices.parsers import foodlink           # noqa: E402,F401
 from modules.invoices.parsers import be_foods           # noqa: E402,F401
+from modules.invoices.parsers import ilg                # noqa: E402,F401
 
 
 def parse_pdf(pdf_bytes: bytes, sender_domain: Optional[str] = None) -> Optional[Invoice]:
