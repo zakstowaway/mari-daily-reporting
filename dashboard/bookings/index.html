@@ -54,6 +54,14 @@
   h2{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:8px}
   #tokenbox{background:var(--paper);border:1px solid var(--line);border-radius:12px;
         padding:18px;max-width:520px;box-shadow:var(--shadow)}
+  .events{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .event-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+        padding:14px 18px;cursor:pointer;box-shadow:var(--shadow);min-width:220px;
+        border-top:4px solid var(--grey);transition:transform .12s}
+  .event-card:hover{transform:translateY(-2px)}
+  .event-card.sel{border-top-color:var(--stow);outline:2px solid var(--ink)}
+  .event-card h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:0 0 4px}
+  .event-card .when{font-size:12.5px;color:var(--ink-soft)}
 </style>
 </head>
 <body>
@@ -81,9 +89,8 @@
     </div>
 
     <div id="main" style="display:none">
+      <div class="events" id="events"></div>
       <div class="bar">
-        <div><label>Date</label><input id="date" type="date"></div>
-        <button id="loadbtn">Load day</button>
         <button class="ghost" id="runsheetbtn">Runsheet PDF</button>
         <span id="status"></span>
       </div>

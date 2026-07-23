@@ -21,6 +21,7 @@ const TOKEN_KEY = 'stowaway_booking_token';
 const $ = (id) => document.getElementById(id);
 let DAY = null;
 let EDITING = null;
+let SEL = null;   // the selected event {date, name, sittings}
 
 // ---------------------------------------------------------------- service io
 const svcToken = () => localStorage.getItem(TOKEN_KEY) || '';
@@ -50,7 +51,13 @@ function renderCaps(remaining) {
 }
 
 function renderDay(d) {
-  const rows = d.bookings.map(b => {
+  // Active bookings first (by sitting, then when they booked); cancelled sink
+  // to the bottom — they're history, not service.
+  const ordered = [...d.bookings].sort((a, b) =>
+    ((a.status === 'cancelled') - (b.status === 'cancelled')) ||
+    a.time.localeCompare(b.time) ||
+    String(a.created_at).localeCompare(String(b.created_at)));
+  const rows = ordered.map(b => {
     const covers = b.adults + b.kids;
     const pills =
       (b.dogs ? `<span class="pill dog">${b.dogs} DOG</span>` : '') +
@@ -81,7 +88,7 @@ function renderDay(d) {
 async function loadDay() {
   $('status').textContent = 'loading…';
   try {
-    DAY = await (await call('/api/admin/day/' + $('date').value)).json();
+    DAY = await (await call('/api/admin/day/' + SEL.date)).json();
     $('status').textContent = DAY.event +
       (DAY.solvable ? ' · day solves ✓' : ' · ⚠ DAY DOES NOT SOLVE');
     renderCaps(DAY.remaining);
@@ -133,10 +140,10 @@ async function saveEdit() {
 }
 
 async function downloadRunsheet() {
-  const r = await call(`/api/admin/day/${$('date').value}/runsheet`);
+  const r = await call(`/api/admin/day/${SEL.date}/runsheet`);
   const a = document.createElement('a');
   a.href = URL.createObjectURL(await r.blob());
-  a.download = `Stowaway_Runsheet_${$('date').value}.pdf`;
+  a.download = `Stowaway_Runsheet_${SEL.date}.pdf`;
   a.click();
 }
 
@@ -159,24 +166,45 @@ function showToken() {
   $('main').style.display = 'none';
 }
 
+function niceDate(iso) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('en-AU',
+    { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function selectEvent(ev, card) {
+  SEL = ev;
+  document.querySelectorAll('.event-card').forEach(c => c.classList.remove('sel'));
+  if (card) card.classList.add('sel');
+  loadDay();
+}
+
 async function init() {
   if (!svcToken()) { showToken(); return; }
   $('tokenbox').style.display = 'none';
   $('main').style.display = 'block';
-  // Event-style: one live date at a time — auto-detect and load it.
+  // No date picker: upcoming open events are cards — pick one.
   try {
     const dates = await (await fetch(API + '/api/dates')).json();
-    if (dates.length) {
-      $('date').value = dates[0].date;
-      $('eventline').textContent =
-        `Live event: ${dates[0].name} · ${dates[0].date} · sittings ${dates[0].sittings.join(' & ')}`;
-    } else {
+    if (!dates.length) {
       $('eventline').textContent = 'No event open for bookings right now.';
+      $('events').innerHTML = '';
+      return;
     }
+    $('eventline').textContent = 'Pick an event:';
+    $('events').innerHTML = '';
+    dates.forEach((ev, i) => {
+      const card = document.createElement('div');
+      card.className = 'event-card' + (i === 0 ? ' sel' : '');
+      card.innerHTML = `<h3>${ev.name}</h3>
+        <div class="when">${niceDate(ev.date)} · sittings ${ev.sittings.join(' & ')}</div>`;
+      card.addEventListener('click', () => selectEvent(ev, card));
+      $('events').appendChild(card);
+    });
+    SEL = dates[0];
+    loadDay();
   } catch (e) {
     $('eventline').textContent = 'Booking engine unreachable: ' + e.message;
   }
-  if ($('date').value) loadDay();
 }
 
 Auth.gate($('gate'), {
@@ -191,7 +219,6 @@ Auth.gate($('gate'), {
       localStorage.setItem(TOKEN_KEY, $('svc_token').value.trim());
       init();
     });
-    $('loadbtn').addEventListener('click', loadDay);
     $('runsheetbtn').addEventListener('click', downloadRunsheet);
     $('saveeditbtn').addEventListener('click', saveEdit);
     $('closeeditbtn').addEventListener('click', () => { $('editbox').style.display = 'none'; });
