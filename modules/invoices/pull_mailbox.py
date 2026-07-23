@@ -35,6 +35,7 @@ import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -46,7 +47,17 @@ MAILBOX = "accounts@stowawaybar.com"
 GRAPH = f"https://graph.microsoft.com/v1.0/users/{urllib.parse.quote(MAILBOX)}"
 PROCESSED_FOLDER = "Invoices Processed"
 REVIEW_FOLDER = "Invoices Review"
-BATCH = 25   # messages per run; the schedule catches the rest
+BATCH = 20        # messages per run; the schedule catches the rest
+WINDOW_WEEKS = 6  # RECENT only — never reach back further than this (Zak)
+
+# Clearly NOT an invoice — statements, reminders, remittances, receipts. We skip
+# these before spending an extraction on them. Conservative on purpose: only
+# obvious non-invoices; anything ambiguous still goes through the validator,
+# which is the real relevance gate. A real invoice rarely carries these words.
+import re as _re  # noqa: E402
+SKIP_SUBJECT = _re.compile(
+    r"\b(statement|remittance|payment\s+reminder|reminder|overdue|thank\s+you\s+for\s+your\s+payment"
+    r"|account\s+balance|past\s+due|receipt\s+of\s+payment)\b", _re.I)
 
 
 # ── Graph helpers ──────────────────────────────────────────────────────────
@@ -76,15 +87,20 @@ def ensure_folder(token, name) -> str:
 
 
 def inbox_with_attachments(token):
-    # No $orderby: Graph rejects sort+filter on hasAttachments as an
-    # "InefficientFilter". Order doesn't matter — each message is moved out of
-    # the inbox once processed, so the next run just sees what's left.
+    # RECENT ONLY. Filter on receivedDateTime (indexed -> efficient) for the
+    # last WINDOW_WEEKS; check hasAttachments client-side. Filtering on BOTH
+    # receivedDateTime and hasAttachments trips Graph's "InefficientFilter", so
+    # we don't — and we never reach back past the window regardless of how much
+    # history sits in the inbox.
+    cutoff = (datetime.now(timezone.utc) - timedelta(weeks=WINDOW_WEEKS)).strftime("%Y-%m-%dT%H:%M:%SZ")
     qs = urllib.parse.urlencode({
-        "$filter": "hasAttachments eq true",
-        "$select": "id,subject,from,receivedDateTime",
+        "$filter": f"receivedDateTime ge {cutoff}",
+        "$select": "id,subject,from,receivedDateTime,hasAttachments",
+        "$orderby": "receivedDateTime desc",
         "$top": str(BATCH),
     }, quote_via=urllib.parse.quote)
-    return _req(token, "GET", f"/mailFolders/inbox/messages?{qs}").get("value", [])
+    msgs = _req(token, "GET", f"/mailFolders/inbox/messages?{qs}").get("value", [])
+    return [m for m in msgs if m.get("hasAttachments")]
 
 
 def pdf_attachments(token, msg_id):
@@ -156,6 +172,11 @@ def main() -> int:
     for m in msgs:
         subj = m.get("subject", "(no subject)")
         sender = (m.get("from", {}).get("emailAddress", {}) or {}).get("address", "?")
+        if SKIP_SUBJECT.search(subj):
+            print(f"\n• {subj}  <{sender}>  — skip (statement/reminder, not an invoice)")
+            if not args.dry_run:
+                move_message(token, m["id"], review_id)
+            continue
         pdfs = pdf_attachments(token, m["id"])
         print(f"\n• {subj}  <{sender}>  — {len(pdfs)} PDF(s)")
         if args.dry_run:
