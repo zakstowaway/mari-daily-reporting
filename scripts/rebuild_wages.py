@@ -93,6 +93,17 @@ if _xp.exists() and _em.exists():
 else:
     print("WARNING: no Xero pay data — falling back to the salaried estimate everywhere")
 
+# Xero leave paid, per person per week (from pull_xero_pay_weekly.py's
+# LeaveEarningsLines). Closed weeks use it to split a salaried person's paid
+# leave OUT of the venue wage line and into leave_dollars, so "operational
+# wages" excludes leave and the leave toggle shows what payroll actually paid as
+# leave. INERT when the file is absent: no split happens, numbers are unchanged.
+_xl = DATA_DIR / "xero_leave_weekly.json"
+XERO_LEAVE = json.loads(_xl.read_text()) if _xl.exists() else {}
+if XERO_LEAVE:
+    _nlv = sum(1 for e in XERO_LEAVE.values() for _ in e.values())
+    print(f"Xero leave: {len(XERO_LEAVE)} employees, {_nlv} person-weeks with paid leave")
+
 # Actual super, per person per week (2026-07-18). Optional: without it every
 # wage silently reverts to the flat-12% estimate, which is the OLD behaviour —
 # wrong by ~$2,737/yr but not catastrophic. Say so loudly rather than let a
@@ -165,6 +176,24 @@ def genuine_leave_for(wk_start, wk_end):
         if f <= wk_end and t >= wk_start:
             out.add(str(e["employee_id"]))
     return out
+
+
+def leave_dates_for(eid, wk_start, wk_end):
+    """ISO dates within [wk_start, wk_end] the salaried-leave register marks as
+    leave for this employee. Used to LAND Xero-paid leave on the actual days off;
+    empty -> caller falls back to the week-ending date."""
+    days = set()
+    for e in _SAL_LEAVE:
+        if str(e.get("employee_id")) != str(eid):
+            continue
+        try:
+            f = date.fromisoformat(e["from"]); t = date.fromisoformat(e["to"])
+        except Exception:
+            continue
+        d = max(f, wk_start); end = min(t, wk_end)
+        while d <= end:
+            days.add(d.isoformat()); d += timedelta(days=1)
+    return sorted(days)
 
 
 def realize(eid, dstr):
@@ -512,9 +541,25 @@ while cur <= d_to:
             # lines (HG 59.8% -> 53.7%) for no reason. The rule is for unapproved
             # timesheets and a live roster (Zak, 2026-07-17) — see the open-week
             # call to allocate_week below.
+            # Split out leave Xero actually PAID this person this week (a fact,
+            # not the shortfall heuristic that caused the $219k problem). The
+            # remainder is spread across worked shifts as before; the leave lands
+            # in the stow|Leave bucket on the register's leave days. Inert when
+            # XERO_LEAVE is empty -> worked == paid[eid], no leave booked.
+            _xn = EMP_MAP.get(eid)
+            leave_ex = XERO_LEAVE.get(_xn, {}).get(wk_key, 0) if _xn else 0
+            leave_ex = min(leave_ex, paid[eid])
+            worked = paid[eid] - leave_ex
             for g in group:
                 costed.append({**g, "cost_final":
-                               gross(eid, paid[eid] * (g.get("hours") or 0) / th)})
+                               gross(eid, worked * (g.get("hours") or 0) / th)})
+            if leave_ex > 0.005:
+                _ld = leave_dates_for(eid, cur, wk_end) or [wk_end.isoformat()]
+                _per = leave_ex / len(_ld)
+                for _d in _ld:
+                    costed.append({"employee_id": eid, "date": _d,
+                                   "bucket": "leave", "hours": 0,
+                                   "cost_final": gross(eid, _per)})
         # Roster stand-ins only help the ESTIMATE. Anyone Xero has paid is costed
         # from the payslip across the shifts they actually logged — a planned
         # shift must never absorb a share of real money.

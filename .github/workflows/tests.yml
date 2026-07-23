@@ -58,6 +58,9 @@ jobs:
         # docstring.
         run: python3 scripts/test_mari_recovery.py
 
+      - name: Closed-week leave split (rebuild_wages)
+        run: python3 scripts/test_closed_week_leave.py
+
       - name: Deterministic feeds must rebuild identically
         # data/costs.csv is derived from data/cogs_list.csv with no clock in the
         # loop, so it must reproduce exactly. A derived file that has stopped

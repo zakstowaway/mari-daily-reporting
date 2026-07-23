@@ -39,6 +39,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SECRETS = Path("/Users/Shared/ClaudeShared/STOW/Sales Reports/Daily Reporting/.secrets")
 OUT = ROOT / "data" / "xero_pay_weekly.json"
 OUT_SUPER = ROOT / "data" / "xero_super_weekly.json"
+OUT_LEAVE = ROOT / "data" / "xero_leave_weekly.json"
 
 app = json.loads((SECRETS / "xero_app.json").read_text())
 cf = SECRETS / "xero_token_cache.json"
@@ -85,6 +86,25 @@ runs = [r for r in get("https://api.xero.com/payroll.xro/1.0/PayRuns").get("PayR
 runs.sort(key=lambda r: xdate(r["PayRunPeriodEndDate"]))
 pay = defaultdict(dict)
 sup = defaultdict(dict)
+lev = defaultdict(dict)   # leave $ per person per week (from payslip LeaveEarningsLines)
+
+
+def leave_amount(payslip_detail):
+    """Sum the leave paid on a detailed payslip. Xero AU Payroll v1 exposes leave
+    as LeaveEarningsLines; each line's dollar value is Amount, or NumberOfUnits x
+    RatePerUnit, or FixedAmount depending on how the pay item is set up. Try each
+    so a config difference can't silently zero it. Returns ex-super dollars."""
+    total = 0.0
+    for ln in (payslip_detail.get("LeaveEarningsLines") or []):
+        amt = ln.get("Amount")
+        if amt is None:
+            u, rate = ln.get("NumberOfUnits"), ln.get("RatePerUnit")
+            amt = (u or 0) * (rate or 0) if (u is not None and rate is not None) else (ln.get("FixedAmount") or 0)
+        total += amt or 0
+    return round(total, 2)
+
+
+_leave_probe = []
 for i, r in enumerate(runs):
     pr = (get(f"https://api.xero.com/payroll.xro/1.0/PayRuns/{r['PayRunID']}").get("PayRuns") or [{}])[0]
     wk = str(xdate(r["PayRunPeriodEndDate"]))
@@ -92,12 +112,34 @@ for i, r in enumerate(runs):
         nm = f"{s.get('FirstName','')} {s.get('LastName','')}".strip()
         pay[nm][wk] = round(pay[nm].get(wk, 0) + (s.get("Wages") or 0), 2)   # supplementary runs add
         sup[nm][wk] = round(sup[nm].get(wk, 0) + (s.get("Super") or 0), 2)
+        # detailed payslip for the leave breakdown (summary payslip has none)
+        pid = s.get("PayslipID")
+        if pid:
+            try:
+                det = (get(f"https://api.xero.com/payroll.xro/1.0/Payslips/{pid}").get("Payslips") or [{}])[0]
+                la = leave_amount(det)
+                if la:
+                    lev[nm][wk] = round(lev[nm].get(wk, 0) + la, 2)
+                    if len(_leave_probe) < 5:
+                        _leave_probe.append(f"{nm} {wk}: ${la:,.2f}")
+                time.sleep(0.2)
+            except Exception as e:
+                print(f"  (leave detail skipped for {nm} {wk}: {e})")
     time.sleep(0.3)
 
 OUT.write_text(json.dumps({k: dict(sorted(v.items())) for k, v in sorted(pay.items())}, indent=1))
 OUT_SUPER.write_text(json.dumps({k: dict(sorted(v.items())) for k, v in sorted(sup.items())}, indent=1))
+OUT_LEAVE.write_text(json.dumps({k: dict(sorted(v.items())) for k, v in sorted(lev.items())}, indent=1))
 print(f"{len(runs)} pay runs, {len(pay)} employees -> {OUT}")
 print(f"{' ' * len(str(len(runs)))} super for {len(sup)} employees -> {OUT_SUPER}")
+_leave_total = sum(v for e in lev.values() for v in e.values())
+print(f"{' ' * len(str(len(runs)))} leave for {len(lev)} employees (${_leave_total:,.2f} total) -> {OUT_LEAVE}")
+if _leave_probe:
+    print("   sample leave lines:", "; ".join(_leave_probe))
+if _leave_total == 0:
+    print("   !! leave came back ZERO across all payslips — LeaveEarningsLines may be")
+    print("      named differently on this Xero plan. rebuild_wages stays inert (no")
+    print("      closed-week leave split) until this is non-zero. Inspect one payslip.")
 
 # Sanity: the whole point is that this is NOT 12%. If it comes back at exactly
 # 12.00% across the board, the Super field didn't populate and we've just
