@@ -180,6 +180,12 @@ jobs:
           # data/products_weekly.csv from the previous step.
           python scripts/build_products_api.py || echo "::warning::products API build failed (non-fatal)"
 
+      - name: Rebuild EatClub nightly rollup
+        run: |
+          # Combines data/eatclub_hg_<date>.json into data/eatclub_nights.json,
+          # which the EatClub dashboard fetches live (keeps the page current).
+          python scripts/build_eatclub_nights.py || echo "::warning::eatclub rollup failed (non-fatal)"
+
       - name: Commit updated data
         run: |
           git config user.name "Daily Pull"

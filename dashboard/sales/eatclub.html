@@ -36,67 +36,89 @@ tr.tot td{border-top:2px solid #333;background:#fafafa;font-weight:700}
 }
 </style></head><body>
 <script>document.documentElement.style.visibility = 'hidden';</script>
+<div style="margin-bottom:14px"><a href="/" style="font-size:14px;color:#666;text-decoration:none">&larr; Back to dashboard</a></div>
+<h1>EatClub — Harry Gatos</h1>
+<div class=sub id=sub>Loading…</div>
+<div id=app></div>
+
 <script type="module">
-  // Admin gate via Supabase (same as the rest of the app). The old synchronous
-  // sessionStorage.mari_session check bounced everyone once login moved to Supabase.
+  // Open to ALL signed-in users; live data from /data/eatclub_nights.json (rebuilt
+  // each daily pull), so the page stays current instead of being a static snapshot.
   import { Auth } from '/_shared/auth.js';
   let me = null;
   try { me = await Auth.current(); } catch (e) { console.error('auth', e); }
-  // EatClub dash is open to ALL signed-in users (any role) — only a non-signed-in
-  // visitor is sent to the dashboard, which hosts the sign-in card.
-  if (!me) location.replace('/');
-  else document.documentElement.style.visibility = '';
+  if (!me) { location.replace('/'); }
+  else { document.documentElement.style.visibility = ''; render(); }
+
+  const $ = n => (n < 0 ? '−$' : '$') + Math.round(Math.abs(n)).toLocaleString();
+  const $2 = n => '$' + n.toFixed(2);
+  const pc = n => n.toFixed(1) + '%';
+  const exgst = n => n / 1.1;
+  const dfmt = iso => new Date(iso + 'T00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  const dow = iso => new Date(iso + 'T00:00').toLocaleDateString('en-AU', { weekday: 'short' });
+  const weekEnding = iso => { const d = new Date(iso + 'T00:00'); const off = (7 - d.getDay()) % 7; d.setDate(d.getDate() + off); return d.toISOString().slice(0, 10); };
+
+  async function render() {
+    const app = document.getElementById('app');
+    let d;
+    try { d = await (await fetch('/data/eatclub_nights.json?t=' + Date.now())).json(); }
+    catch (e) { document.getElementById('sub').textContent = 'Could not load EatClub data.'; return; }
+    const N = d.nights, cogs = d.cogs_pct;
+    document.getElementById('sub').textContent =
+      `Launched ${dfmt(d.launch)} 2026 · ${N.length} nights · latest ${dfmt(d.latest)} 2026 · live`;
+    const sum = f => N.reduce((t, n) => t + f(n), 0);
+    const tables = sum(n => n.tables), covers = sum(n => n.covers);
+    const menuInc = sum(n => n.menu_inc), netInc = sum(n => n.net_inc), give = sum(n => n.giveaway_inc);
+    const costPct = menuInc ? give / menuInc * 100 : 0;
+
+    // cards
+    let html = `<div class=cards>
+      <div class=card><div class=l>Redeemed tables</div><div class=v>${tables}</div></div>
+      <div class=card><div class=l>Covers</div><div class=v>${covers}</div></div>
+      <div class=card><div class=l>Full menu value</div><div class=v>${$(menuInc)}</div></div>
+      <div class=card><div class=l>Net to HG</div><div class=v>${$(netInc)}</div></div>
+      <div class=card><div class=l>Channel cost</div><div class=v>${$(give)}</div><div class=l>${pc(costPct)} of bill</div></div>
+      <div class=card><div class=l>Avg / cover (net)</div><div class=v>${covers ? $2(netInc / covers) : '—'}</div></div>
+    </div>`;
+
+    // weekly contribution (ex-GST), Sunday weeks
+    const wk = {};
+    for (const n of N) { const w = weekEnding(n.date); (wk[w] = wk[w] || []).push(n); }
+    let tM = 0, tD = 0, tC = 0, tNet = 0, tCog = 0, tCov = 0;
+    let rowsHtml = '';
+    for (const w of Object.keys(wk).sort()) {
+      const ns = wk[w];
+      const m = exgst(ns.reduce((t, n) => t + n.menu_inc, 0));
+      const dis = exgst(ns.reduce((t, n) => t + n.discount_inc, 0));
+      const com = exgst(ns.reduce((t, n) => t + n.commission_inc, 0));
+      const net = exgst(ns.reduce((t, n) => t + n.net_inc, 0));
+      const cov = ns.reduce((t, n) => t + n.covers, 0);
+      const cog = m * cogs / 100, contr = net - cog;
+      tM += m; tD += dis; tC += com; tNet += net; tCog += cog; tCov += cov;
+      rowsHtml += `<tr><td>w/e ${dfmt(w)}<br><span class=mutetxt>${ns.length} nights · ${ns.reduce((t, n) => t + n.tables, 0)} tables · ${cov} covers</span></td>` +
+        `<td>${$(m)}</td><td class=neg>−${$(dis)}</td><td class=neg>−${$(com)}</td><td>${$(net)}</td>` +
+        `<td class=neg>−${$(cog)}</td><td class=big>${$(contr)}</td><td>${net ? pc(contr / net * 100) : '—'}</td><td>${cov ? $2(contr / cov) : '—'}</td></tr>`;
+    }
+    const tContr = tNet - tCog;
+    html += `<h2>Weekly contribution — net of EatClub discount, commission &amp; actual COGS (ex-GST)</h2>
+      <table><tr><th>Week</th><th>Menu value</th><th>Discount</th><th>Commission</th><th>Net revenue</th><th>COGS @ ${cogs}% actual</th><th>Contribution</th><th>% of net</th><th>Per cover</th></tr>
+      ${rowsHtml}
+      <tr class=tot><td>Program to date</td><td>${$(tM)}</td><td class=neg>−${$(tD)}</td><td class=neg>−${$(tC)}</td><td>${$(tNet)}</td><td class=neg>−${$(tCog)}</td><td class=big>${$(tContr)}</td><td>${tNet ? pc(tContr / tNet * 100) : '—'}</td><td>${tCov ? $2(tContr / tCov) : '—'}</td></tr></table>
+      <div class=flag><b>COGS ${cogs}%</b> charged on the <b>full</b> menu volume (the kitchen cooks the whole dish; the discount comes off the price, not the plate). Commission is 10% ex-GST (the 11% billed includes GST, which you reclaim). <b>Labour is excluded.</b></div>`;
+
+    // nightly redemptions (newest first)
+    let nightRows = '';
+    for (const n of [...N].reverse()) {
+      const cp = n.menu_inc ? n.giveaway_inc / n.menu_inc * 100 : 0;
+      nightRows += `<tr><td>${n.date}<br><span class=mutetxt>${dow(n.date)}</span></td><td>${n.tables}</td><td>${n.covers}</td>` +
+        `<td>${$2(n.menu_inc)}</td><td>${$2(n.net_inc)}</td><td>${$2(n.giveaway_inc)}</td><td>${pc(cp)}</td>` +
+        `<td>${n.covers ? $2(n.menu_inc / n.covers) : '—'}</td><td>${n.covers ? $2(n.net_inc / n.covers) : '—'}</td></tr>`;
+    }
+    html += `<h2>Nightly redemptions</h2>
+      <table><tr><th>Night</th><th>Tables</th><th>Covers</th><th>Full bill</th><th>Net</th><th>Channel cost</th><th>Cost %</th><th>SPH full</th><th>SPH net</th></tr>${nightRows}</table>
+      <p style="text-align:center;font-size:12px;opacity:.55;margin:24px 0;">Live · rebuilt each daily pull from EatClub nightly data. Deeper cannibalisation / drink-attach analysis is refreshed with the Monday weekly pull.</p>`;
+
+    app.innerHTML = html;
+  }
 </script>
-<div style="margin-bottom:14px"><a href="/" style="font-size:14px;color:#666;text-decoration:none">&larr; Back to dashboard</a></div>
-
-
-<h1>EatClub — Harry Gatos</h1>
-<div class=sub>Launched 1 Jul 2026 · generated 12 Jul 2026 · latest night 2026-07-11</div>
-
-<div class=cards>
-<div class=card><div class=l>Redeemed tables</div><div class=v>28</div></div>
-<div class=card><div class=l>Covers</div><div class=v>66</div></div>
-<div class=card><div class=l>Full menu value</div><div class=v>$4,142</div></div>
-<div class=card><div class=l>Net to HG</div><div class=v>$2,801</div></div>
-<div class=card><div class=l>Channel cost</div><div class=v>$1,341</div><div class=l>32.4% of bill</div></div>
-<div class=card><div class=l>Unredeemed</div><div class=v>5</div><div class=l>cost $0</div></div>
-<div class=card><div class=l>Returning</div><div class=v>0</div><div class=l>of 28</div></div>
-</div>
-
-<h2>Weekly contribution — net of EatClub discount, commission &amp; actual COGS (ex-GST)</h2>
-<table>
-<tr><th>Week</th><th>Menu value</th><th>Discount</th><th>Commission</th><th>Net revenue</th><th>COGS @ 27.6% actual</th><th>Contribution</th><th>% of net</th><th>Per cover</th></tr>
-<tr><td>w/e 12 Jul<br><span class=mutetxt>4 nights · 14 tables · 32 covers</span></td><td>$1,817</td><td class=neg>−$441</td><td class=neg>−$182</td><td>$1,195</td><td class=neg>−$501</td><td class=big>$694</td><td>58.1%</td><td>$21.69</td></tr><tr><td>w/e 05 Jul<br><span class=mutetxt>4 nights · 14 tables · 34 covers</span></td><td>$1,948</td><td class=neg>−$431</td><td class=neg>−$195</td><td>$1,322</td><td class=neg>−$538</td><td class=big>$784</td><td>59.3%</td><td>$23.06</td></tr>
-<tr class=tot><td>Program to date</td><td>$3,766</td><td class=neg>−$872</td><td class=neg>−$377</td><td>$2,517</td><td class=neg>−$1,039</td><td class=big>$1,478</td><td>58.7%</td><td>$22.39</td></tr>
-</table>
-<div class=flag><b>Actual COGS 27.6%</b> — Harry Gatos Xero purchases (trailing 4 complete weeks, ex-Misc) against HG revenue, per Zak 13 Jul. Replaces the 22% blended cost model; the model's night-mix estimate understated true cost by ~5.6pp. Purchases basis includes bar+kitchen mix and stock-cycle noise — the month-end stock journals true it up.
-<br>COGS is charged on the <b>full</b> menu volume (the kitchen cooks the whole dish, the discount comes off the price, not the plate). Commission taken at 10% ex-GST — the 11% billed includes GST, which you reclaim. <b>Labour is excluded</b> — the marginal-wage view lives in the weekly margin/wage task.</div>
-
-<h2>Cannibalisation — offer window 17:00–20:59 (inc-GST)</h2>
-<table>
-<tr><th>Night</th><th>Window total</th><th>EatClub bills</th><th>Full-price window</th><th>DOW baseline</th><th>vs base</th><th>Verdict</th></tr>
-<tr><td>2026-07-01<br><span class=mutetxt>Wed</span></td><td>$1,385</td><td>$292</td><td><b>$1,093</b></td><td>$1,296</td><td class=neg>-15.6%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-02<br><span class=mutetxt>Thu</span></td><td>$1,233</td><td>$132</td><td><b>$1,101</b></td><td>$1,131</td><td class=neg>-2.6%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-03<br><span class=mutetxt>Fri</span></td><td>$4,514</td><td>$918</td><td><b>$3,596</b></td><td>$2,664</td><td class=pos>+35.0%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-04<br><span class=mutetxt>Sat</span></td><td>$3,374</td><td>$801</td><td><b>$2,573</b></td><td>$2,474</td><td class=pos>+4.0%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-06<br><span class=mutetxt>Mon</span></td><td>$842</td><td>$0</td><td><b>$842</b></td><td>$2,088</td><td class=neg>-59.7%</td><td><span class='pill mute'>—</span><div class=whytxt></div></td></tr><tr><td>2026-07-08<br><span class=mutetxt>Wed</span></td><td>$390</td><td>$83</td><td><b>$306</b></td><td>$1,296</td><td class=neg>-76.3%</td><td><span class='pill mute'>WEAK NIGHT</span><div class=whytxt>Dead Wednesday regardless — 1 table.</div></td></tr><tr><td>2026-07-09<br><span class=mutetxt>Thu</span></td><td>$1,289</td><td>$582</td><td><b>$707</b></td><td>$1,131</td><td class=neg>-37.5%</td><td><span class='pill warn'>RESCUE</span><div class=whytxt>Weather killed traffic; tier manually lifted 25%→30% to pull people in. Deep offer was the RESPONSE to the dead night, not its cause.</div></td></tr><tr><td>2026-07-10<br><span class=mutetxt>Fri</span></td><td>$3,614</td><td>$597</td><td><b>$3,017</b></td><td>$2,664</td><td class=pos>+13.2%</td><td><span class='pill good'>INCREMENTAL</span><div class=whytxt>Standard 25% tier, full-price window ABOVE baseline — EatClub sat on top of a normal Friday.</div></td></tr>
-</table>
-<div class=flag>Baseline = mean window revenue for that weekday across the 8 weeks before launch (6 May – 30 Jun). EatClub rings the FULL bill on the POS, so its bills are subtracted to isolate full-price trade.
-<br><b>Offer tier is not fixed:</b> when a night is dying the team lifts the discount to pull traffic in — so a deep-discount night with a weak window is a <b>rescue</b>, not cannibalisation. Thu 9 Jul is exactly that (weather).</div>
-
-<h2>Nightly redemptions</h2>
-<table>
-<tr><th>Night</th><th>Tables</th><th>Covers</th><th>Full bill</th><th>Net</th><th>Channel cost</th><th>Cost %</th><th>SPH full</th><th>SPH net</th></tr>
-<tr><td>2026-07-11</td><td>4</td><td>10</td><td>$736.78</td><td>$514.48</td><td>$222.30</td><td>30.2%</td><td>$73.68</td><td>$51.45</td></tr>
-<tr><td>2026-07-10</td><td>5</td><td>11</td><td>$597.12</td><td>$383.79</td><td>$213.33</td><td>35.7%</td><td>$54.28</td><td>$34.89</td></tr>
-<tr><td>2026-07-09</td><td>4</td><td>9</td><td>$581.65</td><td>$365.01</td><td>$216.64</td><td>37.2%</td><td>$64.63</td><td>$40.56</td></tr>
-<tr><td>2026-07-08</td><td>1</td><td>2</td><td>$83.49</td><td>$56.93</td><td>$26.56</td><td>31.8%</td><td>$41.74</td><td>$28.46</td></tr>
-<tr><td>2026-07-04</td><td>3</td><td>10</td><td>$800.93</td><td>$577.63</td><td>$223.30</td><td>27.9%</td><td>$80.09</td><td>$57.76</td></tr>
-<tr><td>2026-07-03</td><td>6</td><td>15</td><td>$918.39</td><td>$615.89</td><td>$302.50</td><td>32.9%</td><td>$61.23</td><td>$41.06</td></tr>
-<tr><td>2026-07-02</td><td>1</td><td>2</td><td>$131.76</td><td>$85.87</td><td>$45.89</td><td>34.8%</td><td>$65.88</td><td>$42.94</td></tr>
-<tr><td>2026-07-01</td><td>4</td><td>7</td><td>$291.95</td><td>$201.14</td><td>$90.81</td><td>31.1%</td><td>$41.71</td><td>$28.73</td></tr>
-</table>
-
-<h2>What to watch</h2>
-<div class="flag red"><b>Drink attach.</b> Fri 10 Jul night mix ran <b>food 68.1% / alcohol 28.2% / non-alc 2.5%</b> against the regular benchmark of 61 / 35 / 3.5 — booze under-indexing by ~7 points on a night EatClub was 15% of takings. This is the one metric trending the wrong way, and it compounds HG's existing bar-spend decline (−30% YoY per open day).</div>
-<div class=flag><b>Zero returning customers.</b> All 28 redeemed tables to date are NEW. Until someone comes back at full price, this channel is discounting, not acquiring — that number is the whole business case.</div>
-<div class=flag><b>Table-level attach is not measurable.</b> Insights order-level explores are locked behind "Upgrade to Custom" on the account that can see HG, so EatClub bills can't be matched to POS orders. All mix figures above are NIGHT level (every table, not just EatClub).</div>
-
-<p style="text-align:center;font-size:12px;opacity:.55;margin:24px 0;">Static snapshot · program data to w/e 12 Jul 2026 · rebuilt with the Monday weekly pull</p>
 </body></html>
