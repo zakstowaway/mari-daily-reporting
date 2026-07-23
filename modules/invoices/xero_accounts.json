@@ -1,0 +1,728 @@
+{
+  "accounts": [
+    {
+      "code": "111",
+      "name": "Purchases Other COGS",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "112",
+      "name": "Purchases - Bar Supplies",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "113",
+      "name": "Purchases - Beverages",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "114",
+      "name": "Purchases - Event Hire Supplies",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "115",
+      "name": "Purchases - Food",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "117",
+      "name": "Purchases - Packaging",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "118",
+      "name": "Goods for Own Use",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1181",
+      "name": "Musicians & Artists Fees",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1190",
+      "name": "Service & Commission Fees EatClub",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1191",
+      "name": "Service & Delivery Fees - DoorDash",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1192",
+      "name": "Service & Delivery Fees - Just Eat",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1193",
+      "name": "Service & Delivery Fees - ME&U",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1194",
+      "name": "Service & Delivery Fees - Liven",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1195",
+      "name": "Service & Delivery Fees - UberEats",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1196",
+      "name": "Delivery 3rd Party Ad Spend Costs",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1197",
+      "name": "Service Fee Adjustments - Ayden Payments",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "1198",
+      "name": "Uber Direct Delivery Fees",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "120",
+      "name": "Surcharge Fees Paid (Doshii/ME&U)",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "125",
+      "name": "Closing Stock Movement",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "2800",
+      "name": "Accountancy - FCA",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "2801",
+      "name": "Accountancy - Bookkeeping Fees",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "2802",
+      "name": "Accountancy - Colemans Advisory",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "2803",
+      "name": "Accountancy - Pro You Business Advisory",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "2804",
+      "name": "Accountancy - Synergistic Business Partners",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "282",
+      "name": "Advertising & Promotion",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "28201",
+      "name": "Advertising - Social Media",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "295",
+      "name": "Bank Charges",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "2951",
+      "name": "Payment Processing Fees",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "300",
+      "name": "Borrowing Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "301",
+      "name": "Business Coaching",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "303",
+      "name": "Candle Supplies",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "306",
+      "name": "Cleaning",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "311",
+      "name": "Consultants Fees",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "312",
+      "name": "Other Cost of Sales",
+      "type": "DIRECTCOSTS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "313",
+      "name": "Crockery, Cutlery, Glassware",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "320",
+      "name": "Depreciation",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "322",
+      "name": "Depreciation - Low Cost Assets",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "326",
+      "name": "Donations",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "330",
+      "name": "Electricity & Gas",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "332",
+      "name": "Entertainment",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "337",
+      "name": "Filing Fees",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "338",
+      "name": "Fines",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "339",
+      "name": "First Aid & Pharmacy Supplies",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "340",
+      "name": "Furniture, Fixtures and Fittings < $500",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "342",
+      "name": "Freight & Courier",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "345",
+      "name": "Fuel & Oil",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "348",
+      "name": "General Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "350",
+      "name": "Gifts - Staff & Client",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "354",
+      "name": "Hire of Plant",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "358",
+      "name": "Insurance",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "360",
+      "name": "Interest Expense",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "368",
+      "name": "Internet",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "370",
+      "name": "Journals & Reference Books",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "373",
+      "name": "Kitchen Supplies",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "376",
+      "name": "Laundry",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "377",
+      "name": "Leasing Charges",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "380",
+      "name": "Legal Costs",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "382",
+      "name": "Licences, Registrations, Permits",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "384",
+      "name": "Merchant Fees",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "392",
+      "name": "Motor Vehicle Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "400",
+      "name": "Office Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "404",
+      "name": "Packing",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "406",
+      "name": "Pest Control",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "410",
+      "name": "Postage",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "412",
+      "name": "Printing & Stationery",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "415",
+      "name": "Purchases - Non COGS",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "420",
+      "name": "Rates",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "421",
+      "name": "Rent - Harry Gatos",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "422",
+      "name": "Rent - Stowaway",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "423",
+      "name": "Rent Property Outgoings",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "424",
+      "name": "Repairs & Maintenance",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "430",
+      "name": "Research & Development",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "443",
+      "name": "Security",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4631",
+      "name": "Subscriptions - General",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4632",
+      "name": "Subscriptions - Accounting Apps",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4633",
+      "name": "Subscriptions - Admin Apps",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4634",
+      "name": "Subscriptions - Bar Management",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4635",
+      "name": "Subscriptions - Event Management Apps",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4636",
+      "name": "Subscriptions - HR Apps",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4637",
+      "name": "Subscriptions - Music Licensing",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "4638",
+      "name": "Subscriptions - Website Management",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "465",
+      "name": "Storage Fees",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "470",
+      "name": "Telephone & Internet",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "472",
+      "name": "Tips Paid to Staff",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "474",
+      "name": "Tolls & Parking",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "475",
+      "name": "Tools",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "477",
+      "name": "Travelling Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48800",
+      "name": "Wages & Salaries",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48801",
+      "name": "Wages & Salaries - Management",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48802",
+      "name": "Wages & Salaries - Stowaway Bar",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48803",
+      "name": "Wages & Salaries - Marilyna's Pizza",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48804",
+      "name": "Wages & Salaries - Harry Gatos",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48805",
+      "name": "Superannuation",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48806",
+      "name": "Superannuation - Management",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48807",
+      "name": "Superannuation - Stowaway Bar",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48808",
+      "name": "Superannuation - Marilyna's Pizza",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48810",
+      "name": "Superannuation - Harry Gatos",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48811",
+      "name": "Super Guarantee Interest & Admin Fee",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48812",
+      "name": "Staff Amenities",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48813",
+      "name": "Staff Training",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48814",
+      "name": "Staff Recruitment Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48815",
+      "name": "Uniforms",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48816",
+      "name": "Payroll Tax - 2023",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48817",
+      "name": "Payroll Tax",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48818",
+      "name": "Commission",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48819",
+      "name": "Annual Leave Provision Movement",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48820",
+      "name": "Workers Compensation",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "48821",
+      "name": "Workers Compensation - Prior Year",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "495",
+      "name": "Waste Removal",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "496",
+      "name": "Website Development Cost",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "497",
+      "name": "Bank Revaluations",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "498",
+      "name": "Unrealised Currency Gains",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "499",
+      "name": "Realised Currency Gains",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "518",
+      "name": "Income Tax Expense",
+      "type": "OVERHEADS",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "529",
+      "name": "Dividend paid",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    },
+    {
+      "code": "999",
+      "name": "New Business  Formation Expenses",
+      "type": "EXPENSE",
+      "class": "EXPENSE"
+    }
+  ],
+  "tracking": [
+    {
+      "name": "Stowaway",
+      "id": "f03fcb84-a9fa-4e75-931d-b2499aa84a55",
+      "options": [
+        "Admin",
+        "Bar",
+        "Harry Gatos",
+        "Kitchen",
+        "Marilyna's Pizza",
+        "Miscellaneous",
+        "Miscellaneous K",
+        "Miscellaneous Z",
+        "To Be Reviewed"
+      ]
+    },
+    {
+      "name": "Harry Gatos",
+      "id": "d9a3374c-3422-4f6c-bf48-ef6c221d671a",
+      "options": [
+        "Admin",
+        "Bar",
+        "Fitout Costs",
+        "Kitchen",
+        "Wages & Staffing Costs"
+      ]
+    }
+  ]
+}

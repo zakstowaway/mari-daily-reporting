@@ -117,6 +117,16 @@ def main() -> int:
         print(f"  note: LS receive should be ${result.expected_ls_receive_total} "
               f"(${result.extras_total} of extras excluded — that gap is expected)")
 
+    # ---- suggest Xero coding (the Dext replacement) — a hint, never a decision -
+    from collections import Counter
+
+    from modules.invoices.account_map import ACCOUNT_NAME, suggest_coding
+    coding = suggest_coding(inv)
+    acct_split = Counter(l.account_code for l in coding.lines if l.account_code)
+    split_str = ", ".join(f"{ACCOUNT_NAME.get(c, c)} ({c})×{n}" for c, n in acct_split.most_common())
+    print(f"  Xero: {split_str or 'no codeable lines'}"
+          f"  |  tracking: {coding.tracking_category}/{coding.tracking_option} ({coding.tracking_confidence})")
+
     if args.dry_run:
         return 0 if result.ok else 2
 
@@ -136,6 +146,17 @@ def main() -> int:
             ],
             "expected_ls_receive_total": result.expected_ls_receive_total,
             "extras_total": result.extras_total,
+        },
+        "xero_coding": {
+            "tracking_category": coding.tracking_category,
+            "tracking_option": coding.tracking_option,
+            "tracking_confidence": coding.tracking_confidence,
+            "primary_account": coding.primary_account,
+            "lines": [
+                {"description": l.description, "account_code": l.account_code,
+                 "account_name": l.account_name, "reason": l.reason}
+                for l in coding.lines
+            ],
         },
     }
     path = out_dir / f"{stem}.json"
