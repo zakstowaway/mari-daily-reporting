@@ -186,6 +186,14 @@ jobs:
           # which the EatClub dashboard fetches live (keeps the page current).
           python scripts/build_eatclub_nights.py || echo "::warning::eatclub rollup failed (non-fatal)"
 
+      - name: Schema guard (block column wipes / truncation before commit)
+        run: |
+          # Compares the regenerated histories against HEAD and fails the run if a
+          # column was dropped, dates were lost, or a column went dark (e.g. the
+          # leave_dollars wipe). A silent data regression stops here, not on the
+          # dashboard. Intentional changes: add --allow "venue:column".
+          python scripts/schema_guard.py
+
       - name: Commit updated data
         run: |
           git config user.name "Daily Pull"
