@@ -54,7 +54,8 @@ function rowHtml(b) {
   ].join('');
   const note = b.notes ? `<span class="bnote">${b.notes}</span> · ` : '';
   return `<div class="brow${b.status === 'pending_deposit' ? ' pending' : ''}">
-    <div class="btable">${b.suggested_table || '—'}</div>
+    <button class="btable${b.pinned_table ? ' pinnedchip' : ''}" data-pick="${b.id}"
+      title="${b.pinned_table ? 'pinned — click to change' : 'click to choose a table'}">${b.suggested_table || '—'}</button>
     <div class="bmain">
       <div class="bname">${b.name} ${flags}</div>
       <div class="bsub">${note}${b.phone || ''} · booked ${fmtBooked(b.created_at)}</div>
@@ -109,6 +110,45 @@ function renderDay(d) {
     el.addEventListener('click', () => openEdit(el.dataset.edit)));
   wrap.querySelectorAll('[data-cancel]').forEach(el =>
     el.addEventListener('click', () => cancelBooking(el.dataset.cancel)));
+  wrap.querySelectorAll('[data-pick]').forEach(el =>
+    el.addEventListener('click', () => pickTable(el.dataset.pick, el)));
+}
+
+async function pickTable(id, chip) {
+  // Swap the chip for a dropdown of every table the engine PROVES this
+  // booking could move to (each option = a full day re-solve). Picking one
+  // pins it; "auto" hands the choice back to the engine.
+  const original = chip.textContent;
+  chip.textContent = '…';
+  chip.disabled = true;
+  let alts;
+  try {
+    alts = await (await call(`/api/admin/bookings/${id}/alternatives`)).json();
+  } catch (e) {
+    chip.textContent = original; chip.disabled = false;
+    $('status').textContent = 'error: ' + e.message;
+    return;
+  }
+  const sel = document.createElement('select');
+  sel.className = 'tblselect';
+  const current = alts.pinned || original;
+  sel.innerHTML = `<option value="auto">auto — engine picks</option>` +
+    alts.options.map(o =>
+      `<option value="${o}" ${o === current ? 'selected' : ''}>${o}${o === alts.pinned ? ' (pinned)' : ''}</option>`).join('');
+  chip.replaceWith(sel);
+  sel.focus();
+  let done = false;
+  sel.addEventListener('change', async () => {
+    done = true;
+    try {
+      await call(`/api/admin/bookings/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ pinned_table: sel.value }),
+      });
+    } catch (e) { $('status').textContent = 'move refused: ' + e.message; }
+    loadDay();
+  });
+  sel.addEventListener('blur', () => { if (!done) loadDay(); });
 }
 
 // ---------------------------------------------------------------- actions
@@ -221,7 +261,7 @@ async function init() {
 }
 
 Auth.gate($('gate'), {
-  roles: null,   // any signed-in user can open; guest data still requires the booking-engine bearer token entered on-page (that is the real auth)
+  roles: ['admin'],   // guest phone numbers live here — widen deliberately
   onOk: (user) => {
     $('app').style.display = '';
     $('whotop').innerHTML = `<strong>${user.name}</strong>`;
