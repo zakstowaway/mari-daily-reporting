@@ -1,0 +1,41 @@
+[
+  {
+    "timesheet_id": 35457,
+    "employee_id": 15,
+    "employee_name": "Marssheel Marssheel",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1784772000,
+    "end_time": 1784808900,
+    "hours": 10.25,
+    "cost": 433.65,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35462,
+    "employee_id": 242,
+    "employee_name": "David Armour",
+    "ou_name": "Harry's Floor",
+    "company": "Harry Gatos",
+    "dept": "FOH",
+    "start_time": 1784784600,
+    "end_time": 1784807100,
+    "hours": 5.75,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35464,
+    "employee_id": 296,
+    "employee_name": "Olivia",
+    "ou_name": "Harry's Kitchen",
+    "company": "Harry Gatos",
+    "dept": "Kitchen",
+    "start_time": 1784786400,
+    "end_time": 1784807100,
+    "hours": 5.25,
+    "cost": 0.0,
+    "salaried_synth": false
+  }
+]

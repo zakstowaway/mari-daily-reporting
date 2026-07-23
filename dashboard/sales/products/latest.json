@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-23T20:37:39+10:00",
+  "generated_at": "2026-07-24T05:01:25+10:00",
   "coverage": {
     "stow": {
       "label": "Stowaway",
@@ -13,7 +13,7 @@
       "first_week_ending": "2024-10-27",
       "last_week_ending": "2026-07-26",
       "weeks": 92,
-      "products": 191
+      "products": 194
     },
     "mari": {
       "label": "Marilyna's",
