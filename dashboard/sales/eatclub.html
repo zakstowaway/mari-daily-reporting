@@ -42,7 +42,9 @@ tr.tot td{border-top:2px solid #333;background:#fafafa;font-weight:700}
   import { Auth } from '/_shared/auth.js';
   let me = null;
   try { me = await Auth.current(); } catch (e) { console.error('auth', e); }
-  if (!me || me.role !== 'admin') location.replace('/');
+  // EatClub dash is open to ALL signed-in users (any role) — only a non-signed-in
+  // visitor is sent to the dashboard, which hosts the sign-in card.
+  if (!me) location.replace('/');
   else document.documentElement.style.visibility = '';
 </script>
 <div style="margin-bottom:14px"><a href="/" style="font-size:14px;color:#666;text-decoration:none">&larr; Back to dashboard</a></div>

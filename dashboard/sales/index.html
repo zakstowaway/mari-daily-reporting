@@ -2026,7 +2026,7 @@ function renderVenueTabs() {
   const toolNav = document.getElementById('tool-nav');
   if (toolNav) toolNav.innerHTML = CURRENT_ROLE === 'admin'
     ? `<a href="rg.html">Menu trends</a><a href="eatclub.html">EatClub</a><a href="/recipes/">Recipes</a><a href="/admin/">Team</a>`
-    : '';
+    : `<a href="eatclub.html">EatClub</a>`;   // EatClub is open to all roles
 }
 function renderVenueStrip() {
   const el = document.getElementById('venue-strip');
