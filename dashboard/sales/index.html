@@ -473,6 +473,7 @@ tbody tr:hover { background: var(--group-tint); }
 .daywrap p .dw-neg { color: #E24B4A; font-weight: 600; }
 .daywrap p strong { color: var(--ink); font-weight: 600; }
 </style>
+<script src="/_shared/pnl.js"></script>
 </head>
 <script>
   // Single sign-on for the whole app: Supabase session is resolved once here,
@@ -634,8 +635,6 @@ async function tryResume() {
   showDashboard();
 }
 
-const REAL_VENUES = ['mari', 'stow', 'hg'];
-
 const VENUE_CONFIG = {
   group: { label: 'Group', chipClass: 'group', historyFile: null, dayFilePrefix: null,
     cards: ['revenue', 'cogs', 'wages', 'gp'], chart_lines: ['cogs', 'wages', 'gp'],
@@ -677,14 +676,11 @@ const ROLE_CONFIG = {
     history_cols: ['date', 'food_ex_gst', 'food_cogs_pct', 'wages_kitchen_pct', 'food_gp_pct'] },
 };
 
-const STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], includeAdmin: false, includeLeave: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [], uberDirect: [] };
+var STATE = { histories: {}, currentVenue: null, currentTimeframe: 'day', currentDay: null, rangeStart: null, rangeEnd: null, xeroCogs: [], xeroOH: [], baselines: {}, focusMetric: null, focusYears: [], roster: null, uberFees: [], includeAdmin: false, includeLeave: false, oncost: { rate: 0, ownerWeekly: 0 }, uberDaily: [], uberAds: [], uberDirect: [] };
 
 // Plan-basis fixed overheads (non-wage), $/week — Olly's BEP workbooks
 // (FIXED_OH_WEEKLY): Stow 462,748/yr, HG 150,280/yr, Mari 92,508/yr.
 // Excludes dep+interest. Refresh from Xero P&L when the BEP plan is revised.
-const OVERHEADS_WEEKLY = { stow: 8899, hg: 2890, mari: 1779, group: 13568 };
-
-const PLAN_WAGE_SHARE = { stow: 0.624, hg: 0.207, mari: 0.170, group: 1.0 };
 
 function pill(text, kind) {
   const m = { red: ['#FCEBEB', '#791F1F', '#501313', '#F7C1C1'],
@@ -694,39 +690,7 @@ function pill(text, kind) {
   return `<span style="font-size:12px;font-weight:500;padding:2px 8px;border-radius:8px;background:${bg};color:${fg};vertical-align:2px;white-space:nowrap;">${text}</span>`;
 }
 
-function winEnd(day) {
-  const t = String(day.date || '');
-  if (t.includes(' \u2014 ')) return t.split(' \u2014 ')[1];
-  return /^\d{4}-\d{2}-\d{2}$/.test(t) ? t : isoDate(sydneyToday());
-}
-
 // YoY: same window shifted -364 days (weekday-aligned) to strip seasonality.
-function yoyRevenueDelta(rows, timeframe, anchorDay) {
-  const cur = rowsForTimeframe(rows, timeframe, anchorDay);
-  if (!cur.length) return null;
-  const ps = isoDate(addDays(new Date(cur[0].date), -364));
-  const pe = isoDate(addDays(new Date(cur[cur.length - 1].date), -364));
-  const prev = rows.filter(r => r.date >= ps && r.date <= pe);
-  if (!prev.length || prev.length < cur.length * 0.8) return null;
-  const cr = cur.reduce((t, r) => t + toNum(r.revenue_ex_gst), 0);
-  const pr = prev.reduce((t, r) => t + toNum(r.revenue_ex_gst), 0);
-  if (!pr) return null;
-  return (cr - pr) / pr * 100;
-}
-
-function wageMedian12wk(rows) {
-  const byWk = {};
-  for (const r of rows) {
-    if (!hasVal(r.wages_dollars)) continue;
-    const ws = isoDate(weekStart(new Date(r.date)));
-    const b = byWk[ws] = byWk[ws] || { w: 0, rev: 0 };
-    b.w += toNum(r.wages_dollars); b.rev += toNum(r.revenue_ex_gst);
-  }
-  const wks = Object.keys(byWk).sort().slice(-13, -1);
-  const pcts = wks.map(k => byWk[k].rev ? byWk[k].w / byWk[k].rev * 100 : null)
-                  .filter(x => x !== null).sort((a, b) => a - b);
-  return pcts.length ? pcts[Math.floor(pcts.length / 2)] : null;
-}
 
 // Corp payroll = OWNER SALARIES ONLY (Oliver + Bryony). Zak's hard rule
 // (2026-07-18): nothing else belongs here.
@@ -738,10 +702,6 @@ function wageMedian12wk(rows) {
 // what remains — the owners — is a known figure straight from the pay runs
 // (data/wage_oncosts.json, built by compute_wage_oncosts.py). No residual, no
 // timing noise, no leakage.
-function corpPayrollDaily(venue, endIso) {
-  const wk = STATE.oncost.ownerWeekly || 0;
-  return wk * (PLAN_WAGE_SHARE[venue] || 0) / 7;
-}
 
 // Payroll tax + workers-comp: LUMPY ACTUAL expenses (Zak, 2026-07-18: "don't
 // estimate ... treat them as lumpy expenses"). NOT a rate on wages.
@@ -752,28 +712,6 @@ function corpPayrollDaily(venue, endIso) {
 // uses for every other lumpy overhead (quarterly power, annual insurance), and
 // split to venues by plan wage share since wages drive them. Daily $, matching
 // overheadsDailyRate / corpPayrollDaily.
-function wageOncostDaily(venue, endIso) {
-  const feed = STATE.xeroOH;
-  if (!feed.length) return 0;
-  const endMonth = String(endIso || '').slice(0, 7);
-  const months = feed.filter(r => r.month && r.month < endMonth && hasVal(r.group_payroll))
-                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
-  if (!months.length) return 0;
-  const monthSet = new Set(months.map(r => r.month));
-  let gp = 0, days = 0;
-  for (const r of months) {
-    gp += toNum(r.group_payroll);
-    const [y, m] = r.month.split('-').map(Number);
-    days += new Date(y, m, 0).getDate();
-  }
-  let deputy = 0;
-  for (const v of REAL_VENUES) for (const r of (STATE.histories[v] || [])) {
-    if (monthSet.has(r.date.slice(0, 7))) deputy += toNum(r.wages_dollars) + toNum(r.leave_dollars);
-  }
-  const ownerTot = (STATE.oncost.ownerWeekly || 0) / 7 * days;   // owners over same days
-  const oncost = Math.max(0, gp - deputy - ownerTot);            // payroll tax + WC (+ timing)
-  return days ? oncost * (PLAN_WAGE_SHARE[venue] || 0) / days : 0;
-}
 
 // Interest + depreciation/amortisation, per day, from the Xero monthly feed.
 // Split by the same plan wage/OH share as corp payroll — these are group-level
@@ -803,33 +741,9 @@ function financeDaily(venue, endIso) {
 // Typical share of weekly revenue by day-of-week (getDay index, 0=Sun),
 // from the trailing ~12 weeks. Used to apportion overheads: a Saturday
 // carries its typical share of the weekly overhead, not a flat 1/7.
-function dowShares(venue) {
-  STATE._dow = STATE._dow || {};
-  if (STATE._dow[venue] !== undefined) return STATE._dow[venue];
-  const rows = (STATE.histories[venue] || []).slice(-84);
-  const sum = [0,0,0,0,0,0,0], cnt = [0,0,0,0,0,0,0];
-  for (const r of rows) {
-    const rev = toNum(r.revenue_ex_gst);
-    if (!rev) continue;
-    const d = new Date(r.date).getDay();
-    sum[d] += rev; cnt[d]++;
-  }
-  const means = sum.map((x, i) => cnt[i] ? x / cnt[i] : 0);
-  const tot = means.reduce((a, b) => a + b, 0);
-  STATE._dow[venue] = tot ? means.map(x => x / tot) : null;
-  return STATE._dow[venue];
-}
 
 // OH factor for a window: sum of (7 x typical share) over its wage-covered
 // days — equals plain day-count for whole weeks, weights partial windows.
-function ohFactor(day, venue, wdays) {
-  const shares = dowShares(venue);
-  if (!shares) return wdays;
-  if (day.dow_counts) return 7 * day.dow_counts.reduce((t, c, i) => t + c * shares[i], 0);
-  const t = String(day.date || '');
-  if (/^\d{4}-\d{2}-\d{2}$/.test(t)) return 7 * shares[new Date(t).getDay()];
-  return wdays;
-}
 
 // P&L over the wage-covered slice of the selected window. Long windows can
 // include days before wage data exists (late Nov 2025) — costs and profit
@@ -839,43 +753,10 @@ function ohFactor(day, venue, wdays) {
 // From data/uber_daily.csv + uber_marketing_weekly.csv (merchant-portal pull).
 // Returns null when we have no actual for this window (older days fall back to
 // the trailing estimate). Applied for mari/hg only; stow isn't on Uber Eats.
-function uberSplit(venue, sIso, eIso) {
-  if (!STATE.uberDaily.length) return null;
-  if (venue !== 'mari' && venue !== 'hg') return null;
-  let comm = 0, offers = 0, have = false;
-  for (const r of STATE.uberDaily) {
-    if (r.shop === venue && r.date >= sIso && r.date <= eIso) {
-      comm += toNum(r.commission_inc_gst); offers += toNum(r.offers_inc_gst); have = true;
-    }
-  }
-  if (!have) return null;
-  // Ads are billed weekly — amortise each week's spend over its 7 days, counting
-  // only the portion overlapping the window.
-  let ads = 0;
-  for (const r of STATE.uberAds) {
-    if (r.shop !== venue || !r.week_ending) continue;
-    const wkStart = isoDate(addDays(new Date(r.week_ending), -6));
-    const ovStart = wkStart > sIso ? wkStart : sIso;
-    const ovEnd = r.week_ending < eIso ? r.week_ending : eIso;
-    const days = (new Date(ovEnd) - new Date(ovStart)) / 86400000 + 1;
-    if (days > 0) ads += toNum(r.ads_inc_gst) * days / 7;
-  }
-  return { commission: comm, marketing: offers + ads };
-}
 
 // What fraction of a venue's blended delivery-fee estimate is Uber Eats — so we
 // can swap just that slice for the actual and keep the rest (Mari: DoorDash +
 // Uber Direct; HG delivery estimate is ME&U only, no Uber, so 0).
-function uberEatsShareOfDelivery(venue, endIso) {
-  if (venue !== 'mari') return 0;
-  const feed = STATE.xeroOH;
-  const endMonth = String(endIso || '').slice(0, 7);
-  const months = feed.filter(r => r.month && r.month < endMonth && hasVal(r.mari_uber_fees))
-                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
-  let all = 0, only = 0;
-  for (const r of months) { all += toNum(r.mari_uber_fees); only += toNum(r.mari_uber_only); }
-  return all ? Math.min(1, only / all) : 0.89;
-}
 
 // Actual Uber Direct delivery fees (Mari's own online orders, delivered by
 // Uber's fleet — billed DAILY, one invoice per day, separate from Uber Eats
@@ -883,91 +764,14 @@ function uberEatsShareOfDelivery(venue, endIso) {
 // covered=true when the whole window sits inside the pulled date range, so a
 // day with no Direct orders reads as a real $0 rather than a gap. Uncovered
 // windows return covered:false -> caller estimates. Mari only.
-function uberDirectActual(venue, sIso, eIso) {
-  if (venue !== 'mari') return null;
-  const rows = STATE.uberDirect || [];
-  let min = null, max = null;
-  for (const r of rows) {
-    if (r.shop !== venue) continue;
-    if (min === null || r.date < min) min = r.date;
-    if (max === null || r.date > max) max = r.date;
-  }
-  if (min === null) return null;
-  let fee = 0;
-  for (const r of rows) {
-    if (r.shop === venue && r.date >= sIso && r.date <= eIso) fee += toNum(r.fee_inc_gst);
-  }
-  return { fee, covered: sIso >= min && eIso <= max };
-}
 
 // Revenue for one venue over [sIso,eIso] from its daily history.
-function venueRevWindow(venue, sIso, eIso) {
-  let rev = 0;
-  for (const r of (STATE.histories[venue] || [])) {
-    if (r.date >= sIso && r.date <= eIso) rev += toNum(r.revenue_ex_gst);
-  }
-  return rev;
-}
 
 // Delivery-fee dollars for ONE real venue over a window, using actual portal
 // data where it covers the window and the Xero trailing-rate estimate otherwise.
 // Mari: Uber Eats (commission + marketing) actual + Uber Direct actual, residual
 // estimated. HG: Uber Eats actual + ME&U estimate. Stow: ME&U estimate only.
 // Marketing stays INSIDE df — broken out only in card text (Zak: no separate line).
-function venueDeliveryEst(venue, sIso, eIso, endIso) {
-  const rev = venueRevWindow(venue, sIso, eIso);
-  const dfr = deliveryFeesPct(venue, endIso);
-  const dfEst = dfr ? rev * dfr.pct / 100 : 0;
-  const _u = uberSplit(venue, sIso, eIso);
-  if (!_u) return { df: dfEst, commission: 0, marketing: 0, direct: null, actual: false };
-  const dir = uberDirectActual(venue, sIso, eIso);
-  const directActual = dir && dir.covered;
-  const nonUber = directActual ? dir.fee : dfEst * (1 - uberEatsShareOfDelivery(venue, endIso));
-  return { df: _u.commission + _u.marketing + nonUber, commission: _u.commission,
-           marketing: _u.marketing, direct: directActual ? dir.fee : null, actual: true };
-}
-
-function pnlWindow(day, venue = STATE.currentVenue) {
-  const revAll = toNum(day.revenue_ex_gst);
-  if (!revAll || !hasVal(day.wages_dollars)) return null;
-  const daysAll = day.days_included || 1;
-  const wdays = day.wage_days || daysAll;
-  const rev = day.rev_wage_days ? toNum(day.rev_wage_days) : revAll;
-  const endIso = winEnd(day);
-  const a = actualCogs(venue, endIso);
-  const estBase = day.cogs_wage_days && rev ? toNum(day.cogs_wage_days) / rev * 100 : toNum(day.cogs_pct);
-  const cogsPct = a ? a.pct : estBase;
-  const ohA = overheadsDailyRate(venue, endIso);
-  const ohf = ohFactor(day, venue, wdays);
-  const wages = toNum(day.wages_dollars);
-  // Overheads = fixed OH + payroll tax/WC (both lumpy group costs, DOW-weighted).
-  const oh = ((ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7) + wageOncostDaily(venue, endIso)) * ohf;
-  const fa = feesActualWindow(day, venue);
-  // Delivery fees. Whole-month closed windows use booked/portal actuals (fa).
-  // Otherwise venueDeliveryEst swaps in the live Uber Eats + Uber Direct daily
-  // data per venue where it covers the window, and estimates the rest. Marketing
-  // stays INSIDE df (Zak: no separate line). Group = sum of real venues when any
-  // live data is present, else the blended trailing rate (older windows unchanged).
-  const _win = String(day.date).includes(' — ') ? String(day.date).split(' — ') : [day.date, day.date];
-  let df;
-  if (fa) {
-    df = fa.fees;
-  } else if (venue === 'group') {
-    const parts = REAL_VENUES.map(v => venueDeliveryEst(v, _win[0], _win[1], endIso));
-    if (parts.some(p => p.actual)) df = parts.reduce((t, p) => t + p.df, 0);
-    else { const dfr = deliveryFeesPct(venue, endIso); df = dfr ? rev * dfr.pct / 100 : 0; }
-  } else {
-    df = venueDeliveryEst(venue, _win[0], _win[1], endIso).df;
-  }
-  const cp = corpPayrollDaily(venue, endIso) * ohf;   // owners' salary, DOW-weighted
-  // Interest + depreciation are OUT of the P&L (Zak/Olly BEP, 2026-07-22): both are
-  // $0 in Olly's plan — depreciation isn't a cash cost we pay, and interest is a
-  // balance-sheet item, not a day-to-day trading cost. So profit = operating profit.
-  const fin = 0;
-  const opProfit = rev - rev * cogsPct / 100 - wages - oh - df - cp;
-  const profit = opProfit - fin;
-  return { rev, daysAll, wdays, a, cogsPct, ohA, oh, df, cp, fin, wages, opProfit, profit, partial: wdays < daysAll };
-}
 
 // Daily overhead rate from the Xero monthly feed: trailing up-to-3 COMPLETE
 // months before the window end (overheads are lumpy — quarterly power,
@@ -980,98 +784,19 @@ function pnlWindow(day, venue = STATE.currentVenue) {
 // ~$51k for Apr/Jun (a ~$40k capital/annual lump miscoded to opex); a mean would
 // let that single spike inflate every week's overhead, a median ignores it. As
 // more months accumulate the window naturally converges on Olly's 15-week basis.
-function overheadsDailyRate(venue, endIso) {
-  const feed = STATE.xeroOH;
-  if (!feed.length) return null;
-  const endMonth = String(endIso || '').slice(0, 7);
-  const months = feed.filter(r => r.month && r.month < endMonth).sort((a, b) => a.month.localeCompare(b.month)).slice(-4);
-  if (!months.length) return null;
-  const val = r => venue === 'group'
-    ? toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads)
-    : toNum(r[`${venue}_overheads`]);
-  const daysIn = r => { const [y, m] = r.month.split('-').map(Number); return new Date(y, m, 0).getDate(); };
-  const rates = months.map(r => val(r) / daysIn(r)).sort((a, b) => a - b);
-  const n = rates.length;
-  const median = n % 2 ? rates[(n - 1) / 2] : (rates[n / 2 - 1] + rates[n / 2]) / 2;
-  return { rate: median, months: n };
-}
 
 // Delivery fees as a % of venue revenue, from the Xero monthly feed
 // (trailing up-to-3 complete months). Canon: UberEats + DoorDash + Uber
 // Direct -> Mari; ME&U + Doshii surcharges -> Stow/HG by revenue share.
-function deliveryFeesPct(venue, endIso) {
-  const feed = STATE.xeroOH;
-  if (!feed.length) return null;
-  const endMonth = String(endIso || '').slice(0, 7);
-  const months = feed.filter(r => r.month && r.month < endMonth && (hasVal(r.mari_uber_fees) || hasVal(r.meu_fees)))
-                     .sort((a, b) => a.month.localeCompare(b.month)).slice(-3);
-  if (!months.length) return null;
-  const monthSet = new Set(months.map(r => r.month));
-  const revOf = v => (STATE.histories[v] || []).reduce((t, r) => monthSet.has(r.date.slice(0, 7)) ? t + toNum(r.revenue_ex_gst) : t, 0);
-  let fees = 0, rev = 0;
-  if (venue === 'mari') {
-    fees = months.reduce((t, r) => t + toNum(r.mari_uber_fees), 0);
-    rev = revOf('mari');
-  } else if (venue === 'stow' || venue === 'hg') {
-    fees = months.reduce((t, r) => t + toNum(r.meu_fees), 0);
-    rev = revOf('stow') + revOf('hg');   // same % across both = revenue-share split
-  } else {   // group
-    fees = months.reduce((t, r) => t + toNum(r.mari_uber_fees) + toNum(r.meu_fees), 0);
-    rev = revOf('mari') + revOf('stow') + revOf('hg');
-  }
-  if (!rev || !fees) return null;
-  return { pct: fees / rev * 100, months: months.length };
-}
 
 // Trailing-N-complete-weeks actual COGS from Xero purchases. Purchases are
 // backwards-looking (bev stock turns over slowly, food ~14 days), so a
 // 4-week window is the honest attribution — never single days.
-function actualCogs(venue, endIso, nWeeks = 4) {
-  const rowsAll = STATE.xeroCogs;
-  if (!rowsAll.length) return null;
-  const weeks = [...new Set(rowsAll.filter(r => r.week_ending <= endIso).map(r => r.week_ending))].sort().slice(-nWeeks);
-  if (!weeks.length) return null;
-  const vens = venue === 'group' ? REAL_VENUES : [venue];
-  let purch = 0;
-  for (const r of rowsAll) {
-    if (weeks.includes(r.week_ending) && vens.includes(r.venue)) purch += toNum(r.actual_cogs_ex_gst);
-  }
-  // revenue over those same weeks, from the venue's daily history
-  const hist = STATE.histories[venue] || [];
-  let rev = 0;
-  for (const we of weeks) {
-    const end = new Date(we); const start = addDays(end, -6);
-    const sIso = isoDate(start), eIso = we;
-    for (const r of hist) if (r.date >= sIso && r.date <= eIso) rev += toNum(r.revenue_ex_gst);
-  }
-  if (!rev) return null;
-  return { pct: purch / rev * 100, purchases: purch, revenue: rev, weeks: weeks.length, from: weeks[0], to: weeks[weeks.length - 1] };
-}
-
 
 // ---- v12 helpers -------------------------------------------------
 // Typical revenue for a day-of-week: median of the last 8 same-DOW trading
 // days. 0 when the venue has never traded that DOW.
-function dowForecast(venue, dow) {
-  STATE._fcst = STATE._fcst || {};
-  if (!STATE._fcst[venue]) {
-    const rows = STATE.histories[venue] || [];
-    const by = [[], [], [], [], [], [], []];
-    for (let i = rows.length - 1; i >= 0; i--) {
-      const rev = toNum(rows[i].revenue_ex_gst);
-      if (rev <= 0) continue;
-      const d = new Date(rows[i].date).getDay();
-      if (by[d].length < 8) by[d].push(rev);
-      if (by.every(a => a.length >= 8)) break;
-    }
-    STATE._fcst[venue] = by.map(a => {
-      if (!a.length) return 0;
-      const s2 = [...a].sort((x, y) => x - y);
-      return s2.length % 2 ? s2[(s2.length - 1) / 2] : (s2[s2.length / 2 - 1] + s2[s2.length / 2]) / 2;
-    });
-  }
-  return STATE._fcst[venue][dow];
-}
+
 // Typical FOOD / BEV revenue by weekday (median of last 8 same-DOW days
 // carrying the dept split) — denominators for Kitchen / FOH wage %.
 function dowDeptForecast(venue, dow) {
@@ -1095,201 +820,36 @@ function dowDeptForecast(venue, dow) {
   }
   return { food: STATE._dfcst[venue].food[dow], bev: STATE._dfcst[venue].bev[dow] };
 }
-function venueForecast(venue, dow) {
-  return venue === 'group'
-    ? ['stow', 'hg', 'mari'].reduce((t, p) => t + (dowForecast(p, dow) || 0), 0)
-    : (dowForecast(venue, dow) || 0);
-}
+
 // Breakeven: daily fixed cost / (1 - variable %). Variable = actual COGS %
 // + platform fee % + 12-wk median wage % (wages treated as variable at the
 // margin, matching the BEP workbooks).
-function breakevenParts(venue, endIso) {
-  const ohA = overheadsDailyRate(venue, endIso);
-  // Fixed = real overheads + owner salary + payroll tax/WC. All lumpy group
-  // costs that don't move with tonight's trade — the breakeven denominator.
-  const fixedDaily = (ohA ? ohA.rate : (OVERHEADS_WEEKLY[venue] || 0) / 7)
-                     + corpPayrollDaily(venue, endIso) + wageOncostDaily(venue, endIso);
-  const a = actualCogs(venue, endIso);
-  const dfr = deliveryFeesPct(venue, endIso);
-  const wm = wageMedian12wk(STATE.histories[venue] || []);
-  if (!a && wm === null) return null;
-  const varPct = (a ? a.pct : 0) + (dfr ? dfr.pct : 0) + (wm || 0);
-  if (varPct >= 95) return null;
-  return { fixedDaily, varPct };
-}
+
 // Actual COGS split: Xero purchase categories over the trailing 4 complete
 // weeks vs dept revenue over the same weeks (Mari is all-food).
-function actualCogsSplit(venue, endIso, nWeeks = 4) {
-  const rowsAll = STATE.xeroCogs;
-  if (!rowsAll.length) return null;
-  const weeks = [...new Set(rowsAll.filter(r => r.week_ending <= endIso).map(r => r.week_ending))].sort().slice(-nWeeks);
-  if (!weeks.length) return null;
-  const vens = venue === 'group' ? REAL_VENUES : [venue];
-  let food = 0, bev = 0;
-  for (const r of rowsAll) if (weeks.includes(r.week_ending) && vens.includes(r.venue)) {
-    food += toNum(r.food_ex_gst); bev += toNum(r.bev_ex_gst);
-  }
-  let fRev = 0, bRev = 0;
-  for (const v of vens) {
-    const hist = STATE.histories[v] || [];
-    for (const we of weeks) {
-      const sIso = isoDate(addDays(new Date(we), -6));
-      for (const r of hist) if (r.date >= sIso && r.date <= we) {
-        if (v === 'mari') fRev += toNum(r.revenue_ex_gst);
-        else { fRev += toNum(r.food_ex_gst); bRev += toNum(r.bev_ex_gst); }
-      }
-    }
-  }
-  if (!fRev && !bRev) return null;
-  return { food: fRev ? food / fRev * 100 : null, bev: bRev ? bev / bRev * 100 : null };
-}
+
 // REAL Uber service fees (merchant portal, ex-marketing) for a window —
 // only when portal weeks fully cover every Sunday week-end in the window.
 // Values in the feed are inc GST (portal basis); returned ex GST.
-function uberSvcWindow(sIso, eIso) {
-  const feed = STATE.uberFees || [];
-  if (!feed.length) return null;
-  const sundays = [];
-  for (let d = new Date(sIso); isoDate(d) <= eIso; d = addDays(d, 1)) {
-    if (d.getDay() === 0) sundays.push(isoDate(d));
-  }
-  if (!sundays.length) return null;
-  const wk = {};
-  for (const r of feed) if (r.venue === 'mari' && hasVal(r.service_fees_inc_gst)) wk[r.week_ending] = r;
-  if (!sundays.every(su => wk[su])) return null;
-  let svc = 0, mkt = 0;
-  for (const su of sundays) { svc += toNum(wk[su].service_fees_inc_gst); mkt += toNum(wk[su].marketing_inc_gst); }
-  return { svc: svc / 1.1, mkt: mkt / 1.1, weeks: sundays.length };
-}
 
 // Whole-month edge test, tolerant of venue closed days: the window's first
 // data day sits in the first 3 days of its month, the last in the final 3
 // (Mari's June starts on the 2nd — Monday closed — and is still "June").
-function wholeMonthEdges(sIso, eIso) {
-  if (Number(sIso.slice(8)) > 3) return false;
-  const eD = new Date(eIso);
-  return new Date(eD.getFullYear(), eD.getMonth() + 1, 0).getDate() - eD.getDate() <= 2;
-}
 
 // Actual booked platform fees for windows made of whole COMPLETED months
 // present in the Xero feed. No stock-journal requirement — fee accounts are
 // reconciled continuously, so a finished month's booking is real.
-function feesActualWindow(day, venue = STATE.currentVenue) {
-  const t = String((day && day.date) || '');
-  if (!t.includes(' — ')) return null;
-  const parts = t.split(' — ');
-  const sIso = parts[0], eIso = parts[1];
-  if (!wholeMonthEdges(sIso, eIso)) return null;
-  const feed = Object.fromEntries(STATE.xeroOH.map(r => [r.month, r]));
-  const curMonth = isoDate(sydneyToday()).slice(0, 7);
-  const months = [];
-  let cur = new Date(sIso.slice(0, 7) + '-01');
-  while (isoDate(cur) <= eIso) {
-    months.push(isoDate(cur).slice(0, 7));
-    cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
-  }
-  if (!months.length || !months.every(m => feed[m] && m < curMonth)) return null;
-  let mari = 0, meu = 0, uberOnly = 0;
-  for (const m of months) {
-    mari += toNum(feed[m].mari_uber_fees);
-    uberOnly += toNum(feed[m].mari_uber_only);
-    meu += toNum(feed[m].meu_fees);
-  }
-  // Portal override: swap the booked UberEats line for REAL portal service
-  // fees (ex-marketing) when portal weeks cover the window. DoorDash +
-  // Uber Direct stay from the books (mari_uber_fees - mari_uber_only).
-  const u = uberSvcWindow(sIso, eIso);
-  let portal = false;
-  if (u && uberOnly) { mari = u.svc + (mari - uberOnly); portal = true; }
-  const v = venue;
-  let fees;
-  if (v === 'mari') fees = mari;
-  else if (v === 'group') fees = mari + meu;
-  else {
-    const revOf = vv => (STATE.histories[vv] || []).reduce((tt, r) => (r.date >= sIso && r.date <= eIso) ? tt + toNum(r.revenue_ex_gst) : tt, 0);
-    const rs = revOf('stow'), rh = revOf('hg');
-    fees = (rs + rh) ? meu * (v === 'stow' ? rs : rh) / (rs + rh) : 0;
-  }
-  return { fees, mari, meu, nMonths: months.length, portal, mkt: u ? u.mkt : null };
-}
 
 // Closed months: the Closing Stock Movement journal exists in Xero for that
 // month (board rule, 2026-07-15). A genuinely-$0 journal reads as open —
 // acceptable, it just stays "expected" until a journal posts.
-function closedMonthsSet() {
-  const out = new Set();
-  for (const r of STATE.xeroOH) if (r.month && Math.abs(toNum(r.stock_movement)) > 0.005) out.add(r.month);
-  return out;
-}
+
 // Actual P&L for whole-month windows where every month is closed:
 //   COS   = group CoS ex-Misc, apportioned by the venue's purchase share
 //   wages = Xero payroll (incl owners/super/ptx/wcomp) x plan wage share
 //   OH    = the venue's ACTUAL overhead months (not the trailing average)
 //   fees  = real platform fees (Uber/DoorDash -> Mari, ME&U -> rev share)
-function actualProfitWindow(day) {
-  const t = String((day && day.date) || '');
-  if (!t.includes(' — ')) return null;
-  const parts = t.split(' — ');
-  const sIso = parts[0], eIso = parts[1];
-  if (!wholeMonthEdges(sIso, eIso)) return null;
-  const months = [];
-  let cur = new Date(sIso.slice(0, 7) + '-01');
-  while (isoDate(cur) <= eIso) {
-    months.push(isoDate(cur).slice(0, 7));
-    cur = new Date(cur.getFullYear(), cur.getMonth() + 1, 1);
-  }
-  const closed = closedMonthsSet();
-  const feed = Object.fromEntries(STATE.xeroOH.map(r => [r.month, r]));
-  if (!months.length || !months.every(m => closed.has(m) && feed[m])) return null;
-  const v = STATE.currentVenue;
-  const rev = toNum(day.revenue_ex_gst);
-  if (!rev) return null;
-  const purchV = { stow: 0, hg: 0, mari: 0 };
-  for (const r of STATE.xeroCogs) {
-    if (r.week_ending >= sIso && r.week_ending <= eIso && purchV[r.venue] !== undefined) {
-      purchV[r.venue] += toNum(r.actual_cogs_ex_gst);
-    }
-  }
-  const purchTot = purchV.stow + purchV.hg + purchV.mari;
-  const cosShare = v === 'group' ? 1 : (purchTot ? purchV[v] / purchTot : 0);
-  if (v !== 'group' && !cosShare) return null;
-  const revOf = vv => (STATE.histories[vv] || []).reduce((tt, r) => (r.date >= sIso && r.date <= eIso) ? tt + toNum(r.revenue_ex_gst) : tt, 0);
-  const meuShare = (v === 'stow' || v === 'hg') ? (() => {
-    const rs = revOf('stow'), rh = revOf('hg');
-    return (rs + rh) ? (v === 'stow' ? rs : rh) / (rs + rh) : 0;
-  })() : 1;
-  let cos = 0, wages = 0, oh = 0, df = 0, fin = 0;
-  for (const m of months) {
-    const r = feed[m];
-    cos += toNum(r.group_cos_ex_misc) * cosShare;
-    wages += toNum(r.group_payroll) * (PLAN_WAGE_SHARE[v] || 1);
-    oh += v === 'group'
-      ? toNum(r.stow_overheads) + toNum(r.hg_overheads) + toNum(r.mari_overheads)
-      : toNum(r[v + '_overheads']);
-    df += v === 'mari' ? toNum(r.mari_uber_fees)
-        : v === 'group' ? toNum(r.mari_uber_fees) + toNum(r.meu_fees)
-        : toNum(r.meu_fees) * meuShare;
-    // Interest + depreciation are OUT of the P&L (Olly BEP = $0 for both). Kept
-    // consistent with pnlWindow so the 'actual' and 'expected' profits share one
-    // definition (operating profit, no finance). group_finance stays in the feed
-    // for reference but never hits profit.
-    fin += 0;
-  }
-  // group_payroll bundles staff wages, owner salary, payroll tax and workers-
-  // comp. Split it to match the operational card and Zak's rule, with NO
-  // estimation: staff wages are the ACTUAL Deputy figure for these months; what
-  // is left (owners + payroll tax + WC — all lumpy actuals) moves to overheads.
-  // PROFIT IS UNCHANGED — wages + oh are preserved to the cent; only the label
-  // moves. Falls back to a no-op if histories are absent.
-  const vens = v === 'group' ? REAL_VENUES : [v];
-  let staffWages = 0;
-  for (const vv of vens) for (const r of (STATE.histories[vv] || [])) {
-    if (r.date >= sIso && r.date <= eIso) staffWages += toNum(r.wages_dollars) + toNum(r.leave_dollars);
-  }
-  if (staffWages > 0 && staffWages <= wages) { oh += (wages - staffWages); wages = staffWages; }
-  const profit = rev - cos - wages - oh - df - fin;
-  return { profit, cos, wages, oh, df, fin, rev, nMonths: months.length };
-}
+
 // Period boundaries for pacing (current, incomplete periods only).
 function periodBounds(tf, anchorIso) {
   if (!anchorIso) return null;
@@ -1327,40 +887,17 @@ function vsTarget(pct, tgt, band = 2, invert = false) {
   return `<span class="vs-t">target ${fmtPct(tgt)}</span><span class="${cls}">${word}</span>`;
 }
 
-function toNum(x) { const n = parseFloat(x); return isFinite(n) ? n : 0; }
-function hasVal(x) { return x != null && x !== '' && isFinite(parseFloat(x)); }
 // GROSS revenue: what actually rang on the POS. revenue_ex_gst is already NET
 // of the EatClub give-away (discount + 11% commission), so add it back to get
 // the top line the customer was billed. gross = net + eatclub give-away.
-function grossRev(day) { return toNum(day.revenue_ex_gst) + toNum(day.eatclub_giveaway_ex_gst); }
+
 function fmtDollars(n) { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
-function isoDate(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-function sydneyToday() { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }
-function addDays(d, n) { const c = new Date(d); c.setDate(c.getDate() + n); return c; }
-function quarterStart(d) { const q = Math.floor(d.getMonth() / 3); return new Date(d.getFullYear(), q * 3, 1); }
-function monthStart(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
-function weekStart(d) { const day = d.getDay(); const offset = day === 0 ? -6 : 1 - day; return addDays(d, offset); }
+
 // Is the selected period still in progress (its calendar end is today or later)?
 // Profit/margin only makes sense once a period has fully closed — today, "this
 // week", "this month" shouldn't carry a profit line; a completed/closed period
 // does. (Zak, 2026-07: KPIs while it's live, profit once it's closed.)
-function periodIsOpen() {
-  const tf = STATE.currentTimeframe;
-  if (tf === 'day') return true;                       // daily is always KPI-only
-  const today = sydneyToday();
-  const rows = STATE.histories[STATE.currentVenue] || STATE.histories.stow || [];
-  const anchor = STATE.currentDay ? new Date(STATE.currentDay)
-    : (rows.length ? new Date(rows[rows.length - 1].date) : today);
-  let end;
-  if (tf === 'week') end = addDays(weekStart(anchor), 6);
-  else if (tf === 'month') end = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0);
-  else if (tf === 'quarter') { const q = quarterStart(anchor); end = new Date(q.getFullYear(), q.getMonth() + 3, 0); }
-  else if (tf === 'thisfy') { const fy = today.getMonth() >= 6 ? today.getFullYear() : today.getFullYear() - 1; end = new Date(fy + 1, 5, 30); }
-  else if (tf === 'range') end = STATE.rangeEnd ? new Date(STATE.rangeEnd) : today;
-  else return false;   // lastweek / lastmonth / lastquarter / lastfy / last12 / all → complete
-  return end >= today;
-}
 
 // A venue's wage line is what that venue can ROSTER (Zak, 2026-07-17). Admin and
 // leave are neither: nobody rosters against them, and no venue decision changes
@@ -1535,113 +1072,6 @@ function synthesizeGroupHistory(histories) {
 
 // Fields summed across days/venues in rollups. Split fields ride along so
 // week/month/quarter views can recompute split percentages properly.
-const SUM_FIELDS = ['revenue_ex_gst', 'cogs_dollars', 'wages_dollars', 'delivery_dollars', 'gp_dollars',
-  'food_ex_gst', 'bev_ex_gst', 'food_cogs', 'bev_cogs', 'wages_kitchen_dollars', 'wages_foh_dollars',
-  'eatclub_giveaway_ex_gst', 'eatclub_covers'];
-
-function rowsForTimeframe(rows, timeframe, anchorDay) {
-  const anchor = new Date(anchorDay);
-  if (timeframe === 'day') return rows.filter(r => r.date === anchorDay);
-  if (timeframe === 'range') {
-    if (!STATE.rangeStart || !STATE.rangeEnd) return [];
-    return rows.filter(r => r.date >= STATE.rangeStart && r.date <= STATE.rangeEnd);
-  }
-  let start, endIso = anchorDay;
-  if (timeframe === 'week')    start = weekStart(anchor);
-  if (timeframe === 'month')   start = monthStart(anchor);
-  if (timeframe === 'quarter') start = quarterStart(anchor);
-  // Completed windows — computed off today, independent of the data anchor.
-  const today = sydneyToday();
-  if (timeframe === 'lastweek') {
-    const thisWk = weekStart(today);
-    start = addDays(thisWk, -7); endIso = isoDate(addDays(thisWk, -1));
-  }
-  if (timeframe === 'lastmonth') {
-    const thisMo = monthStart(today);
-    start = new Date(thisMo.getFullYear(), thisMo.getMonth() - 1, 1);
-    endIso = isoDate(addDays(thisMo, -1));
-  }
-  if (timeframe === 'lastquarter') {
-    const thisQ = quarterStart(today);
-    start = new Date(thisQ.getFullYear(), thisQ.getMonth() - 3, 1);
-    endIso = isoDate(addDays(thisQ, -1));
-  }
-  // AU financial year: 1 Jul - 30 Jun
-  const fyStartYear = today.getMonth() >= 6 ? today.getFullYear() : today.getFullYear() - 1;
-  if (timeframe === 'thisfy') {
-    start = new Date(fyStartYear, 6, 1);
-  }
-  if (timeframe === 'lastfy') {
-    start = new Date(fyStartYear - 1, 6, 1);
-    endIso = isoDate(new Date(fyStartYear, 5, 30));
-  }
-  if (timeframe === 'last12') {
-    start = addDays(today, -365);
-  }
-  if (timeframe === 'all') {
-    return rows;
-  }
-  const startIso = isoDate(start);
-  return rows.filter(r => r.date >= startIso && r.date <= endIso);
-}
-function rollup(rows) {
-  if (!rows.length) return null;
-  if (rows.length === 1) return rows[0];
-  const sums = {};
-  for (const f of SUM_FIELDS) sums[f] = 0;
-  const present = {};
-  let n = 0, wageDays = 0, revW = 0, cogsW = 0;
-  const dowCounts = [0, 0, 0, 0, 0, 0, 0];
-  for (const r of rows) {
-    if (!r.revenue_ex_gst) continue;
-    for (const f of SUM_FIELDS) {
-      if (hasVal(r[f])) { sums[f] += toNum(r[f]); present[f] = true; }
-    }
-    if (hasVal(r.wages_dollars)) {
-      wageDays++; revW += toNum(r.revenue_ex_gst); cogsW += toNum(r.cogs_dollars);
-      dowCounts[new Date(r.date).getDay()]++;
-    }
-    n++;
-  }
-  if (n === 0) return null;
-  const rev = sums.revenue_ex_gst;
-  const out = {
-    date: rows[0].date + ' — ' + rows[rows.length - 1].date,
-    days_included: n,
-    wage_days: wageDays, rev_wage_days: revW, cogs_wage_days: cogsW, dow_counts: dowCounts,
-    revenue_ex_gst: sums.revenue_ex_gst,
-    cogs_dollars: sums.cogs_dollars, cogs_pct: rev ? sums.cogs_dollars / rev * 100 : 0,
-    wages_dollars: wageDays ? sums.wages_dollars : '',
-    wages_pct: wageDays && revW ? sums.wages_dollars / revW * 100 : '',
-    delivery_dollars: sums.delivery_dollars, delivery_pct: rev ? sums.delivery_dollars / rev * 100 : 0,
-    gp_dollars: sums.gp_dollars, gp_pct: rev ? sums.gp_dollars / rev * 100 : 0,
-    eatclub_giveaway_ex_gst: sums.eatclub_giveaway_ex_gst, eatclub_covers: sums.eatclub_covers,
-    cogs_alert: 'unknown', wages_alert: 'unknown', delivery_alert: 'unknown', gp_alert: 'unknown',
-  };
-  // Split lanes: only emit when at least one row in range carried the field,
-  // so the pre-split history doesn't render misleading zeros.
-  if (present.food_ex_gst) {
-    out.food_ex_gst = sums.food_ex_gst;
-    out.food_cogs = sums.food_cogs;
-    out.food_cogs_pct = sums.food_ex_gst ? sums.food_cogs / sums.food_ex_gst * 100 : 0;
-    out.food_gp_pct = sums.food_ex_gst ? (sums.food_ex_gst - sums.food_cogs) / sums.food_ex_gst * 100 : 0;
-  }
-  if (present.bev_ex_gst) {
-    out.bev_ex_gst = sums.bev_ex_gst;
-    out.bev_cogs = sums.bev_cogs;
-    out.bev_cogs_pct = sums.bev_ex_gst ? sums.bev_cogs / sums.bev_ex_gst * 100 : 0;
-    out.bev_gp_pct = sums.bev_ex_gst ? (sums.bev_ex_gst - sums.bev_cogs) / sums.bev_ex_gst * 100 : 0;
-  }
-  if (present.wages_kitchen_dollars) {
-    out.wages_kitchen_dollars = sums.wages_kitchen_dollars;
-    out.wages_kitchen_pct = sums.food_ex_gst ? sums.wages_kitchen_dollars / sums.food_ex_gst * 100 : '';
-  }
-  if (present.wages_foh_dollars) {
-    out.wages_foh_dollars = sums.wages_foh_dollars;
-    out.wages_foh_pct = sums.bev_ex_gst ? sums.wages_foh_dollars / sums.bev_ex_gst * 100 : '';
-  }
-  return out;
-}
 
 // Mari has no food/bev split (kitchen-only venue) — the *_food cards fall back
 // to the blended figures so `bigchef` can compare kitchens across all venues.
