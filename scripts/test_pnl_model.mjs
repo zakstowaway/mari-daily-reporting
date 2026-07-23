@@ -13,20 +13,12 @@ const D = p => fs.existsSync(path.join(ROOT, p)) ? fs.readFileSync(path.join(ROO
 const ctx = vm.createContext({ console, Math, Date, JSON, isNaN, parseFloat, parseInt,
   Number, Object, Array, String, Set, Map, Boolean, RegExp });
 vm.runInContext(D('dashboard/_shared/pnl.js'), ctx);
-// pull synthesizeGroupHistory (a loader that stays in index.html) into the ctx.
-// Uses acorn if present; otherwise the group=Σvenues check is skipped (real-venue
-// conservation still runs), so the test needs no npm install to be useful.
+// synthesizeGroupHistory now lives in util.js — load it into the same ctx so the
+// group=Σvenues invariant can be checked. util.js is pure declarations, so running
+// it just defines functions (only synthesizeGroupHistory is exercised here).
 let HAVE_GROUP = false;
-try {
-  const acorn = await import('acorn');
-  const html = D('dashboard/sales/index.html');
-  const re = /<script(?![^>]*\bsrc=)(?![^>]*type="module")[^>]*>([\s\S]*?)<\/script>/g;
-  let m, big=''; while ((m=re.exec(html))) if (m[1].length>big.length) big=m[1];
-  const a = acorn.parse(big, {ecmaVersion:2022});
-  for (const n of a.body) if (n.type==='FunctionDeclaration' && n.id.name==='synthesizeGroupHistory')
-    vm.runInContext(big.slice(n.start,n.end), ctx);
-  HAVE_GROUP = true;
-} catch (e) { console.log('(acorn unavailable — skipping group=Σvenues, running real-venue conservation only)'); }
+try { vm.runInContext(D('dashboard/_shared/util.js'), ctx); HAVE_GROUP = typeof ctx.synthesizeGroupHistory === 'function'; }
+catch (e) { console.log('(util.js load failed — running real-venue conservation only):', e.message); }
 
 // Rebuild STATE from the data files (mirrors index.html's loaders)
 const S = { histories:{}, xeroCogs:[], xeroOH:[], baselines:{}, roster:{days:{}},

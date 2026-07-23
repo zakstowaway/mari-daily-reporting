@@ -37,6 +37,14 @@ jobs:
         # engine (PyYAML). Without this the build fails with ModuleNotFoundError
         # even though it works locally. Same deps as the test job.
         run: pip install -r requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Architecture guard (block logic-in-HTML + verify P&L model)
+        # Fails the DEPLOY if the dashboard drifts from its module structure:
+        # no business logic in index.html, pnl.js pure, model conserves. A
+        # drifted dashboard never reaches app.stowawaybar.com.
+        run: python3 scripts/arch_guard.py
       - name: Build _site
         # ONE definition of the site layout, shared with local preview:
         #   python3 scripts/build_site.py --serve
