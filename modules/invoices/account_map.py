@@ -8,9 +8,10 @@ line landed where it did, and every rule is editable here.
 
 Priority, highest first:
   1. line-description keyword   (freight, packaging, cleaning, glassware ...)
-  2. known supplier default     (our recurring suppliers -> food vs beverage)
-  3. supplier-name category     (unknown supplier -> guess from its name)
-  4. fallback                   (111 Purchases Other COGS)
+  2. learned from Xero history  (how this supplier has actually been coded)
+  3. known supplier default     (our recurring suppliers -> food vs beverage)
+  4. supplier-name category     (unknown supplier -> guess from its name)
+  5. fallback                   (111 Purchases Other COGS)
 
 Nothing here writes to Xero. It only *suggests*; the account codes come from the
 live chart of accounts snapshot in xero_accounts.json. GST is a tax rate in Xero,
@@ -31,6 +32,26 @@ HERE = Path(__file__).parent
 _COA = json.loads((HERE / "xero_accounts.json").read_text())
 ACCOUNT_NAME = {a["code"]: a["name"] for a in _COA["accounts"]}
 TRACKING = {c["name"]: c for c in _COA["tracking"]}
+
+# Empirical supplier -> account, learned from Xero history (learn_coding.py) if
+# present. Keyed by supplier name (lowercased). Preferred over rule guesses when
+# confident, because it reflects exactly how the books have actually been coded.
+_LEARNED_FILE = HERE / "learned_coding.json"
+LEARNED: dict[str, dict] = {}
+if _LEARNED_FILE.exists():
+    try:
+        _lj = json.loads(_LEARNED_FILE.read_text())
+        LEARNED = {k.lower(): v for k, v in _lj.get("suppliers", {}).items()}
+    except Exception:
+        LEARNED = {}
+
+
+def _learned_account(inv) -> Optional[str]:
+    """A confident (>=60%) historical account for this supplier, if we have one."""
+    d = LEARNED.get((inv.supplier_name_raw or "").strip().lower())
+    if d and d.get("account_code") and d.get("account_confidence", 0) >= 0.6:
+        return d["account_code"]
+    return None
 
 # --- account codes we route to (must exist in xero_accounts.json) --------------
 FOOD, BEVERAGE, BAR_SUPPLIES = "115", "113", "112"
@@ -106,17 +127,20 @@ def _account_for_line(inv: Invoice, line) -> LineCoding:
     # pure-GST reconciliation lines are tax, not an expense line
     if line.line_class == LineClass.EXTRA and re.fullmatch(r"\s*gst\s*", desc, re.I):
         return LineCoding(desc, None, None, "GST is a tax rate in Xero, not a coded line")
-    for pat, code in LINE_RULES:                       # 1. line keyword
+    for pat, code in LINE_RULES:                       # 1. line keyword (freight, packaging…)
         if pat.search(desc):
             return LineCoding(desc, code, ACCOUNT_NAME.get(code), f"line keyword -> {ACCOUNT_NAME.get(code)}")
-    code = SUPPLIER_ACCOUNT.get(inv.supplier_key)       # 2. known supplier
+    code = _learned_account(inv)                        # 2. learned from Xero history
+    if code:
+        return LineCoding(desc, code, ACCOUNT_NAME.get(code), "learned from Xero history for this supplier")
+    code = SUPPLIER_ACCOUNT.get(inv.supplier_key)       # 3. known supplier default
     if code:
         return LineCoding(desc, code, ACCOUNT_NAME.get(code), f"known supplier '{inv.supplier_key}'")
-    hay = f"{inv.supplier_name_raw} {inv.supplier_key}"  # 3. supplier-name category
+    hay = f"{inv.supplier_name_raw} {inv.supplier_key}"  # 4. supplier-name category
     for pat, code in NAME_RULES:
         if pat.search(hay):
             return LineCoding(desc, code, ACCOUNT_NAME.get(code), f"supplier name looks like {ACCOUNT_NAME.get(code)}")
-    return LineCoding(desc, OTHER_COGS, ACCOUNT_NAME.get(OTHER_COGS), "fallback — no rule matched")  # 4.
+    return LineCoding(desc, OTHER_COGS, ACCOUNT_NAME.get(OTHER_COGS), "fallback — no rule matched")  # 5.
 
 
 def _venue_tracking(inv: Invoice, primary_account: Optional[str]) -> tuple[Optional[str], Optional[str], str]:
