@@ -173,19 +173,6 @@ async function downloadRunsheet() {
   a.click();
 }
 
-async function saveEvent() {
-  await call('/api/admin/events', {
-    method: 'POST',
-    body: JSON.stringify({
-      date: $('ev_date').value, name: $('ev_name').value,
-      sittings: $('ev_sittings').value.split(',').map(s => s.trim()),
-      open: $('ev_open').value === '1',
-    }),
-  });
-  $('status').textContent = 'event saved';
-  init();
-}
-
 // ---------------------------------------------------------------- boot
 function showToken() {
   $('tokenbox').style.display = 'block';
@@ -248,7 +235,6 @@ Auth.gate($('gate'), {
     $('runsheetbtn').addEventListener('click', downloadRunsheet);
     $('saveeditbtn').addEventListener('click', saveEdit);
     $('closeeditbtn').addEventListener('click', () => { $('editbox').style.display = 'none'; });
-    $('saveeventbtn').addEventListener('click', saveEvent);
     init();
   },
 });
