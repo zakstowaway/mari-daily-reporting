@@ -10,6 +10,7 @@ pyyaml==6.0.2          # suppliers.yaml, recipes
 anthropic==0.40.0      # scripts/invoices/extract.py — PDF -> line items
 requests==2.32.3       # xero_pull, deputy pulls
 msal==1.37.0           # Graph auth for the accounts@ invoice mailbox poller
+pymupdf==1.26.5        # free PDF text extraction for the deterministic parsers
 
 # dev / CI
 pytest==8.3.4

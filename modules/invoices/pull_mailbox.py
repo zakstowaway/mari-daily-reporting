@@ -119,14 +119,17 @@ def move_message(token, msg_id, folder_id):
 
 
 # ── invoice handling ───────────────────────────────────────────────────────
-def run_invoice(pdf_bytes, source) -> int:
-    """run.py on one PDF. 0 PASS, 2 REVIEW, 1 ERROR (its own exit codes)."""
+def run_invoice(pdf_bytes, source, sender="") -> int:
+    """run.py on one PDF. 0 PASS, 2 REVIEW, 1 ERROR (its own exit codes).
+    Passes the sender domain so run.py tries a free deterministic parser first."""
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
         f.write(pdf_bytes)
         tmp = f.name
     try:
-        r = subprocess.run([sys.executable, "modules/invoices/run.py", "--pdf", tmp,
-                            "--source", source], cwd=ROOT, capture_output=True, text=True)
+        cmd = [sys.executable, "modules/invoices/run.py", "--pdf", tmp, "--source", source]
+        if sender:
+            cmd += ["--sender", sender.split("@")[-1].lower()]
+        r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
         print(r.stdout.strip())
         if r.returncode == 1:
             print(f"    extract error: {r.stderr.strip()[:200]}")
@@ -187,7 +190,7 @@ def main() -> int:
 
         worst = 0
         for name, data in pdfs:
-            code = run_invoice(data, f"{subj} / {name}")
+            code = run_invoice(data, f"{subj} / {name}", sender=sender)
             worst = max(worst, 1 if code == 1 else (2 if code == 2 else 0))
             any_change = True
         move_message(token, m["id"], processed_id if worst == 0 else review_id)

@@ -72,6 +72,7 @@ def main() -> int:
     src.add_argument("--pdf-base64-file", type=Path, help="file containing base64 PDF (Pipedream payload)")
     src.add_argument("--json", type=Path, help="pre-extracted JSON (skips the API call)")
     ap.add_argument("--source", default="", help="original filename / email subject, for provenance")
+    ap.add_argument("--sender", default="", help="sender email domain — picks a free deterministic parser before the LLM")
     ap.add_argument("--dry-run", action="store_true", help="validate but write nothing")
     args = ap.parse_args()
 
@@ -86,7 +87,17 @@ def main() -> int:
             else:
                 pdf = args.pdf.read_bytes()
                 name = args.source or args.pdf.name
-            inv = extract(pdf, filename=name)
+            # FREE FIRST. A recurring supplier with a known layout is parsed
+            # deterministically — no API call. Only fall to the LLM when there's
+            # no parser for this sender, the PDF is a scan, or the parse breaks.
+            inv = None
+            if args.sender:
+                from modules.invoices.parsers import parse_pdf
+                inv = parse_pdf(pdf, args.sender)
+                if inv is not None:
+                    print(f"[parsed deterministically — {args.sender}, no API]")
+            if inv is None:
+                inv = extract(pdf, filename=name)
     except ExtractionError as e:
         print(f"EXTRACTION FAILED: {e}", file=sys.stderr)
         return 1
