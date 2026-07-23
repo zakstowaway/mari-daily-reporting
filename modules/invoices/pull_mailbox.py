@@ -57,9 +57,13 @@ def _req(token, method, path, body=None):
     if data:
         headers["Content-Type"] = "application/json"
     req = urllib.request.Request(url, data=data, headers=headers, method=method)
-    with urllib.request.urlopen(req) as r:
-        raw = r.read()
-        return json.loads(raw) if raw else {}
+    try:
+        with urllib.request.urlopen(req) as r:
+            raw = r.read()
+            return json.loads(raw) if raw else {}
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")[:400]
+        raise RuntimeError(f"Graph {e.code} on {method} {url.split('?')[0]}: {body}") from None
 
 
 def ensure_folder(token, name) -> str:
@@ -72,11 +76,15 @@ def ensure_folder(token, name) -> str:
 
 
 def inbox_with_attachments(token):
-    path = ("/mailFolders/inbox/messages"
-            "?$filter=hasAttachments eq true"
-            "&$select=id,subject,from,receivedDateTime"
-            f"&$orderby=receivedDateTime asc&$top={BATCH}")
-    return _req(token, "GET", path).get("value", [])
+    # No $orderby: Graph rejects sort+filter on hasAttachments as an
+    # "InefficientFilter". Order doesn't matter — each message is moved out of
+    # the inbox once processed, so the next run just sees what's left.
+    qs = urllib.parse.urlencode({
+        "$filter": "hasAttachments eq true",
+        "$select": "id,subject,from,receivedDateTime",
+        "$top": str(BATCH),
+    }, quote_via=urllib.parse.quote)
+    return _req(token, "GET", f"/mailFolders/inbox/messages?{qs}").get("value", [])
 
 
 def pdf_attachments(token, msg_id):
