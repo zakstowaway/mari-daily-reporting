@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
 from modules.invoices.models import CostBasis, TaxTreatment, Venue  # noqa: E402
-from modules.invoices.parsers.select_fresh import parse as select_fresh_parse  # noqa: E402
+from modules.invoices.parsers.select_fresh import _from_text as select_fresh_parse  # noqa: E402
 
 SELECT_FRESH = """TAX  INVOICE   3054116
 Invoice Date

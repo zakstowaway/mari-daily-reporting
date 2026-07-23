@@ -55,3 +55,23 @@ def word_rows(pdf_bytes: bytes, y_tol: float = 3.0) -> list[list[tuple]]:
     finally:
         doc.close()
     return rows
+
+
+def bucket(row: list[tuple], bounds: list[tuple]) -> dict:
+    """
+    Assign a row's words to named columns by x-position.
+
+    `bounds` is [(name, x_start), ...] sorted left→right; a word at x0 belongs to
+    the last column whose x_start <= x0. Returns {name: "joined words"}. This is
+    how a coordinate parser turns visual rows into fields robustly.
+    """
+    out: dict[str, list[str]] = {name: [] for name, _ in bounds}
+    for x0, x1, t in row:
+        name = bounds[0][0]
+        for nm, lo in bounds:
+            if x0 >= lo - 2:
+                name = nm
+            else:
+                break
+        out[name].append(t)
+    return {k: " ".join(v).strip() for k, v in out.items()}

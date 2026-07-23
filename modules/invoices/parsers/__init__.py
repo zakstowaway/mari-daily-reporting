@@ -42,10 +42,9 @@ def parse_pdf(pdf_bytes: bytes, sender_domain: Optional[str] = None) -> Optional
     fn = DOMAIN_TO_PARSER.get((sender_domain or "").lower())
     if not fn:
         return None
-    txt = pdf_text.text(pdf_bytes)
-    if len(txt.strip()) < 60:
+    if not pdf_text.has_text_layer(pdf_bytes):
         return None                       # scanned image -> LLM
     try:
-        return fn(txt)
+        return fn(pdf_bytes)              # parsers get the bytes; they pick text vs coordinates
     except Exception:
         return None                       # parse broke -> LLM

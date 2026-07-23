@@ -14,6 +14,7 @@ import re
 from datetime import datetime
 from decimal import Decimal
 
+from modules.invoices import pdf_text
 from modules.invoices.models import (CostBasis, Invoice, InvoiceLine, LineClass,
                                      TaxTreatment, Venue)
 from modules.invoices.parsers import register
@@ -30,7 +31,11 @@ UNIT_BASIS = {
 
 
 @register("selectprovidores.com.au")
-def parse(text: str) -> Invoice:
+def parse(pdf_bytes: bytes) -> Invoice:
+    return _from_text(pdf_text.text(pdf_bytes))
+
+
+def _from_text(text: str) -> Invoice:
     L = [x.strip() for x in text.splitlines() if x.strip()]
 
     ref = ""

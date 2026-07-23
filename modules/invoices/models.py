@@ -26,6 +26,7 @@ from typing import Optional
 class Venue(str, Enum):
     STOWAWAY = "stowaway"
     HARRY_GATOS = "harry_gatos"
+    MARILYNAS = "marilynas"
     UNKNOWN = "unknown"
 
 

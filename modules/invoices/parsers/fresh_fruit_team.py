@@ -1,99 +1,108 @@
 """
-The Fresh Fruit Team — deterministic parser.
+The Fresh Fruit Team — deterministic parser (coordinate-based).
 
-Layout: a 7-field header  QTY | SKU | UNIT | ITEM | UNIT PRICE | GST | AMOUNT
-then one record per line item as 7 consecutive text lines (prices are
-$-prefixed). Footer carries Subtotal / GST Total / Delivery Fee / Fuel Levy /
-Total. Mostly GST-free produce; the Fuel Levy is an extra the validator excludes.
+Columns:  QTY | SKU | UNIT | ITEM | UNIT PRICE | GST | AMOUNT
+Descriptions and units sometimes wrap to extra visual rows, but the reconcile
+fields (qty, sku, price, gst, amount) always sit on ONE "money row" — so we read
+by word x-position (pdf_text.word_rows/bucket) and treat any row carrying
+qty+price+amount as a line item. Footer Delivery Fee / Fuel Levy become EXTRA
+lines; the stated "Total" is the reconcile target.
 """
 
 from __future__ import annotations
 
 import re
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
+from modules.invoices import pdf_text
 from modules.invoices.models import (CostBasis, Invoice, InvoiceLine, LineClass,
                                      TaxTreatment, Venue)
 from modules.invoices.parsers import register
 
-HEADER = ["QTY", "SKU", "UNIT", "ITEM", "UNIT PRICE", "GST", "AMOUNT"]
-NUM = re.compile(r"^-?\d+(?:\.\d+)?$")
-MONEY = re.compile(r"^\$?(-?\d+(?:\.\d+)?)$")
-UNIT_BASIS = {
-    "KILOGRAM": CostBasis.PER_KG, "KG": CostBasis.PER_KG,
-    "EACH": CostBasis.PER_UNIT, "BUNCH": CostBasis.PER_UNIT, "BOX": CostBasis.PER_UNIT,
-    "TRAY": CostBasis.PER_UNIT, "MARKET": CostBasis.PER_UNIT, "PUNNET": CostBasis.PER_UNIT,
-    "BAG": CostBasis.PER_UNIT, "DOZEN": CostBasis.PER_UNIT, "PACKET": CostBasis.PER_UNIT,
-}
+# Column x-starts from the header row (QTY 30, SKU 68, UNIT 145, ITEM 200,
+# UNIT PRICE 363, GST 451, AMOUNT 508).
+COLS = [("qty", 0), ("sku", 64), ("unit", 143), ("desc", 198),
+        ("price", 360), ("gst", 449), ("amt", 506)]
+MONEY = re.compile(r"^\$?(-?[\d,]+\.?\d*)$")
 
 
-def _money(s: str):
+def _m(s):
+    s = (s or "").replace(",", "").strip()
     m = MONEY.match(s)
-    return Decimal(m.group(1)) if m else None
+    if not m:
+        return None
+    try:
+        return Decimal(m.group(1))
+    except InvalidOperation:
+        return None
 
 
 @register("tfft.com.au")
-def parse(text: str) -> Invoice:
-    L = [x.strip() for x in text.splitlines() if x.strip()]
+def parse(pdf_bytes: bytes) -> Invoice:
+    rows = pdf_text.word_rows(pdf_bytes)
+    flat = pdf_text.text(pdf_bytes)
 
-    # The flattened text puts values before their labels, so match the ref
-    # pattern directly (FFT refs are INB followed by digits).
-    m = re.search(r"\bINB\d+\b", text)
+    m = re.search(r"\bINB\d+\b", flat)
     ref = m.group(0) if m else ""
     date = None
-    for x in L:
-        if re.match(r"^\d{1,2} [A-Za-z]{3} \d{4}$", x):
-            date = datetime.strptime(x, "%d %b %Y").date()
+    for x in flat.splitlines():
+        if re.match(r"^\s*\d{1,2} [A-Za-z]{3} \d{4}\s*$", x):
+            date = datetime.strptime(x.strip(), "%d %b %Y").date()
             break
-    venue = (Venue.HARRY_GATOS if re.search(r"harry\s*gatt?os", text, re.I)
-             else Venue.STOWAWAY if re.search(r"stowaway", text, re.I) else Venue.UNKNOWN)
+    venue = (Venue.MARILYNAS if re.search(r"marilyna", flat, re.I)
+             else Venue.HARRY_GATOS if re.search(r"harry\s*gatt?os", flat, re.I)
+             else Venue.STOWAWAY if re.search(r"stowaway", flat, re.I) else Venue.UNKNOWN)
 
-    start = None
-    for j in range(len(L) - 6):
-        if L[j:j + 7] == HEADER:
-            start = j + 7
+    hi = None
+    for i, r in enumerate(rows):
+        toks = [t for _, _, t in r]
+        if "QTY" in toks and "SKU" in toks and "AMOUNT" in toks:
+            hi = i
             break
-    if start is None:
+    if hi is None:
         raise ValueError("FFT: header row not found")
 
     items = []
-    k = start
-    while k + 7 <= len(L):
-        qty, sku, unit, desc, up, gst, amt = L[k:k + 7]
-        a, g, u = _money(amt), _money(gst), _money(up)
-        if not (NUM.match(qty) and a is not None and g is not None and u is not None
-                and unit.upper() in UNIT_BASIS):
-            break
-        k += 7
-        if a == 0:                                    # substituted / zero-qty line
+    for r in rows[hi + 1:]:
+        c = pdf_text.bucket(r, COLS)
+        qty, price, amt = _m(c["qty"]), _m(c["price"]), _m(c["amt"])
+        if qty is None or price is None or amt is None:   # not a stock money row
             continue
+        if amt == 0:                                      # substituted / zero-qty
+            continue
+        g = _m(c["gst"]) or Decimal("0")
+        unit = c["unit"]
+        cb = CostBasis.PER_KG if re.search(r"kilo|kg", unit, re.I) else CostBasis.PER_UNIT
         items.append(InvoiceLine(
-            description=desc, qty=Decimal(qty), line_total_incl=a + g,
-            unit_price_incl=u, pack_size=1, line_class=LineClass.STOCK,
+            description=c["desc"] or c["sku"], qty=qty, line_total_incl=amt + g,
+            unit_price_incl=price, pack_size=1, line_class=LineClass.STOCK,
             tax_treatment=(TaxTreatment.GST if g > 0 else TaxTreatment.GST_FREE),
-            cost_basis=UNIT_BASIS[unit.upper()], supplier_code=sku, raw_uom=unit,
-            gst_amount=g))
+            cost_basis=cb, supplier_code=c["sku"] or None, raw_uom=unit or None, gst_amount=g))
     if not items:
         raise ValueError("FFT: no line items parsed")
 
-    # Footer extras — captured as EXTRA lines so the validator excludes them
-    # from the stock reconcile but they still count toward the invoice total.
-    for label in ("Delivery Fee", "Fuel Levy"):
+    L = [x.strip() for x in flat.splitlines() if x.strip()]
+    # Footer extras as EXTRA lines: Delivery/Fuel, plus the GST Total — the
+    # produce is GST-free, so the invoice's GST sits entirely on the taxable
+    # extras (10% of the fuel levy). Capturing it here makes the sum reconcile.
+    extras = [("Delivery Fee", TaxTreatment.GST_FREE), ("Fuel Levy", TaxTreatment.GST_FREE),
+              ("GST Total", TaxTreatment.GST)]
+    for label, tt in extras:
         for i, x in enumerate(L):
             if x == label and i + 1 < len(L):
-                v = _money(L[i + 1])
+                v = _m(L[i + 1])
                 if v and v > 0:
                     items.append(InvoiceLine(
-                        description=label, qty=Decimal("1"), line_total_incl=v,
-                        unit_price_incl=v, pack_size=1, line_class=LineClass.EXTRA,
-                        tax_treatment=TaxTreatment.GST_FREE, cost_basis=CostBasis.UNKNOWN))
+                        description=("GST" if label == "GST Total" else label),
+                        qty=Decimal("1"), line_total_incl=v, unit_price_incl=v, pack_size=1,
+                        line_class=LineClass.EXTRA, tax_treatment=tt, cost_basis=CostBasis.UNKNOWN))
                 break
 
     total = None
     for i, x in enumerate(L):
-        if x == "Total" and i + 1 < len(L) and _money(L[i + 1]) is not None:
-            total = _money(L[i + 1])
+        if x == "Total" and i + 1 < len(L) and _m(L[i + 1]) is not None:
+            total = _m(L[i + 1])
             break
     if total is None:
         raise ValueError("FFT: invoice total not found")
