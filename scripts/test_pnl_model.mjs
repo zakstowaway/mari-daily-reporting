@@ -48,14 +48,20 @@ const approx = (a,b,e=0.02) => Math.abs(a-b) <= e + Math.abs(b)*1e-6;
 const TFS = ['day','week','lastweek','month','lastmonth','quarter','thisfy','all'];
 const VENUES = HAVE_GROUP ? ['stow','hg','mari','group'] : ['stow','hg','mari'];
 
+// Common anchor so the group==Σvenues check compares the SAME day/window across
+// venues. Using each venue's own latest date breaks when a partial daily pull
+// leaves their latest dates out of sync (group's latest day vs a venue's older
+// latest day is not a real conservation break). Group's history spans the max
+// date range, so its latest is the common reference.
+const groupRows = S.histories.group || [];
+const commonDay = groupRows.length ? groupRows[groupRows.length-1].date : null;
 for (const tf of TFS) {
   const revByVenue = {};
   for (const v of VENUES) {
     S.currentVenue = v; S.currentTimeframe = tf;
+    S.currentDay = tf==='day' ? commonDay : null;
     const rows = S.histories[v] || [];
-    const anchor = rows.length ? rows[rows.length-1].date : null;
-    S.currentDay = tf==='day' ? anchor : null;
-    const day = ctx.rollup(ctx.rowsForTimeframe(rows, tf, anchor));
+    const day = ctx.rollup(ctx.rowsForTimeframe(rows, tf, commonDay));
     const w = day ? ctx.pnlWindow(day, v) : null;
     if (!w) { revByVenue[v]=0; continue; }
     revByVenue[v] = w.rev;
