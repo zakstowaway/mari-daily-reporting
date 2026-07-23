@@ -175,7 +175,7 @@ let prepMin = 0;             // recorded prep minutes
 let timing = false, tStart = 0, tPrev = 0, tick = null;
 
 Auth.gate(document.getElementById('gate'), {
-  roles: Auth.KITCHEN_ROLES,
+  roles: null,   // any signed-in user can view; saving still needs a kitchen role (canWrite)
   onOk: (user) => {
     CURRENT_USER = user;
     document.getElementById('app').style.display = '';

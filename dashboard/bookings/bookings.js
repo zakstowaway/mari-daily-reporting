@@ -221,7 +221,7 @@ async function init() {
 }
 
 Auth.gate($('gate'), {
-  roles: ['admin'],   // guest phone numbers live here — widen deliberately
+  roles: null,   // any signed-in user can open; guest data still requires the booking-engine bearer token entered on-page (that is the real auth)
   onOk: (user) => {
     $('app').style.display = '';
     $('whotop').innerHTML = `<strong>${user.name}</strong>`;
