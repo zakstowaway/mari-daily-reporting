@@ -410,6 +410,16 @@ tbody tr:hover { background: var(--group-tint); }
   border-radius: 999px; cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s; }
 .tf-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
 .tf-btn.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.tf-days { display: inline-flex; gap: 3px; }
+.tf-day { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; color: var(--ink-soft);
+  width: 28px; padding: 4px 0; border: 1px solid var(--line); background: var(--paper); border-radius: 8px;
+  cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; line-height: 1.05;
+  transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.tf-day:hover:not(.future) { color: var(--ink); border-color: var(--ink-soft); }
+.tf-day.active { background: var(--group); color: var(--paper); border-color: var(--group); }
+.tf-day.future { opacity: 0.35; cursor: default; }
+.tf-dnum { font-size: 9px; opacity: 0.7; font-weight: 500; }
+.tf-sep { width: 1px; height: 20px; background: var(--line); margin: 0 3px; display: inline-block; vertical-align: middle; }
 .day-picker { display: none; align-items: center; gap: 8px; }
 .day-picker .dp-lbl { font-size: 13px; color: var(--ink-soft); }
 .day-picker input[type="date"] { background: transparent; color: var(--ink); border: 1px solid rgba(128,128,128,.35);
@@ -2049,21 +2059,36 @@ function renderTimeframeToggle() {
   const tf = STATE.currentTimeframe;
   const todayIso = isoDate(sydneyToday());
   const btn = (t, lbl) => `<button class="tf-btn${tf === t ? ' active' : ''}" onclick="switchTimeframe('${t}')">${lbl}</button>`;
-  // Compact so the whole selector fits on the venue nav line. "Today" is one click;
-  // any other day comes from "Pick a day…" in the More menu (same pattern as Custom
-  // range) — it reveals a single date picker in the control row below.
-  const todayOn = tf === 'day' && STATE.currentDay === todayIso;
-  const dayOn = tf === 'day' && STATE.currentDay !== todayIso;   // a past day is being viewed
-  const todayBtn = `<button class="tf-btn${todayOn ? ' active' : ''}" onclick="switchDay('${todayIso}')">Today</button>`;
+  // Day scrubber: Mon->Sun of the CURRENT week. Clicking a day selects that date
+  // (day view); future days are muted and not clickable. Restored 2026-07-23 —
+  // the week's day buttons are the quickest way to flick day-to-day. The whole
+  // toggle wraps to its own line when the venue row runs out of width, so the
+  // scrubber never overflows. A day outside this week comes from "Pick a day..."
+  const wkStart = weekStart(sydneyToday());
+  const DOW = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  let days = '';
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(wkStart, i);
+    const iso = isoDate(d);
+    const future = iso > todayIso;
+    const on = tf === 'day' && STATE.currentDay === iso;
+    days += `<button class="tf-day${on ? ' active' : ''}${future ? ' future' : ''}" ` +
+      (future ? 'disabled' : `onclick="switchDay('${iso}')"`) +
+      ` title="${iso}">${DOW[i]}<span class="tf-dnum">${d.getDate()}</span></button>`;
+  }
   const moreOpts = [['pickday', 'Pick a day…'], ['lastmonth', 'Last month'], ['quarter', 'This quarter'],
     ['lastquarter', 'Last quarter'], ['thisfy', 'This FY'], ['lastfy', 'Last FY'],
     ['last12', 'Last 12 months'], ['all', 'All time'], ['range', 'Custom range…']];
-  const moreOn = dayOn || tf === 'range' || moreOpts.some(o => o[0] === tf);
+  // A past day outside this week still shows as "Day ▾" so the user can see a
+  // day (not week) is selected even when no scrubber pill is lit.
+  const dayOutside = tf === 'day' && STATE.currentDay && (STATE.currentDay < isoDate(wkStart) || STATE.currentDay > todayIso);
+  const moreOn = dayOutside || tf === 'range' || moreOpts.some(o => o[0] === tf);
   const moreSel = `<select id="tf-more" class="${moreOn ? 'active' : ''}" onchange="tfMore(this.value)">` +
-    `<option value="">${dayOn ? 'Day ▾' : 'More ▾'}</option>` +
+    `<option value="">${dayOutside ? 'Day ▾' : 'More ▾'}</option>` +
     moreOpts.map(o => `<option value="${o[0]}"${tf === o[0] ? ' selected' : ''}>${o[1]}</option>`).join('') +
     `</select>`;
-  el.innerHTML = todayBtn + btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') + moreSel;
+  el.innerHTML = `<span class="tf-days">${days}</span><span class="tf-sep"></span>` +
+    btn('week', 'This week') + btn('lastweek', 'Last week') + btn('month', 'This month') + moreSel;
 }
 function tfMore(v) {
   if (!v) return;
