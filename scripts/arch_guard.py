@@ -95,13 +95,18 @@ for label, needle in MARKERS.items():
     if needle not in bundle:
         problems.append(f"R7: missing marker '{label}' ('{needle}')")
 
-# R8 — model conservation
-test = ROOT / "scripts/test_pnl_model.mjs"
-if test.exists():
-    r = subprocess.run(["node", str(test)], capture_output=True, text=True, cwd=ROOT)
+# R8 — the three JS test suites: P&L conservation, render layer, pure-helper units
+SUITES = [("model conservation", "scripts/test_pnl_model.mjs"),
+          ("render layer", "scripts/test_dashboard_render.mjs"),
+          ("helper units", "scripts/test_dashboard_units.mjs")]
+for label, rel in SUITES:
+    t = ROOT / rel
+    if not t.exists():
+        problems.append(f"R8: test suite missing: {rel}"); continue
+    r = subprocess.run(["node", str(t)], capture_output=True, text=True, cwd=ROOT)
     if r.returncode:
         tail = (r.stdout + r.stderr).strip().splitlines()[-5:]
-        problems.append("R8: pnl model test FAILED:\n    " + "\n    ".join(tail))
+        problems.append(f"R8: {label} test FAILED:\n    " + "\n    ".join(tail))
 
 if problems:
     print("ARCHITECTURE GUARD FAILED — the dashboard drifted from its module structure:")
@@ -110,4 +115,4 @@ if problems:
     print("\nLogic belongs in dashboard/_shared/{pnl,util,data,render}.js — never in index.html.")
     sys.exit(1)
 print(f"architecture guard: ok — index.html is a {sz//1024}KB shell, 0 logic fns; "
-      f"{len(defined)} module fns, pnl.js pure, model conserves.")
+      f"{len(defined)} module fns, pnl.js pure, all 3 test suites pass.")
