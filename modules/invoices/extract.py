@@ -27,7 +27,7 @@ from typing import Any, Optional
 from modules.invoices.models import CostBasis, Invoice, InvoiceLine, LineClass, TaxTreatment, Venue
 
 HERE = Path(__file__).parent
-MODEL = os.environ.get("INVOICE_MODEL", "claude-sonnet-5")
+MODEL = os.environ.get("INVOICE_MODEL", "claude-haiku-4-5")
 MAX_TOKENS = 8000
 
 
@@ -90,12 +90,21 @@ If you cannot resolve the venue, use "unknown". Do NOT guess.
 """
 
 
-def extract(pdf_bytes: bytes, *, client=None, filename: str = "invoice.pdf") -> Invoice:
+def extract(pdf_bytes: Optional[bytes] = None, *, text: Optional[str] = None,
+            client=None, filename: str = "invoice.pdf") -> Invoice:
     """
-    Ask Claude to read the PDF. Returns a parsed Invoice.
+    Ask Claude to read the invoice. Returns a parsed (UNVALIDATED) Invoice —
+    always pass it through Validator.validate() before trusting it.
 
-    The result is UNVALIDATED and must not be trusted. Pass it to
-    Validator.validate() before it goes anywhere near Lightspeed or COGS.
+    CHEAPEST-FALLBACK SHAPE (this only runs when a deterministic parser can't):
+      * model defaults to Haiku 4.5 ($1/$5 per M) — see MODEL.
+      * the big static rules block (EXTRACTION.md + suppliers.yaml + schema) is
+        identical every call, so it is sent FIRST and prompt-cached
+        (cache_control ephemeral) → ~10% cost after the first call. The variable
+        part (this invoice) comes after the cache breakpoint.
+      * prefer `text` (already pulled from the PDF's text layer, cheap tokens)
+        over the PDF `document` block (image tokens). run.py passes text when it
+        has it; the raw PDF is the fallback-of-the-fallback.
     """
     if client is None:
         try:
@@ -104,18 +113,23 @@ def extract(pdf_bytes: bytes, *, client=None, filename: str = "invoice.pdf") -> 
             raise ExtractionError("pip install anthropic") from e
         client = Anthropic()  # reads ANTHROPIC_API_KEY
 
+    # Static, cacheable prefix — everything up to and including this block is the
+    # cache key; it never varies, so subsequent invoices reuse it.
+    content = [{"type": "text", "text": _load_prompt() + _SCHEMA_HINT,
+                "cache_control": {"type": "ephemeral"}}]
+    # Variable suffix — the actual invoice, as cheap text when we have it.
+    if text:
+        content.append({"type": "text", "text": f"\n\n=== INVOICE TEXT ===\n{text}"})
+    elif pdf_bytes is not None:
+        content.append({"type": "document",
+                        "source": {"type": "base64", "media_type": "application/pdf",
+                                   "data": base64.b64encode(pdf_bytes).decode()}})
+    else:
+        raise ExtractionError("extract() needs pdf_bytes or text")
+
     resp = client.messages.create(
-        model=MODEL,
-        max_tokens=MAX_TOKENS,
-        messages=[{
-            "role": "user",
-            "content": [
-                {"type": "document",
-                 "source": {"type": "base64", "media_type": "application/pdf",
-                            "data": base64.b64encode(pdf_bytes).decode()}},
-                {"type": "text", "text": _load_prompt() + _SCHEMA_HINT},
-            ],
-        }],
+        model=MODEL, max_tokens=MAX_TOKENS,
+        messages=[{"role": "user", "content": content}],
     )
     raw = "".join(b.text for b in resp.content if b.type == "text").strip()
     return parse(raw, source=filename)

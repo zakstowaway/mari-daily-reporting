@@ -50,7 +50,7 @@ from modules.invoices.extract import ExtractionError, extract, parse          # 
 from modules.invoices.validator import Status, Validator                       # noqa: E402
 
 ROOT = Path(__file__).parent.parent
-CONFIG = Path(__file__).parent / "invoices" / "suppliers.yaml"
+CONFIG = Path(__file__).parent / "suppliers.yaml"
 OUT_PASS = ROOT / "data" / "invoices"
 OUT_REVIEW = ROOT / "data" / "invoices_review"
 
