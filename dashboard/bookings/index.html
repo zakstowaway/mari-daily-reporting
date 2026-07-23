@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bookings · Stowaway Hospitality Group</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/_shared/tokens.css?v=20260719b">
+<!--
+  Bookings admin — a tool page behind the shared Supabase gate, same as
+  /sales/ and /recipes/. The page is a shell: ALL logic lives in bookings.js
+  (arch_guard discipline). It talks live to the booking engine service
+  (seating-solver-backed), which holds its own real auth: a bearer token,
+  entered once per device and kept in localStorage. The Supabase gate decides
+  who may see this page; the token decides what the service will accept.
+-->
+<style>
+  .wrap{max-width:1100px;margin:0 auto;padding:24px}
+  .app-header{border-bottom:1px solid var(--line);background:var(--paper)}
+  .app-header-inner{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;
+    align-items:center;justify-content:space-between;gap:16px}
+  .brand-row{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit}
+  .brand-row img{height:34px;width:auto;display:block}
+  .group-brand{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--ink)}
+  .app-header .who{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-soft)}
+  .app-header .who a{color:var(--ink);text-decoration:none}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:24px;margin:0 0 4px}
+  .sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:18px}
+  .bar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-bottom:16px}
+  label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;
+        color:var(--ink-soft);margin-bottom:3px;letter-spacing:.05em}
+  input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px;
+        background:var(--paper);color:var(--ink)}
+  button{padding:9px 14px;border:none;border-radius:8px;background:var(--ink);
+         color:var(--paper);font-size:13px;cursor:pointer;font-weight:600}
+  button.warn{background:var(--red,#b3403f)}
+  button.ghost{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;background:var(--paper);border-radius:12px;
+        overflow:hidden;box-shadow:var(--shadow)}
+  th{background:var(--ink);color:var(--paper);font-size:11px;text-transform:uppercase;
+     padding:8px 10px;text-align:left;letter-spacing:.04em}
+  td{padding:8px 10px;border-top:1px solid var(--line);font-size:14px}
+  tr.cancelled td{opacity:.4;text-decoration:line-through}
+  tr.pending td{background:#fff8e6}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;
+        font-weight:600;background:var(--line);margin-right:4px}
+  .pill.dog{background:#f5d8c8}.pill.kid{background:#fff3a8}
+  .caps{display:flex;gap:14px;margin:14px 0;flex-wrap:wrap}
+  .cap{background:var(--paper);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow);font-size:13px}
+  .cap b{display:block;font-size:15px;margin-bottom:4px}
+  .yes{color:var(--green,#2e7d4f);font-weight:600}.no{color:var(--red,#b3403f);font-weight:600}
+  #status{margin-left:auto;font-size:13px;color:var(--ink-soft)}
+  .section{margin-top:22px}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:8px}
+  #tokenbox{background:var(--paper);border:1px solid var(--line);border-radius:12px;
+        padding:18px;max-width:520px;box-shadow:var(--shadow)}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+<div id="app" style="display:none">
+  <header class="app-header"><div class="app-header-inner">
+    <a class="brand-row" href="/"><img src="/logo_512.png" alt=""><span class="group-brand">Stowaway Hospitality Group</span></a>
+    <div class="who"><span id="whotop"></span><a href="/">home</a><a href="#" id="signout">sign out</a></div>
+  </div></header>
+
+  <div class="wrap">
+    <h1>Bookings</h1>
+    <div class="sub" id="eventline">Loading the live event…</div>
+
+    <div id="tokenbox" style="display:none">
+      <h2>Connect to the booking engine</h2>
+      <p style="font-size:13px;color:var(--ink-soft);margin:6px 0 12px">
+        One-time on this device: paste the booking service token
+        (Render → stowaway-bookings → Environment → STOWAWAY_ADMIN_TOKEN).</p>
+      <div class="bar">
+        <div style="flex:1"><label>Service token</label>
+          <input id="svc_token" type="password" style="width:100%"></div>
+        <button id="savetoken">Connect</button>
+      </div>
+    </div>
+
+    <div id="main" style="display:none">
+      <div class="bar">
+        <div><label>Date</label><input id="date" type="date"></div>
+        <button id="loadbtn">Load day</button>
+        <button class="ghost" id="runsheetbtn">Runsheet PDF</button>
+        <span id="status"></span>
+      </div>
+      <div class="caps" id="caps"></div>
+      <div id="daywrap"></div>
+
+      <div class="section" id="editbox" style="display:none">
+        <h2>Edit booking <span id="edit_name" style="font-weight:normal"></span></h2>
+        <div class="bar">
+          <div><label>Sitting</label><select id="ed_time"></select></div>
+          <div><label>Adults</label><input id="ed_adults" type="number" min="1" max="12" style="width:70px"></div>
+          <div><label>Kids</label><input id="ed_kids" type="number" min="0" max="8" style="width:70px"></div>
+          <div><label>Babies</label><input id="ed_babies" type="number" min="0" max="4" style="width:70px"></div>
+          <div><label>Dogs</label><input id="ed_dogs" type="number" min="0" max="3" style="width:70px"></div>
+          <div><label>Phone</label><input id="ed_phone"></div>
+          <div style="flex:1"><label>Notes</label><input id="ed_notes" style="width:100%"></div>
+          <button id="saveeditbtn">Save changes</button>
+          <button class="ghost" id="closeeditbtn">Close</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Open / edit an event date</h2>
+        <div class="bar">
+          <div><label>Date</label><input id="ev_date" type="date"></div>
+          <div><label>Event name</label><input id="ev_name" placeholder="Sunday Service"></div>
+          <div><label>Sittings (comma sep)</label><input id="ev_sittings" value="12:00,14:00"></div>
+          <div><label>Open</label><select id="ev_open"><option value="1">open</option><option value="0">closed</option></select></div>
+          <button id="saveeventbtn">Save event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./bookings.js"></script>
+</body>
+</html>
