@@ -13,6 +13,7 @@ data/recipes_index.json
 data/labour_rate.json
 data/employees.json
 data/_backups/
+data/invoice_corpus/
 node_modules/
 package.json
 package-lock.json
