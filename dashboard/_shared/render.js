@@ -454,12 +454,34 @@ function renderVenueBreakdown() {
   const open = periodIsOpen();
   const showProfit = !open;   // open period (this week / today) = KPIs only, no profit/margin
   const showLY = !open;       // vs-LY on an in-progress period is misleading (partial vs full)
+  // Detect venues with no sales in this window while others DO have data — that
+  // is a partial import (e.g. yesterday's Stowaway/Mari export hasn't landed), and
+  // silently dropping them makes a partial Group look like the whole Group.
+  const missingLbls = [];
   const body = [['stow', 'Stowaway'], ['hg', 'Harry Gatos'], ['mari', "Marilyna's"]].map(([vk, lbl]) => {
     const rows = STATE.histories[vk] || [];
     let anchorDay = STATE.currentDay;
     if (!anchorDay && rows.length) anchorDay = rows[rows.length - 1].date;
     const day = rollup(rowsForTimeframe(rows, STATE.currentTimeframe, anchorDay));
-    if (!day) return '';
+    // A venue with no sales this window is only "awaiting import" (vs legitimately
+    // closed) on the DAY view when it normally trades that weekday — i.e. it had
+    // revenue on a recent same-weekday. Otherwise treat as closed and omit.
+    const noSales = !day || !(grossRev(day) > 0);
+    if (noSales) {
+      const iso = STATE.currentDay || anchorDay;
+      let tradesThisDow = false;
+      if (STATE.currentTimeframe === 'day' && iso) {
+        const dow = new Date(iso + 'T00:00').getDay();
+        const same = rows.filter(r => r.date < iso && new Date(r.date + 'T00:00').getDay() === dow).slice(-3);
+        tradesThisDow = same.some(r => toNum(r.revenue_ex_gst) > 0);
+      }
+      if (!tradesThisDow) return '';   // closed / no-data period — omit as before
+      missingLbls.push(lbl);
+      const ncols = 2 + (showLY ? 1 : 0) + 2 + (showProfit ? 2 : 0);
+      return `<tr class="vbx-row ${vk}" style="opacity:.6" onclick="switchVenue('${vk}')">
+        <td class="vbx-venue"><span class="vbx-dot"></span>${lbl}</td>
+        <td colspan="${ncols - 1}" style="color:var(--amber)">awaiting import</td></tr>`;
+    }
     const rev = grossRev(day);   // gross, to match the rest of the redesign
     const yoy = yoyRevenueDelta(rows, STATE.currentTimeframe, anchorDay);
     const w = pnlWindow(day, vk);
@@ -481,8 +503,13 @@ function renderVenueBreakdown() {
     </tr>`;
   }).join('');
   if (!body) return;
+  // Partial only if at least one venue is present AND at least one is missing.
+  const partial = missingLbls.length > 0 && missingLbls.length < 3;
+  const banner = partial
+    ? `<div class="vbx-partial">⚠ Group is partial — no sales imported yet for ${missingLbls.join(' & ')} on this ${STATE.currentTimeframe === 'day' ? 'day' : 'period'}. The totals above exclude ${missingLbls.length > 1 ? 'them' : 'it'}.</div>`
+    : '';
   el.innerHTML = `<div class="vbx">
-    <p class="vbx-title">Per-venue breakdown</p>
+    <p class="vbx-title">Per-venue breakdown</p>${banner}
     <div class="vbx-scroll"><table class="vb-table vbx-table">
     <thead><tr><th>Venue</th><th>Revenue</th>${showLY ? '<th>vs LY</th>' : ''}<th>Wages</th><th>COGS</th>${showProfit ? '<th>Exp. profit</th><th>Margin</th>' : ''}</tr></thead>
     <tbody>${body}</tbody></table></div></div>`;
