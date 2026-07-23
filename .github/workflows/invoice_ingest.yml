@@ -1,0 +1,71 @@
+name: Ingest supplier invoice
+
+# The automated path that replaces reading invoices by hand:
+#
+#   supplier email (PDF)  ->  Outlook rule / forward  ->  Pipedream email trigger
+#     ->  repository_dispatch {pdf_base64, source}  ->  THIS
+#     ->  run.py (extract via ANTHROPIC_API_KEY, then validate)
+#     ->  build_cogs_list.py (validated invoice -> cogs rows)
+#     ->  build_costs.py (rebuild the cost table)  ->  commit
+#
+# The deploy workflow then rebuilds the site, so a new invoice reaches the
+# recipe builder with zero manual steps. workflow_dispatch re-aggregates only
+# (no new PDF) — handy after editing a data/invoices/*.json by hand.
+
+on:
+  repository_dispatch:
+    types: [invoice]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cogs-write        # serialise writers to cogs_list.csv
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Extract + validate the invoice PDF
+        if: github.event_name == 'repository_dispatch'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PDF_B64: ${{ github.event.client_payload.pdf_base64 }}
+          SRC: ${{ github.event.client_payload.source }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is not set — add it in Settings > Secrets"; exit 1
+          fi
+          printf '%s' "$PDF_B64" > payload.b64
+          # REVIEW (exit 2) and ERROR (exit 1) must not fail the job — a review
+          # invoice is filed to data/invoices_review/ for a human, not dropped.
+          python3 modules/invoices/run.py --pdf-base64-file payload.b64 --source "$SRC" || true
+          rm -f payload.b64
+
+      - name: Aggregate into cogs_list + rebuild costs
+        run: |
+          python3 modules/invoices/build_cogs_list.py
+          python3 modules/recipes/pipeline/build_costs.py
+
+      - name: Commit what changed
+        env:
+          SRC: ${{ github.event.client_payload.source }}
+        run: |
+          git config user.name  "invoice-bot"
+          git config user.email "bot@stowawaybar.com"
+          git add data/invoices data/invoices_review data/cogs_list.csv data/costs.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+          else
+            git commit -m "Invoice ingest: ${SRC:-manual re-aggregate}"
+            git push
+          fi

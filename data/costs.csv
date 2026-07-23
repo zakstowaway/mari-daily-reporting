@@ -68,28 +68,28 @@ paramount:44583,2026-07-14,0.003726,ml,stowaway,5441124,15l,DE BORTOLI GOLD SEAL
 paramount:98541,2026-07-14,0.003412,ml,stowaway,5441124,1250ml,SPRITE PET : 1250 ml
 paramount:98541,2026-07-14,0.003412,ml,stowaway,5441124,1250ml,SPRITE PET : 1250 ml
 select-fresh:CARK,2026-07-15,0.002400,g,harry_gatos,3084903,per kg (invoice),CARROT KG
-select-fresh:CHLR,2026-07-22,0.013500,g,stowaway,3092061,per kg (invoice),CHILLI RED LONG KG
+select-fresh:CHLR,2026-07-22,0.013500,g,harry_gatos,3092061,per kg (invoice),CHILLI RED LONG KG
 select-fresh:CHOI,2026-07-15,2.2000,bunch,harry_gatos,3084903,bch,CHOI SUM BCH
-select-fresh:CHOI,2026-07-22,2.2000,bunch,stowaway,3092061,bch,CHOI SUM BCH
-select-fresh:EG700P,2026-07-22,0.008286,g,stowaway,3092061,700gm,EGG 700GM PACK (DOZ)
+select-fresh:CHOI,2026-07-22,2.2000,bunch,harry_gatos,3092061,bch,CHOI SUM BCH
+select-fresh:EG700P,2026-07-22,0.008286,g,harry_gatos,3092061,700gm,EGG 700GM PACK (DOZ)
 select-fresh:HCHI,2026-07-15,2.3000,bunch,harry_gatos,3084903,bch,HERB CHIVES BCH
-select-fresh:HCHI,2026-07-22,2.7000,bunch,stowaway,3092061,bch,HERB CHIVES BCH
+select-fresh:HCHI,2026-07-22,2.7000,bunch,harry_gatos,3092061,bch,HERB CHIVES BCH
 select-fresh:LEMK,2026-07-15,0.003600,g,harry_gatos,3084903,per kg (invoice),LEMON KG
 select-fresh:ONIBK,2026-07-15,0.002400,g,harry_gatos,3084903,per kg (invoice),ONION BROWN KG
-select-fresh:ONIBK,2026-07-22,0.002400,g,stowaway,3092061,per kg (invoice),ONION BROWN KG
+select-fresh:ONIBK,2026-07-22,0.002400,g,harry_gatos,3092061,per kg (invoice),ONION BROWN KG
 select-fresh:PGAR,2026-07-15,0.005800,g,harry_gatos,3084903,per kg (invoice),PROCESS GARLIC PEELED KG
 select-fresh:PRPOTP,2026-07-15,0.003800,g,harry_gatos,3084903,per kg (invoice),POTATO PEELED PROCESSING KG
-select-fresh:PRPOTP,2026-07-22,0.003800,g,stowaway,3092061,per kg (invoice),POTATO PEELED PROCESSING KG
+select-fresh:PRPOTP,2026-07-22,0.003800,g,harry_gatos,3092061,per kg (invoice),POTATO PEELED PROCESSING KG
 select-fresh:SHAL,2026-07-15,3.0000,bunch,harry_gatos,3084903,bch,SHALLOT BCH
-select-fresh:SHAL,2026-07-22,3.0000,bunch,stowaway,3092061,bch,SHALLOT BCH
+select-fresh:SHAL,2026-07-22,3.0000,bunch,harry_gatos,3092061,bch,SHALLOT BCH
 select-fresh:TBUS100,2026-07-15,0.165000,g,harry_gatos,3084903,100gm,TOMATO BUSH POWDER 100GM
-select-fresh:XCAUFL,2026-07-22,0.006000,g,stowaway,3092061,per kg (invoice),CAULIFLOWER FLORETS
+select-fresh:XCAUFL,2026-07-22,0.006000,g,harry_gatos,3092061,per kg (invoice),CAULIFLOWER FLORETS
 select-fresh:XCSIMIX,2026-07-15,0.004800,g,harry_gatos,3084903,per kg (invoice),CABBAGE RED/GRN SHRD MIX KG
 select-fresh:XDCAR05,2026-07-15,0.003100,g,harry_gatos,3084903,per kg (invoice),CARROT DICED 5MM KG
-select-fresh:XDCAR05,2026-07-22,0.003100,g,stowaway,3092061,per kg (invoice),CARROT DICED 5MM KG
+select-fresh:XDCAR05,2026-07-22,0.003100,g,harry_gatos,3092061,per kg (invoice),CARROT DICED 5MM KG
 select-fresh:XSHRCAB,2026-07-15,0.004200,g,harry_gatos,3084903,per kg (invoice),CABBAGE GREEN SHREDDED
-select-fresh:XSHRCAB,2026-07-22,0.004200,g,stowaway,3092061,per kg (invoice),CABBAGE GREEN SHREDDED
+select-fresh:XSHRCAB,2026-07-22,0.004200,g,harry_gatos,3092061,per kg (invoice),CABBAGE GREEN SHREDDED
 select-fresh:XSHRCAR,2026-07-15,0.002800,g,harry_gatos,3084903,per kg (invoice),CARROT SHREDDED
-select-fresh:XSHRCAR,2026-07-22,0.002800,g,stowaway,3092061,per kg (invoice),CARROT SHREDDED
+select-fresh:XSHRCAR,2026-07-22,0.002800,g,harry_gatos,3092061,per kg (invoice),CARROT SHREDDED
 viticult:ARWLC24,2026-07-13,37.6983,bottle,stowaway,INV-02634,bottle,A Rodda Willow Lake Chard 2024
 viticult:ECPM24,2026-07-13,19.3324,bottle,stowaway,INV-02634,bottle,Padrillos Malbec 24
