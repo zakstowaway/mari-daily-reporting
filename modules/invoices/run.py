@@ -87,15 +87,21 @@ def main() -> int:
             else:
                 pdf = args.pdf.read_bytes()
                 name = args.source or args.pdf.name
-            # FREE FIRST. A recurring supplier with a known layout is parsed
-            # deterministically — no API call. Only fall to the LLM when there's
-            # no parser for this sender, the PDF is a scan, or the parse breaks.
+            # FREE FIRST, BUT ONLY IF IT RECONCILES. A recurring supplier with a
+            # known layout is parsed deterministically (no API). We TRUST it only
+            # when it validates against the printed total — otherwise (no parser,
+            # a scan, a layout change, a parser bug) we fall to the LLM. So a
+            # partial parser is pure upside: free when it's right, LLM when not.
             inv = None
             if args.sender:
                 from modules.invoices.parsers import parse_pdf
-                inv = parse_pdf(pdf, args.sender)
-                if inv is not None:
-                    print(f"[parsed deterministically — {args.sender}, no API]")
+                cand = parse_pdf(pdf, args.sender)
+                if cand is not None:
+                    if Validator(yaml.safe_load(CONFIG.read_text())).validate(cand).ok:
+                        inv = cand
+                        print(f"[parsed deterministically — {args.sender}, reconciled, no API]")
+                    else:
+                        print(f"[{args.sender} parser did not reconcile — using LLM]")
             if inv is None:
                 inv = extract(pdf, filename=name)
     except ExtractionError as e:
