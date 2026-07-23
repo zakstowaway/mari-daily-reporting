@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -86,12 +87,13 @@ def ensure_folder(token, name) -> str:
     return _req(token, "POST", "/mailFolders", {"displayName": name})["id"]
 
 
-def inbox_with_attachments(token):
+def messages_with_attachments(token, folder="inbox"):
     # RECENT ONLY. Filter on receivedDateTime (indexed -> efficient) for the
     # last WINDOW_WEEKS; check hasAttachments client-side. Filtering on BOTH
     # receivedDateTime and hasAttachments trips Graph's "InefficientFilter", so
     # we don't — and we never reach back past the window regardless of how much
-    # history sits in the inbox.
+    # history sits in the folder. `folder` is a well-known name (inbox) or a
+    # folder id (for the Review-retry pass).
     cutoff = (datetime.now(timezone.utc) - timedelta(weeks=WINDOW_WEEKS)).strftime("%Y-%m-%dT%H:%M:%SZ")
     qs = urllib.parse.urlencode({
         "$filter": f"receivedDateTime ge {cutoff}",
@@ -99,7 +101,7 @@ def inbox_with_attachments(token):
         "$orderby": "receivedDateTime desc",
         "$top": str(BATCH),
     }, quote_via=urllib.parse.quote)
-    msgs = _req(token, "GET", f"/mailFolders/inbox/messages?{qs}").get("value", [])
+    msgs = _req(token, "GET", f"/mailFolders/{folder}/messages?{qs}").get("value", [])
     return [m for m in msgs if m.get("hasAttachments")]
 
 
@@ -158,24 +160,31 @@ def aggregate_and_commit(dry_run: bool):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="list only; no extract, move or commit")
+    ap.add_argument("--source-folder", default="inbox",
+                    help="'inbox' (default) or 'Invoices Review' to re-run stuck ones (retry pass)")
     args = ap.parse_args()
+    retry = args.source_folder.lower() != "inbox"   # Review-retry pass
 
     token = get_token()
-    msgs = inbox_with_attachments(token)
-    print(f"{len(msgs)} message(s) with attachments in accounts@ inbox")
-    if not msgs:
-        return 0
-
     processed_id = review_id = None
     if not args.dry_run:
         processed_id = ensure_folder(token, PROCESSED_FOLDER)
         review_id = ensure_folder(token, REVIEW_FOLDER)
+    source = review_id if retry else "inbox"
+    msgs = messages_with_attachments(token, source)
+    label = "Review folder (retry)" if retry else "accounts@ inbox"
+    print(f"{len(msgs)} message(s) with attachments in {label}"
+          + (f"  [model={os.environ.get('INVOICE_MODEL','haiku')}]" if retry else ""))
+    if not msgs:
+        return 0
 
     any_change = False
     for m in msgs:
         subj = m.get("subject", "(no subject)")
         sender = (m.get("from", {}).get("emailAddress", {}) or {}).get("address", "?")
-        if SKIP_SUBJECT.search(subj):
+        # On the first pass, skip obvious non-invoices. On a retry we process
+        # everything already in Review (they were flagged for a reason).
+        if not retry and SKIP_SUBJECT.search(subj):
             print(f"\n• {subj}  <{sender}>  — skip (statement/reminder, not an invoice)")
             if not args.dry_run:
                 move_message(token, m["id"], review_id)
@@ -185,7 +194,8 @@ def main() -> int:
         if args.dry_run:
             continue
         if not pdfs:
-            move_message(token, m["id"], review_id)     # attachment but no PDF -> human
+            if not retry:
+                move_message(token, m["id"], review_id)   # attachment but no PDF -> human
             continue
 
         worst = 0
@@ -193,8 +203,14 @@ def main() -> int:
             code = run_invoice(data, f"{subj} / {name}", sender=sender)
             worst = max(worst, 1 if code == 1 else (2 if code == 2 else 0))
             any_change = True
-        move_message(token, m["id"], processed_id if worst == 0 else review_id)
-        print(f"    -> {'Processed' if worst == 0 else 'Review'}")
+        if worst == 0:
+            move_message(token, m["id"], processed_id)    # rescued -> Processed
+            print("    -> Processed")
+        elif not retry:
+            move_message(token, m["id"], review_id)
+            print("    -> Review")
+        else:
+            print("    -> still stuck (left in Review)")   # retry couldn't rescue it
 
     if any_change or args.dry_run:
         aggregate_and_commit(args.dry_run)
