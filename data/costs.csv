@@ -14,11 +14,31 @@ foodlink:100831,2026-07-16,0.015767,g,stowaway,SI4467596,6x500gm,CORN CHIPS ROSI
 foodlink:101112,2026-07-16,0.043651,g,stowaway,SI4467596,12x63gm,FLOUR TORTILLAS 12X63GM 10INCH
 foodlink:102689,2026-07-16,0.011400,g,stowaway,SI4467596,5kg,SQUID PINEAPPLE CUT IMP U5 5KG
 foodlink:103272,2026-07-16,0.016600,g,stowaway,SI4467596,5kg,BARRAMUNDI FILLETS IMP 200/300 S/OFF 5KG
+fresh-fruit-team:AH20T,2026-07-18,30.8000,tray,stowaway,INB00111714,per tray (invoice),Avocado Hass
 fresh-fruit-team:BRL,2026-07-16,33.6000,box,stowaway,INB00111435,per box (invoice),Broccolini
+fresh-fruit-team:CAULI-EA,2026-07-20,4.4000,ea,stowaway,INB00111833,per ea (invoice),Cauliflower
 fresh-fruit-team:CELE,2026-07-16,10.8000,ea,stowaway,INB00111435,per ea (invoice),Celeriac
+fresh-fruit-team:CL20KGBX,2026-07-20,0.001320,g,stowaway,INB00111833,per kg (invoice),Carrot Large
+fresh-fruit-team:EGL7BX,2026-07-20,48.0000,box,stowaway,INB00111833,per box (invoice),Eggs 700 Grams
+fresh-fruit-team:GRREA,2026-07-20,1.3200,ea,stowaway,INB00111833,per ea (invoice),Grapefruit Ruby Red
+fresh-fruit-team:HCDRMB,2026-07-20,7.7000,bunch,stowaway,INB00111833,per bunch (invoice),Herb Coriander
+fresh-fruit-team:HCMB,2026-07-20,13.2000,bunch,stowaway,INB00111833,per bunch (invoice),Herb Chives
+fresh-fruit-team:KITCD5MM,2026-07-18,0.003900,g,stowaway,INB00111714,per kg (invoice),Carrot Diced 5mm
+fresh-fruit-team:KITCELD5MM,2026-07-18,0.005900,g,stowaway,INB00111714,per kg (invoice),Celery Diced 5mm
 fresh-fruit-team:KITCFKG,2026-07-16,0.007900,g,stowaway,INB00111435,per kg (invoice),Cauliflower Florets
+fresh-fruit-team:KITCFKG,2026-07-18,0.007900,g,stowaway,INB00111714,per kg (invoice),Cauliflower Florets
+fresh-fruit-team:KITCRAGKG,2026-07-18,0.007900,g,stowaway,INB00111714,per kg (invoice),Coleslaw Red And Green
 fresh-fruit-team:KITCSKG,2026-07-16,0.007900,g,stowaway,INB00111435,per kg (invoice),Coleslaw
+fresh-fruit-team:KITMUDKG,2026-07-18,0.011900,g,stowaway,INB00111714,per kg (invoice),Mushroom Diced
+fresh-fruit-team:KITOWDKG,2026-07-18,0.009500,g,stowaway,INB00111714,per kg (invoice),Onion White Diced
+fresh-fruit-team:LCBTPBX,2026-07-20,27.5000,box,stowaway,INB00111833,per box (invoice),Lettuce Cos Baby Twin Pack
+fresh-fruit-team:LCBTPEA,2026-07-18,2.7500,ea,stowaway,INB00111714,per ea (invoice),Lettuce Cos Baby Twin Pack
+fresh-fruit-team:LREA,2026-07-18,6.0500,ea,stowaway,INB00111714,per ea (invoice),Lettuce Radicchio
+fresh-fruit-team:LREA,2026-07-20,6.0500,ea,stowaway,INB00111833,per ea (invoice),Lettuce Radicchio
+fresh-fruit-team:OSKG,2026-07-18,0.002420,g,stowaway,INB00111714,per kg (invoice),Onion Spanish
+fresh-fruit-team:OSKG,2026-07-20,0.002420,g,stowaway,INB00111833,per kg (invoice),Onion Spanish
 fresh-fruit-team:PJEA,2026-07-16,2.3000,ea,stowaway,INB00111435,per ea (invoice),Pumpkin Jap
+fresh-fruit-team:POTCOBX,2026-07-20,49.5000,box,stowaway,INB00111833,per box (invoice),Potato Cocktail (Box)
 fresh-fruit-team:TCPUN,2026-07-16,1.7600,punnet,stowaway,INB00111435,per punnet (invoice),Tomatoes Cherry
 gulli:MANFLOPIZ-U,2026-07-13,0.001104,g,stowaway,CI-424608,12.5kg,Manildra- Gem West Pizza Flour 12.5kg
 gulli:MOZZARELLA2KG-UC4,2026-07-13,0.010500,g,stowaway,CI-424608,2kg,Big Cheese- Shredded Mozzarella 2kg
@@ -48,17 +68,28 @@ paramount:44583,2026-07-14,0.003726,ml,stowaway,5441124,15l,DE BORTOLI GOLD SEAL
 paramount:98541,2026-07-14,0.003412,ml,stowaway,5441124,1250ml,SPRITE PET : 1250 ml
 paramount:98541,2026-07-14,0.003412,ml,stowaway,5441124,1250ml,SPRITE PET : 1250 ml
 select-fresh:CARK,2026-07-15,0.002400,g,harry_gatos,3084903,per kg (invoice),CARROT KG
+select-fresh:CHLR,2026-07-22,0.013500,g,stowaway,3092061,per kg (invoice),CHILLI RED LONG KG
 select-fresh:CHOI,2026-07-15,2.2000,bunch,harry_gatos,3084903,bch,CHOI SUM BCH
+select-fresh:CHOI,2026-07-22,2.2000,bunch,stowaway,3092061,bch,CHOI SUM BCH
+select-fresh:EG700P,2026-07-22,0.008286,g,stowaway,3092061,700gm,EGG 700GM PACK (DOZ)
 select-fresh:HCHI,2026-07-15,2.3000,bunch,harry_gatos,3084903,bch,HERB CHIVES BCH
+select-fresh:HCHI,2026-07-22,2.7000,bunch,stowaway,3092061,bch,HERB CHIVES BCH
 select-fresh:LEMK,2026-07-15,0.003600,g,harry_gatos,3084903,per kg (invoice),LEMON KG
 select-fresh:ONIBK,2026-07-15,0.002400,g,harry_gatos,3084903,per kg (invoice),ONION BROWN KG
+select-fresh:ONIBK,2026-07-22,0.002400,g,stowaway,3092061,per kg (invoice),ONION BROWN KG
 select-fresh:PGAR,2026-07-15,0.005800,g,harry_gatos,3084903,per kg (invoice),PROCESS GARLIC PEELED KG
 select-fresh:PRPOTP,2026-07-15,0.003800,g,harry_gatos,3084903,per kg (invoice),POTATO PEELED PROCESSING KG
+select-fresh:PRPOTP,2026-07-22,0.003800,g,stowaway,3092061,per kg (invoice),POTATO PEELED PROCESSING KG
 select-fresh:SHAL,2026-07-15,3.0000,bunch,harry_gatos,3084903,bch,SHALLOT BCH
+select-fresh:SHAL,2026-07-22,3.0000,bunch,stowaway,3092061,bch,SHALLOT BCH
 select-fresh:TBUS100,2026-07-15,0.165000,g,harry_gatos,3084903,100gm,TOMATO BUSH POWDER 100GM
+select-fresh:XCAUFL,2026-07-22,0.006000,g,stowaway,3092061,per kg (invoice),CAULIFLOWER FLORETS
 select-fresh:XCSIMIX,2026-07-15,0.004800,g,harry_gatos,3084903,per kg (invoice),CABBAGE RED/GRN SHRD MIX KG
 select-fresh:XDCAR05,2026-07-15,0.003100,g,harry_gatos,3084903,per kg (invoice),CARROT DICED 5MM KG
+select-fresh:XDCAR05,2026-07-22,0.003100,g,stowaway,3092061,per kg (invoice),CARROT DICED 5MM KG
 select-fresh:XSHRCAB,2026-07-15,0.004200,g,harry_gatos,3084903,per kg (invoice),CABBAGE GREEN SHREDDED
+select-fresh:XSHRCAB,2026-07-22,0.004200,g,stowaway,3092061,per kg (invoice),CABBAGE GREEN SHREDDED
 select-fresh:XSHRCAR,2026-07-15,0.002800,g,harry_gatos,3084903,per kg (invoice),CARROT SHREDDED
+select-fresh:XSHRCAR,2026-07-22,0.002800,g,stowaway,3092061,per kg (invoice),CARROT SHREDDED
 viticult:ARWLC24,2026-07-13,37.6983,bottle,stowaway,INV-02634,bottle,A Rodda Willow Lake Chard 2024
 viticult:ECPM24,2026-07-13,19.3324,bottle,stowaway,INV-02634,bottle,Padrillos Malbec 24
