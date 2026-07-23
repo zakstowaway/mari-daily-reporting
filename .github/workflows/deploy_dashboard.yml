@@ -2,7 +2,7 @@ name: Deploy dashboard to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["Daily Pull", "Mari Daily Pull", "Wages Backfill", "Roster Pull"]
+    workflows: ["Daily Pull", "Mari Daily Pull", "Wages Backfill", "Rebuild Wages", "Roster Pull"]
     types: [completed]
   push:
     branches: [main]
