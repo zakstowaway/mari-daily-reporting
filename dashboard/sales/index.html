@@ -2282,14 +2282,23 @@ function renderProfitCard(day, cfg) {
       : '';
     const oc = overheadChips();   // group-only admin + leave toggles (sit in the card head)
     const wagesLbl = 'Labour' + (STATE.currentVenue === 'group' ? ' (excl. admin)' : '');
+    // Marilyna's is delivery-led, so platform/delivery cost is a headline KPI here
+    // (Uber Direct + Uber Eats commission + marketing). w.df is the same delivery
+    // dollars used in the full P&L, so the KPI and the profit line never disagree.
+    const showDelivery = STATE.currentVenue === 'mari';
+    const deliveryCard = showDelivery
+      ? `<div class="pmini-c"><p class="pmini-l">Delivery cost</p><p class="pmini-v">${fmtPct(pct(w.df))}</p><p class="pmini-s">${fmtDollars(w.df)} of turnover</p></div>`
+      : '';
+    const gridStyle = showDelivery ? ' style="grid-template-columns:repeat(4,1fr)"' : '';
     el.innerHTML =
       `<div class="pcard">` +
       `<div class="pcard-head"><span class="pcard-lbl">${kpiLbl}</span>${oc.chips}</div>` +
       oc.note +
-      `<div class="pmini">` +
+      `<div class="pmini"${gridStyle}>` +
       `<div class="pmini-c"><p class="pmini-l">Turnover (gross)</p><p class="pmini-v">${fmtDollars(grpDisp)}</p><p class="pmini-s"></p></div>` +
       `<div class="pmini-c"><p class="pmini-l">COGS</p><p class="pmini-v">${fmtPct(cogsPctG)}</p><p class="pmini-s">${fmtDollars(cogsD)} · ${vsTarget(cogsPctG, COGS_TARGET_PCT)}</p></div>` +
       `<div class="pmini-c"><p class="pmini-l">${wagesLbl}</p><p class="pmini-v">${fmtPct(wagesPctG)}</p><p class="pmini-s">${fmtDollars(w.wages)}${wTgt !== null ? ' · ' + vsTarget(wagesPctG, wTgt) : ''}</p></div>` +
+      deliveryCard +
       `</div></div>`;
     return;
   }
@@ -2346,11 +2355,18 @@ function renderProfitCard(day, cfg) {
     ? `<span class="${yy >= 0 ? 'vs-good' : 'vs-bad'}">${(yy >= 0 ? '+' : '−') + Math.abs(yy).toFixed(1)}%</span><span class="vs-t">vs LY</span>`
     : '';
   const wagesLbl = 'Wages' + (STATE.currentVenue === 'group' ? ' (excl. admin)' : '');
+  // Delivery cost is a headline KPI for Marilyna's (delivery-led venue).
+  const showDeliveryM = STATE.currentVenue === 'mari';
+  const deliveryCardM = showDeliveryM
+    ? `<div class="pmini-c"><p class="pmini-l">Delivery cost</p><p class="pmini-v">${fmtPct(pct(w.df))}</p><p class="pmini-s">${fmtDollars(w.df)} of turnover</p></div>`
+    : '';
+  const gridStyleM = showDeliveryM ? ' style="grid-template-columns:repeat(4,1fr)"' : '';
   const mini =
-    `<div class="pmini">` +
+    `<div class="pmini"${gridStyleM}>` +
     `<div class="pmini-c"><p class="pmini-l">Revenue (gross)</p><p class="pmini-v">${fmtDollars(grpDisp)}</p><p class="pmini-s">${revSub}</p></div>` +
     `<div class="pmini-c"><p class="pmini-l">COGS</p><p class="pmini-v">${fmtPct(cogsPctG)}</p><p class="pmini-s">${vsTarget(cogsPctG, COGS_TARGET_PCT)}</p></div>` +
     `<div class="pmini-c"><p class="pmini-l">${wagesLbl}</p><p class="pmini-v">${fmtPct(wagesPctG)}</p><p class="pmini-s">${wTgt !== null ? vsTarget(wagesPctG, wTgt) : ''}</p></div>` +
+    deliveryCardM +
     `</div>`;
 
   // --- 100%-of-gross stacked bar (reuses the old dollar-strip logic) ---
