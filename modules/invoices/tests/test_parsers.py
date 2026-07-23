@@ -49,3 +49,38 @@ def test_word_rows_and_bucket_ignore_empty_columns():
     assert c["qty"] == "4" and c["sku"] == "MKB500"
     assert c["desc"] == "" and c["unit"] == ""
     assert c["price"] == "6.05" and c["amt"] == "24.20"
+
+
+# Paramount Liquor column starts (Code | Description | Size | Case/Bottle |
+# Base Cost | Total Net | WET | GST | LUC Ex GST | Total Inc GST).
+PARAMOUNT_COLS = [("code", 0), ("desc", 75), ("size", 290), ("qty", 356),
+                  ("base", 415), ("net", 485), ("wet", 548), ("gst", 600),
+                  ("luc", 645), ("incgst", 705)]
+
+
+def test_paramount_bucket_reads_total_inc_gst_on_a_wet_line():
+    # CARPANO row: bottle-break qty "0 / 1", per-case base cost, WET present.
+    # The reconcile figure is the rightmost Total-Inc-GST cell ($23.17).
+    row = _row((21, "10015926"), (81, "CARPANO"), (128, "CLASSICO"),
+               (176, "VERMOUTH"), (235, "750ml"), (296, "6/750"), (321, "ml"),
+               (372, "0"), (379, "/"), (384, "1"), (428, "$98.00"),
+               (494, "$16.33"), (555, "$4.74"), (609, "$2.11"), (650, "$21.07"),
+               (727, "$23.17"))
+    c = pdf_text.bucket(row, PARAMOUNT_COLS)
+    assert c["code"] == "10015926"
+    assert c["desc"].startswith("CARPANO")
+    assert c["base"] == "$98.00"
+    assert c["net"] == "$16.33"
+    assert c["incgst"] == "$23.17"     # this is what the parser reconciles on
+
+
+def test_paramount_bucket_reads_a_misc_charge_line():
+    # Carton Freight (MISC) — captured as an EXTRA line; incgst = $7.15.
+    row = _row((21, "9000000"), (81, "Carton"), (111, "Freight"), (296, "MISC"),
+               (378, "5"), (431, "$1.30"), (496, "$6.50"), (609, "$0.65"),
+               (650, "$1.30"), (730, "$7.15"))
+    c = pdf_text.bucket(row, PARAMOUNT_COLS)
+    assert c["code"] == "9000000"
+    assert c["size"] == "MISC"
+    assert c["desc"] == "Carton Freight"
+    assert c["incgst"] == "$7.15"

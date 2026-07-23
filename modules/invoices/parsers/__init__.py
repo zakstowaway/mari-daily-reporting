@@ -38,6 +38,7 @@ from modules.invoices.parsers import ilg                # noqa: E402,F401
 from modules.invoices.parsers import gulli              # noqa: E402,F401
 from modules.invoices.parsers import jun_pacific        # noqa: E402,F401
 from modules.invoices.parsers import lion               # noqa: E402,F401
+from modules.invoices.parsers import paramount          # noqa: E402,F401
 
 
 def parse_pdf(pdf_bytes: bytes, sender_domain: Optional[str] = None) -> Optional[Invoice]:
