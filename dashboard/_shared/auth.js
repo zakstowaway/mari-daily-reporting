@@ -107,8 +107,17 @@ export const Auth = (() => {
   // establishes the recovery session without relying on the link (Zak 2026-07-21).
   async function verifyRecoveryCode(email, code) {
     if (!sb) throw new Error("Auth not configured yet.");
-    const { error } = await sb.auth.verifyOtp({ email: (email || "").trim(), token: (code || "").trim(), type: "recovery" });
-    return error ? { ok: false, error: error.message } : { ok: true };
+    const e = (email || "").trim(), c = (code || "").trim();
+    // A burned/expired one-time link can't tell us whether this is an INVITE
+    // (brand-new user) or a RECOVERY (existing user resetting). Try both OTP
+    // types — whichever the same-email code matches establishes the session.
+    let lastErr = "That code didn't work — check it and try again.";
+    for (const type of ["invite", "recovery", "email", "signup"]) {
+      const { error } = await sb.auth.verifyOtp({ email: e, token: c, type });
+      if (!error) return { ok: true };
+      lastErr = error.message || lastErr;
+    }
+    return { ok: false, error: lastErr };
   }
 
   async function logout() {
@@ -271,7 +280,7 @@ export const Auth = (() => {
     } else if (!linked) {
       // Arrived via a reset LINK (maybe burned by a scanner) — email unknown, ask for it.
       codeFields = `
-        <div class="muted" style="margin:-2px 0 12px">Enter the <b>6-digit code</b> from your reset email, plus a new password.</div>
+        <div class="muted" style="margin:-2px 0 12px">Enter the <b>6-digit code</b> from your invite or reset email, plus a new password.</div>
         <label for="_e">Email</label><input id="_e" type="email" autocomplete="username" autofocus>
         <label for="_c">6-digit code</label><input id="_c" inputmode="numeric" autocomplete="one-time-code" maxlength="8">`;
     }
