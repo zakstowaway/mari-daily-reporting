@@ -88,6 +88,30 @@ token rotation, no ledger. $0, always-on, no admin. Note: M365 IMAP is NOT an
 option here (basic-auth/app-passwords disabled by the tenant) — Gmail is.
 
 
+## Auth / admin worker — Supabase Edge Function (2026-07-24, off Pipedream)
+
+The privileged auth worker (list/invite/set-role users, and commit recipes/prep)
+used to be a Pipedream HTTP workflow. Pipedream died (out of credits) so the Team
+page 400'd ("Is SUPABASE_SERVICE_KEY set?") and chefs couldn't save recipes.
+
+Now it's a **Supabase Edge Function `shg-auth`** (code in `supabase/functions/
+shg-auth/index.ts`; deployed on the Supabase project fyqhvyvwbedoowjkrxyj). URL:
+`https://fyqhvyvwbedoowjkrxyj.supabase.co/functions/v1/shg-auth`, wired via
+`WORKER_URL` in `dashboard/_shared/config.js`. Same routes as before:
+`/admin/users|invite|role` (admin) + `/recipes`, `/prep` (kitchen).
+
+- **verify_jwt = OFF** (the function verifies the caller's Supabase token itself
+  via /auth/v1/user and must answer CORS preflight). Don't turn it on.
+- Admin routes use `SUPABASE_SERVICE_ROLE_KEY` — **auto-injected** by Supabase,
+  no secret to set.
+- Recipe/prep commits use a `GITHUB_TOKEN` Edge Function secret (the repo PAT),
+  set in Supabase -> Edge Functions -> Secrets.
+- To change the function: edit the .ts, redeploy via Supabase dashboard
+  (Functions -> shg-auth -> Code/Editor) or `supabase functions deploy shg-auth`.
+- Old Pipedream code kept for reference at modules/auth/pipedream/auth_component.js
+  (NO LONGER USED). Login/signup/reset and invoice approvals already talk to
+  Supabase directly and never used this worker.
+
 ## Deploying the dashboard (modularised 2026-07-23 — see dashboard/_shared/README.md)
 
 The site is built by `scripts/build_site.py` and served at app.stowawaybar.com:
