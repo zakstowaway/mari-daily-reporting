@@ -56,6 +56,12 @@
   button.approve{background:var(--green);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:600;cursor:pointer}
   button.reject{background:transparent;color:var(--ink-soft);border:1px solid var(--line);padding:9px 14px;border-radius:8px;cursor:pointer}
   button:disabled{opacity:.5;cursor:default}
+  /* sticky "approve all" bar */
+  .bulkbar{position:sticky;bottom:0;z-index:8;border-top:1px solid var(--line);
+           background:color-mix(in srgb, var(--paper) 90%, #000 10%);backdrop-filter:blur(8px)}
+  .bulkbar-inner{display:flex;justify-content:flex-end;align-items:center;gap:16px;padding:12px 0}
+  .bulkbar .muted{color:var(--ink-soft);font-size:13px}
+  .bulkbar #approve-all{padding:11px 22px;font-size:14px}
   .empty{text-align:center;color:var(--ink-soft);padding:60px 20px}
   .empty .big{font-size:15px;color:var(--ink);margin-bottom:6px}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);
@@ -77,6 +83,12 @@
       per line from your Xero history. Check it, fix anything, Approve — it posts into
       Xero as a bill <strong>awaiting payment</strong>, the same way Dext did. Nothing posts on its own.</p>
     <div id="list"><div class="empty">Loading…</div></div>
+  </div>
+  <div class="bulkbar" id="bulkbar" style="display:none">
+    <div class="wrap bulkbar-inner">
+      <span id="bulk-count" class="muted"></span>
+      <button id="approve-all" class="approve">Approve all → post to Xero</button>
+    </div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -176,6 +188,53 @@ function render() {
     if (url && win) win.location = url;
     else { if (win) win.close(); toast('Original invoice not found'); }
   });
+  // sticky "approve all" bar
+  const bar = document.getElementById('bulkbar');
+  if (QUEUE.length) {
+    bar.style.display = '';
+    document.getElementById('bulk-count').textContent =
+      `${QUEUE.length} invoice${QUEUE.length > 1 ? 's' : ''} ready`;
+    document.getElementById('approve-all').textContent = `Approve all ${QUEUE.length} → post to Xero`;
+    document.getElementById('approve-all').onclick = approveAll;
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+// Read a card's (possibly edited) coding into a decision payload.
+function collectDecision(i, decision, approver) {
+  const inv = QUEUE[i];
+  const card = document.querySelector(`.inv[data-i="${i}"]`);
+  const [cat, opt] = (card.querySelector('.venue-sel').value || '|').split('|');
+  const lines = inv.lines.map((l, j) => ({
+    description: l.description, amount: l.amount, tax: l.tax,
+    account_code: card.querySelector(`.acct[data-i="${i}"][data-j="${j}"]`).value,
+  }));
+  return {
+    ref: inv.ref, supplier: inv.supplier, supplier_key: inv.supplier_key,
+    date: inv.date, due_date: inv.due_date, total: inv.total,
+    decision, tracking_category: cat, tracking_option: opt, lines, approver,
+  };
+}
+
+async function approveAll() {
+  if (!QUEUE.length) return;
+  if (!confirm(`Approve all ${QUEUE.length} invoice(s) and post them to Xero as bills awaiting payment?`)) return;
+  const me = await Auth.current();
+  const approver = me?.name || me?.email;
+  document.querySelectorAll('#app button').forEach(b => b.disabled = true);
+  const btn = document.getElementById('approve-all');
+  const payloads = QUEUE.map((_, i) => collectDecision(i, 'approve', approver));
+  const failed = [];
+  for (let k = 0; k < payloads.length; k++) {
+    btn.textContent = `Posting ${k + 1} of ${payloads.length}…`;
+    try { await Auth.decideInvoice(payloads[k]); }
+    catch (e) { failed.push(QUEUE[k]); }
+  }
+  QUEUE = failed;
+  render();
+  toast(failed.length ? `Posted all but ${failed.length} — those stayed for review`
+                      : `Approved all — posting to Xero`);
 }
 
 function toast(t) {
@@ -190,20 +249,9 @@ async function decide(i, decision) {
   const msg = document.getElementById(`msg-${i}`);
   card.querySelectorAll('button').forEach(b => b.disabled = true);
   msg.textContent = '';
-  // gather final coding from the (possibly edited) dropdowns
-  const [cat, opt] = (card.querySelector('.venue-sel').value || '|').split('|');
-  const lines = inv.lines.map((l, j) => ({
-    description: l.description, amount: l.amount, tax: l.tax,
-    account_code: card.querySelector(`.acct[data-i="${i}"][data-j="${j}"]`).value,
-  }));
   const me = await Auth.current();
   try {
-    await Auth.decideInvoice({
-      ref: inv.ref, supplier: inv.supplier, supplier_key: inv.supplier_key,
-      date: inv.date, due_date: inv.due_date, total: inv.total,
-      decision, tracking_category: cat, tracking_option: opt,
-      lines, approver: me?.name || me?.email,
-    });
+    await Auth.decideInvoice(collectDecision(i, decision, me?.name || me?.email));
     QUEUE.splice(i, 1);
     render();
     toast(decision === 'approve' ? `Approved ${inv.supplier} — posting to Xero` : `Rejected ${inv.supplier}`);
