@@ -188,6 +188,32 @@ def _learned_venue(inv) -> Optional[tuple]:
     return None
 
 
+# Produce that is clearly bar (cocktail garnishes / mixers) vs clearly kitchen.
+# Used only to tell a Stowaway produce delivery apart — a bar run (limes, mint,
+# cucumber, citrus, juice) from a kitchen run (onions, potatoes, lettuce). Xero
+# history can't help here: those bills were entered as summary lines.
+_BAR_PRODUCE = re.compile(
+    r"\b(lime|lemon|mint|cucumber|chill?i|jalapen|ginger|citrus|orange|grapefruit|"
+    r"berr|strawberr|raspberr|blueberr|passion ?fruit|pineapple|cranberr|celery|"
+    r"juice|tonic|soda|rosemary|thyme|kaffir|lemongrass)\b", re.I)
+_KITCHEN_PRODUCE = re.compile(
+    r"\b(onion|potato|carrot|lettuce|tomato|mushroom|garlic|pumpkin|capsicum|spinach|"
+    r"broccoli|cauliflower|zucchini|eggplant|cabbage|leek|\bbean|\bpea\b|corn|kumara|"
+    r"parsnip|beetroot|fennel|shallot|rocket|kale|avocado|sweet ?potato)\b", re.I)
+
+
+def _bar_produce_dominant(inv) -> bool:
+    """True when the produce on the invoice is clearly a bar run, not a kitchen one."""
+    bar = kit = 0
+    for l in inv.lines:
+        d = l.description or ""
+        if _BAR_PRODUCE.search(d):
+            bar += 1
+        elif _KITCHEN_PRODUCE.search(d):
+            kit += 1
+    return bar >= 2 and bar > kit * 2      # a clear bar majority
+
+
 def _venue_tracking(inv: Invoice, primary_account: Optional[str]) -> tuple[Optional[str], Optional[str], str]:
     """
     Which venue/department the bill is tracked to. Prefer how this supplier has
@@ -206,6 +232,9 @@ def _venue_tracking(inv: Invoice, primary_account: Optional[str]) -> tuple[Optio
     #   Marilyna's  -> Stowaway category,   'Marilyna's Pizza'
     dept = ("Bar" if primary_account in (BEVERAGE, BAR_SUPPLIES)
             else "Kitchen" if primary_account == FOOD else None)
+    # a produce delivery of garnishes/mixers is a Bar run, not Kitchen
+    if dept == "Kitchen" and _bar_produce_dominant(inv):
+        dept = "Bar"
 
     def in_cat(cat, *cands):
         have = {o.lower(): o for o in TRACKING.get(cat, {}).get("options", [])}
