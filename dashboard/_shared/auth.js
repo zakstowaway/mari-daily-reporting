@@ -146,13 +146,24 @@ export const Auth = (() => {
       return;
     }
 
-    // Returning from a reset OR invite email? Both need the user to set a
-    // password. Supabase (detectSessionInUrl) has already put a session in place.
+    // Invite / recovery arriving as a token_hash LINK. Verify it in the browser
+    // so email-link scanners (M365 Safe Links) — which merely GET the URL — can't
+    // consume the one-time token. Only the real browser running verifyOtp spends
+    // it, so the link keeps working until the person actually clicks through.
+    const hp = new URLSearchParams(
+      location.hash.replace(/^#/, "") + "&" + location.search.replace(/^\?/, ""));
+    if (hp.get("token_hash")) {
+      const type = hp.get("type") || "invite";
+      const { error } = await sb.auth.verifyOtp({ token_hash: hp.get("token_hash"), type });
+      history.replaceState(null, "", location.pathname);   // strip the token from the URL bar
+      if (error) return renderExpired(mount, onOk, roles);
+      return renderReset(mount, onOk, roles);   // session established -> clean set-password screen
+    }
+
+    // Returning from a reset/invite email (implicit #access_token session already
+    // placed by detectSessionInUrl, or an error hash from a link a scanner burned).
     if (location.hash.includes("reset") || location.hash.includes("type=recovery") ||
         location.hash.includes("type=invite") ||
-        // A burned/expired one-time link lands here with an error hash instead of
-        // a session. Still route to the reset screen so the 6-digit-code fallback
-        // is offered rather than dumping the user on a bare sign-in page.
         location.hash.includes("otp_expired") || location.hash.includes("access_denied")) {
       return renderReset(mount, onOk, roles);
     }
@@ -173,6 +184,18 @@ export const Auth = (() => {
     }
     mount.style.display = "none";
     onOk(c);
+  }
+
+  // Shown when an invite/recovery token_hash is expired or already used — a clean
+  // dead-end with a way back, instead of a confusing code box.
+  function renderExpired(mount, onOk, roles) {
+    mount.style.display = "";
+    mount.innerHTML = card(`
+      <b>This link has expired</b>
+      <div class="muted" style="margin:8px 0 14px">Ask your manager to send a fresh invitation, then open it here. Links are single-use.</div>
+      <a href="#" id="_si">Back to sign in</a>`);
+    const b = mount.querySelector("#_si");
+    if (b) b.onclick = (e) => { e.preventDefault(); renderSignIn(mount, onOk, roles); };
   }
 
   const brandMark = `
