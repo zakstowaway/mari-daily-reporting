@@ -42,16 +42,30 @@ Pipedream → `repository_dispatch` with `csv_base64`). There is NO sales API pu
 **Closed-week wages/leave = Xero** (Mac-only pull; leave from payslip
 LeaveEarningsLines). Owners (Oliver, Bryony) = corp payroll, never on Deputy/venue lines.
 
-## Deploying the dashboard
+## Deploying the dashboard (modularised 2026-07-23 — see dashboard/_shared/README.md)
 
-Edit `dashboard/index.html`, then `git commit` + `git push`. GitHub Pages
-redeploys automatically (custom domain: app.stowawaybar.com, served from the
-`dashboard/` folder as site root — so `dashboard/index.html` is `/`).
+The site is built by `scripts/build_site.py` and served at app.stowawaybar.com:
+`/` = `dashboard/home/` (module picker), `/sales/` = the P&L dashboard,
+`/recipes/`, `/bookings/`, `/admin/`.
 
-There is **no need for the old patch_index_v*.py / push_*.py scripts**. They
-existed only because earlier sessions had no persistent clone to push from, so
-they mutated a scratch copy and PUT it via the GitHub contents API. They are
-archived (untracked) in `_archive/patch-scripts-2026-07/` for reference only.
+**The sales dashboard is NO LONGER one big index.html.** `dashboard/sales/index.html`
+is a ~70KB SHELL (markup + config + bootstrap); ALL logic lives in modules:
+`dashboard/_shared/pnl.js` (pure P&L maths), `util.js` (helpers/formatting),
+`data.js` (feed loaders), `render.js` (DOM + handlers). **Do not put business
+logic in index.html** — `scripts/arch_guard.py` fails CI *and* the deploy if you
+do (it also runs 3 JS test suites + the P&L conservation check). `scripts/schema_guard.py`
+guards the history CSVs. `reconcile_wages.py` proves every Xero dollar classifies.
+
+**Deploy trap — work in an ISOLATED clone, never this mounted folder.** The cron
+(Daily Pull / Rebuild Wages) does `git pull --rebase` on THIS working tree and
+will silently clobber in-progress edits mid-session. Pattern: `git clone` to /tmp,
+edit + commit + push there, so automation can't stomp you. A push to `dashboard/**`
+(or a Daily Pull / Wages Backfill / Rebuild Wages / Roster Pull run) triggers the
+`deploy_dashboard` GitHub Action which rebuilds Pages. Data-only commits need a
+`dashboard/**` touch OR one of those workflows to redeploy.
+
+The old patch_index_v*.py / push_*.py scripts are archived in
+`_archive/patch-scripts-2026-07/` — do not use them.
 
 ## Auth
 
