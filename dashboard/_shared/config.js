@@ -6,6 +6,7 @@
 export const SUPABASE_URL = "https://fyqhvyvwbedoowjkrxyj.supabase.co";
 export const SUPABASE_ANON_KEY = "sb_publishable_Q8pTPc83qHXrRC_UzQzPZQ_wFcqASCV";
 
-// Pipedream SHG Auth endpoint that commits recipes. Public — does nothing
-// without a valid Supabase token.
-export const WORKER_URL = "https://eotwefx7cim9jou.m.pipedream.net";
+// SHG Auth endpoint — a Supabase Edge Function (replaced the dead Pipedream
+// worker 2026-07-24). Public — does nothing without a valid Supabase token.
+// Routes: /admin/users|invite|role (service key, auto-injected) + /recipes,/prep.
+export const WORKER_URL = "https://fyqhvyvwbedoowjkrxyj.supabase.co/functions/v1/shg-auth";
