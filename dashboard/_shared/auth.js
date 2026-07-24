@@ -322,26 +322,35 @@ export const Auth = (() => {
   const inviteUser = (email, role, venue, employee) => adminCall("invite", { email, role, venue, employee });
   const setUserRole = (email, role, venue, employee) => adminCall("role", { email, role, venue, employee });
 
-  // Non-/admin worker route (invoice approvals). Same token-verify pattern; the
-  // worker records the admin's decision + final coding to the repo, and the Mac
-  // side turns approvals into Xero drafts. The service key isn't involved.
-  async function workerCall(path, body) {
-    const token = requireToken();
-    const r = await fetch(`${WORKER_URL}${path}`, {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
-      body: JSON.stringify(body || {}),
-    });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
-    return j;
+  // Invoice approvals go STRAIGHT to Supabase — no worker, no server code. A
+  // row-level-security policy lets only role=admin insert, so the browser holds
+  // no secret. The Mac side reads these rows and creates the Xero drafts.
+  async function decideInvoice(rec) {
+    if (!sb) throw new Error("Auth not configured — Supabase keys missing.");
+    const me = CACHE || (await current());
+    const { error } = await sb.from("invoice_approvals").upsert({
+      ref: rec.ref, supplier: rec.supplier, supplier_key: rec.supplier_key,
+      invoice_date: rec.date || null, total: rec.total != null ? Number(rec.total) : null,
+      decision: rec.decision, tracking_category: rec.tracking_category || null,
+      tracking_option: rec.tracking_option || null, lines: rec.lines || [],
+      approver: rec.approver || me?.name || me?.email, approver_email: me?.email || null,
+      status: "pending",
+    }, { onConflict: "ref" });
+    if (error) throw new Error(error.message);
+    return { ok: true };
   }
-  const decideInvoice = (rec) => workerCall("/invoice/approve", rec);
+  // Refs that already have a decision — the queue hides these so two admins
+  // don't double-handle a bill.
+  async function decidedRefs() {
+    if (!sb) return [];
+    const { data, error } = await sb.from("invoice_approvals").select("ref");
+    return error ? [] : (data || []).map((r) => r.ref);
+  }
 
   return {
     login, signUp, forgotPassword, completePasswordReset, logout,
     current, requireToken, canWrite, hasRole, gate, KITCHEN_ROLES,
     configured, SUPABASE_URL,
-    listUsers, inviteUser, setUserRole, decideInvoice,
+    listUsers, inviteUser, setUserRole, decideInvoice, decidedRefs,
   };
 })();

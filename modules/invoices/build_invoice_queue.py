@@ -8,8 +8,8 @@ fetches: dashboard/invoices/queue.json. Also snapshots the chart of accounts +
 tracking options to dashboard/invoices/accounts.json so the page's dropdowns are
 always in sync with Xero.
 
-An invoice drops off the queue once data/invoice_approvals/<ref>.json exists
-(approved or rejected) — so the app only ever shows what still needs a human.
+This lists every parsed invoice; the app hides the ones already decided (it reads
+those from Supabase). So the builder stays dumb — no approval state here.
 
     python3 modules/invoices/build_invoice_queue.py
 """
@@ -29,15 +29,8 @@ from modules.invoices.xero_csv import _invoice_from_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SRC_DIRS = [ROOT / "data" / "invoices", ROOT / "data" / "invoices_review"]
-APPROVALS = ROOT / "data" / "invoice_approvals"
 OUT_DIR = ROOT / "dashboard" / "invoices"
 COA = ROOT / "modules" / "invoices" / "xero_accounts.json"
-
-
-def _decided_refs() -> set[str]:
-    if not APPROVALS.exists():
-        return set()
-    return {p.stem for p in APPROVALS.glob("*.json")}
 
 
 def _entry(payload: dict) -> dict:
@@ -73,7 +66,6 @@ def _entry(payload: dict) -> dict:
 
 
 def build() -> dict:
-    decided = _decided_refs()
     seen, entries = set(), []
     for d in SRC_DIRS:
         if not d.exists():
@@ -88,7 +80,7 @@ def build() -> dict:
             except Exception as ex:
                 print(f"  skip {f.name}: {ex}", file=sys.stderr)
                 continue
-            if e["ref"] in decided or e["ref"] in seen:
+            if e["ref"] in seen:
                 continue
             seen.add(e["ref"])
             entries.append(e)

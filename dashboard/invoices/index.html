@@ -75,11 +75,14 @@ Auth.gate(document.getElementById('gate'), {
   onOk: async (user) => {
     document.getElementById('app').style.display = '';
     document.getElementById('who').textContent = user.name;
-    const [q, a] = await Promise.all([
+    const [q, a, decided] = await Promise.all([
       fetch('/invoices/queue.json').then(r=>r.json()).catch(()=>({invoices:[]})),
       fetch('/invoices/accounts.json').then(r=>r.json()).catch(()=>({accounts:[],tracking:[]})),
+      Auth.decidedRefs().catch(()=>[]),
     ]);
-    ACCOUNTS = a.accounts || []; TRACKING = a.tracking || []; QUEUE = q.invoices || [];
+    ACCOUNTS = a.accounts || []; TRACKING = a.tracking || [];
+    const done = new Set(decided);
+    QUEUE = (q.invoices || []).filter(inv => !done.has(inv.ref));   // hide already-decided
     render();
   },
 });
