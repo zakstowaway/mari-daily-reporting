@@ -43,10 +43,11 @@ def _entry(payload: dict) -> dict:
             continue
         lines.append({
             "description": line.description,
+            "supplier_code": line.supplier_code,      # stable key for learning corrections
             "qty": str(line.qty),
             "amount": f"{Decimal(str(line.line_total_incl)):.2f}",
             "tax": line.tax_treatment.value if hasattr(line.tax_treatment, "value") else str(line.tax_treatment),
-            "account_code": lc.account_code,
+            "account_code": lc.account_code,           # the SUGGESTED account
             "account_name": lc.account_name,
             "reason": lc.reason,
         })

@@ -17,7 +17,9 @@ create table if not exists public.invoice_approvals (
   decision          text not null check (decision in ('approve','reject')),
   tracking_category text,
   tracking_option   text,
-  lines             jsonb not null default '[]',   -- [{description, amount, tax, account_code}]
+  suggested_tracking_category text,   -- what the system suggested (for learning)
+  suggested_tracking_option   text,
+  lines             jsonb not null default '[]',   -- lines carry suggested_account per item too   -- [{description, amount, tax, account_code}]
   approver          text,
   approver_email    text,
   status            text not null default 'pending',  -- pending | drafted | rejected | needs_review

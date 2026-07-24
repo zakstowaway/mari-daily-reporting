@@ -365,7 +365,10 @@ export const Auth = (() => {
       invoice_date: rec.date || null, invoice_due_date: rec.due_date || null,
       total: rec.total != null ? Number(rec.total) : null,
       decision: rec.decision, tracking_category: rec.tracking_category || null,
-      tracking_option: rec.tracking_option || null, lines: rec.lines || [],
+      tracking_option: rec.tracking_option || null,
+      suggested_tracking_category: rec.suggested_tracking_category || null,
+      suggested_tracking_option: rec.suggested_tracking_option || null,
+      lines: rec.lines || [],
       approver: rec.approver || me?.name || me?.email, approver_email: me?.email || null,
       status: "pending",
     }, { onConflict: "ref" });

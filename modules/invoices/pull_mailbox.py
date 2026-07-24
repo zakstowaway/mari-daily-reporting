@@ -154,7 +154,7 @@ def aggregate_and_commit(dry_run: bool):
     if dry_run:
         return
     subprocess.run(["git", "add", "data/invoices", "data/invoices_review",
-                    "data/cogs_list.csv", "data/costs.csv",
+                    "data/cogs_list.csv", "data/costs.csv", "modules/invoices/learned_overrides.json",
                     "dashboard/invoices/queue.json", "dashboard/invoices/accounts.json"], cwd=ROOT, check=False)
     staged = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT).returncode
     if staged == 0:

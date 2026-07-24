@@ -60,6 +60,27 @@ def _learned(name: str) -> Optional[dict]:
     return LEARNED.get(_norm(name))
 
 
+# Human corrections (learn_overrides.py) — the highest authority. When someone
+# fixed a line's account or a venue before approving, do it that way next time.
+_OVERRIDES_FILE = HERE / "learned_overrides.json"
+OVERRIDES: dict = {"line_account": {}, "supplier_venue": {}}
+if _OVERRIDES_FILE.exists():
+    try:
+        OVERRIDES = json.loads(_OVERRIDES_FILE.read_text())
+    except Exception:
+        pass
+
+
+def _item_key(line) -> str:
+    code = (getattr(line, "supplier_code", None) or "").strip()
+    return code.lower() if code else _norm(getattr(line, "description", "") or "")
+
+
+def _override_account(inv, line) -> Optional[str]:
+    ov = OVERRIDES.get("line_account", {}).get(f"{_norm(inv.supplier_name_raw)}|{_item_key(line)}")
+    return ov.get("code") if ov else None
+
+
 def _learned_account(inv) -> Optional[str]:
     """A confident (>=60%) historical account for this supplier, if we have one."""
     d = _learned(inv.supplier_name_raw)
@@ -154,6 +175,9 @@ def _account_for_line(inv: Invoice, line) -> LineCoding:
     # pure-GST reconciliation lines are tax, not an expense line
     if line.line_class == LineClass.EXTRA and re.fullmatch(r"\s*gst\s*", desc, re.I):
         return LineCoding(desc, None, None, "GST is a tax rate in Xero, not a coded line")
+    code = _override_account(inv, line)                # 0. a human already fixed this item
+    if code:
+        return LineCoding(desc, code, ACCOUNT_NAME.get(code), "learned from a human correction")
     for pat, code in LINE_RULES:                       # 1. line keyword (freight, packaging…)
         if pat.search(desc):
             return LineCoding(desc, code, ACCOUNT_NAME.get(code), f"line keyword -> {ACCOUNT_NAME.get(code)}")
@@ -221,6 +245,9 @@ def _venue_tracking(inv: Invoice, primary_account: Optional[str]) -> tuple[Optio
     (HG / Marilyna's directly; a Stowaway-billed bill picks Kitchen for food, Bar
     for beverage).
     """
+    sv = OVERRIDES.get("supplier_venue", {}).get(_norm(inv.supplier_name_raw))
+    if sv and sv.get("option"):                        # a human re-picked this venue
+        return (sv.get("category") or _find_category(sv["option"])), sv["option"], "high"
     learned = _learned_venue(inv)
     if learned:
         lcat, lopt = learned

@@ -209,13 +209,17 @@ function collectDecision(i, decision, approver) {
   const card = document.querySelector(`.inv[data-i="${i}"]`);
   const [cat, opt] = (card.querySelector('.venue-sel').value || '|').split('|');
   const lines = inv.lines.map((l, j) => ({
-    description: l.description, amount: l.amount, tax: l.tax,
-    account_code: card.querySelector(`.acct[data-i="${i}"][data-j="${j}"]`).value,
+    description: l.description, supplier_code: l.supplier_code, amount: l.amount, tax: l.tax,
+    account_code: card.querySelector(`.acct[data-i="${i}"][data-j="${j}"]`).value,  // chosen
+    suggested_account: l.account_code,                                              // suggested
   }));
   return {
     ref: inv.ref, supplier: inv.supplier, supplier_key: inv.supplier_key,
     date: inv.date, due_date: inv.due_date, total: inv.total,
-    decision, tracking_category: cat, tracking_option: opt, lines, approver,
+    decision, tracking_category: cat, tracking_option: opt,
+    // what the system suggested, so corrections teach it
+    suggested_tracking_category: inv.tracking_category, suggested_tracking_option: inv.tracking_option,
+    lines, approver,
   };
 }
 

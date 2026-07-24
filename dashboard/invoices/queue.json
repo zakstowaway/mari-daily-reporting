@@ -18,6 +18,7 @@
       "lines": [
         {
           "description": "Paesanella- Bocconcini 1kg",
+          "supplier_code": "PAEBOC1-UC6",
           "qty": "2.000",
           "amount": "38.70",
           "tax": "gst_free",
@@ -27,6 +28,7 @@
         },
         {
           "description": "B Flute Lock Top 11\" Pizza Boxes x 50",
+          "supplier_code": "PBLTB11-U",
           "qty": "2.000",
           "amount": "48.19",
           "tax": "gst",
@@ -36,6 +38,7 @@
         },
         {
           "description": "B Flute Lock Top 13\" Pizza Boxes x 50",
+          "supplier_code": "PBLTB13-U",
           "qty": "2.000",
           "amount": "64.24",
           "tax": "gst",
@@ -45,6 +48,7 @@
         },
         {
           "description": "Zammit- Sliced Pepperoni Salami 3kg",
+          "supplier_code": "ZAMSALPEPSLI-UC5",
           "qty": "3.000",
           "amount": "169.90",
           "tax": "gst_free",
@@ -54,6 +58,7 @@
         },
         {
           "description": "Big Cheese- Shredded Mozzarella 2kg",
+          "supplier_code": "MOZZARELLA2KG-UC4",
           "qty": "6.000",
           "amount": "147.98",
           "tax": "gst_free",
@@ -63,6 +68,7 @@
         },
         {
           "description": "Sharwood- Tandoori Paste 1.25kg",
+          "supplier_code": "TANDOORI-UC4",
           "qty": "1.000",
           "amount": "31.10",
           "tax": "gst_free",
@@ -88,6 +94,7 @@
       "lines": [
         {
           "description": "SAPPORO KEG 50LT",
+          "supplier_code": "122-4561",
           "qty": "2",
           "amount": "759.85",
           "tax": "gst",
@@ -113,6 +120,7 @@
       "lines": [
         {
           "description": "S & W Pacific Ale 49.5L KEG",
+          "supplier_code": "1256672",
           "qty": "2",
           "amount": "769.41",
           "tax": "gst",
@@ -122,6 +130,7 @@
         },
         {
           "description": "Kirin Ichb 5% 49.5L KEG",
+          "supplier_code": "1254690",
           "qty": "1",
           "amount": "445.18",
           "tax": "gst",
@@ -147,6 +156,7 @@
       "lines": [
         {
           "description": "CHILLI JALAPENO GREEN KG",
+          "supplier_code": "CHJAL",
           "qty": "0.25",
           "amount": "2.30",
           "tax": "gst_free",
@@ -156,6 +166,7 @@
         },
         {
           "description": "CUCUMBER LEBANESE KG",
+          "supplier_code": "CUCLK",
           "qty": "2.00",
           "amount": "8.20",
           "tax": "gst_free",
@@ -165,6 +176,7 @@
         },
         {
           "description": "LIMES TRAY",
+          "supplier_code": "LIM",
           "qty": "1.00",
           "amount": "36.50",
           "tax": "gst_free",
@@ -174,6 +186,7 @@
         },
         {
           "description": "HERB MINT ROUND LEAF BCH",
+          "supplier_code": "HRMIN",
           "qty": "2.00",
           "amount": "2.60",
           "tax": "gst_free",
@@ -183,6 +196,7 @@
         },
         {
           "description": "JUICE CLEAR APPLE 2LTR",
+          "supplier_code": "JUCAP",
           "qty": "1.00",
           "amount": "5.60",
           "tax": "gst_free",
@@ -208,6 +222,7 @@
       "lines": [
         {
           "description": "FZ CHIPS - CRISPY COATED",
+          "supplier_code": "15555",
           "qty": "2.00",
           "amount": "80.00",
           "tax": "gst_free",
@@ -217,6 +232,7 @@
         },
         {
           "description": "BEEF - BRISKET YG POINT",
+          "supplier_code": "10876",
           "qty": "7.03",
           "amount": "98.36",
           "tax": "gst_free",
@@ -226,6 +242,7 @@
         },
         {
           "description": "CHICKEN - WHOLE BIRD NO.8",
+          "supplier_code": "10677",
           "qty": "15.00",
           "amount": "91.50",
           "tax": "gst_free",
@@ -251,6 +268,7 @@
       "lines": [
         {
           "description": "\"Takaokaya\" 50P (Gold) Roasted Seaweed (Yaki Nori)",
+          "supplier_code": "SA81476",
           "qty": "2",
           "amount": "32.00",
           "tax": "gst_free",
@@ -260,6 +278,7 @@
         },
         {
           "description": "\u201cS&B\u201d EX Torokeru Curry Flake (Mild)",
+          "supplier_code": "HA8204606",
           "qty": "3",
           "amount": "28.35",
           "tax": "gst_free",
@@ -269,6 +288,7 @@
         },
         {
           "description": "\"S&B\" EX Golden Curry Mid Hot (1kg)",
+          "supplier_code": "HA8204612",
           "qty": "2",
           "amount": "24.50",
           "tax": "gst_free",
@@ -278,6 +298,7 @@
         },
         {
           "description": "\u201cJun\u201d Marumatsu Vegetable Dumpling 39-41pcs (Vegetable",
+          "supplier_code": "QB8514617",
           "qty": "15",
           "amount": "138.75",
           "tax": "gst_free",
@@ -287,6 +308,7 @@
         },
         {
           "description": "Fresh Ramen Frozen (150gx12pcs) R8",
+          "supplier_code": "BF912590",
           "qty": "7",
           "amount": "91.00",
           "tax": "gst_free",
@@ -312,6 +334,7 @@
       "lines": [
         {
           "description": "SOUR CREAM FULL 2LT Brancourts",
+          "supplier_code": "102638",
           "qty": "3",
           "amount": "57.00",
           "tax": "gst_free",
@@ -321,6 +344,7 @@
         },
         {
           "description": "OLIVES PITTED GREEN 2KG Riviana",
+          "supplier_code": "101871",
           "qty": "2",
           "amount": "40.72",
           "tax": "gst_free",
@@ -330,6 +354,7 @@
         },
         {
           "description": "OLIVES PITTED KALAMATA 2KG",
+          "supplier_code": "101873",
           "qty": "1",
           "amount": "19.00",
           "tax": "gst_free",
@@ -339,6 +364,7 @@
         },
         {
           "description": "SAUCE BOTTLE EMPTY 480ML",
+          "supplier_code": "108119",
           "qty": "4",
           "amount": "22.00",
           "tax": "gst",
@@ -348,6 +374,7 @@
         },
         {
           "description": "SAUCE BOTTLE EMPTY PLASTIC",
+          "supplier_code": "100280",
           "qty": "6",
           "amount": "36.30",
           "tax": "gst",
@@ -357,6 +384,7 @@
         },
         {
           "description": "Fuel Levy",
+          "supplier_code": null,
           "qty": "1",
           "amount": "3.30",
           "tax": "gst",
@@ -382,6 +410,7 @@
       "lines": [
         {
           "description": "Cabbage Red Shredded",
+          "supplier_code": "KITCRSKG",
           "qty": "1",
           "amount": "7.90",
           "tax": "gst_free",
@@ -391,6 +420,7 @@
         },
         {
           "description": "Cabbage Shredded",
+          "supplier_code": "KITCSHKG",
           "qty": "1",
           "amount": "6.90",
           "tax": "gst_free",
@@ -400,6 +430,7 @@
         },
         {
           "description": "Carrot Large",
+          "supplier_code": "CLKG",
           "qty": "1",
           "amount": "1.65",
           "tax": "gst_free",
@@ -409,6 +440,7 @@
         },
         {
           "description": "Carrot Diced 5mm",
+          "supplier_code": "KITCD5MM",
           "qty": "2",
           "amount": "7.80",
           "tax": "gst_free",
@@ -418,6 +450,7 @@
         },
         {
           "description": "Carrot Shredded",
+          "supplier_code": "KITCARSHKG",
           "qty": "2",
           "amount": "7.80",
           "tax": "gst_free",
@@ -427,6 +460,7 @@
         },
         {
           "description": "Lettuce Cos Baby Twin Pack",
+          "supplier_code": "LCBTPEA",
           "qty": "3",
           "amount": "8.25",
           "tax": "gst_free",
@@ -436,6 +470,7 @@
         },
         {
           "description": "Mushroom King Brown (200G Punnet)",
+          "supplier_code": "MKB500PUNN",
           "qty": "4",
           "amount": "24.20",
           "tax": "gst_free",
@@ -445,6 +480,7 @@
         },
         {
           "description": "Shallot",
+          "supplier_code": "SBCH",
           "qty": "4",
           "amount": "7.08",
           "tax": "gst_free",
@@ -454,6 +490,7 @@
         },
         {
           "description": "Corn Baby Sweet",
+          "supplier_code": "CBSPACK",
           "qty": "4",
           "amount": "13.20",
           "tax": "gst_free",
@@ -463,6 +500,7 @@
         },
         {
           "description": "Eggs Free Range 700 Grams",
+          "supplier_code": "EFR700DOZ",
           "qty": "1",
           "amount": "8.00",
           "tax": "gst_free",
@@ -472,6 +510,7 @@
         },
         {
           "description": "Fuel Levy",
+          "supplier_code": null,
           "qty": "1",
           "amount": "7.20",
           "tax": "gst_free",

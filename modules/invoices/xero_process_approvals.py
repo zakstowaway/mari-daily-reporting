@@ -150,6 +150,14 @@ def main() -> int:
     res = process(args.dry_run)
     done = sum(r["status"] == "posted" for r in res)
     print(f"{date.today()}: processed {len(res)} approval(s) — {done} posted to Xero")
+    # self-improve: fold any human coding corrections into the overrides
+    if not args.dry_run:
+        try:
+            import json as _json
+            from modules.invoices import learn_overrides as _lo
+            _lo.OUT.write_text(_json.dumps(_lo.learn(), indent=2))
+        except Exception as e:
+            print(f"(override learning skipped: {e})")
     for r in res:
         extra = r.get("xero_invoice_id") or r.get("note") or ""
         print(f"  {r['status']:12} {r.get('supplier', '')[:24]:24} {r.get('ref', '')}  {extra}")
