@@ -168,8 +168,13 @@ function render() {
   el.querySelectorAll('.reject').forEach(b => b.onclick = () => decide(+b.dataset.i, 'reject'));
   el.querySelectorAll('.viewpdf').forEach(a => a.onclick = async (e) => {
     e.preventDefault();
-    const url = await Auth.invoicePdfUrl(a.dataset.pdf).catch(() => null);
-    if (url) window.open(url, '_blank'); else toast('Original invoice not found');
+    // open the tab synchronously (keeps the click's user-activation so it isn't
+    // blocked), then point it at the signed URL once it resolves.
+    const win = window.open('', '_blank');
+    let url = null;
+    try { url = await Auth.invoicePdfUrl(a.dataset.pdf); } catch {}
+    if (url && win) win.location = url;
+    else { if (win) win.close(); toast('Original invoice not found'); }
   });
 }
 
