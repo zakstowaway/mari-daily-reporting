@@ -66,22 +66,33 @@ forwarder. Replacement: `.github/workflows/ingest_insights_email.yml` +
 MX `stowawaybar-com.mail.protection.outlook.com`) via Graph and fires the SAME
 `{stow,hg,insights}-csv-arrived` dispatches the daily pull already consumes. It
 polls every 20 min in the morning window, so a late email is caught next run and
-re-runs are no-ops (only unread Insights mail is processed, then marked read).
+re-runs are no-ops (dedupe on Graph message id, ledger in `.ingest/processed.json`).
+
+**Auth = delegated device-code — NO Azure app registration, NO tenant admin.**
+Zak's account can't register apps (401), and we won't pay for/maintain an app
+registration. Instead we use Microsoft's first-party public client "Microsoft
+Graph Command Line Tools" and a delegated refresh token that reads the signed-in
+user's OWN mailbox (`/me`). Entra rotates the refresh token, so each run writes
+the fresh one back into the `GRAPH_REFRESH_TOKEN` secret (via `gh secret set`,
+using `GH_DISPATCH_PAT`) — keeping it alive indefinitely. If writeback is skipped
+the token still lasts ~90 days, then just re-run the login script.
 
 **One-time setup:**
-1. Point the Lightspeed schedules at the mailbox: Insights → Reports → "Product
-   sales" → Schedules → each Daily auto → add/replace recipient with the M365
-   address (e.g. `hello@stowawaybar.com`). (Keep or drop the Pipedream address.)
-2. Azure app registration (portal.azure.com, tenant admin): App registrations →
-   New → API permissions → Microsoft Graph → **Application → Mail.Read** → Grant
-   admin consent → Certificates & secrets → new client secret. Best practice:
-   scope it to just this mailbox with a New-ApplicationAccessPolicy (PowerShell).
-3. Repo secrets: `GRAPH_TENANT_ID`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET`,
-   `INSIGHTS_MAILBOX` (the address), `GH_DISPATCH_PAT` (a PAT with repo scope —
-   GITHUB_TOKEN can't fire repository_dispatch).
+1. Point the Lightspeed schedules at the mailbox that you'll log in as: Insights →
+   Reports → "Product sales" → Schedules → each Daily auto → add/replace recipient
+   with that M365 address. (Delegated = own mailbox, so the login account and the
+   recipient must match. Any user mailbox works; a human reading it is harmless
+   since dedupe is by message id, not unread state.)
+2. Mint the token (once, on a Mac, signed in as that mailbox):
+   `python3 scripts/graph_device_login.py` → open microsoft.com/devicelogin, enter
+   the code, approve "read your mail". It stores `GRAPH_REFRESH_TOKEN` via `gh`
+   (or prints it to paste into repo Settings → Secrets → Actions).
+3. Repo secrets: `GRAPH_REFRESH_TOKEN` (from step 2) + `GH_DISPATCH_PAT` (PAT with
+   repo scope — fires repository_dispatch AND rotates the token secret). Optional
+   overrides: `GRAPH_CLIENT_ID`, `GRAPH_TENANT_ID` (code defaults are fine).
 
-App-only auth = no token rotation to babysit (the client secret lasts up to 24
-months) — unlike the Xero pull. This is the always-on, $0 path.
+$0, always-on, no app registration, no admin. Only maintenance is quarterly
+re-login IF the PAT lacks Secrets:write (then auto-rotation is off).
 
 ## Deploying the dashboard (modularised 2026-07-23 — see dashboard/_shared/README.md)
 
