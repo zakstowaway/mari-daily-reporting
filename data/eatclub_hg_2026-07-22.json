@@ -1,11 +1,11 @@
 {
   "date": "2026-07-22",
   "venue": "Harry Gatos",
-  "tables": 1,
-  "covers": 2,
-  "menu_inc": 148.76,
-  "net_inc": 95.2,
-  "giveaway_inc": 53.56,
-  "discount_inc": 37.19,
-  "commission_inc": 16.37
+  "tables": 4,
+  "covers": 10,
+  "menu_inc": 320.13,
+  "net_inc": 246.08,
+  "giveaway_inc": 74.05,
+  "discount_inc": 64.03,
+  "commission_inc": 10.02
 }
