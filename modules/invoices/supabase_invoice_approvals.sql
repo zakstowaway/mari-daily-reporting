@@ -43,3 +43,10 @@ create policy invoice_admin_update on public.invoice_approvals
 create policy invoice_admin_select on public.invoice_approvals
   for select to authenticated
   using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+-- Storage: admins can read the original invoice PDFs (private 'invoices' bucket).
+-- The Mac uploads with the service key (bypasses RLS); the app opens them with
+-- short-lived signed URLs, which need this select policy.
+create policy invoices_admin_read on storage.objects
+  for select to authenticated
+  using (bucket_id = 'invoices' and (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');

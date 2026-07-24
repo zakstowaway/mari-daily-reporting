@@ -347,11 +347,18 @@ export const Auth = (() => {
     const { data, error } = await sb.from("invoice_approvals").select("ref");
     return error ? [] : (data || []).map((r) => r.ref);
   }
+  // A short-lived signed URL to open the original invoice PDF (private bucket,
+  // admin-only via storage RLS). Returns null if we can't.
+  async function invoicePdfUrl(path) {
+    if (!sb || !path) return null;
+    const { data } = await sb.storage.from("invoices").createSignedUrl(path, 600);
+    return data?.signedUrl || null;
+  }
 
   return {
     login, signUp, forgotPassword, completePasswordReset, logout,
     current, requireToken, canWrite, hasRole, gate, KITCHEN_ROLES,
     configured, SUPABASE_URL,
-    listUsers, inviteUser, setUserRole, decideInvoice, decidedRefs,
+    listUsers, inviteUser, setUserRole, decideInvoice, decidedRefs, invoicePdfUrl,
   };
 })();

@@ -23,6 +23,8 @@
   .inv-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}
   .inv-hd h3{margin:0;font-size:15px}
   .inv-hd .meta{color:var(--ink-soft);font-size:12px;margin-top:3px}
+  .inv-hd .meta a.viewpdf{color:#6db3ff;text-decoration:none;font-weight:500}
+  .inv-hd .meta a.viewpdf:hover{text-decoration:underline}
   .inv-hd .total{font-size:18px;font-weight:600;white-space:nowrap}
   .tag{font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--grey);color:#fff;text-transform:uppercase;letter-spacing:.04em}
   .tag.review{background:var(--amber)} .tag.pass{background:var(--green)}
@@ -118,7 +120,8 @@ function render() {
       <div class="inv-hd">
         <div>
           <h3>${esc(inv.supplier)} <span class="tag ${inv.status}">${inv.status}</span></h3>
-          <div class="meta">Bill ${esc(inv.ref)} · ${esc(inv.date||'—')}${inv.due_date ? ' · due '+esc(inv.due_date) : ''} · ${inv.lines.length} lines</div>
+          <div class="meta">Bill ${esc(inv.ref)} · ${esc(inv.date||'—')}${inv.due_date ? ' · due '+esc(inv.due_date) : ''} · ${inv.lines.length} lines
+            ${inv.pdf_path ? `· <a href="#" class="viewpdf" data-pdf="${esc(inv.pdf_path)}">view invoice ↗</a>` : ''}</div>
         </div>
         <div class="total">$${esc(inv.total)}</div>
       </div>
@@ -150,6 +153,11 @@ function render() {
     </div>`).join('');
   el.querySelectorAll('.approve').forEach(b => b.onclick = () => decide(+b.dataset.i, 'approve'));
   el.querySelectorAll('.reject').forEach(b => b.onclick = () => decide(+b.dataset.i, 'reject'));
+  el.querySelectorAll('.viewpdf').forEach(a => a.onclick = async (e) => {
+    e.preventDefault();
+    const url = await Auth.invoicePdfUrl(a.dataset.pdf).catch(() => null);
+    if (url) window.open(url, '_blank'); else toast('Original invoice not found');
+  });
 }
 
 function toast(t) {

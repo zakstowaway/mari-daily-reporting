@@ -116,6 +116,14 @@ def main() -> int:
         except Exception:
             pass
 
+    # provenance: key of the original PDF in Supabase Storage, so the app can
+    # open the actual invoice for review.
+    try:
+        from modules.invoices.invoice_store import pdf_key
+        inv.source_pdf = pdf_key(pdf)
+    except Exception:
+        pass
+
     # ---- validate — the gate. No model involved. ---------------------------
     result = Validator(yaml.safe_load(CONFIG.read_text())).validate(inv)
 

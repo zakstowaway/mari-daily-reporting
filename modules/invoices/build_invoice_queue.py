@@ -58,6 +58,7 @@ def _entry(payload: dict) -> dict:
         "due_date": inv.due_date.isoformat() if inv.due_date else None,
         "total": f"{Decimal(str(inv.total_incl)):.2f}",
         "venue": inv.venue.value if hasattr(inv.venue, "value") else str(inv.venue),
+        "pdf_path": inv.source_pdf,       # object key in the Supabase 'invoices' bucket
         "tracking_category": coding.tracking_category,
         "tracking_option": coding.tracking_option,
         "tracking_confidence": coding.tracking_confidence,

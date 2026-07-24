@@ -124,6 +124,12 @@ def move_message(token, msg_id, folder_id):
 def run_invoice(pdf_bytes, source, sender="") -> int:
     """run.py on one PDF. 0 PASS, 2 REVIEW, 1 ERROR (its own exit codes).
     Passes the sender domain so run.py tries a free deterministic parser first."""
+    # keep the original PDF so the app can show the actual invoice for review
+    try:
+        from modules.invoices.invoice_store import upload_pdf
+        upload_pdf(pdf_bytes)
+    except Exception as e:
+        print(f"    (pdf store skipped: {str(e)[:80]})")
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
         f.write(pdf_bytes)
         tmp = f.name
