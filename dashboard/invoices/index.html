@@ -19,17 +19,26 @@
 <style>
   .wrap{max-width:1080px}
   .sub{color:var(--ink-soft);font-size:13px;margin:-4px 0 18px}
-  .inv{border:1px solid var(--line);border-radius:12px;background:var(--paper);margin-bottom:14px;overflow:hidden}
-  .inv-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}
-  .inv-hd h3{margin:0;font-size:15px}
-  .inv-hd .meta{color:var(--ink-soft);font-size:12px;margin-top:3px}
-  .inv-hd .meta a.viewpdf{color:#6db3ff;text-decoration:none;font-weight:500}
-  .inv-hd .meta a.viewpdf:hover{text-decoration:underline}
-  .inv-hd .total{font-size:18px;font-weight:600;white-space:nowrap}
+  .inv{border:1px solid var(--line);border-radius:12px;background:var(--paper);margin-bottom:16px;overflow:hidden}
+  /* 1. header: who + how much */
+  .inv-hd{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px}
+  .inv-hd h3{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
+  .inv-hd .total{font-size:20px;font-weight:600;white-space:nowrap}
+  /* 2. bill-level fields, grouped together */
+  .inv-meta{display:flex;flex-wrap:wrap;align-items:center;gap:22px;padding:10px 16px;
+            border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg)}
+  .field{display:flex;flex-direction:column;gap:2px}
+  .field label{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+  .field>span{font-size:13px;font-variant-numeric:tabular-nums}
+  .field.venue-f{min-width:170px}
+  .field .venue-sel{width:100%}
+  .meta-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+  a.viewpdf{color:#6db3ff;text-decoration:none;font-weight:500;font-size:13px;white-space:nowrap}
+  a.viewpdf:hover{text-decoration:underline}
   .tag{font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--grey);color:#fff;text-transform:uppercase;letter-spacing:.04em}
   .tag.review{background:var(--amber)} .tag.pass{background:var(--green)}
-  .tag.low{background:var(--amber)} .tag.medium{background:var(--grey)} .tag.high{background:var(--green)}
-  /* fixed layout so Qty / Account / Amount line up across every invoice card */
+  .conf{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+  /* 3. line detail — fixed layout so columns line up across every card */
   table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
   col.c-qty{width:66px} col.c-acct{width:288px} col.c-amt{width:124px}
   th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);text-align:left;padding:9px 16px;font-weight:600}
@@ -41,8 +50,8 @@
   tbody tr:hover{background:color-mix(in srgb, var(--paper) 90%, var(--ink) 4%)}
   select{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:12.5px;width:100%;cursor:pointer}
   .taxpill{font-size:10px;color:var(--ink-soft)}
-  .inv-ft{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid var(--line);background:var(--bg)}
-  .venue{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft)}
+  /* 4. actions */
+  .inv-ft{display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:13px 16px;border-top:1px solid var(--line)}
   .acts{display:flex;gap:8px}
   button.approve{background:var(--green);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:600;cursor:pointer}
   button.reject{background:transparent;color:var(--ink-soft);border:1px solid var(--line);padding:9px 14px;border-radius:8px;cursor:pointer}
@@ -118,12 +127,19 @@ function render() {
   el.innerHTML = QUEUE.map((inv, i) => `
     <div class="inv" data-i="${i}">
       <div class="inv-hd">
-        <div>
-          <h3>${esc(inv.supplier)} <span class="tag ${inv.status}">${inv.status}</span></h3>
-          <div class="meta">Bill ${esc(inv.ref)} · ${esc(inv.date||'—')}${inv.due_date ? ' · due '+esc(inv.due_date) : ''} · ${inv.lines.length} lines
-            ${inv.pdf_path ? `· <a href="#" class="viewpdf" data-pdf="${esc(inv.pdf_path)}">view invoice ↗</a>` : ''}</div>
-        </div>
+        <h3>${esc(inv.supplier)} <span class="tag ${inv.status}">${inv.status}</span></h3>
         <div class="total">$${esc(inv.total)}</div>
+      </div>
+      <div class="inv-meta">
+        <div class="field"><label>Invoice</label><span>${esc(inv.ref)}</span></div>
+        <div class="field"><label>Date</label><span>${esc(inv.date||'—')}</span></div>
+        <div class="field"><label>Due</label><span>${esc(inv.due_date||'—')}</span></div>
+        <div class="field venue-f"><label>Venue</label>
+          <select class="venue-sel" data-i="${i}">${venueOpt(inv.tracking_category, inv.tracking_option)}</select></div>
+        <div class="meta-right">
+          ${inv.tracking_confidence==='low' ? '<span class="conf" style="color:var(--amber)">⚠ check venue</span>' : ''}
+          ${inv.pdf_path ? `<a href="#" class="viewpdf" data-pdf="${esc(inv.pdf_path)}">view invoice ↗</a>` : ''}
+        </div>
       </div>
       <table>
         <colgroup><col><col class="c-qty"><col class="c-acct"><col class="c-amt"></colgroup>
@@ -141,10 +157,6 @@ function render() {
       </table>
       <div class="rowmsg" id="msg-${i}"></div>
       <div class="inv-ft">
-        <div class="venue">Venue
-          <select class="venue-sel" data-i="${i}">${venueOpt(inv.tracking_category, inv.tracking_option)}</select>
-          <span class="tag ${inv.tracking_confidence}">${inv.tracking_confidence}</span>
-        </div>
         <div class="acts">
           <button class="reject" data-i="${i}">Reject</button>
           <button class="approve" data-i="${i}">Approve → post to Xero</button>
