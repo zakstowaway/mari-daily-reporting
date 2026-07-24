@@ -92,13 +92,13 @@ def save_state(state):
 
 
 def main():
-    print(f"login as {GMAIL!r}  |  app-password length={len(APP_PW)} (expect 16)")
     M = imaplib.IMAP4_SSL("imap.gmail.com", 993)
     M.login(GMAIL, APP_PW)
     M.select("INBOX")
-    # Gmail raw search: last 2 days, has attachment, subject mentions a venue.
-    typ, data = M.search(None, "X-GM-RAW",
-        'newer_than:2d has:attachment (subject:stow OR subject:hg OR subject:harry OR subject:mari)')
+    # Standard IMAP search: everything received in the last 2 days. Subject +
+    # attachment are filtered in Python (portable; avoids Gmail X-GM-RAW quoting).
+    since = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%d-%b-%Y")
+    typ, data = M.search(None, "SINCE", since)
     ids = data[0].split() if data and data[0] else []
     state = load_state()
     fired = scanned = 0
