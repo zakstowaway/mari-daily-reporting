@@ -122,11 +122,11 @@ function renderDay(d) {
 }
 
 function showGuestLink() {
-  // The public widget is one URL for all events (it shows whatever's
-  // bookable) — surfaced here so staff can send it to a caller.
-  const url = API + '/';
+  // Per-event deep link: the widget preselects the ?date= event (or shows
+  // its walk-ins notice once the cutoff passes). One link per event card.
+  const url = `${API}/?date=${SEL.date}`;
   const g = $('guestlink');
-  g.innerHTML = `Guest booking page:&nbsp;<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+  g.innerHTML = `Guest link · ${SEL.name}:&nbsp;<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
   const b = document.createElement('button');
   b.className = 'mini';
   b.textContent = 'copy link';
