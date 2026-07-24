@@ -1,0 +1,40 @@
+name: Ingest Insights Email
+
+# Free, always-on replacement for the Pipedream sales-email flow. Polls the M365
+# mailbox for the Lightspeed "Daily Sales Auto" emails and fires the same
+# repository_dispatch events the daily pull already consumes. Poll model = it
+# self-heals: a late email is caught on the next run, and re-runs are no-ops
+# (only unread Insights mail is processed, then marked read).
+#
+# Setup (one-time): see WORKING_HERE.md "Sales email ingestion". Requires repo
+# secrets GRAPH_TENANT_ID, GRAPH_CLIENT_ID, GRAPH_CLIENT_SECRET, INSIGHTS_MAILBOX,
+# GH_DISPATCH_PAT.
+
+on:
+  schedule:
+    # AEST is UTC+10. Cover ~5:00–11:59am AEST every 20 min (that's when the
+    # 05:00/05:30/06:00 auto-exports land), so a miss is picked up minutes later.
+    - cron: '*/20 19-23 * * *'   # 05:00–09:59 AEST
+    - cron: '*/20 0-1 * * *'     # 10:00–11:59 AEST
+  workflow_dispatch:
+
+concurrency:
+  group: ingest-insights-email
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Read mailbox + dispatch
+        env:
+          GRAPH_TENANT_ID: ${{ secrets.GRAPH_TENANT_ID }}
+          GRAPH_CLIENT_ID: ${{ secrets.GRAPH_CLIENT_ID }}
+          GRAPH_CLIENT_SECRET: ${{ secrets.GRAPH_CLIENT_SECRET }}
+          INSIGHTS_MAILBOX: ${{ secrets.INSIGHTS_MAILBOX }}
+          GH_DISPATCH_PAT: ${{ secrets.GH_DISPATCH_PAT }}
+          GH_REPO: ${{ github.repository }}
+        run: python3 scripts/ingest_insights_email.py

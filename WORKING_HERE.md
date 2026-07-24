@@ -55,6 +55,34 @@ the aggregator.
 **Closed-week wages/leave = Xero** (Mac-only pull; leave from payslip
 LeaveEarningsLines). Owners (Oliver, Bryony) = corp payroll, never on Deputy/venue lines.
 
+### Sales email ingestion — FREE, no Pipedream (2026-07-24)
+
+Pipedream's free tier ran out mid-morning 2026-07-24, so HG's 05:00 email got
+through but Stow's 05:30 + Mari's 06:00 didn't — starving the whole group (Mari +
+part of HG derive from the Stow export). We do NOT pay $45/mo for an email
+forwarder. Replacement: `.github/workflows/ingest_insights_email.yml` +
+`scripts/ingest_insights_email.py` — a GitHub Action that reads the Insights
+"Daily Sales Auto" emails from the **Microsoft 365 mailbox** (email is on M365:
+MX `stowawaybar-com.mail.protection.outlook.com`) via Graph and fires the SAME
+`{stow,hg,insights}-csv-arrived` dispatches the daily pull already consumes. It
+polls every 20 min in the morning window, so a late email is caught next run and
+re-runs are no-ops (only unread Insights mail is processed, then marked read).
+
+**One-time setup:**
+1. Point the Lightspeed schedules at the mailbox: Insights → Reports → "Product
+   sales" → Schedules → each Daily auto → add/replace recipient with the M365
+   address (e.g. `hello@stowawaybar.com`). (Keep or drop the Pipedream address.)
+2. Azure app registration (portal.azure.com, tenant admin): App registrations →
+   New → API permissions → Microsoft Graph → **Application → Mail.Read** → Grant
+   admin consent → Certificates & secrets → new client secret. Best practice:
+   scope it to just this mailbox with a New-ApplicationAccessPolicy (PowerShell).
+3. Repo secrets: `GRAPH_TENANT_ID`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET`,
+   `INSIGHTS_MAILBOX` (the address), `GH_DISPATCH_PAT` (a PAT with repo scope —
+   GITHUB_TOKEN can't fire repository_dispatch).
+
+App-only auth = no token rotation to babysit (the client secret lasts up to 24
+months) — unlike the Xero pull. This is the always-on, $0 path.
+
 ## Deploying the dashboard (modularised 2026-07-23 — see dashboard/_shared/README.md)
 
 The site is built by `scripts/build_site.py` and served at app.stowawaybar.com:
