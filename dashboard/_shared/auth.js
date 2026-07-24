@@ -330,7 +330,8 @@ export const Auth = (() => {
     const me = CACHE || (await current());
     const { error } = await sb.from("invoice_approvals").upsert({
       ref: rec.ref, supplier: rec.supplier, supplier_key: rec.supplier_key,
-      invoice_date: rec.date || null, total: rec.total != null ? Number(rec.total) : null,
+      invoice_date: rec.date || null, invoice_due_date: rec.due_date || null,
+      total: rec.total != null ? Number(rec.total) : null,
       decision: rec.decision, tracking_category: rec.tracking_category || null,
       tracking_option: rec.tracking_option || null, lines: rec.lines || [],
       approver: rec.approver || me?.name || me?.email, approver_email: me?.email || null,

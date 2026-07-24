@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import statistics
 import json
 import sys
 from datetime import date, timedelta
@@ -35,6 +36,7 @@ def learn(months: int = 18) -> dict:
     acct_by_sup = collections.defaultdict(collections.Counter)
     track_by_sup = collections.defaultdict(collections.Counter)
     kw_by_acct = collections.defaultdict(collections.Counter)   # account -> line-word freq (future use)
+    due_by_sup = collections.defaultdict(list)                  # supplier -> [days bill->due]
     scanned = 0
     for page in range(1, 60):
         res = xp.api_get(access, tenant, "Invoices",
@@ -57,6 +59,15 @@ def learn(months: int = 18) -> dict:
                 for t in li.get("Tracking", []):
                     if t.get("Option"):
                         track_by_sup[sup][t["Option"]] += 1
+            # payment terms: days between bill date and its due date
+            d, due = iv.get("DateString", "")[:10], iv.get("DueDateString", "")[:10]
+            if d and due:
+                try:
+                    dd = (date.fromisoformat(due) - date.fromisoformat(d)).days
+                    if 0 <= dd <= 90:
+                        due_by_sup[sup].append(dd)
+                except ValueError:
+                    pass
             scanned += 1
 
     learned = {"scanned_bills": scanned, "since": since, "suppliers": {}}
@@ -64,11 +75,15 @@ def learn(months: int = 18) -> dict:
         top_acct, n = counter.most_common(1)[0]
         total = sum(counter.values())
         tracks = track_by_sup[sup].most_common(1)
+        gaps = due_by_sup.get(sup, [])
         learned["suppliers"][sup] = {
             "account_code": top_acct,
             "account_confidence": round(n / total, 2),
             "account_distribution": dict(counter),
             "tracking_option": tracks[0][0] if tracks else None,
+            # each supplier's real terms = median gap between bill date and due date
+            "due_days": int(statistics.median(gaps)) if gaps else None,
+            "due_days_samples": len(gaps),
         }
     return learned
 

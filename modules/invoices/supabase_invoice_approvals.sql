@@ -12,6 +12,7 @@ create table if not exists public.invoice_approvals (
   supplier          text,
   supplier_key      text,
   invoice_date      date,
+  invoice_due_date  date,          -- payment due date read off the invoice
   total             numeric(12,2),
   decision          text not null check (decision in ('approve','reject')),
   tracking_category text,

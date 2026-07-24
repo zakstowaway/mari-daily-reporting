@@ -33,7 +33,7 @@ from typing import Optional
 
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2]))
 
-from modules.invoices.account_map import suggest_coding  # noqa: E402
+from modules.invoices.account_map import due_days_for, suggest_coding  # noqa: E402
 from modules.invoices.models import Invoice, TaxTreatment  # noqa: E402
 
 # Status the app-approved bill lands at in Xero. Verified against how Dext
@@ -121,7 +121,10 @@ def build_bill(inv: Invoice, coding=None) -> tuple[dict, Decimal, list[str]]:
         payload["InvoiceNumber"] = inv.invoice_ref
     if inv.invoice_date:
         payload["Date"] = inv.invoice_date.isoformat()
-        payload["DueDate"] = (inv.invoice_date + _timedelta(days=14)).isoformat()  # AUTHORISED needs a due date
+        # AUTHORISED needs a due date — prefer the one read off the invoice,
+        # else fall back to this supplier's usual terms.
+        due = inv.due_date or (inv.invoice_date + _timedelta(days=due_days_for(inv.supplier_name_raw)))
+        payload["DueDate"] = due.isoformat()
     if inv.po_refs:
         payload["Reference"] = ", ".join(inv.po_refs)
     if not coding.tracking_option:

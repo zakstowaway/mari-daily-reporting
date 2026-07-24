@@ -105,6 +105,7 @@ def _invoice_from_json(d: dict) -> Invoice:
         supplier_key=iv.get("supplier_key", ""), supplier_name_raw=iv.get("supplier_name_raw", ""),
         invoice_ref=iv.get("invoice_ref", ""),
         invoice_date=date.fromisoformat(iv["invoice_date"]) if iv.get("invoice_date") else None,
+        due_date=date.fromisoformat(iv["due_date"]) if iv.get("due_date") else None,
         total_incl=Decimal(str(iv.get("total_incl", "0"))), lines=lines,
         venue=Venue(iv["venue"]) if iv.get("venue") else Venue.UNKNOWN,
         po_refs=iv.get("po_refs") or [])

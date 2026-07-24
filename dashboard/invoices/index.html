@@ -166,7 +166,7 @@ async function decide(i, decision) {
   try {
     await Auth.decideInvoice({
       ref: inv.ref, supplier: inv.supplier, supplier_key: inv.supplier_key,
-      date: inv.date, total: inv.total,
+      date: inv.date, due_date: inv.due_date, total: inv.total,
       decision, tracking_category: cat, tracking_option: opt,
       lines, approver: me?.name || me?.email,
     });

@@ -7,6 +7,7 @@
       "supplier": "Gulli Food Distributors Pty Ltd",
       "supplier_key": "gulli",
       "date": "2026-04-07",
+      "due_date": "2026-05-30",
       "total": "500.11",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -75,6 +76,7 @@
       "supplier": "Independent Liquor Group",
       "supplier_key": "ilg",
       "date": "2026-06-23",
+      "due_date": "2026-06-30",
       "total": "759.85",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -97,7 +99,8 @@
       "ref": "94684681",
       "supplier": "Lion - Beer, Spirits & Wine Pty Ltd",
       "supplier_key": "lion",
-      "date": null,
+      "date": "2026-05-26",
+      "due_date": "2026-06-08",
       "total": "1214.59",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -130,6 +133,7 @@
       "supplier": "Select Fresh Providores",
       "supplier_key": "select_fresh",
       "date": "2026-04-01",
+      "due_date": "2026-04-15",
       "total": "55.20",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -189,6 +193,7 @@
       "supplier": "B&E Foods Pty Ltd",
       "supplier_key": "be_foods",
       "date": "2026-05-07",
+      "due_date": "2026-05-14",
       "total": "269.86",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -203,7 +208,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'be_foods'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "BEEF - BRISKET YG POINT",
@@ -212,7 +217,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'be_foods'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "CHICKEN - WHOLE BIRD NO.8",
@@ -221,7 +226,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'be_foods'"
+          "reason": "learned from Xero history for this supplier"
         }
       ]
     },
@@ -230,6 +235,7 @@
       "supplier": "Jun Pacific Corporation Pty Ltd",
       "supplier_key": "jun_pacific",
       "date": "2026-03-26",
+      "due_date": "2026-03-26",
       "total": "314.60",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -289,6 +295,7 @@
       "supplier": "Foodlink Australia Pty Ltd",
       "supplier_key": "foodlink",
       "date": "2026-04-09",
+      "due_date": "2026-04-16",
       "total": "178.32",
       "venue": "stowaway",
       "tracking_category": "Stowaway",
@@ -357,6 +364,7 @@
       "supplier": "The Fresh Fruit Team Pty Ltd",
       "supplier_key": "fresh_fruit_team",
       "date": "2026-04-14",
+      "due_date": "2026-04-28",
       "total": "100.70",
       "venue": "harry_gatos",
       "tracking_category": "Stowaway",

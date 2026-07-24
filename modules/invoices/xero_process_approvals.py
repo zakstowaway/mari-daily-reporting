@@ -36,7 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import xero_pull as xp  # noqa: E402
 from modules.invoices import xero_push  # noqa: E402
-from modules.invoices.account_map import ACCOUNT_NAME  # noqa: E402
+from modules.invoices.account_map import ACCOUNT_NAME, due_days_for  # noqa: E402
 
 SUPA_URL = "https://fyqhvyvwbedoowjkrxyj.supabase.co"
 KEY_FILE = Path.home() / "Documents" / "STOW" / ".secrets" / "supabase_service_key"
@@ -87,13 +87,18 @@ def _payload(rec: dict) -> tuple[dict, Decimal]:
         payload["InvoiceNumber"] = rec["ref"]
     if rec.get("invoice_date"):
         payload["Date"] = rec["invoice_date"]
-        # AUTHORISED bills (unlike drafts) require a DueDate. Default to 14 days
-        # after the invoice date — a sane trade default; the exact date can be
-        # tweaked in Xero (or refined to each supplier's terms later).
-        try:
-            payload["DueDate"] = (date.fromisoformat(rec["invoice_date"]) + timedelta(days=14)).isoformat()
-        except ValueError:
-            pass
+        # AUTHORISED bills (unlike drafts) require a DueDate. Prefer the due date
+        # read straight off THIS invoice; only if it's missing fall back to the
+        # supplier's usual terms (+14 default).
+        due = rec.get("invoice_due_date")
+        if not due:
+            try:
+                due = (date.fromisoformat(rec["invoice_date"])
+                       + timedelta(days=due_days_for(rec.get("supplier") or ""))).isoformat()
+            except ValueError:
+                due = None
+        if due:
+            payload["DueDate"] = due
     return payload, total
 
 

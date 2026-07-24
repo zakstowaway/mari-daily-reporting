@@ -55,6 +55,7 @@ def _entry(payload: dict) -> dict:
         "supplier": inv.supplier_name_raw or inv.supplier_key,
         "supplier_key": inv.supplier_key,
         "date": inv.invoice_date.isoformat() if inv.invoice_date else None,
+        "due_date": inv.due_date.isoformat() if inv.due_date else None,
         "total": f"{Decimal(str(inv.total_incl)):.2f}",
         "venue": inv.venue.value if hasattr(inv.venue, "value") else str(inv.venue),
         "tracking_category": coding.tracking_category,

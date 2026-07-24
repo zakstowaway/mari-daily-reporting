@@ -41,8 +41,20 @@ def parse(pdf_bytes: bytes) -> Invoice:
 
     m = re.search(r"INVOICE\s+No\s*(\d+)", flat, re.I) or re.search(r"\b(94\d{6})\b", flat)
     ref = m.group(1) if m else ""
-    m = re.search(r"INVOICE\s+DATE\s*(\d{2}/\d{2}/\d{4})", flat, re.I)
-    date = datetime.strptime(m.group(1), "%d/%m/%Y").date() if m else None
+    # Lion's summary panel (right column, x>=700) stacks the invoice DATE and the
+    # PAYMENT DUE DATE as bare d/m/y values. Earliest = invoice date, latest = due.
+    panel = []
+    for r in rows:
+        for x0, _, t in r:
+            if x0 >= 700:
+                dm = re.match(r"(\d{2})/(\d{2})/(\d{4})$", t)
+                if dm:
+                    try:
+                        panel.append(datetime(int(dm[3]), int(dm[2]), int(dm[1])).date())
+                    except ValueError:
+                        pass
+    date = min(panel) if panel else None
+    due = max(panel) if len(panel) >= 2 else None
     venue = (Venue.MARILYNAS if re.search(r"marilyna", flat, re.I)
              else Venue.HARRY_GATOS if re.search(r"gatt?os|HARGAT", flat, re.I)
              else Venue.STOWAWAY if re.search(r"stowaway", flat, re.I) else Venue.UNKNOWN)
@@ -83,4 +95,4 @@ def parse(pdf_bytes: bytes) -> Invoice:
 
     return Invoice(
         supplier_key="lion", supplier_name_raw="Lion - Beer, Spirits & Wine Pty Ltd",
-        invoice_ref=ref, invoice_date=date, total_incl=total_incl, lines=items, venue=venue)
+        invoice_ref=ref, invoice_date=date, due_date=due, total_incl=total_incl, lines=items, venue=venue)

@@ -108,6 +108,14 @@ def main() -> int:
         print(f"EXTRACTION FAILED: {e}", file=sys.stderr)
         return 1
 
+    # payment due date, read off the invoice itself (never inferred from history)
+    if inv.due_date is None:
+        try:
+            from modules.invoices.due_terms import read_due
+            inv.due_date = read_due(pdf, inv.invoice_date)
+        except Exception:
+            pass
+
     # ---- validate — the gate. No model involved. ---------------------------
     result = Validator(yaml.safe_load(CONFIG.read_text())).validate(inv)
 

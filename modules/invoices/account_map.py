@@ -53,6 +53,19 @@ def _learned_account(inv) -> Optional[str]:
         return d["account_code"]
     return None
 
+
+DEFAULT_DUE_DAYS = 14
+
+
+def due_days_for(supplier_name: str) -> int:
+    """This supplier's payment terms in days, learned from Xero history (median
+    gap between bill date and due date). Falls back to net-14 when we haven't
+    seen enough of their bills. net-0 (card/direct-debit suppliers) is honoured."""
+    d = LEARNED.get((supplier_name or "").strip().lower())
+    if d and d.get("due_days") is not None and d.get("due_days_samples", 0) >= 3:
+        return int(d["due_days"])
+    return DEFAULT_DUE_DAYS
+
 # --- account codes we route to (must exist in xero_accounts.json) --------------
 FOOD, BEVERAGE, BAR_SUPPLIES = "115", "113", "112"
 PACKAGING, CLEANING, FREIGHT = "117", "306", "342"

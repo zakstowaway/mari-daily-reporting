@@ -115,6 +115,8 @@ class Invoice:
 
     lines: list[InvoiceLine] = field(default_factory=list)
 
+    due_date: Optional[date] = None    # payment due date, read off the invoice
+
     venue: Venue = Venue.UNKNOWN
     po_refs: list[str] = field(default_factory=list)  # Bacchus can carry two
 
