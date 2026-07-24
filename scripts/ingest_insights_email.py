@@ -35,7 +35,7 @@ late email is caught on the next run; re-runs are no-ops.
 import base64, json, os, re, sys, urllib.parse, urllib.request, urllib.error
 from datetime import datetime, timedelta, timezone
 
-CLIENT = os.environ.get("GRAPH_CLIENT_ID", "14d82eec-204b-4c2f-b7e8-296a70dab67e")
+CLIENT = os.environ.get("GRAPH_CLIENT_ID", "d3590ed6-52b3-4102-aeff-aad2292ab01c")
 TENANT = os.environ.get("GRAPH_TENANT_ID", "organizations")
 REFRESH = os.environ["GRAPH_REFRESH_TOKEN"]
 PAT = os.environ["GH_DISPATCH_PAT"]

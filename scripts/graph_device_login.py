@@ -18,7 +18,7 @@ paste into GitHub -> repo Settings -> Secrets and variables -> Actions.
 """
 import json, time, urllib.parse, urllib.request, urllib.error, subprocess, shutil, sys
 
-CLIENT = "14d82eec-204b-4c2f-b7e8-296a70dab67e"   # Microsoft Graph Command Line Tools (public)
+CLIENT = "d3590ed6-52b3-4102-aeff-aad2292ab01c"   # Microsoft Office (public, pre-approved in this tenant - same client the functions auto-draft uses)
 TENANT = "organizations"
 SCOPE = "offline_access Mail.Read"
 REPO = "zakstowaway/mari-daily-reporting"
