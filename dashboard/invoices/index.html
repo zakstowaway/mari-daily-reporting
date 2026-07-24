@@ -99,6 +99,7 @@ const acctOpt = (sel) => ACCOUNTS.map(a =>
 const venueOpt = (selCat, selOpt) => trackingOptions().map(t =>
   `<option value="${t.cat}|${t.opt}" ${t.cat===selCat&&t.opt===selOpt?'selected':''}>${t.opt}</option>`).join('');
 const esc = (s) => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtQty = (q) => { const n = parseFloat(q); return Number.isFinite(n) ? String(+n.toFixed(3)) : esc(q); };
 
 function render() {
   const el = document.getElementById('list');
@@ -112,17 +113,18 @@ function render() {
       <div class="inv-hd">
         <div>
           <h3>${esc(inv.supplier)} <span class="tag ${inv.status}">${inv.status}</span></h3>
-          <div class="meta">Bill ${esc(inv.ref)} · ${esc(inv.date||'—')} · ${inv.lines.length} lines</div>
+          <div class="meta">Bill ${esc(inv.ref)} · ${esc(inv.date||'—')}${inv.due_date ? ' · due '+esc(inv.due_date) : ''} · ${inv.lines.length} lines</div>
         </div>
         <div class="total">$${esc(inv.total)}</div>
       </div>
       <table>
-        <thead><tr><th>Line</th><th>Account</th><th style="text-align:right">Amount</th></tr></thead>
+        <thead><tr><th>Line</th><th style="text-align:right">Qty</th><th>Account</th><th style="text-align:right">Amount</th></tr></thead>
         <tbody>
         ${inv.lines.map((l, j) => `
           <tr>
             <td class="desc">${esc(l.description)}
               <span class="taxpill">· ${l.tax==='gst'?'GST':'GST-free'}</span></td>
+            <td class="amt">${fmtQty(l.qty)}</td>
             <td><select class="acct" data-i="${i}" data-j="${j}">${acctOpt(l.account_code)}</select></td>
             <td class="amt">$${esc(l.amount)}</td>
           </tr>`).join('')}
