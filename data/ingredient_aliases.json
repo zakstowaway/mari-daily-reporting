@@ -1,0 +1,4 @@
+{
+  "_comment": "Manual ingredient-identity merges for the /pricing comparison. Maps one canonical key onto another so two differently-worded lines compare as the same ingredient. Key = sorted significant tokens of a description (see price_compare.canonical_key). Example: {\"merge\": {\"chook\": \"chicken\"}}. Added by a human when the auto-grouper under-merges.",
+  "merge": {}
+}

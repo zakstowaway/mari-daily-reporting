@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Price comparison · Stowaway Hospitality Group</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/_shared/tokens.css?v=20260719b">
+<!--
+  Cross-supplier price comparison. Admin-only. Every ingredient the invoice
+  pipeline has validated, reduced to a canonical $/kg | $/L | $/each, grouped so
+  the same thing from two suppliers lines up. Read-only: it reflects what was
+  actually invoiced (data/cogs_list.csv via build_price_compare.py). Nothing here
+  changes a price — it just shows where one supplier is dearer than another and
+  where a cost has crept up since last order.
+-->
+<style>
+  .wrap{max-width:960px}
+  .sub{color:var(--ink-soft);font-size:13px;margin:-4px 0 16px;line-height:1.5}
+  .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+  .bar input{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;
+    background:var(--bg);color:var(--ink);font-size:14px}
+  .bar .stat{font-size:12px;color:var(--ink-soft);white-space:nowrap}
+  .bar .stat b{color:var(--ink)}
+  h2.sec{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:26px 0 4px;display:flex;align-items:center;gap:9px}
+  h2.sec .n{font-size:11px;color:var(--ink-soft);font-weight:400}
+  .sec-note{font-size:12px;color:var(--ink-soft);margin:0 0 12px}
+  /* compared ingredient card */
+  .ing{border:1px solid var(--line);border-radius:12px;background:var(--paper);margin-bottom:12px;overflow:hidden}
+  .ing-hd{display:flex;align-items:baseline;gap:10px;padding:12px 15px 8px}
+  .ing-name{font-size:15px;font-weight:600}
+  .ing-unit{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}
+  .spread{margin-left:auto;font-size:12px;font-weight:600;color:var(--green);white-space:nowrap}
+  .spread.warn{color:var(--amber)}
+  .sups{display:flex;flex-direction:column}
+  .sup{display:flex;align-items:center;gap:12px;padding:9px 15px;border-top:1px solid var(--line)}
+  .sup .s-name{font-size:13.5px;min-width:150px}
+  .sup .s-cost{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;min-width:96px}
+  .sup .s-tag{font-size:10.5px;padding:1px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
+  .sup .s-tag.best{background:var(--green);color:#fff}
+  .sup .s-vs{font-size:12px;color:var(--ink-soft)}
+  .sup.best{background:color-mix(in srgb, var(--green) 9%, var(--paper))}
+  .chg{font-size:11.5px;margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .chg.up{color:var(--red)} .chg.down{color:var(--green)} .chg.flat{color:var(--ink-soft)}
+  .desc{font-size:11px;color:var(--ink-soft);margin-left:6px}
+  /* single-supplier price list */
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);text-align:left;padding:8px 12px;font-weight:600}
+  th.r{text-align:right}
+  td{padding:7px 12px;border-top:1px solid var(--line);vertical-align:middle}
+  td.cost{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;white-space:nowrap}
+  td.mv{text-align:right;font-variant-numeric:tabular-nums;font-size:12px;white-space:nowrap}
+  tbody tr:hover{background:color-mix(in srgb, var(--paper) 90%, var(--ink) 4%)}
+  .pl{border:1px solid var(--line);border-radius:12px;background:var(--paper);overflow:hidden}
+  .empty{text-align:center;color:var(--ink-soft);padding:50px 20px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+<div id="app" style="display:none">
+  <header class="app-header"><div class="app-header-inner">
+    <a class="brand-row" href="/"><img src="/logo_512.png" alt=""><span class="group-brand">Stowaway Hospitality Group</span></a>
+    <div class="who"><span id="who"></span><a href="/">home</a></div>
+  </div></header>
+  <div class="wrap">
+    <h1>Supplier price comparison</h1>
+    <p class="sub">Every ingredient we've been invoiced for, reduced to a like-for-like
+      unit cost and lined up across suppliers. Prices are what was actually billed —
+      cheapest is flagged, and a cost that moved since last order shows its change.</p>
+    <div class="bar">
+      <input id="q" type="search" placeholder="Search an ingredient — carrot, chicken, mozzarella…" autocomplete="off">
+      <span class="stat" id="stat"></span>
+    </div>
+    <div id="body"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<script type="module">
+import { Auth } from '/_shared/auth.js';
+
+let DATA = { ingredients: [] };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => '$' + Number(n).toFixed(2);
+const unitLabel = u => u === 'ea' ? 'each' : ('per ' + u);
+
+Auth.gate(document.getElementById('gate'), {
+  roles: ['admin'],
+  onOk: async (user) => {
+    document.getElementById('app').style.display = '';
+    document.getElementById('who').textContent = user.name;
+    DATA = await fetch('/pricing/compare.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>({ingredients:[]}));
+    document.getElementById('q').addEventListener('input', render);
+    render();
+  },
+});
+
+function chg(pct){
+  if (pct === null || pct === undefined) return '<span class="chg flat">–</span>';
+  if (pct > 0)  return `<span class="chg up">▲ ${pct.toFixed(1)}% since last</span>`;
+  if (pct < 0)  return `<span class="chg down">▼ ${Math.abs(pct).toFixed(1)}% since last</span>`;
+  return '<span class="chg flat">no change</span>';
+}
+
+function comparedCard(i){
+  const rows = i.suppliers.map((s, idx) => {
+    const best = idx === 0;
+    const vs = best ? '' : `<span class="s-vs">+${(((s.cost - i.min)/i.min)*100).toFixed(1)}% vs best</span>`;
+    const tag = best ? '<span class="s-tag best">cheapest</span>' : '';
+    return `<div class="sup ${best?'best':''}">
+      <span class="s-name">${esc(s.supplier)}<span class="desc" title="${esc(s.desc)}">${esc(s.desc.length>22?s.desc.slice(0,22)+'…':s.desc)}</span></span>
+      <span class="s-cost">${money(s.cost)}<small style="font-weight:400;color:var(--ink-soft)">/${esc(i.unit)}</small></span>
+      ${tag}${vs}${chg(s.change_pct)}
+    </div>`;
+  }).join('');
+  const spreadCls = i.suspect ? 'spread warn' : 'spread';
+  const spreadTxt = i.suspect ? `⚠ ${i.spread_pct}% gap — verify pack size`
+                              : `save ${i.spread_pct}% at ${esc(i.cheapest)}`;
+  return `<div class="ing" data-name="${esc(i.name.toLowerCase())}">
+    <div class="ing-hd"><span class="ing-name">${esc(i.name)}</span>
+      <span class="ing-unit">${unitLabel(i.unit)}</span>
+      <span class="${spreadCls}">${spreadTxt}</span></div>
+    <div class="sups">${rows}</div></div>`;
+}
+
+function priceRow(i){
+  const s = i.suppliers[0];
+  return `<tr data-name="${esc(i.name.toLowerCase())}">
+    <td>${esc(i.name)}</td>
+    <td style="color:var(--ink-soft)">${esc(s.supplier)}</td>
+    <td class="cost">${money(s.cost)} <small style="color:var(--ink-soft)">/${esc(i.unit)}</small></td>
+    <td class="mv">${chg(s.change_pct)}</td></tr>`;
+}
+
+function render(){
+  const q = (document.getElementById('q').value || '').trim().toLowerCase();
+  const match = i => !q || i.name.toLowerCase().includes(q) ||
+                     i.suppliers.some(s => s.supplier.toLowerCase().includes(q));
+  const ings = DATA.ingredients.filter(match);
+  const compared = ings.filter(i => i.multi && !i.suspect);
+  const suspect  = ings.filter(i => i.suspect);
+  const single   = ings.filter(i => !i.multi);
+
+  document.getElementById('stat').innerHTML =
+    `<b>${DATA.count||DATA.ingredients.length}</b> ingredients · <b>${DATA.compared||compared.length}</b> across 2+ suppliers`;
+
+  let html = '';
+  if (compared.length){
+    html += `<h2 class="sec">Compared across suppliers <span class="n">${compared.length}</span></h2>`;
+    html += `<p class="sec-note">Same ingredient, more than one supplier — cheapest first. Biggest gaps at the top.</p>`;
+    html += compared.map(comparedCard).join('');
+  }
+  if (suspect.length){
+    html += `<h2 class="sec">Verify pack size <span class="n">${suspect.length}</span></h2>`;
+    html += `<p class="sec-note">The gap here is too large to be a real price difference — usually one supplier
+      is priced per tray/dozen and the other per kg. Check the descriptions; if they're genuinely the same, tell me and I'll merge them.</p>`;
+    html += suspect.map(comparedCard).join('');
+  }
+  if (single.length){
+    html += `<h2 class="sec">Price list <span class="n">${single.length}</span></h2>`;
+    html += `<p class="sec-note">One supplier so far — listed with any movement since the last invoice.</p>`;
+    html += `<div class="pl"><table><thead><tr><th>Ingredient</th><th>Supplier</th><th class="r">Unit cost</th><th class="r">Movement</th></tr></thead><tbody>`;
+    html += single.map(priceRow).join('') + `</tbody></table></div>`;
+  }
+  document.getElementById('body').innerHTML = html || '<div class="empty">No ingredients match.</div>';
+}
+</script>
+</body>
+</html>

@@ -151,11 +151,14 @@ def aggregate_and_commit(dry_run: bool):
     subprocess.run([sys.executable, "modules/recipes/pipeline/build_costs.py"], cwd=ROOT, check=False)
     # refresh the app's review queue so newly-ingested bills show up at /invoices
     subprocess.run([sys.executable, "modules/invoices/build_invoice_queue.py"], cwd=ROOT, check=False)
+    # refresh cross-supplier price comparison (/pricing) from the updated cogs
+    subprocess.run([sys.executable, "modules/invoices/build_price_compare.py"], cwd=ROOT, check=False)
     if dry_run:
         return
     subprocess.run(["git", "add", "data/invoices", "data/invoices_review",
                     "data/cogs_list.csv", "data/costs.csv", "modules/invoices/learned_overrides.json",
-                    "dashboard/invoices/queue.json", "dashboard/invoices/accounts.json"], cwd=ROOT, check=False)
+                    "dashboard/invoices/queue.json", "dashboard/invoices/accounts.json",
+                    "dashboard/pricing/compare.json"], cwd=ROOT, check=False)
     staged = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=ROOT).returncode
     if staged == 0:
         print("nothing new to commit")

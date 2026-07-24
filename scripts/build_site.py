@@ -42,6 +42,7 @@ LAYOUT: list[tuple[str, str]] = [
     ("dashboard/sales",        "sales"),     # the daily-reporting dashboard -> /sales/
     ("dashboard/admin",        "admin"),     # -> /admin/ (admin only)
     ("dashboard/invoices",     "invoices"),  # -> /invoices/ (admin only) — Xero review queue
+    ("dashboard/pricing",      "pricing"),   # -> /pricing/ (admin only) — cross-supplier $/unit
     ("dashboard/bookings",     "bookings"),  # -> /bookings/ (admin only)
     ("modules/recipes/app",    "recipes"),   # -> /recipes/
     ("data",                   "data"),      # feeds -> /data/
@@ -65,7 +66,8 @@ def build() -> int:
     # committed and CI proves it reproduces. Two kinds of derived file; only one
     # of them can be checked byte-for-byte.
     for gen in ("modules/recipes/pipeline/build_ingredients.py",
-                "modules/recipes/pipeline/build_recipe_feeds.py"):
+                "modules/recipes/pipeline/build_recipe_feeds.py",
+                "modules/invoices/build_price_compare.py"):   # /pricing/compare.json from cogs
         r = subprocess.run([sys.executable, str(ROOT / gen)], capture_output=True, text=True, cwd=ROOT)
         if r.returncode:
             print(f"  FAILED {gen}\n{r.stderr}")
