@@ -35,11 +35,13 @@ sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2]
 from modules.invoices.account_map import suggest_coding  # noqa: E402
 from modules.invoices.models import Invoice, TaxTreatment  # noqa: E402
 
-# AU tax types for a purchase (bill).
+# AU tax types for a purchase (bill). Codes verified against how these bills are
+# actually coded in this org's Xero history: GST-free lines use EXEMPTEXPENSES
+# ("GST Free Expenses"), NOT EXEMPTINPUT (which Xero downgrades to BAS Excluded).
 TAX_TYPE = {
-    TaxTreatment.GST: "INPUT",          # GST on Expenses (10%)
-    TaxTreatment.GST_FREE: "EXEMPTINPUT",  # GST Free Expenses
-    TaxTreatment.WET: "INPUT",          # WET is embedded; treat the line as GST on expenses
+    TaxTreatment.GST: "INPUT",            # GST on Expenses (10%)
+    TaxTreatment.GST_FREE: "EXEMPTEXPENSES",  # GST Free Expenses
+    TaxTreatment.WET: "INPUT",            # WET is embedded; treat the line as GST on expenses
 }
 RECONCILE_TOL = Decimal("0.50")
 

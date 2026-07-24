@@ -46,7 +46,7 @@ def test_tax_type_maps_per_line():
                 _line("BEER", "10.00", tax=TaxTreatment.GST)], "20.00")
     payload, _, _ = build_bill(inv)
     tt = {li["Description"]: li["TaxType"] for li in payload["LineItems"]}
-    assert tt["PRODUCE"] == "EXEMPTINPUT" and tt["BEER"] == "INPUT"
+    assert tt["PRODUCE"] == "EXEMPTEXPENSES" and tt["BEER"] == "INPUT"
 
 
 def test_reconcile_gate_holds_back_a_bad_bill():
