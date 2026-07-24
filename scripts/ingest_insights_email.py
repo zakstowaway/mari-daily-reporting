@@ -26,8 +26,8 @@ import base64, email, imaplib, json, os, re, sys, urllib.request
 from email.utils import parsedate_to_datetime
 from datetime import datetime, timedelta, timezone
 
-GMAIL = os.environ["GMAIL_ADDRESS"]
-APP_PW = os.environ["GMAIL_APP_PASSWORD"].replace(" ", "")   # Google shows it space-separated
+GMAIL = os.environ["GMAIL_ADDRESS"].strip()
+APP_PW = os.environ["GMAIL_APP_PASSWORD"].replace(" ", "").strip()   # Google shows it space-separated
 PAT = os.environ["GH_DISPATCH_PAT"]
 REPO = os.environ.get("GH_REPO", "zakstowaway/mari-daily-reporting")
 STATE_FILE = os.environ.get("STATE_FILE", ".ingest/processed.json")
