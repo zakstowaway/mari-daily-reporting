@@ -12,6 +12,36 @@ git, so nobody could see it had fallen behind. Don't let that happen again:
     git pull        # before you start
     git push        # when you're done
 
+## ⚠️ CRITICAL DATA MODEL — read before touching sales data (2026-07-24)
+
+**All three venues share ONE Lightspeed till — the Stowaway POS.**
+- **Marilyna's has NO till of its own.** Her sales ring through the Stow POS.
+- Harry Gatos food also rings through the Stow POS.
+- The Stow "Sales by Product" export `data/insights_stow_<date>.csv` is the WHOLE
+  site — it carries Stow **+ HG + Mari** rows.
+- `daily_aggregator.py` splits it by `classify_product()`: Stow keeps its own,
+  HG gets `'hg'` rows, **Marilyna's = the `'m'` rows carved off the Stow till**
+  (`classify_product(...) == 'm'`). Mari's own export is a CROSS-CHECK only,
+  NEVER a source. There is NO separate Marilyna's Kounta login to hunt for.
+
+**Sales enter ONLY via the emailed Insights CSV** (Lightspeed scheduled report →
+Pipedream → `repository_dispatch` with `csv_base64`). There is NO sales API pull.
+
+**To fix a day whose Stow export email never fired:**
+1. From the logged-in Lightspeed tab, fetch the Stow export:
+   `https://my.kounta.com/report/salesummarybyproduct?DateFrom=<d>&DateTo=<d>&CategoryID=0&SiteID=0&TerminalID=0&TabId=week&TypeId=product&tags=&noTax=0&export=true&txtDateFrom=<d>&txtDateTo=<d>`
+   (`credentials:'include'`). The aggregator handles this format: no tax column →
+   revenue_ex = revenue_inc / 1.1.
+2. Ingest through the production path — `repository_dispatch` `stow-csv-arrived`,
+   payload `{venue:"stowaway", csv_base64:<b64>}`. This writes the Stow export,
+   pulls Deputy, aggregates **stow + hg**.
+3. **THEN run the Mari aggregation** so her rows get carved from the same export:
+   `workflow_dispatch daily_pull.yml {venue:"marilynas", target_date:"<d>"}`.
+   (The stow-csv-arrived run does NOT re-aggregate Mari automatically.)
+
+**Closed-week wages/leave = Xero** (Mac-only pull; leave from payslip
+LeaveEarningsLines). Owners (Oliver, Bryony) = corp payroll, never on Deputy/venue lines.
+
 ## Deploying the dashboard
 
 Edit `dashboard/index.html`, then `git commit` + `git push`. GitHub Pages
