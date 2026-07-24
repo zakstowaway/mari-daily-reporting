@@ -1,0 +1,6 @@
+project_id = "fyqhvyvwbedoowjkrxyj"
+
+# shg-auth verifies the caller's Supabase token itself and must answer CORS
+# preflight, so platform JWT verification is off.
+[functions.shg-auth]
+verify_jwt = false
