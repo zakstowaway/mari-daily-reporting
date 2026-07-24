@@ -92,6 +92,7 @@ def save_state(state):
 
 
 def main():
+    print(f"login as {GMAIL!r}  |  app-password length={len(APP_PW)} (expect 16)")
     M = imaplib.IMAP4_SSL("imap.gmail.com", 993)
     M.login(GMAIL, APP_PW)
     M.select("INBOX")
