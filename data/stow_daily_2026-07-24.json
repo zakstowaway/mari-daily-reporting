@@ -1,0 +1,253 @@
+{
+  "date": "2026-07-24",
+  "generated_at": "2026-07-24T20:07:52.592842Z",
+  "venue": "stowaway",
+  "venue_display": "Stowaway Bar",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 12600.37,
+    "revenue_ex_gst": 11454.97,
+    "cogs_dollars": 2427.78,
+    "cogs_pct": 21.2,
+    "gp_dollars": 9027.19,
+    "gp_pct": 78.8,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 0.0,
+    "eatclub_covers": 0,
+    "revenue_ex_gst_before_eatclub": null,
+    "food_ex_gst": 2806.58,
+    "bev_ex_gst": 8648.3,
+    "food_cogs": 380.24,
+    "bev_cogs": 2047.54,
+    "food_cogs_pct": 13.5,
+    "bev_cogs_pct": 23.7,
+    "food_gp_pct": 86.5,
+    "bev_gp_pct": 76.3,
+    "mari_rideon_ex_gst": 3193.67,
+    "hg_food_out_ex_gst": 60.91,
+    "stow_food_out_ex_gst": 0.0
+  },
+  "wages": {
+    "kitchen_dollars": 1267.91,
+    "foh_dollars": 1223.13,
+    "driver_dollars": 0,
+    "admin_dollars": 0,
+    "leave_dollars": 0,
+    "total_dollars": 2491.05,
+    "wages_pct": 21.7,
+    "net_wage_pct": null,
+    "kitchen_hours": 24.5,
+    "foh_hours": 29.5,
+    "wages_kitchen_pct": 45.2,
+    "wages_foh_pct": 14.1,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "green",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "yellow",
+    "wages_kitchen": "red",
+    "wages_foh": "green"
+  },
+  "targets": {
+    "cogs": {
+      "target": 28.0,
+      "amber": 32.0,
+      "red": 35.0,
+      "note": "Blended food+bev COGS; bar-heavy Stow typically lands ~28-30% \u2014 refine after 8 weeks of daily data"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Weekly-report placeholder food GP is 65% (i.e. 35% COGS); target set slightly tighter."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST). Drinks GP at Stow runs ~80% on cocktails (known-margins.md); blended bev incl. beer/wine lands lower."
+    },
+    "wages_kitchen": {
+      "target": 12.0,
+      "amber": 15.0,
+      "red": 18.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total."
+    },
+    "wages_foh": {
+      "target": 18.0,
+      "amber": 22.0,
+      "red": 26.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 70% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Mulled Wine",
+      "qty": 30.0,
+      "rev": 456.35,
+      "cost": 61.13,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Beef Cheek",
+      "qty": 9.0,
+      "rev": 366.96,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Classic Margarita",
+      "qty": 21.0,
+      "rev": 335.32,
+      "cost": 85.55,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Tommy's Margarita",
+      "qty": 15.0,
+      "rev": 317.09,
+      "cost": 74.59,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Guinness Draught - Pint",
+      "qty": 18.0,
+      "rev": 312.07,
+      "cost": 84.75,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fresh is Best Lager - Pint",
+      "qty": 26.0,
+      "rev": 278.94,
+      "cost": 63.73,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Stone & Wood - Pint",
+      "qty": 16.0,
+      "rev": 276.53,
+      "cost": 69.68,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Version Two Pinot Grigio - Regular",
+      "qty": 31.7,
+      "rev": 260.3,
+      "cost": 56.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Philter XPA - Pint",
+      "qty": 21.0,
+      "rev": 252.55,
+      "cost": 62.99,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Flower Child",
+      "qty": 11.0,
+      "rev": 240.13,
+      "cost": 31.5,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Arancini Balls [5pc]",
+      "qty": 10.0,
+      "rev": 224.06,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Whispering Angel Ros\u00e9 - Bottle",
+      "qty": 2.0,
+      "rev": 223.07,
+      "cost": 69.21,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Philter XPA - Schooner",
+      "qty": 22.0,
+      "rev": 213.26,
+      "cost": 49.2,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fish Tacos",
+      "qty": 10.0,
+      "rev": 205.29,
+      "cost": 21.85,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Grifter Pale - Pint",
+      "qty": 14.0,
+      "rev": 199.5,
+      "cost": 46.61,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fresh is Best Lager - Schooner",
+      "qty": 24.0,
+      "rev": 199.16,
+      "cost": 43.86,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "White Light Pure Vodka [House]",
+      "qty": 19.0,
+      "rev": 188.26,
+      "cost": 28.86,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Stone & Wood - Schooner",
+      "qty": 14.0,
+      "rev": 185.39,
+      "cost": 45.46,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Geppetto Pinot Noir - Regular",
+      "qty": 12.0,
+      "rev": 180.95,
+      "cost": 42.15,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fancy Pants Parmy - Classic",
+      "qty": 6.0,
+      "rev": 178.8,
+      "cost": 48.63,
+      "cost_source": "lightspeed"
+    }
+  ]
+}
