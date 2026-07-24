@@ -3,7 +3,12 @@ Push a validated invoice into Xero as a DRAFT bill (ACCPAY) — the write half o
 the Dext replacement.
 
 Safety, by construction:
-  * DRAFT only. Never Authorised/Approved — a human opens the draft and clicks.
+  * A HUMAN APPROVES EVERY INVOICE. push_bill() will not contact Xero unless it
+    is given an explicit `approved_by` (a person). No approver -> dry-run only,
+    no matter what. This is never wired into the automated pipeline (grep: it has
+    no caller) — creating a draft is always a deliberate, per-invoice human act.
+  * DRAFT only. Even when approved, bills are created as DRAFT — never
+    Authorised — so they still surface in Xero for the bookkeeper to post.
   * Reconcile-gated. We rebuild the bill from the coded lines and only post if it
     totals the invoice's printed total (±$0.50). A bill that doesn't add up is
     never sent; it's left for review — same philosophy as the extractor's gate.
@@ -114,10 +119,15 @@ def build_bill(inv: Invoice, coding=None) -> tuple[dict, Decimal, list[str]]:
     return payload, rebuilt, warnings
 
 
-def push_bill(inv: Invoice, access=None, tenant=None, *, api_get=None, dry_run=True) -> dict:
+def push_bill(inv: Invoice, access=None, tenant=None, *, api_get=None, dry_run=True,
+              approved_by: Optional[str] = None) -> dict:
     """
-    Build → reconcile-gate → (optionally) POST a DRAFT bill. Returns a status dict;
-    never raises for a business reason (only for genuine transport errors).
+    Build → reconcile-gate → (only with a human approver) POST a DRAFT bill.
+    Returns a status dict; never raises for a business reason.
+
+    `approved_by` is mandatory to actually write: it must name the person who
+    reviewed this specific invoice. Without it we stay in dry-run — automation
+    can never create a bill on its own.
     """
     coding = suggest_coding(inv)
     payload, rebuilt, warnings = build_bill(inv, coding)
@@ -135,10 +145,17 @@ def push_bill(inv: Invoice, access=None, tenant=None, *, api_get=None, dry_run=T
         status["action"] = "needs_review"
         status["reason"] = f"rebuilt bill (${rebuilt}) != invoice total (${inv.total_incl}); not pushing"
         return status
+    # HARD GATE: no named human approver -> never writes, regardless of dry_run.
+    if not approved_by:
+        status["action"] = "awaiting_approval"
+        status["payload"] = payload
+        status["reason"] = "no approved_by — a human must approve this invoice before a draft is created"
+        return status
     if dry_run or access is None:
         status["action"] = "ready (dry-run)"
         status["payload"] = payload
         return status
+    status["approved_by"] = approved_by
     if api_get and already_exists(access, tenant, api_get, payload["Contact"]["Name"], inv.invoice_ref):
         status["action"] = "skipped"; status["reason"] = "draft/bill already in Xero"
         return status

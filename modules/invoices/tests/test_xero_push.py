@@ -55,6 +55,13 @@ def test_reconcile_gate_holds_back_a_bad_bill():
     assert st["action"] == "needs_review"
 
 
-def test_clean_bill_is_ready():
+def test_clean_bill_awaits_approval_without_approver():
+    # a reconciling bill still will NOT touch Xero until a human approves it
     st = push_bill(_inv([_line("X", "50.00"), _line("Y", "50.00")], "100.00"), dry_run=True)
-    assert st["action"] == "ready (dry-run)" and st["line_count"] == 2
+    assert st["action"] == "awaiting_approval" and st["line_count"] == 2
+
+
+def test_approved_bill_is_ready_in_dry_run():
+    st = push_bill(_inv([_line("X", "50.00"), _line("Y", "50.00")], "100.00"),
+                   dry_run=True, approved_by="Zak")
+    assert st["action"] == "ready (dry-run)"
