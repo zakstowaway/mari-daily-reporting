@@ -1,0 +1,253 @@
+{
+  "date": "2026-07-24",
+  "generated_at": "2026-07-24T20:21:04.308363Z",
+  "venue": "harry",
+  "venue_display": "Harry Gatos",
+  "lane_config": [
+    "revenue",
+    "cogs",
+    "wages",
+    "gp"
+  ],
+  "data_status": {
+    "lightspeed": "ok",
+    "deputy": "ok",
+    "payments": "missing"
+  },
+  "sales": {
+    "revenue_inc_gst": 3498.0,
+    "revenue_ex_gst": 3180.12,
+    "cogs_dollars": 400.08,
+    "cogs_pct": 12.6,
+    "gp_dollars": 2780.04,
+    "gp_pct": 87.4,
+    "uber_eats_revenue": 0,
+    "net_takings_ex_gst": null,
+    "eatclub_giveaway_ex_gst": 0.0,
+    "eatclub_covers": 0,
+    "revenue_ex_gst_before_eatclub": null,
+    "food_ex_gst": 2243.36,
+    "bev_ex_gst": 936.64,
+    "food_cogs": 222.72,
+    "bev_cogs": 177.36,
+    "food_cogs_pct": 9.9,
+    "bev_cogs_pct": 18.9,
+    "food_gp_pct": 90.1,
+    "bev_gp_pct": 81.1,
+    "mari_rideon_ex_gst": 0.0,
+    "hg_food_out_ex_gst": 0.0,
+    "stow_food_out_ex_gst": 23.64
+  },
+  "wages": {
+    "kitchen_dollars": 858.15,
+    "foh_dollars": 380.12,
+    "driver_dollars": 0,
+    "admin_dollars": 0,
+    "leave_dollars": 0,
+    "total_dollars": 1238.27,
+    "wages_pct": 38.9,
+    "net_wage_pct": null,
+    "kitchen_hours": 20.0,
+    "foh_hours": 8.8,
+    "wages_kitchen_pct": 38.3,
+    "wages_foh_pct": 40.6,
+    "includes_super": true,
+    "salaried_synthesized": true
+  },
+  "delivery": null,
+  "payments_breakdown": null,
+  "alerts": {
+    "cogs": "green",
+    "wages": "red",
+    "delivery": "n/a",
+    "gp": "green",
+    "cogs_food": "green",
+    "cogs_bev": "green",
+    "wages_kitchen": "red",
+    "wages_foh": "red"
+  },
+  "targets": {
+    "cogs": {
+      "target": 32.0,
+      "amber": 35.0,
+      "red": 38.0,
+      "note": "HG food-heavy mix (dumplings, shared plates) runs ~32-35% blended \u2014 heavier than Stow"
+    },
+    "wages": {
+      "target": 30.0,
+      "amber": 33.0,
+      "red": 36.0,
+      "note": "Zak-set 30% target \u2014 hospitality benchmark; splits kitchen + FOH"
+    },
+    "cogs_food": {
+      "target": 32.0,
+      "amber": 36.0,
+      "red": 40.0,
+      "note": "DRAFT \u2014 Zak to confirm. Food COGS vs food revenue (ex-GST). Olly's BEP work put HG food COGS ~35%."
+    },
+    "cogs_bev": {
+      "target": 22.0,
+      "amber": 25.0,
+      "red": 28.0,
+      "note": "DRAFT \u2014 Zak to confirm. Bev COGS vs bev revenue (ex-GST)."
+    },
+    "wages_kitchen": {
+      "target": 14.0,
+      "amber": 17.0,
+      "red": 20.0,
+      "note": "DRAFT \u2014 Zak to confirm. Kitchen wages as % of FOOD revenue (ex-GST), not total. HG kitchen is heavier than Stow's."
+    },
+    "wages_foh": {
+      "target": 16.0,
+      "amber": 20.0,
+      "red": 24.0,
+      "note": "DRAFT \u2014 Zak to confirm. FOH wages as % of BEV revenue (ex-GST), not total."
+    },
+    "gp": {
+      "note": "Higher is better \u2014 68% target; status inversion not yet implemented so alerts left empty",
+      "target_direction": "high_is_good"
+    }
+  },
+  "top_products": [
+    {
+      "name": "Tonkotsu",
+      "qty": 14.0,
+      "rev": 406.0,
+      "cost": 58.3,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Mie Goreng",
+      "qty": 13.0,
+      "rev": 303.0,
+      "cost": 41.37,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Shredded Beef",
+      "qty": 11.0,
+      "rev": 286.0,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Miso",
+      "qty": 8.0,
+      "rev": 229.1,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Dumplings - Prawn Har Gow [GF]",
+      "qty": 11.0,
+      "rev": 207.0,
+      "cost": 48.55,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Shoyu",
+      "qty": 6.0,
+      "rev": 174.0,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Octopus Karaage",
+      "qty": 6.0,
+      "rev": 108.0,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Chicken Katsu Curry",
+      "qty": 4.0,
+      "rev": 108.0,
+      "cost": 11.43,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Popcorn Cauliflower",
+      "qty": 6.0,
+      "rev": 89.0,
+      "cost": 5.87,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "River Retreat Pinot Grigio - Regular",
+      "qty": 7.0,
+      "rev": 84.0,
+      "cost": 14.07,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Duck Spring Roll",
+      "qty": 5.0,
+      "rev": 80.0,
+      "cost": 17.86,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Sapporo - Schooner",
+      "qty": 7.0,
+      "rev": 73.0,
+      "cost": 22.61,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Fried Rice",
+      "qty": 3.0,
+      "rev": 70.0,
+      "cost": 8.04,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Devon's Prawn Toast",
+      "qty": 4.0,
+      "rev": 64.0,
+      "cost": 15.55,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Salmon Sashimi Special",
+      "qty": 3.0,
+      "rev": 63.8,
+      "cost": 0.0,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Demon Slayer",
+      "qty": 3.0,
+      "rev": 63.0,
+      "cost": 12.26,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Harry's Lager - Pint",
+      "qty": 5.0,
+      "rev": 62.5,
+      "cost": 11.2,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Sapporo - 500ml",
+      "qty": 4.0,
+      "rev": 56.85,
+      "cost": 15.2,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "Dumplings - Beef & Cabbage",
+      "qty": 4.0,
+      "rev": 56.0,
+      "cost": 5.89,
+      "cost_source": "lightspeed"
+    },
+    {
+      "name": "River Retreat Pinot Grigio - Bottle",
+      "qty": 1.0,
+      "rev": 49.0,
+      "cost": 10.05,
+      "cost_source": "lightspeed"
+    }
+  ]
+}

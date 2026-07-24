@@ -1,0 +1,93 @@
+[
+  {
+    "timesheet_id": 35479,
+    "employee_id": 142,
+    "employee_name": "Renan Borba Bagesteiro",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784865600,
+    "end_time": 1784896200,
+    "hours": 8.5,
+    "cost": 306.49,
+    "salaried_synth": true
+  },
+  {
+    "timesheet_id": 35483,
+    "employee_id": 78,
+    "employee_name": "Sushant Acharya",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784871900,
+    "end_time": 1784896200,
+    "hours": 6.25,
+    "cost": 0.0,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35490,
+    "employee_id": 258,
+    "employee_name": "piettra bagesteiro",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784878200,
+    "end_time": 1784888100,
+    "hours": 2.75,
+    "cost": 54.56,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35491,
+    "employee_id": 261,
+    "employee_name": "pedro f",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784878200,
+    "end_time": 1784888100,
+    "hours": 2.75,
+    "cost": 68.75,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35492,
+    "employee_id": 190,
+    "employee_name": "John Campbell",
+    "ou_name": "Driver",
+    "company": "Stowaway",
+    "dept": "Driver",
+    "start_time": 1784878200,
+    "end_time": 1784889900,
+    "hours": 3.25,
+    "cost": 79.11,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35494,
+    "employee_id": 106,
+    "employee_name": "Reef Poole",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784878200,
+    "end_time": 1784889000,
+    "hours": 3.0,
+    "cost": 86.32,
+    "salaried_synth": false
+  },
+  {
+    "timesheet_id": 35496,
+    "employee_id": 123,
+    "employee_name": "Kade Marshall-Witte",
+    "ou_name": "Pizza Shop",
+    "company": "Stowaway",
+    "dept": "Kitchen",
+    "start_time": 1784879100,
+    "end_time": 1784889000,
+    "hours": 2.75,
+    "cost": 93.09,
+    "salaried_synth": false
+  }
+]
