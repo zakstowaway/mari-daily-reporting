@@ -129,6 +129,8 @@ const venueOpt = (selCat, selOpt) => trackingOptions().map(t =>
   `<option value="${t.cat}|${t.opt}" ${t.cat===selCat&&t.opt===selOpt?'selected':''}>${t.cat} · ${t.opt}</option>`).join('');
 const esc = (s) => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtQty = (q) => { const n = parseFloat(q); return Number.isFinite(n) ? String(+n.toFixed(3)) : esc(q); };
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtDate = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? `${+m[3]} ${MONTHS[+m[2]-1]} ${m[1]}` : (s ? esc(s) : '—'); };
 
 function render() {
   const el = document.getElementById('list');
@@ -145,8 +147,8 @@ function render() {
       </div>
       <div class="inv-meta">
         <div class="field"><label>Invoice</label><span>${esc(inv.ref)}</span></div>
-        <div class="field"><label>Date</label><span>${esc(inv.date||'—')}</span></div>
-        <div class="field"><label>Due</label><span>${esc(inv.due_date||'—')}</span></div>
+        <div class="field"><label>Date</label><span>${fmtDate(inv.date)}</span></div>
+        <div class="field"><label>Due</label><span>${fmtDate(inv.due_date)}</span></div>
         <div class="field venue-f"><label>Venue</label>
           <select class="venue-sel" data-i="${i}">${venueOpt(inv.tracking_category, inv.tracking_option)}</select></div>
         <div class="meta-right">

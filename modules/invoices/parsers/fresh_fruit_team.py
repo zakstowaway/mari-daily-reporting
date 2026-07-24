@@ -63,19 +63,36 @@ def parse(pdf_bytes: bytes) -> Invoice:
     if hi is None:
         raise ValueError("FFT: header row not found")
 
+    def is_money(row):
+        cc = pdf_text.bucket(row, COLS)
+        return (_m(cc["qty"]) is not None and _m(cc["price"]) is not None
+                and _m(cc["amt"]) not in (None, Decimal("0")))
+
+    body = rows[hi + 1:]
     items = []
-    for r in rows[hi + 1:]:
+    for idx, r in enumerate(body):
         c = pdf_text.bucket(r, COLS)
         qty, price, amt = _m(c["qty"]), _m(c["price"]), _m(c["amt"])
         if qty is None or price is None or amt is None:   # not a stock money row
             continue
         if amt == 0:                                      # substituted / zero-qty
             continue
+        # FFT prints the money row in the MIDDLE of a wrapped description, so when
+        # this row has no description of its own, stitch in the desc from the rows
+        # immediately above and below (which carry no money).
+        desc = c["desc"].strip()
+        if not desc:
+            parts = []
+            if idx - 1 >= 0 and not is_money(body[idx - 1]):
+                parts.append(pdf_text.bucket(body[idx - 1], COLS)["desc"].strip())
+            if idx + 1 < len(body) and not is_money(body[idx + 1]):
+                parts.append(pdf_text.bucket(body[idx + 1], COLS)["desc"].strip())
+            desc = " ".join(p for p in parts if p).strip()
         g = _m(c["gst"]) or Decimal("0")
         unit = c["unit"]
         cb = CostBasis.PER_KG if re.search(r"kilo|kg", unit, re.I) else CostBasis.PER_UNIT
         items.append(InvoiceLine(
-            description=c["desc"] or c["sku"], qty=qty, line_total_incl=amt + g,
+            description=desc or c["sku"], qty=qty, line_total_incl=amt + g,
             unit_price_incl=price, pack_size=1, line_class=LineClass.STOCK,
             tax_treatment=(TaxTreatment.GST if g > 0 else TaxTreatment.GST_FREE),
             cost_basis=cb, supplier_code=c["sku"] or None, raw_uom=unit or None, gst_amount=g))
