@@ -26,9 +26,11 @@ def _inv(lines, total, key="be_foods", name="B&E Foods", venue=Venue.STOWAWAY):
                    invoice_date=None, total_incl=Decimal(total), lines=lines, venue=venue)
 
 
-def test_bill_is_draft_and_inclusive():
+def test_bill_posts_to_ledger_inclusive():
+    from modules.invoices.xero_push import XERO_BILL_STATUS
     payload, total, _ = build_bill(_inv([_line("CHICKEN 5KG", "50.00")], "50.00"))
-    assert payload["Type"] == "ACCPAY" and payload["Status"] == "DRAFT"
+    assert payload["Type"] == "ACCPAY" and payload["Status"] == XERO_BILL_STATUS
+    assert payload["Status"] in ("AUTHORISED", "SUBMITTED", "DRAFT")
     assert payload["LineAmountTypes"] == "Inclusive"
 
 

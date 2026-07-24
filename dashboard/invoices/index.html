@@ -58,8 +58,8 @@
   <div class="wrap">
     <h1>Invoices to review</h1>
     <p class="sub">Each bill is already read and reconciled to its printed total, and coded
-      per line from your Xero history. Check it, fix anything, Approve — it becomes a
-      <strong>draft</strong> bill in Xero for you to post. Nothing here posts on its own.</p>
+      per line from your Xero history. Check it, fix anything, Approve — it posts into
+      Xero as a bill <strong>awaiting payment</strong>, the same way Dext did. Nothing posts on its own.</p>
     <div id="list"><div class="empty">Loading…</div></div>
   </div>
 </div>
@@ -136,7 +136,7 @@ function render() {
         </div>
         <div class="acts">
           <button class="reject" data-i="${i}">Reject</button>
-          <button class="approve" data-i="${i}">Approve → Xero draft</button>
+          <button class="approve" data-i="${i}">Approve → post to Xero</button>
         </div>
       </div>
     </div>`).join('');
@@ -172,7 +172,7 @@ async function decide(i, decision) {
     });
     QUEUE.splice(i, 1);
     render();
-    toast(decision === 'approve' ? `Approved ${inv.supplier} — drafting in Xero` : `Rejected ${inv.supplier}`);
+    toast(decision === 'approve' ? `Approved ${inv.supplier} — posting to Xero` : `Rejected ${inv.supplier}`);
   } catch (e) {
     card.querySelectorAll('button').forEach(b => b.disabled = false);
     msg.textContent = `Couldn't save: ${e.message}`;

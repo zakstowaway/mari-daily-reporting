@@ -1,14 +1,16 @@
 """
-Turn human-approved invoices into Xero DRAFT bills. Runs on the Mac (where the
-Xero token lives) — the browser only ever writes an approval row to Supabase.
+Turn human-approved invoices into Xero bills. Runs on the Mac (where the Xero
+token lives) — the browser only ever writes an approval row to Supabase.
 
-Reads the invoice_approvals table (status = pending) straight from Supabase via
-its REST API, using the service key that lives ONLY on this machine. For each:
+Bills post at xero_push.XERO_BILL_STATUS (AUTHORISED = Awaiting Payment, matching
+how Dext publishes into this org — no drafts). Reads the invoice_approvals table
+(status = pending) straight from Supabase via its REST API, using the service key
+that lives ONLY on this machine. For each:
   * decision "reject"  -> mark rejected, do nothing in Xero.
-  * decision "approve" -> build the DRAFT from the APPROVED coding (exactly what
+  * decision "approve" -> build the bill from the APPROVED coding (exactly what
     the admin saw/edited), reconcile it to the invoice total (±$0.50), and — only
-    if it balances — create it in Xero as a DRAFT. Idempotent by bill number.
-Each row is patched with the outcome (drafted / rejected / needs_review) and the
+    if it balances — create it in Xero. Idempotent by bill number.
+Each row is patched with the outcome (posted / rejected / needs_review) and the
 Xero invoice id, so the app shows status and re-runs never double-post.
 
 No Pipedream. Supabase is the queue; the Mac is the worker.
@@ -26,7 +28,7 @@ import json
 import sys
 import urllib.parse
 import urllib.request
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
@@ -77,7 +79,7 @@ def _payload(rec: dict) -> tuple[dict, Decimal]:
         lines.append(li)
         total += amt
     payload = {
-        "Type": "ACCPAY", "Status": "DRAFT", "LineAmountTypes": "Inclusive",
+        "Type": "ACCPAY", "Status": xero_push.XERO_BILL_STATUS, "LineAmountTypes": "Inclusive",
         "Contact": {"Name": rec.get("supplier") or rec.get("supplier_key") or "Unknown supplier"},
         "LineItems": lines,
     }
@@ -85,6 +87,13 @@ def _payload(rec: dict) -> tuple[dict, Decimal]:
         payload["InvoiceNumber"] = rec["ref"]
     if rec.get("invoice_date"):
         payload["Date"] = rec["invoice_date"]
+        # AUTHORISED bills (unlike drafts) require a DueDate. Default to 14 days
+        # after the invoice date — a sane trade default; the exact date can be
+        # tweaked in Xero (or refined to each supplier's terms later).
+        try:
+            payload["DueDate"] = (date.fromisoformat(rec["invoice_date"]) + timedelta(days=14)).isoformat()
+        except ValueError:
+            pass
     return payload, total
 
 
@@ -114,11 +123,11 @@ def process(dry_run: bool = False) -> list[dict]:
                 out["note"] = f"ready (dry-run) ${built}"
             elif xero_push.already_exists(access, tenant, xp.api_get,
                                           payload["Contact"]["Name"], rec.get("ref", "")):
-                patch = {"status": "drafted", "note": "already in Xero"}
+                patch = {"status": "posted", "note": "already in Xero"}
             else:
                 resp = xero_push.api_post(access, tenant, "Invoices", {"Invoices": [payload]})
                 created = (resp.get("Invoices") or [{}])[0]
-                patch = {"status": "drafted", "xero_invoice_id": created.get("InvoiceID")}
+                patch = {"status": "posted", "xero_invoice_id": created.get("InvoiceID")}
                 out["xero_invoice_id"] = created.get("InvoiceID")
 
         if patch and not dry_run:
@@ -134,8 +143,8 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     res = process(args.dry_run)
-    done = sum(r["status"] == "drafted" for r in res)
-    print(f"{date.today()}: processed {len(res)} approval(s) — {done} drafted in Xero")
+    done = sum(r["status"] == "posted" for r in res)
+    print(f"{date.today()}: processed {len(res)} approval(s) — {done} posted to Xero")
     for r in res:
         extra = r.get("xero_invoice_id") or r.get("note") or ""
         print(f"  {r['status']:12} {r.get('supplier', '')[:24]:24} {r.get('ref', '')}  {extra}")

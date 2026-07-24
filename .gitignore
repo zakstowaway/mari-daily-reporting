@@ -17,3 +17,5 @@ data/invoice_corpus/
 node_modules/
 package.json
 package-lock.json
+
+xero_approvals.log

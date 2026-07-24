@@ -27,6 +27,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import timedelta as _timedelta
 from decimal import Decimal
 from typing import Optional
 
@@ -34,6 +35,12 @@ sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[2]
 
 from modules.invoices.account_map import suggest_coding  # noqa: E402
 from modules.invoices.models import Invoice, TaxTreatment  # noqa: E402
+
+# Status the app-approved bill lands at in Xero. Verified against how Dext
+# actually publishes into THIS org (July 2026): no drafts — bills post straight
+# to the ledger as AUTHORISED (Awaiting Payment). Change to "SUBMITTED" to keep a
+# second approval in Xero, or "DRAFT" to hold them out of the ledger.
+XERO_BILL_STATUS = "AUTHORISED"
 
 # AU tax types for a purchase (bill). Codes verified against how these bills are
 # actually coded in this org's Xero history: GST-free lines use EXEMPTEXPENSES
@@ -107,13 +114,14 @@ def build_bill(inv: Invoice, coding=None) -> tuple[dict, Decimal, list[str]]:
         "Type": "ACCPAY",
         "Contact": {"Name": inv.supplier_name_raw or inv.supplier_key or "Unknown supplier"},
         "LineAmountTypes": "Inclusive",
-        "Status": "DRAFT",
+        "Status": XERO_BILL_STATUS,
         "LineItems": line_items,
     }
     if inv.invoice_ref:
         payload["InvoiceNumber"] = inv.invoice_ref
     if inv.invoice_date:
         payload["Date"] = inv.invoice_date.isoformat()
+        payload["DueDate"] = (inv.invoice_date + _timedelta(days=14)).isoformat()  # AUTHORISED needs a due date
     if inv.po_refs:
         payload["Reference"] = ", ".join(inv.po_refs)
     if not coding.tracking_option:
