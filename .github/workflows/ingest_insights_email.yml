@@ -1,15 +1,15 @@
 name: Ingest Insights Email
 
-# Free, always-on replacement for the Pipedream sales-email flow. Polls the M365
-# mailbox for the Lightspeed "Daily Sales Auto" emails and fires the same
-# repository_dispatch events the daily pull already consumes. Poll model =
-# self-healing: a late email is caught on the next run; re-runs are no-ops
-# (dedupe on Graph message id, ledger in .ingest/processed.json).
+# Free, always-on replacement for the Pipedream sales-email flow. The three
+# Lightspeed "Daily Sales Auto" emails are routed to a dedicated Gmail; this polls
+# it over IMAP and fires the same repository_dispatch events the daily pull
+# consumes. Poll model self-heals: a late email is caught next run; re-runs are
+# no-ops (only UNSEEN mail is processed, then marked \Seen).
 #
-# AUTH: delegated device-code (NO Azure app reg, NO admin). One-time setup:
-# run scripts/graph_device_login.py locally -> sets GRAPH_REFRESH_TOKEN. See
-# WORKING_HERE.md "Sales email ingestion". Secrets: GRAPH_REFRESH_TOKEN,
-# GH_DISPATCH_PAT (repo scope; also lets us rotate the refresh token secret).
+# Why Gmail not M365: this tenant blocks every self-serve Graph path (app reg is
+# admin-only, user consent disabled, Office client not preauthorised). Gmail +
+# an app password needs no admin. See WORKING_HERE.md "Sales email ingestion".
+# Secrets: GMAIL_ADDRESS, GMAIL_APP_PASSWORD, GH_DISPATCH_PAT.
 
 on:
   schedule:
@@ -20,47 +20,20 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # Serialize so two runs never refresh the rotating token at once.
   group: ingest-insights-email
   cancel-in-progress: false
 
 jobs:
   poll:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: '3.11' }
-
-      - name: Read mailbox + dispatch
+      - name: Read Gmail + dispatch
         env:
-          GRAPH_CLIENT_ID: ${{ secrets.GRAPH_CLIENT_ID }}      # optional; defaults to MS Graph CLI
-          GRAPH_TENANT_ID: ${{ secrets.GRAPH_TENANT_ID }}      # optional; defaults to "organizations"
-          GRAPH_REFRESH_TOKEN: ${{ secrets.GRAPH_REFRESH_TOKEN }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           GH_DISPATCH_PAT: ${{ secrets.GH_DISPATCH_PAT }}
           GH_REPO: ${{ github.repository }}
-          REFRESH_OUT: /tmp/new_refresh_token.txt
         run: python3 scripts/ingest_insights_email.py
-
-      - name: Rotate refresh-token secret (keeps auth alive)
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GH_DISPATCH_PAT }}
-        run: |
-          if [ -s /tmp/new_refresh_token.txt ]; then
-            gh secret set GRAPH_REFRESH_TOKEN --repo "${{ github.repository }}" \
-              < /tmp/new_refresh_token.txt \
-              && echo "rotated GRAPH_REFRESH_TOKEN" \
-              || echo "::warning::could not rotate token (PAT needs Secrets:write); token still valid ~90d"
-          fi
-
-      - name: Commit processed-id ledger
-        if: always()
-        run: |
-          git config user.name "Insights Ingest"
-          git config user.email "hello@stowawaybar.com"
-          git add .ingest/processed.json 2>/dev/null || true
-          git diff --quiet --staged || git commit -m "ingest ledger $(date -u +%FT%TZ)"
-          for i in 1 2 3; do git pull --rebase origin main && git push && break || sleep $((i*5)); done

@@ -62,37 +62,31 @@ through but Stow's 05:30 + Mari's 06:00 didn't — starving the whole group (Mar
 part of HG derive from the Stow export). We do NOT pay $45/mo for an email
 forwarder. Replacement: `.github/workflows/ingest_insights_email.yml` +
 `scripts/ingest_insights_email.py` — a GitHub Action that reads the Insights
-"Daily Sales Auto" emails from the **Microsoft 365 mailbox** (email is on M365:
-MX `stowawaybar-com.mail.protection.outlook.com`) via Graph and fires the SAME
-`{stow,hg,insights}-csv-arrived` dispatches the daily pull already consumes. It
-polls every 20 min in the morning window, so a late email is caught next run and
-re-runs are no-ops (dedupe on Graph message id, ledger in `.ingest/processed.json`).
+"Daily Sales Auto" emails and fires the SAME `{stow,hg,insights}-csv-arrived`
+dispatches the daily pull already consumes. Polls every 20 min in the morning
+window, so a late email is caught next run and re-runs are no-ops (only UNSEEN
+mail is processed, then marked \Seen).
 
-**Auth = delegated device-code — NO Azure app registration, NO tenant admin.**
-Zak's account can't register apps (401), and we won't pay for/maintain an app
-registration. Instead we use Microsoft's first-party public client "Microsoft
-Graph Command Line Tools" and a delegated refresh token that reads the signed-in
-user's OWN mailbox (`/me`). Entra rotates the refresh token, so each run writes
-the fresh one back into the `GRAPH_REFRESH_TOKEN` secret (via `gh secret set`,
-using `GH_DISPATCH_PAT`) — keeping it alive indefinitely. If writeback is skipped
-the token still lasts ~90 days, then just re-run the login script.
+**Why Gmail, not M365.** This tenant blocks every self-serve Microsoft Graph
+path: Zak's account can't register apps (401); user consent is disabled (the
+Graph CLI client hits an admin-approval wall, AADSTS65001-style); and the Office
+public client isn't preauthorised for Graph (AADSTS65002). So we route the three
+Lightspeed schedules to a **dedicated free Gmail** and read THAT over IMAP with a
+Google **app password** — no admin anywhere.
 
 **One-time setup:**
-1. Point the Lightspeed schedules at the mailbox that you'll log in as: Insights →
-   Reports → "Product sales" → Schedules → each Daily auto → add/replace recipient
-   with that M365 address. (Delegated = own mailbox, so the login account and the
-   recipient must match. Any user mailbox works; a human reading it is harmless
-   since dedupe is by message id, not unread state.)
-2. Mint the token (once, on a Mac, signed in as that mailbox):
-   `python3 scripts/graph_device_login.py` → open microsoft.com/devicelogin, enter
-   the code, approve "read your mail". It stores `GRAPH_REFRESH_TOKEN` via `gh`
-   (or prints it to paste into repo Settings → Secrets → Actions).
-3. Repo secrets: `GRAPH_REFRESH_TOKEN` (from step 2) + `GH_DISPATCH_PAT` (PAT with
-   repo scope — fires repository_dispatch AND rotates the token secret). Optional
-   overrides: `GRAPH_CLIENT_ID`, `GRAPH_TENANT_ID` (code defaults are fine).
+1. Create a dedicated Gmail (nobody reads it), e.g. `stowawaysales@gmail.com`.
+   Turn on 2-Step Verification, then generate an **App password**
+   (myaccount.google.com → Security → App passwords) — 16 chars.
+2. Point the three Lightspeed schedules at that Gmail: Insights → Reports →
+   "Product sales" → Schedules → each Daily auto → recipient = the Gmail.
+3. Repo secrets: `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` (the 16-char app password),
+   `GH_DISPATCH_PAT` (PAT with repo scope — fires repository_dispatch).
 
-$0, always-on, no app registration, no admin. Only maintenance is quarterly
-re-login IF the PAT lacks Secrets:write (then auto-rotation is off).
+Dedupe is the IMAP `\Seen` flag (dedicated inbox, so "unseen" is reliable) — no
+token rotation, no ledger. $0, always-on, no admin. Note: M365 IMAP is NOT an
+option here (basic-auth/app-passwords disabled by the tenant) — Gmail is.
+
 
 ## Deploying the dashboard (modularised 2026-07-23 — see dashboard/_shared/README.md)
 

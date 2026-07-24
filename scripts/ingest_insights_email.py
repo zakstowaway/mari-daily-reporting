@@ -1,48 +1,34 @@
 #!/usr/bin/env python3
-"""Free, always-on replacement for the Pipedream sales-email flow.
+"""Free, always-on replacement for the Pipedream sales-email flow (Gmail/IMAP).
 
-Reads the Lightspeed Insights "Daily Sales Auto" emails straight from the
-Microsoft 365 mailbox via the Graph API, and fires the SAME repository_dispatch
-events the daily pull already consumes (stow-csv-arrived / hg-csv-arrived /
-insights-csv-arrived). Drop-in for Pipedream: the whole downstream pipeline
-(Deputy pull, cross-till split, Mari carve, aggregate, commit, deploy) is
-unchanged. Runs in GitHub Actions on a morning schedule.
+Microsoft 365 in this tenant blocks every self-serve API path (app registration
+is admin-only; user consent is disabled; the Office client isn't preauthorised).
+So instead of reading M365 we route the three Lightspeed "Daily Sales Auto"
+emails to a dedicated free Gmail and read THAT over IMAP with a Google app
+password - no admin anywhere, always-on, $0.
 
-Cost: $0. Uses Microsoft 365 (already paid) + GitHub Actions minutes.
+It fires the SAME repository_dispatch events the daily pull already consumes
+(stow-csv-arrived / hg-csv-arrived / insights-csv-arrived), so the whole
+downstream pipeline is unchanged. Runs in GitHub Actions on a morning schedule.
 
-AUTH — delegated device-code (NO Azure app registration, NO tenant admin).
-We use Microsoft's first-party public client "Microsoft Graph Command Line
-Tools" and a long-lived refresh token minted once by scripts/graph_device_login.py
-(run by a human, consenting to read their OWN mailbox). Each run swaps the
-refresh token for an access token, reads /me mail, and — because Entra rotates
-refresh tokens — writes the fresh refresh token to REFRESH_OUT so the workflow
-can push it back into the GRAPH_REFRESH_TOKEN secret. That keeps it alive
-indefinitely; if writeback is skipped the token still lasts ~90 days.
+Dedupe: only UNSEEN inbox mail is processed, then marked \\Seen - so re-runs are
+no-ops and a late email is caught next run. Uses a dedicated Gmail nobody reads,
+so "unseen" is reliable.
 
 Env:
-    GRAPH_CLIENT_ID     public client id (default = MS Graph CLI, 14d82eec-...)
-    GRAPH_TENANT_ID     tenant id or "organizations" (default "organizations")
-    GRAPH_REFRESH_TOKEN the delegated refresh token (from graph_device_login.py)
-    GH_DISPATCH_PAT     PAT with repo scope (fires repository_dispatch)
-    GH_REPO             owner/repo (default zakstowaway/mari-daily-reporting)
-    REFRESH_OUT         path to write the rotated refresh token (default /tmp/new_refresh_token.txt)
-    STATE_FILE          processed-id ledger (default .ingest/processed.json)
-
-Read-only (Mail.Read) so we can't mark mail read; instead we dedupe on Graph
-message id in STATE_FILE (committed by the workflow). Poll model self-heals: a
-late email is caught on the next run; re-runs are no-ops.
+    GMAIL_ADDRESS        the dedicated Gmail the sales emails are routed to
+    GMAIL_APP_PASSWORD   a Google App Password (16 chars; needs 2-Step Verification)
+    GH_DISPATCH_PAT      PAT with repo scope (fires repository_dispatch)
+    GH_REPO              owner/repo (default zakstowaway/mari-daily-reporting)
 """
-import base64, json, os, re, sys, urllib.parse, urllib.request, urllib.error
+import base64, email, imaplib, json, os, re, sys, urllib.request
+from email.utils import parsedate_to_datetime
 from datetime import datetime, timedelta, timezone
 
-CLIENT = os.environ.get("GRAPH_CLIENT_ID", "d3590ed6-52b3-4102-aeff-aad2292ab01c")
-TENANT = os.environ.get("GRAPH_TENANT_ID", "organizations")
-REFRESH = os.environ["GRAPH_REFRESH_TOKEN"]
+GMAIL = os.environ["GMAIL_ADDRESS"]
+APP_PW = os.environ["GMAIL_APP_PASSWORD"].replace(" ", "")   # Google prints it space-separated
 PAT = os.environ["GH_DISPATCH_PAT"]
 REPO = os.environ.get("GH_REPO", "zakstowaway/mari-daily-reporting")
-REFRESH_OUT = os.environ.get("REFRESH_OUT", "/tmp/new_refresh_token.txt")
-STATE_FILE = os.environ.get("STATE_FILE", ".ingest/processed.json")
-SCOPE = "offline_access Mail.Read"
 SYD = timezone(timedelta(hours=10))   # AEST (fine for date-stamping)
 
 # Subject -> (dispatch event, venue). The three daily CSV auto-exports.
@@ -53,34 +39,6 @@ SUBJECT_MAP = [
 ]
 
 
-def refresh_access_token():
-    """Swap the refresh token for an access token; persist the rotated refresh
-    token (Entra returns a new one) so the next run stays authenticated."""
-    body = urllib.parse.urlencode({
-        "client_id": CLIENT, "grant_type": "refresh_token",
-        "refresh_token": REFRESH, "scope": SCOPE}).encode()
-    r = urllib.request.Request(
-        f"https://login.microsoftonline.com/{TENANT}/oauth2/v2.0/token", data=body)
-    tok = json.loads(urllib.request.urlopen(r, timeout=30).read())
-    new_rt = tok.get("refresh_token")
-    if new_rt and new_rt != REFRESH:
-        try:
-            with open(REFRESH_OUT, "w") as f:
-                f.write(new_rt)
-            print(f"  rotated refresh token -> {REFRESH_OUT}")
-        except Exception as e:
-            print(f"  WARN could not write rotated token: {e}")
-    return tok["access_token"]
-
-
-def graph(tok, path):
-    req = urllib.request.Request("https://graph.microsoft.com/v1.0" + path,
-        headers={"Authorization": f"Bearer {tok}"})
-    with urllib.request.urlopen(req, timeout=45) as resp:
-        raw = resp.read()
-        return json.loads(raw) if raw else {}
-
-
 def classify(subject):
     for rx, out in SUBJECT_MAP:
         if rx.search(subject or ""):
@@ -88,67 +46,68 @@ def classify(subject):
     return None
 
 
-def dispatch(event, venue, csv_b64, target_date):
+def find_attachment_b64(msg):
+    """Return base64 str of the first .zip/.csv attachment (raw file bytes)."""
+    for part in msg.walk():
+        fn = part.get_filename() or ""
+        if fn.lower().endswith((".zip", ".csv")):
+            raw = part.get_payload(decode=True)
+            if raw:
+                return base64.b64encode(raw).decode()
+    return None
+
+
+def target_date(msg):
+    try:
+        dt = parsedate_to_datetime(msg.get("Date"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+    except Exception:
+        dt = datetime.now(timezone.utc)
+    return (dt.astimezone(SYD) - timedelta(days=1)).strftime("%Y-%m-%d")   # report = "Yesterday"
+
+
+def dispatch(event, venue, csv_b64, tdate):
     payload = {"event_type": event,
                "client_payload": {"venue": venue, "csv_base64": csv_b64,
-                                  "target_date": target_date, "source": "m365-device-poller"}}
+                                  "target_date": tdate, "source": "gmail-imap-poller"}}
     req = urllib.request.Request(f"https://api.github.com/repos/{REPO}/dispatches",
         data=json.dumps(payload).encode(),
         headers={"Authorization": f"token {PAT}", "Accept": "application/vnd.github+json"})
     urllib.request.urlopen(req, timeout=30)
 
 
-def load_state():
-    try:
-        return json.load(open(STATE_FILE))
-    except Exception:
-        return {}
-
-
-def save_state(state):
-    # prune ids older than 7 days so the ledger stays small
-    cut = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
-    state = {k: v for k, v in state.items() if v >= cut}
-    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
-    json.dump(state, open(STATE_FILE, "w"), indent=0, sort_keys=True)
-
-
 def main():
-    tok = refresh_access_token()
-    state = load_state()
-    # Own mailbox (delegated /me), attachments, last 2 days, newest first. Subject
-    # is filtered in code (Graph $filter has no 'contains' on subject).
-    since = (datetime.now(timezone.utc) - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    q = ("/me/mailFolders/inbox/messages?"
-         f"$filter=hasAttachments eq true and receivedDateTime ge {since}"
-         "&$select=id,subject,receivedDateTime&$orderby=receivedDateTime desc&$top=50")
-    msgs = graph(tok, q).get("value", [])
-    fired = 0
-    for m in msgs:
-        if m["id"] in state:
+    M = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+    M.login(GMAIL, APP_PW)
+    M.select("INBOX")
+    typ, data = M.search(None, "UNSEEN")
+    ids = data[0].split() if data and data[0] else []
+    fired = scanned = 0
+    for num in ids:
+        typ, md = M.fetch(num, "(RFC822)")
+        if typ != "OK" or not md or not md[0]:
             continue
-        cl = classify(m.get("subject", ""))
+        msg = email.message_from_bytes(md[0][1])
+        scanned += 1
+        cl = classify(msg.get("Subject", ""))
         if not cl:
             continue
         event, venue = cl
-        rcv = datetime.fromisoformat(m["receivedDateTime"].replace("Z", "+00:00")).astimezone(SYD)
-        target = (rcv - timedelta(days=1)).strftime("%Y-%m-%d")   # report filter = "Yesterday"
-        atts = graph(tok, f"/me/messages/{m['id']}/attachments"
-                          "?$select=name,contentType,contentBytes").get("value", [])
-        att = next((a for a in atts if (a.get("name") or "").lower().endswith((".zip", ".csv"))), None)
-        if not att or not att.get("contentBytes"):
-            print(f"  skip '{m['subject']}' - no csv/zip attachment")
+        b64 = find_attachment_b64(msg)
+        if not b64:
+            print(f"  skip '{msg.get('Subject')}' - no csv/zip attachment")
             continue
-        dispatch(event, venue, att["contentBytes"], target)
-        state[m["id"]] = m["receivedDateTime"]
+        dispatch(event, venue, b64, target_date(msg))
+        M.store(num, "+FLAGS", "\\Seen")
         fired += 1
-        print(f"  dispatched {event} ({venue}) for {target} from '{m['subject']}'")
-    save_state(state)
-    print(f"done - {fired} Insights email(s) ingested, {len(msgs)} recent w/attachment scanned")
+        print(f"  dispatched {event} ({venue}) for {target_date(msg)} from '{msg.get('Subject')}'")
+    M.logout()
+    print(f"done - {fired} Insights email(s) ingested, {scanned} unseen scanned")
 
 
 if __name__ == "__main__":
     try:
         main()
-    except urllib.error.HTTPError as e:
-        print("HTTP", e.code, e.read().decode()[:400]); sys.exit(1)
+    except Exception as e:
+        print("ERROR:", type(e).__name__, str(e)[:300]); sys.exit(1)
