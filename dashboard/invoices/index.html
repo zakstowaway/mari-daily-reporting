@@ -27,12 +27,17 @@
   .tag{font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--grey);color:#fff;text-transform:uppercase;letter-spacing:.04em}
   .tag.review{background:var(--amber)} .tag.pass{background:var(--green)}
   .tag.low{background:var(--amber)} .tag.medium{background:var(--grey)} .tag.high{background:var(--green)}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);text-align:left;padding:8px 15px;font-weight:600}
-  td{padding:6px 15px;border-top:1px solid var(--line);vertical-align:middle}
-  td.amt{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
-  td.desc{max-width:340px}
-  select{padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12.5px;max-width:230px}
+  /* fixed layout so Qty / Account / Amount line up across every invoice card */
+  table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+  col.c-qty{width:66px} col.c-acct{width:288px} col.c-amt{width:124px}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);text-align:left;padding:9px 16px;font-weight:600}
+  th.r{text-align:right}
+  td{padding:8px 16px;border-top:1px solid var(--line);vertical-align:middle}
+  td.qty{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  td.amt{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:500}
+  td.desc{line-height:1.35;word-break:break-word}
+  tbody tr:hover{background:color-mix(in srgb, var(--paper) 90%, var(--ink) 4%)}
+  select{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:12.5px;width:100%;cursor:pointer}
   .taxpill{font-size:10px;color:var(--ink-soft)}
   .inv-ft{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid var(--line);background:var(--bg)}
   .venue{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft)}
@@ -118,13 +123,14 @@ function render() {
         <div class="total">$${esc(inv.total)}</div>
       </div>
       <table>
-        <thead><tr><th>Line</th><th style="text-align:right">Qty</th><th>Account</th><th style="text-align:right">Amount</th></tr></thead>
+        <colgroup><col><col class="c-qty"><col class="c-acct"><col class="c-amt"></colgroup>
+        <thead><tr><th>Line</th><th class="r">Qty</th><th>Account</th><th class="r">Amount</th></tr></thead>
         <tbody>
         ${inv.lines.map((l, j) => `
           <tr>
             <td class="desc">${esc(l.description)}
               <span class="taxpill">· ${l.tax==='gst'?'GST':'GST-free'}</span></td>
-            <td class="amt">${fmtQty(l.qty)}</td>
+            <td class="qty">${fmtQty(l.qty)}</td>
             <td><select class="acct" data-i="${i}" data-j="${j}">${acctOpt(l.account_code)}</select></td>
             <td class="amt">$${esc(l.amount)}</td>
           </tr>`).join('')}
