@@ -39,6 +39,19 @@ Pipedream → `repository_dispatch` with `csv_base64`). There is NO sales API pu
    `workflow_dispatch daily_pull.yml {venue:"marilynas", target_date:"<d>"}`.
    (The stow-csv-arrived run does NOT re-aggregate Mari automatically.)
 
+**The Stow export is a SINGLE POINT OF FAILURE for the whole group.** Sales flow:
+Lightspeed scheduled "Sales by Product" email → a Pipedream workflow (NOT in this
+repo; separate from `pipedream/uber_direct_ingest.js`) → `repository_dispatch`
+(`stow-csv-arrived` / `hg-csv-arrived` / `insights-csv-arrived`=mari). Pipedream
+works when an email arrives (HG's fired 2026-07-23); when Stow's doesn't fire,
+Mari + part of HG starve too. 2026-07-24: only HG's email came for 23 Jul, so the
+Group showed HG-only ($1,685) until I hand-pulled Stow and ingested it. If a day
+looks wrong/partial, FIRST check whether the Stow export landed
+(`ls data/insights_stow_<date>.csv`); the dashboard now also flags venues
+"awaiting import" on the group day view. Root cause when Stow's is missing is
+upstream (Lightspeed schedule disabled, or email not reaching Pipedream) — not
+the aggregator.
+
 **Closed-week wages/leave = Xero** (Mac-only pull; leave from payslip
 LeaveEarningsLines). Owners (Oliver, Bryony) = corp payroll, never on Deputy/venue lines.
 
@@ -151,8 +164,17 @@ fortnight is the only way approvals ever land.
 
 Refresh the Xero side on the Mac (the token rotates, so Actions would burn it):
 
-    python3 scripts/pull_xero_pay_weekly.py     # -> data/xero_pay_weekly.json
+    python3 scripts/pull_xero_pay_weekly.py     # -> xero_pay_weekly.json + xero_super_weekly.json + xero_leave_weekly.json
     # then dispatch the Employee Map + Rebuild Wages workflows
+
+**Closed-week LEAVE (added 2026-07-24).** `pull_xero_pay_weekly.py` now also writes
+`data/xero_leave_weekly.json` from each payslip's LeaveEarningsLines (endpoint is
+`/Payslip/{id}` SINGULAR, wrapped in `"Payslip"`; leave $ = NumberOfUnits x
+RatePerUnit — there is no Amount field). `rebuild_wages.py` splits that leave OUT
+of the venue wage line into `leave_dollars` on the register's leave days, so
+"operational wages" excludes leave and the group leave toggle shows what payroll
+paid. It is INERT until `xero_leave_weekly.json` exists (no change to any number).
+The dashboard's leave figure is $0 until you run the Xero pull for those weeks.
 
 **Do not** use `backfill_wages_deputy.py` or `backfill_dept_split.py` — both are
 deprecated and exit immediately. They cost salaried staff at hours x rate.
