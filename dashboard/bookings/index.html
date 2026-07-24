@@ -118,9 +118,28 @@
     <div id="main" style="display:none">
       <div class="events" id="events"></div>
       <div class="bar">
+        <button id="addbtn">+ New booking</button>
         <button class="ghost" id="runsheetbtn">Runsheet PDF</button>
         <span id="status"></span>
       </div>
+
+      <div class="section" id="addbox" style="display:none;margin:0 0 18px">
+        <h2>New booking <span style="font-weight:normal;color:var(--ink-soft)">— phone / staff entry</span></h2>
+        <div class="bar">
+          <div><label>Sitting</label><select id="nb_time"></select></div>
+          <div><label>Name</label><input id="nb_name"></div>
+          <div><label>Phone</label><input id="nb_phone" type="tel"></div>
+          <div><label>Email (optional)</label><input id="nb_email" type="email"></div>
+          <div><label>Adults</label><input id="nb_adults" type="number" min="1" max="12" value="2" style="width:70px"></div>
+          <div><label>Kids</label><input id="nb_kids" type="number" min="0" max="8" value="0" style="width:70px"></div>
+          <div><label>Babies</label><input id="nb_babies" type="number" min="0" max="4" value="0" style="width:70px"></div>
+          <div><label>Dogs</label><input id="nb_dogs" type="number" min="0" max="3" value="0" style="width:70px"></div>
+          <div style="flex:1;min-width:180px"><label>Notes</label><input id="nb_notes" style="width:100%"></div>
+          <button id="savenewbtn">Book it</button>
+          <button class="ghost" id="closenewbtn">Close</button>
+        </div>
+      </div>
+
       <div id="daywrap"></div>
 
       <div class="section" id="editbox" style="display:none">
@@ -141,6 +160,6 @@
   </div>
 </div>
 
-<script type="module" src="./bookings.js?v=20260724a"></script>
+<script type="module" src="./bookings.js?v=20260725a"></script>
 </body>
 </html>

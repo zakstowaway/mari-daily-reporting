@@ -42,7 +42,7 @@ function fmtBooked(iso) {
 }
 
 // ---------------------------------------------------------------- rendering
-const T12 = (t) => t.replace('12:00', '12pm').replace('14:00', '2pm');
+const T12 = (t) => t.replace('12:00', '12pm').replace('14:00', '2pm').replace('19:00', '7pm');
 
 function rowHtml(b) {
   const covers = b.adults + b.kids;
@@ -212,6 +212,45 @@ async function saveEdit() {
   } catch (e) { $('status').textContent = 'edit refused: ' + e.message; }
 }
 
+// New booking (phone/staff entry). Goes to the ADMIN create endpoint: works
+// inside the 24h guest cutoff and email is optional — but the seating solver
+// still has the final say, so an impossible party is refused with a reason.
+function openAdd() {
+  $('nb_time').innerHTML = ((DAY && DAY.sittings) || SEL.sittings || []).map(t =>
+    `<option value="${t}">${T12(t)}</option>`).join('');
+  ['nb_name', 'nb_phone', 'nb_email', 'nb_notes'].forEach(id => { $(id).value = ''; });
+  $('nb_adults').value = 2; $('nb_kids').value = 0;
+  $('nb_babies').value = 0; $('nb_dogs').value = 0;
+  $('editbox').style.display = 'none';
+  $('addbox').style.display = 'block';
+  $('addbox').scrollIntoView({ behavior: 'smooth' });
+  $('nb_name').focus();
+}
+
+async function saveNew() {
+  if (!$('nb_name').value.trim()) { $('status').textContent = 'name is required'; return; }
+  if (($('nb_phone').value || '').replace(/\D/g, '').length < 8) {
+    $('status').textContent = 'phone number looks too short'; return;
+  }
+  try {
+    const r = await (await call('/api/admin/bookings', {
+      method: 'POST',
+      body: JSON.stringify({
+        date: SEL.date, time: $('nb_time').value,
+        name: $('nb_name').value.trim(),
+        phone: $('nb_phone').value.trim(),
+        email: $('nb_email').value.trim() || null,
+        adults: +$('nb_adults').value, kids: +$('nb_kids').value,
+        babies: +$('nb_babies').value, dogs: +$('nb_dogs').value,
+        notes: $('nb_notes').value,
+      }),
+    })).json();
+    $('addbox').style.display = 'none';
+    $('status').textContent = `booked — ${r.covers} pax at ${T12(r.time)}`;
+    loadDay();
+  } catch (e) { $('status').textContent = 'booking refused: ' + e.message; }
+}
+
 async function downloadRunsheet() {
   const r = await call(`/api/admin/day/${SEL.date}/runsheet`);
   const a = document.createElement('a');
@@ -233,6 +272,8 @@ function niceDate(iso) {
 
 function selectEvent(ev, card) {
   SEL = ev;
+  $('addbox').style.display = 'none';
+  $('editbox').style.display = 'none';
   document.querySelectorAll('.event-card').forEach(c => c.classList.remove('sel'));
   if (card) card.classList.add('sel');
   loadDay();
@@ -279,6 +320,9 @@ Auth.gate($('gate'), {
       localStorage.setItem(TOKEN_KEY, $('svc_token').value.trim());
       init();
     });
+    $('addbtn').addEventListener('click', openAdd);
+    $('savenewbtn').addEventListener('click', saveNew);
+    $('closenewbtn').addEventListener('click', () => { $('addbox').style.display = 'none'; });
     $('runsheetbtn').addEventListener('click', downloadRunsheet);
     $('saveeditbtn').addEventListener('click', saveEdit);
     $('closeeditbtn').addEventListener('click', () => { $('editbox').style.display = 'none'; });
