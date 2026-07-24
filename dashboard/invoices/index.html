@@ -92,8 +92,9 @@ Auth.gate(document.getElementById('gate'), {
     document.getElementById('app').style.display = '';
     document.getElementById('who').textContent = user.name;
     const [q, a, decided] = await Promise.all([
-      fetch('/invoices/queue.json').then(r=>r.json()).catch(()=>({invoices:[]})),
-      fetch('/invoices/accounts.json').then(r=>r.json()).catch(()=>({accounts:[],tracking:[]})),
+      // queue changes on every ingest — never serve a stale copy
+      fetch('/invoices/queue.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>({invoices:[]})),
+      fetch('/invoices/accounts.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>({accounts:[],tracking:[]})),
       // tolerate an older cached auth.js that predates decidedRefs — never hang
       (Auth.decidedRefs ? Auth.decidedRefs() : Promise.resolve([])).catch(()=>[]),
     ]);
