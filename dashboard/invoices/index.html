@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Invoices · Stowaway Hospitality Group</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/_shared/tokens.css?v=20260719b">
+<!--
+  Invoice review — the Dext replacement's approve step. Admin-only.
+
+  Each invoice arrives already read (parser or LLM), reconciled to its printed
+  total, and coded per line (account + venue) from Xero history. A human checks
+  it, adjusts anything, and Approves. Approval goes to the worker (verifies
+  admin), which records the decision; the Mac side turns approvals into DRAFT
+  bills in Xero. Nothing posts to Xero from this page, and nothing is ever
+  auto-approved — every bill needs this click.
+-->
+<style>
+  .wrap{max-width:1080px}
+  .sub{color:var(--ink-soft);font-size:13px;margin:-4px 0 18px}
+  .inv{border:1px solid var(--line);border-radius:12px;background:var(--paper);margin-bottom:14px;overflow:hidden}
+  .inv-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}
+  .inv-hd h3{margin:0;font-size:15px}
+  .inv-hd .meta{color:var(--ink-soft);font-size:12px;margin-top:3px}
+  .inv-hd .total{font-size:18px;font-weight:600;white-space:nowrap}
+  .tag{font-size:10.5px;padding:1px 7px;border-radius:99px;background:var(--grey);color:#fff;text-transform:uppercase;letter-spacing:.04em}
+  .tag.review{background:var(--amber)} .tag.pass{background:var(--green)}
+  .tag.low{background:var(--amber)} .tag.medium{background:var(--grey)} .tag.high{background:var(--green)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);text-align:left;padding:8px 15px;font-weight:600}
+  td{padding:6px 15px;border-top:1px solid var(--line);vertical-align:middle}
+  td.amt{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  td.desc{max-width:340px}
+  select{padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink);font-size:12.5px;max-width:230px}
+  .taxpill{font-size:10px;color:var(--ink-soft)}
+  .inv-ft{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid var(--line);background:var(--bg)}
+  .venue{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-soft)}
+  .acts{display:flex;gap:8px}
+  button.approve{background:var(--green);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:600;cursor:pointer}
+  button.reject{background:transparent;color:var(--ink-soft);border:1px solid var(--line);padding:9px 14px;border-radius:8px;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  .empty{text-align:center;color:var(--ink-soft);padding:60px 20px}
+  .empty .big{font-size:15px;color:var(--ink);margin-bottom:6px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+         padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+  .toast.show{opacity:1}
+  .rowmsg{font-size:12px;color:var(--red);padding:0 15px 10px}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+<div id="app" style="display:none">
+  <header class="app-header"><div class="app-header-inner">
+    <a class="brand-row" href="/"><img src="/logo_512.png" alt=""><span class="group-brand">Stowaway Hospitality Group</span></a>
+    <div class="who"><span id="who"></span><a href="/">home</a></div>
+  </div></header>
+  <div class="wrap">
+    <h1>Invoices to review</h1>
+    <p class="sub">Each bill is already read and reconciled to its printed total, and coded
+      per line from your Xero history. Check it, fix anything, Approve — it becomes a
+      <strong>draft</strong> bill in Xero for you to post. Nothing here posts on its own.</p>
+    <div id="list"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { Auth } from '/_shared/auth.js';
+
+let ACCOUNTS = [], TRACKING = [], QUEUE = [];
+
+Auth.gate(document.getElementById('gate'), {
+  roles: ['admin'],                       // invoices are admin-only
+  onOk: async (user) => {
+    document.getElementById('app').style.display = '';
+    document.getElementById('who').textContent = user.name;
+    const [q, a] = await Promise.all([
+      fetch('/invoices/queue.json').then(r=>r.json()).catch(()=>({invoices:[]})),
+      fetch('/invoices/accounts.json').then(r=>r.json()).catch(()=>({accounts:[],tracking:[]})),
+    ]);
+    ACCOUNTS = a.accounts || []; TRACKING = a.tracking || []; QUEUE = q.invoices || [];
+    render();
+  },
+});
+
+const trackingOptions = () => {
+  // Flatten every tracking category's options into "Category / Option".
+  const out = [];
+  for (const c of TRACKING) for (const o of (c.options||[])) out.push({ cat: c.name, opt: o });
+  return out;
+};
+const acctOpt = (sel) => ACCOUNTS.map(a =>
+  `<option value="${a.code}" ${a.code===sel?'selected':''}>${a.code} · ${a.name}</option>`).join('');
+const venueOpt = (selCat, selOpt) => trackingOptions().map(t =>
+  `<option value="${t.cat}|${t.opt}" ${t.cat===selCat&&t.opt===selOpt?'selected':''}>${t.opt}</option>`).join('');
+const esc = (s) => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render() {
+  const el = document.getElementById('list');
+  if (!QUEUE.length) {
+    el.innerHTML = `<div class="empty"><div class="big">All clear 🎉</div>
+      No invoices waiting. New ones appear here as they come in.</div>`;
+    return;
+  }
+  el.innerHTML = QUEUE.map((inv, i) => `
+    <div class="inv" data-i="${i}">
+      <div class="inv-hd">
+        <div>
+          <h3>${esc(inv.supplier)} <span class="tag ${inv.status}">${inv.status}</span></h3>
+          <div class="meta">Bill ${esc(inv.ref)} · ${esc(inv.date||'—')} · ${inv.lines.length} lines</div>
+        </div>
+        <div class="total">$${esc(inv.total)}</div>
+      </div>
+      <table>
+        <thead><tr><th>Line</th><th>Account</th><th style="text-align:right">Amount</th></tr></thead>
+        <tbody>
+        ${inv.lines.map((l, j) => `
+          <tr>
+            <td class="desc">${esc(l.description)}
+              <span class="taxpill">· ${l.tax==='gst'?'GST':'GST-free'}</span></td>
+            <td><select class="acct" data-i="${i}" data-j="${j}">${acctOpt(l.account_code)}</select></td>
+            <td class="amt">$${esc(l.amount)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="rowmsg" id="msg-${i}"></div>
+      <div class="inv-ft">
+        <div class="venue">Venue
+          <select class="venue-sel" data-i="${i}">${venueOpt(inv.tracking_category, inv.tracking_option)}</select>
+          <span class="tag ${inv.tracking_confidence}">${inv.tracking_confidence}</span>
+        </div>
+        <div class="acts">
+          <button class="reject" data-i="${i}">Reject</button>
+          <button class="approve" data-i="${i}">Approve → Xero draft</button>
+        </div>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('.approve').forEach(b => b.onclick = () => decide(+b.dataset.i, 'approve'));
+  el.querySelectorAll('.reject').forEach(b => b.onclick = () => decide(+b.dataset.i, 'reject'));
+}
+
+function toast(t) {
+  const el = document.getElementById('toast');
+  el.textContent = t; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+async function decide(i, decision) {
+  const inv = QUEUE[i];
+  const card = document.querySelector(`.inv[data-i="${i}"]`);
+  const msg = document.getElementById(`msg-${i}`);
+  card.querySelectorAll('button').forEach(b => b.disabled = true);
+  msg.textContent = '';
+  // gather final coding from the (possibly edited) dropdowns
+  const [cat, opt] = (card.querySelector('.venue-sel').value || '|').split('|');
+  const lines = inv.lines.map((l, j) => ({
+    description: l.description, amount: l.amount, tax: l.tax,
+    account_code: card.querySelector(`.acct[data-i="${i}"][data-j="${j}"]`).value,
+  }));
+  const me = await Auth.current();
+  try {
+    await Auth.decideInvoice({
+      ref: inv.ref, supplier: inv.supplier, supplier_key: inv.supplier_key,
+      date: inv.date, total: inv.total,
+      decision, tracking_category: cat, tracking_option: opt,
+      lines, approver: me?.name || me?.email,
+    });
+    QUEUE.splice(i, 1);
+    render();
+    toast(decision === 'approve' ? `Approved ${inv.supplier} — drafting in Xero` : `Rejected ${inv.supplier}`);
+  } catch (e) {
+    card.querySelectorAll('button').forEach(b => b.disabled = false);
+    msg.textContent = `Couldn't save: ${e.message}`;
+  }
+}
+</script>
+</body>
+</html>

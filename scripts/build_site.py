@@ -41,6 +41,7 @@ LAYOUT: list[tuple[str, str]] = [
     ("dashboard/home",         ""),          # the app HOME (sign in here) -> /
     ("dashboard/sales",        "sales"),     # the daily-reporting dashboard -> /sales/
     ("dashboard/admin",        "admin"),     # -> /admin/ (admin only)
+    ("dashboard/invoices",     "invoices"),  # -> /invoices/ (admin only) — Xero review queue
     ("dashboard/bookings",     "bookings"),  # -> /bookings/ (admin only)
     ("modules/recipes/app",    "recipes"),   # -> /recipes/
     ("data",                   "data"),      # feeds -> /data/

@@ -146,6 +146,47 @@ export default defineComponent({
       }
     }
 
+    // ── /invoice/approve — admin records a bill decision ───────────────────
+    // Writes data/invoice_approvals/<ref>.json (final coding + approver). The
+    // Mac side reads these and creates the DRAFT bill in Xero — no Xero creds
+    // live here. Admin only; nothing here posts to Xero.
+    if (path.endsWith("/invoice/approve")) {
+      if (role !== "admin") return reply(403, { error: "Admins only" });
+      const ref = String(body.ref || "").trim();
+      if (!ref) return reply(400, { error: "ref required" });
+      if (!["approve", "reject"].includes(body.decision)) return reply(400, { error: "bad decision" });
+      const safeRef = ref.replace(/[^A-Za-z0-9._-]/g, "_");
+      const ghToken = this.github.$auth.oauth_access_token;
+      const ghReq = (method, url, payload) =>
+        fetch(`https://api.github.com/repos/${REPO}/${url}`, {
+          method,
+          headers: {
+            authorization: `Bearer ${ghToken}`, accept: "application/vnd.github+json",
+            "user-agent": "shg-auth", ...(payload ? { "content-type": "application/json" } : {}),
+          },
+          ...(payload ? { body: JSON.stringify(payload) } : {}),
+        });
+      const record = {
+        ref, supplier: body.supplier || "", supplier_key: body.supplier_key || "",
+        date: body.date || null, total: body.total || null,
+        decision: body.decision, tracking_category: body.tracking_category || null,
+        tracking_option: body.tracking_option || null, lines: body.lines || [],
+        approver: body.approver || name, approver_email: user.email,
+        decided_at: new Date().toISOString(), status: "pending",
+      };
+      const path_ = `data/invoice_approvals/${safeRef}.json`;
+      let sha;
+      const ex = await ghReq("GET", `contents/${path_}`);
+      if (ex.ok) sha = (await ex.json()).sha;
+      const put = await ghReq("PUT", `contents/${path_}`, {
+        message: `Invoice ${body.decision}: ${record.supplier} ${ref} — ${name}`,
+        content: Buffer.from(JSON.stringify(record, null, 2), "utf8").toString("base64"),
+        author: { name, email: user.email }, ...(sha ? { sha } : {}),
+      });
+      if (!put.ok) return reply(502, { error: `GitHub ${put.status}`, detail: await put.text() });
+      return reply(200, { ok: true, ref, decision: body.decision });
+    }
+
     // ── repo writes — kitchen role, committed AS the person ────────────────
     // Both /recipes and /prep append to a YAML file and commit under the
     // signed-in user's name. One helper, so the GitHub plumbing lives once.

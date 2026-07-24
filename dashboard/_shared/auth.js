@@ -322,10 +322,26 @@ export const Auth = (() => {
   const inviteUser = (email, role, venue, employee) => adminCall("invite", { email, role, venue, employee });
   const setUserRole = (email, role, venue, employee) => adminCall("role", { email, role, venue, employee });
 
+  // Non-/admin worker route (invoice approvals). Same token-verify pattern; the
+  // worker records the admin's decision + final coding to the repo, and the Mac
+  // side turns approvals into Xero drafts. The service key isn't involved.
+  async function workerCall(path, body) {
+    const token = requireToken();
+    const r = await fetch(`${WORKER_URL}${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${token}` },
+      body: JSON.stringify(body || {}),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+    return j;
+  }
+  const decideInvoice = (rec) => workerCall("/invoice/approve", rec);
+
   return {
     login, signUp, forgotPassword, completePasswordReset, logout,
     current, requireToken, canWrite, hasRole, gate, KITCHEN_ROLES,
     configured, SUPABASE_URL,
-    listUsers, inviteUser, setUserRole,
+    listUsers, inviteUser, setUserRole, decideInvoice,
   };
 })();

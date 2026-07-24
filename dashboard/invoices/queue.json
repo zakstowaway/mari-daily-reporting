@@ -1,0 +1,469 @@
+{
+  "generated": "2026-07-24",
+  "count": 8,
+  "invoices": [
+    {
+      "ref": "CI-371746",
+      "supplier": "Gulli Food Distributors Pty Ltd",
+      "supplier_key": "gulli",
+      "date": "2026-04-07",
+      "total": "500.11",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Kitchen",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "Paesanella- Bocconcini 1kg",
+          "qty": "2.000",
+          "amount": "38.70",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "B Flute Lock Top 11\" Pizza Boxes x 50",
+          "qty": "2.000",
+          "amount": "48.19",
+          "tax": "gst",
+          "account_code": "117",
+          "account_name": "Purchases - Packaging",
+          "reason": "line keyword -> Purchases - Packaging"
+        },
+        {
+          "description": "B Flute Lock Top 13\" Pizza Boxes x 50",
+          "qty": "2.000",
+          "amount": "64.24",
+          "tax": "gst",
+          "account_code": "117",
+          "account_name": "Purchases - Packaging",
+          "reason": "line keyword -> Purchases - Packaging"
+        },
+        {
+          "description": "Zammit- Sliced Pepperoni Salami 3kg",
+          "qty": "3.000",
+          "amount": "169.90",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Big Cheese- Shredded Mozzarella 2kg",
+          "qty": "6.000",
+          "amount": "147.98",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Sharwood- Tandoori Paste 1.25kg",
+          "qty": "1.000",
+          "amount": "31.10",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        }
+      ]
+    },
+    {
+      "ref": "03717769",
+      "supplier": "Independent Liquor Group",
+      "supplier_key": "ilg",
+      "date": "2026-06-23",
+      "total": "759.85",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Bar",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "SAPPORO KEG 50LT",
+          "qty": "2",
+          "amount": "759.85",
+          "tax": "gst",
+          "account_code": "113",
+          "account_name": "Purchases - Beverages",
+          "reason": "learned from Xero history for this supplier"
+        }
+      ]
+    },
+    {
+      "ref": "94684681",
+      "supplier": "Lion - Beer, Spirits & Wine Pty Ltd",
+      "supplier_key": "lion",
+      "date": null,
+      "total": "1214.59",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Bar",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "S & W Pacific Ale 49.5L KEG",
+          "qty": "2",
+          "amount": "769.41",
+          "tax": "gst",
+          "account_code": "113",
+          "account_name": "Purchases - Beverages",
+          "reason": "known supplier 'lion'"
+        },
+        {
+          "description": "Kirin Ichb 5% 49.5L KEG",
+          "qty": "1",
+          "amount": "445.18",
+          "tax": "gst",
+          "account_code": "113",
+          "account_name": "Purchases - Beverages",
+          "reason": "known supplier 'lion'"
+        }
+      ]
+    },
+    {
+      "ref": "2986250",
+      "supplier": "Select Fresh Providores",
+      "supplier_key": "select_fresh",
+      "date": "2026-04-01",
+      "total": "55.20",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Kitchen",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "CHILLI JALAPENO GREEN KG",
+          "qty": "0.25",
+          "amount": "2.30",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "CUCUMBER LEBANESE KG",
+          "qty": "2.00",
+          "amount": "8.20",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "LIMES TRAY",
+          "qty": "1.00",
+          "amount": "36.50",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "HERB MINT ROUND LEAF BCH",
+          "qty": "2.00",
+          "amount": "2.60",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "JUICE CLEAR APPLE 2LTR",
+          "qty": "1.00",
+          "amount": "5.60",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        }
+      ]
+    },
+    {
+      "ref": "6642711",
+      "supplier": "B&E Foods Pty Ltd",
+      "supplier_key": "be_foods",
+      "date": "2026-05-07",
+      "total": "269.86",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Kitchen",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "FZ CHIPS - CRISPY COATED",
+          "qty": "2.00",
+          "amount": "80.00",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'be_foods'"
+        },
+        {
+          "description": "BEEF - BRISKET YG POINT",
+          "qty": "7.03",
+          "amount": "98.36",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'be_foods'"
+        },
+        {
+          "description": "CHICKEN - WHOLE BIRD NO.8",
+          "qty": "15.00",
+          "amount": "91.50",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'be_foods'"
+        }
+      ]
+    },
+    {
+      "ref": "NB10482429",
+      "supplier": "Jun Pacific Corporation Pty Ltd",
+      "supplier_key": "jun_pacific",
+      "date": "2026-03-26",
+      "total": "314.60",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Kitchen",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "\"Takaokaya\" 50P (Gold) Roasted Seaweed (Yaki Nori)",
+          "qty": "2",
+          "amount": "32.00",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'jun_pacific'"
+        },
+        {
+          "description": "\u201cS&B\u201d EX Torokeru Curry Flake (Mild)",
+          "qty": "3",
+          "amount": "28.35",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'jun_pacific'"
+        },
+        {
+          "description": "\"S&B\" EX Golden Curry Mid Hot (1kg)",
+          "qty": "2",
+          "amount": "24.50",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'jun_pacific'"
+        },
+        {
+          "description": "\u201cJun\u201d Marumatsu Vegetable Dumpling 39-41pcs (Vegetable",
+          "qty": "15",
+          "amount": "138.75",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'jun_pacific'"
+        },
+        {
+          "description": "Fresh Ramen Frozen (150gx12pcs) R8",
+          "qty": "7",
+          "amount": "91.00",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'jun_pacific'"
+        }
+      ]
+    },
+    {
+      "ref": "SI4286330",
+      "supplier": "Foodlink Australia Pty Ltd",
+      "supplier_key": "foodlink",
+      "date": "2026-04-09",
+      "total": "178.32",
+      "venue": "stowaway",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Kitchen",
+      "tracking_confidence": "medium",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "SOUR CREAM FULL 2LT Brancourts",
+          "qty": "3",
+          "amount": "57.00",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'foodlink'"
+        },
+        {
+          "description": "OLIVES PITTED GREEN 2KG Riviana",
+          "qty": "2",
+          "amount": "40.72",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'foodlink'"
+        },
+        {
+          "description": "OLIVES PITTED KALAMATA 2KG",
+          "qty": "1",
+          "amount": "19.00",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'foodlink'"
+        },
+        {
+          "description": "SAUCE BOTTLE EMPTY 480ML",
+          "qty": "4",
+          "amount": "22.00",
+          "tax": "gst",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'foodlink'"
+        },
+        {
+          "description": "SAUCE BOTTLE EMPTY PLASTIC",
+          "qty": "6",
+          "amount": "36.30",
+          "tax": "gst",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "known supplier 'foodlink'"
+        },
+        {
+          "description": "Fuel Levy",
+          "qty": "1",
+          "amount": "3.30",
+          "tax": "gst",
+          "account_code": "342",
+          "account_name": "Freight & Courier",
+          "reason": "line keyword -> Freight & Courier"
+        }
+      ]
+    },
+    {
+      "ref": "INB00100435",
+      "supplier": "The Fresh Fruit Team Pty Ltd",
+      "supplier_key": "fresh_fruit_team",
+      "date": "2026-04-14",
+      "total": "100.70",
+      "venue": "harry_gatos",
+      "tracking_category": "Stowaway",
+      "tracking_option": "Harry Gatos",
+      "tracking_confidence": "high",
+      "status": "pass",
+      "lines": [
+        {
+          "description": "Cabbage Red Shredded",
+          "qty": "1",
+          "amount": "7.90",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Cabbage Shredded",
+          "qty": "1",
+          "amount": "6.90",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Carrot Large",
+          "qty": "1",
+          "amount": "1.65",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Carrot Diced 5mm",
+          "qty": "2",
+          "amount": "7.80",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Carrot Shredded",
+          "qty": "2",
+          "amount": "7.80",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Lettuce Cos Baby Twin Pack",
+          "qty": "3",
+          "amount": "8.25",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "MKB500PUNN",
+          "qty": "4",
+          "amount": "24.20",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Shallot",
+          "qty": "4",
+          "amount": "7.08",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Corn Baby Sweet",
+          "qty": "4",
+          "amount": "13.20",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Eggs Free Range 700 Grams",
+          "qty": "1",
+          "amount": "8.00",
+          "tax": "gst_free",
+          "account_code": "115",
+          "account_name": "Purchases - Food",
+          "reason": "learned from Xero history for this supplier"
+        },
+        {
+          "description": "Fuel Levy",
+          "qty": "1",
+          "amount": "7.20",
+          "tax": "gst_free",
+          "account_code": "342",
+          "account_name": "Freight & Courier",
+          "reason": "line keyword -> Freight & Courier"
+        }
+      ]
+    }
+  ]
+}

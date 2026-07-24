@@ -1,0 +1,496 @@
+{
+  "accounts": [
+    {
+      "code": "111",
+      "name": "Purchases Other COGS"
+    },
+    {
+      "code": "112",
+      "name": "Purchases - Bar Supplies"
+    },
+    {
+      "code": "113",
+      "name": "Purchases - Beverages"
+    },
+    {
+      "code": "114",
+      "name": "Purchases - Event Hire Supplies"
+    },
+    {
+      "code": "115",
+      "name": "Purchases - Food"
+    },
+    {
+      "code": "117",
+      "name": "Purchases - Packaging"
+    },
+    {
+      "code": "118",
+      "name": "Goods for Own Use"
+    },
+    {
+      "code": "1181",
+      "name": "Musicians & Artists Fees"
+    },
+    {
+      "code": "1190",
+      "name": "Service & Commission Fees EatClub"
+    },
+    {
+      "code": "1191",
+      "name": "Service & Delivery Fees - DoorDash"
+    },
+    {
+      "code": "1192",
+      "name": "Service & Delivery Fees - Just Eat"
+    },
+    {
+      "code": "1193",
+      "name": "Service & Delivery Fees - ME&U"
+    },
+    {
+      "code": "1194",
+      "name": "Service & Delivery Fees - Liven"
+    },
+    {
+      "code": "1195",
+      "name": "Service & Delivery Fees - UberEats"
+    },
+    {
+      "code": "1196",
+      "name": "Delivery 3rd Party Ad Spend Costs"
+    },
+    {
+      "code": "1197",
+      "name": "Service Fee Adjustments - Ayden Payments"
+    },
+    {
+      "code": "1198",
+      "name": "Uber Direct Delivery Fees"
+    },
+    {
+      "code": "120",
+      "name": "Surcharge Fees Paid (Doshii/ME&U)"
+    },
+    {
+      "code": "125",
+      "name": "Closing Stock Movement"
+    },
+    {
+      "code": "2800",
+      "name": "Accountancy - FCA"
+    },
+    {
+      "code": "2801",
+      "name": "Accountancy - Bookkeeping Fees"
+    },
+    {
+      "code": "2802",
+      "name": "Accountancy - Colemans Advisory"
+    },
+    {
+      "code": "2803",
+      "name": "Accountancy - Pro You Business Advisory"
+    },
+    {
+      "code": "2804",
+      "name": "Accountancy - Synergistic Business Partners"
+    },
+    {
+      "code": "282",
+      "name": "Advertising & Promotion"
+    },
+    {
+      "code": "28201",
+      "name": "Advertising - Social Media"
+    },
+    {
+      "code": "295",
+      "name": "Bank Charges"
+    },
+    {
+      "code": "2951",
+      "name": "Payment Processing Fees"
+    },
+    {
+      "code": "300",
+      "name": "Borrowing Expenses"
+    },
+    {
+      "code": "301",
+      "name": "Business Coaching"
+    },
+    {
+      "code": "303",
+      "name": "Candle Supplies"
+    },
+    {
+      "code": "306",
+      "name": "Cleaning"
+    },
+    {
+      "code": "311",
+      "name": "Consultants Fees"
+    },
+    {
+      "code": "312",
+      "name": "Other Cost of Sales"
+    },
+    {
+      "code": "313",
+      "name": "Crockery, Cutlery, Glassware"
+    },
+    {
+      "code": "320",
+      "name": "Depreciation"
+    },
+    {
+      "code": "322",
+      "name": "Depreciation - Low Cost Assets"
+    },
+    {
+      "code": "326",
+      "name": "Donations"
+    },
+    {
+      "code": "330",
+      "name": "Electricity & Gas"
+    },
+    {
+      "code": "332",
+      "name": "Entertainment"
+    },
+    {
+      "code": "337",
+      "name": "Filing Fees"
+    },
+    {
+      "code": "338",
+      "name": "Fines"
+    },
+    {
+      "code": "339",
+      "name": "First Aid & Pharmacy Supplies"
+    },
+    {
+      "code": "340",
+      "name": "Furniture, Fixtures and Fittings < $500"
+    },
+    {
+      "code": "342",
+      "name": "Freight & Courier"
+    },
+    {
+      "code": "345",
+      "name": "Fuel & Oil"
+    },
+    {
+      "code": "348",
+      "name": "General Expenses"
+    },
+    {
+      "code": "350",
+      "name": "Gifts - Staff & Client"
+    },
+    {
+      "code": "354",
+      "name": "Hire of Plant"
+    },
+    {
+      "code": "358",
+      "name": "Insurance"
+    },
+    {
+      "code": "360",
+      "name": "Interest Expense"
+    },
+    {
+      "code": "368",
+      "name": "Internet"
+    },
+    {
+      "code": "370",
+      "name": "Journals & Reference Books"
+    },
+    {
+      "code": "373",
+      "name": "Kitchen Supplies"
+    },
+    {
+      "code": "376",
+      "name": "Laundry"
+    },
+    {
+      "code": "377",
+      "name": "Leasing Charges"
+    },
+    {
+      "code": "380",
+      "name": "Legal Costs"
+    },
+    {
+      "code": "382",
+      "name": "Licences, Registrations, Permits"
+    },
+    {
+      "code": "384",
+      "name": "Merchant Fees"
+    },
+    {
+      "code": "392",
+      "name": "Motor Vehicle Expenses"
+    },
+    {
+      "code": "400",
+      "name": "Office Expenses"
+    },
+    {
+      "code": "404",
+      "name": "Packing"
+    },
+    {
+      "code": "406",
+      "name": "Pest Control"
+    },
+    {
+      "code": "410",
+      "name": "Postage"
+    },
+    {
+      "code": "412",
+      "name": "Printing & Stationery"
+    },
+    {
+      "code": "415",
+      "name": "Purchases - Non COGS"
+    },
+    {
+      "code": "420",
+      "name": "Rates"
+    },
+    {
+      "code": "421",
+      "name": "Rent - Harry Gatos"
+    },
+    {
+      "code": "422",
+      "name": "Rent - Stowaway"
+    },
+    {
+      "code": "423",
+      "name": "Rent Property Outgoings"
+    },
+    {
+      "code": "424",
+      "name": "Repairs & Maintenance"
+    },
+    {
+      "code": "430",
+      "name": "Research & Development"
+    },
+    {
+      "code": "443",
+      "name": "Security"
+    },
+    {
+      "code": "4631",
+      "name": "Subscriptions - General"
+    },
+    {
+      "code": "4632",
+      "name": "Subscriptions - Accounting Apps"
+    },
+    {
+      "code": "4633",
+      "name": "Subscriptions - Admin Apps"
+    },
+    {
+      "code": "4634",
+      "name": "Subscriptions - Bar Management"
+    },
+    {
+      "code": "4635",
+      "name": "Subscriptions - Event Management Apps"
+    },
+    {
+      "code": "4636",
+      "name": "Subscriptions - HR Apps"
+    },
+    {
+      "code": "4637",
+      "name": "Subscriptions - Music Licensing"
+    },
+    {
+      "code": "4638",
+      "name": "Subscriptions - Website Management"
+    },
+    {
+      "code": "465",
+      "name": "Storage Fees"
+    },
+    {
+      "code": "470",
+      "name": "Telephone & Internet"
+    },
+    {
+      "code": "472",
+      "name": "Tips Paid to Staff"
+    },
+    {
+      "code": "474",
+      "name": "Tolls & Parking"
+    },
+    {
+      "code": "475",
+      "name": "Tools"
+    },
+    {
+      "code": "477",
+      "name": "Travelling Expenses"
+    },
+    {
+      "code": "48800",
+      "name": "Wages & Salaries"
+    },
+    {
+      "code": "48801",
+      "name": "Wages & Salaries - Management"
+    },
+    {
+      "code": "48802",
+      "name": "Wages & Salaries - Stowaway Bar"
+    },
+    {
+      "code": "48803",
+      "name": "Wages & Salaries - Marilyna's Pizza"
+    },
+    {
+      "code": "48804",
+      "name": "Wages & Salaries - Harry Gatos"
+    },
+    {
+      "code": "48805",
+      "name": "Superannuation"
+    },
+    {
+      "code": "48806",
+      "name": "Superannuation - Management"
+    },
+    {
+      "code": "48807",
+      "name": "Superannuation - Stowaway Bar"
+    },
+    {
+      "code": "48808",
+      "name": "Superannuation - Marilyna's Pizza"
+    },
+    {
+      "code": "48810",
+      "name": "Superannuation - Harry Gatos"
+    },
+    {
+      "code": "48811",
+      "name": "Super Guarantee Interest & Admin Fee"
+    },
+    {
+      "code": "48812",
+      "name": "Staff Amenities"
+    },
+    {
+      "code": "48813",
+      "name": "Staff Training"
+    },
+    {
+      "code": "48814",
+      "name": "Staff Recruitment Expenses"
+    },
+    {
+      "code": "48815",
+      "name": "Uniforms"
+    },
+    {
+      "code": "48816",
+      "name": "Payroll Tax - 2023"
+    },
+    {
+      "code": "48817",
+      "name": "Payroll Tax"
+    },
+    {
+      "code": "48818",
+      "name": "Commission"
+    },
+    {
+      "code": "48819",
+      "name": "Annual Leave Provision Movement"
+    },
+    {
+      "code": "48820",
+      "name": "Workers Compensation"
+    },
+    {
+      "code": "48821",
+      "name": "Workers Compensation - Prior Year"
+    },
+    {
+      "code": "495",
+      "name": "Waste Removal"
+    },
+    {
+      "code": "496",
+      "name": "Website Development Cost"
+    },
+    {
+      "code": "497",
+      "name": "Bank Revaluations"
+    },
+    {
+      "code": "498",
+      "name": "Unrealised Currency Gains"
+    },
+    {
+      "code": "499",
+      "name": "Realised Currency Gains"
+    },
+    {
+      "code": "518",
+      "name": "Income Tax Expense"
+    },
+    {
+      "code": "529",
+      "name": "Dividend paid"
+    },
+    {
+      "code": "999",
+      "name": "New Business  Formation Expenses"
+    }
+  ],
+  "tracking": [
+    {
+      "name": "Stowaway",
+      "id": "f03fcb84-a9fa-4e75-931d-b2499aa84a55",
+      "options": [
+        "Admin",
+        "Bar",
+        "Harry Gatos",
+        "Kitchen",
+        "Marilyna's Pizza",
+        "Miscellaneous",
+        "Miscellaneous K",
+        "Miscellaneous Z",
+        "To Be Reviewed"
+      ]
+    },
+    {
+      "name": "Harry Gatos",
+      "id": "d9a3374c-3422-4f6c-bf48-ef6c221d671a",
+      "options": [
+        "Admin",
+        "Bar",
+        "Fitout Costs",
+        "Kitchen",
+        "Wages & Staffing Costs"
+      ]
+    }
+  ]
+}
