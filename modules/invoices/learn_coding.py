@@ -76,11 +76,18 @@ def learn(months: int = 18) -> dict:
         total = sum(counter.values())
         tracks = track_by_sup[sup].most_common(1)
         gaps = due_by_sup.get(sup, [])
+        tv = track_by_sup[sup]
+        tv_total = sum(tv.values())
         learned["suppliers"][sup] = {
             "account_code": top_acct,
             "account_confidence": round(n / total, 2),
             "account_distribution": dict(counter),
+            # how this supplier's bills are actually tracked (venue/dept), + how
+            # consistent that is — so a supplier that ALWAYS codes to one venue
+            # (e.g. Gulli -> Marilyna's) is trusted over the billed-to address.
             "tracking_option": tracks[0][0] if tracks else None,
+            "tracking_confidence": round(tracks[0][1] / tv_total, 2) if tracks and tv_total else 0,
+            "tracking_samples": tv_total,
             # each supplier's real terms = median gap between bill date and due date
             "due_days": int(statistics.median(gaps)) if gaps else None,
             "due_days_samples": len(gaps),

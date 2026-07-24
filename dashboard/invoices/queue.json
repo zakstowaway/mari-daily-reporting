@@ -12,8 +12,8 @@
       "venue": "stowaway",
       "pdf_path": "8581675b717eb24e0d18c113c9eb6d2059329d7057817b909ff5795ec6f1c6ca.pdf",
       "tracking_category": "Stowaway",
-      "tracking_option": "Kitchen",
-      "tracking_confidence": "medium",
+      "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": "high",
       "status": "pass",
       "lines": [
         {
@@ -83,7 +83,7 @@
       "pdf_path": "bf069a63dd600557121b7dce602f85dca843e81cdcca646f9c1adb1f28f4870f.pdf",
       "tracking_category": "Stowaway",
       "tracking_option": "Bar",
-      "tracking_confidence": "medium",
+      "tracking_confidence": "high",
       "status": "pass",
       "lines": [
         {
@@ -108,7 +108,7 @@
       "pdf_path": "960e5bc69aee7749bef8abbd523a889c2b503b69b1d572a3d2b208d8fe1c1f11.pdf",
       "tracking_category": "Stowaway",
       "tracking_option": "Bar",
-      "tracking_confidence": "medium",
+      "tracking_confidence": "high",
       "status": "pass",
       "lines": [
         {
@@ -118,7 +118,7 @@
           "tax": "gst",
           "account_code": "113",
           "account_name": "Purchases - Beverages",
-          "reason": "known supplier 'lion'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "Kirin Ichb 5% 49.5L KEG",
@@ -127,7 +127,7 @@
           "tax": "gst",
           "account_code": "113",
           "account_name": "Purchases - Beverages",
-          "reason": "known supplier 'lion'"
+          "reason": "learned from Xero history for this supplier"
         }
       ]
     },
@@ -203,7 +203,7 @@
       "pdf_path": "8301e96293b7fe4edfb332f51ee483732c4d40e4a90ec610c05c87fb2716b18b.pdf",
       "tracking_category": "Stowaway",
       "tracking_option": "Kitchen",
-      "tracking_confidence": "medium",
+      "tracking_confidence": "high",
       "status": "pass",
       "lines": [
         {
@@ -246,7 +246,7 @@
       "pdf_path": "a654d4aa4fe5433b68b1d1a1b63dde1ee9c6f39772f1a902db29fb6ece23af13.pdf",
       "tracking_category": "Stowaway",
       "tracking_option": "Kitchen",
-      "tracking_confidence": "medium",
+      "tracking_confidence": "high",
       "status": "pass",
       "lines": [
         {
@@ -256,7 +256,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'jun_pacific'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "\u201cS&B\u201d EX Torokeru Curry Flake (Mild)",
@@ -265,7 +265,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'jun_pacific'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "\"S&B\" EX Golden Curry Mid Hot (1kg)",
@@ -274,7 +274,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'jun_pacific'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "\u201cJun\u201d Marumatsu Vegetable Dumpling 39-41pcs (Vegetable",
@@ -283,7 +283,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'jun_pacific'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "Fresh Ramen Frozen (150gx12pcs) R8",
@@ -292,7 +292,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'jun_pacific'"
+          "reason": "learned from Xero history for this supplier"
         }
       ]
     },
@@ -307,7 +307,7 @@
       "pdf_path": "58350e3e91eb6b4705815466f7f811d019cce773e472815eb9090cc1ce60891d.pdf",
       "tracking_category": "Stowaway",
       "tracking_option": "Kitchen",
-      "tracking_confidence": "medium",
+      "tracking_confidence": "high",
       "status": "pass",
       "lines": [
         {
@@ -317,7 +317,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'foodlink'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "OLIVES PITTED GREEN 2KG Riviana",
@@ -326,7 +326,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'foodlink'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "OLIVES PITTED KALAMATA 2KG",
@@ -335,7 +335,7 @@
           "tax": "gst_free",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'foodlink'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "SAUCE BOTTLE EMPTY 480ML",
@@ -344,7 +344,7 @@
           "tax": "gst",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'foodlink'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "SAUCE BOTTLE EMPTY PLASTIC",
@@ -353,7 +353,7 @@
           "tax": "gst",
           "account_code": "115",
           "account_name": "Purchases - Food",
-          "reason": "known supplier 'foodlink'"
+          "reason": "learned from Xero history for this supplier"
         },
         {
           "description": "Fuel Levy",

@@ -1,5 +1,5 @@
 {
-  "scanned_bills": 5412,
+  "scanned_bills": 5413,
   "since": "2025-07-29",
   "suppliers": {
     "Uber Eats": {
@@ -9,6 +9,8 @@
         "1195": 84
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 84
     },
@@ -20,6 +22,8 @@
         "111": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 31,
       "due_days": 7,
       "due_days_samples": 29
     },
@@ -30,6 +34,8 @@
         "4632": 12
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 9,
       "due_days": 0,
       "due_days_samples": 12
     },
@@ -40,6 +46,8 @@
         "424": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -57,6 +65,8 @@
         "306": 15
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.88,
+      "tracking_samples": 4240,
       "due_days": 7,
       "due_days_samples": 545
     },
@@ -68,6 +78,8 @@
         "113": 4
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.54,
+      "tracking_samples": 785,
       "due_days": 14,
       "due_days_samples": 774
     },
@@ -95,6 +107,8 @@
         "322": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.91,
+      "tracking_samples": 483,
       "due_days": 0,
       "due_days_samples": 393
     },
@@ -105,6 +119,8 @@
         "4634": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -115,6 +131,8 @@
         "113": 181
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 170,
       "due_days": 28,
       "due_days_samples": 150
     },
@@ -127,6 +145,8 @@
         "674": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 335,
       "due_days": 0,
       "due_days_samples": 76
     },
@@ -138,6 +158,8 @@
         "111": 6
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.99,
+      "tracking_samples": 97,
       "due_days": 14,
       "due_days_samples": 57
     },
@@ -148,6 +170,8 @@
         "340": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -158,6 +182,8 @@
         "113": 64
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 64,
       "due_days": 14,
       "due_days_samples": 62
     },
@@ -169,6 +195,8 @@
         "111": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 27,
       "due_days": 20,
       "due_days_samples": 26
     },
@@ -179,6 +207,8 @@
         "113": 68
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 68,
       "due_days": 12,
       "due_days_samples": 68
     },
@@ -190,6 +220,8 @@
         "111": 5
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 20,
       "due_days": 14,
       "due_days_samples": 14
     },
@@ -201,6 +233,8 @@
         "111": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 28,
       "due_days": 7,
       "due_days_samples": 29
     },
@@ -211,6 +245,8 @@
         "113": 27
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 24,
       "due_days": 14,
       "due_days_samples": 27
     },
@@ -221,6 +257,8 @@
         "113": 5
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 46,
       "due_days_samples": 5
     },
@@ -231,6 +269,8 @@
         "4632": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -242,6 +282,8 @@
         "111": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 54,
       "due_days": 7,
       "due_days_samples": 45
     },
@@ -252,6 +294,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -262,6 +306,8 @@
         "113": 59
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 56,
       "due_days": 0,
       "due_days_samples": 56
     },
@@ -275,6 +321,8 @@
         "111": 53
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.68,
+      "tracking_samples": 595,
       "due_days": 6,
       "due_days_samples": 130
     },
@@ -289,6 +337,8 @@
         "100": 2
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 0.72,
+      "tracking_samples": 308,
       "due_days": 0,
       "due_days_samples": 99
     },
@@ -300,6 +350,8 @@
         "111": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 54,
       "due_days": 30,
       "due_days_samples": 54
     },
@@ -310,6 +362,8 @@
         "115": 6
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -321,6 +375,8 @@
         "111": 22
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.83,
+      "tracking_samples": 84,
       "due_days": 14,
       "due_days_samples": 54
     },
@@ -331,6 +387,8 @@
         "1198": 24
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 0.92,
+      "tracking_samples": 12,
       "due_days": 0,
       "due_days_samples": 21
     },
@@ -341,6 +399,8 @@
         "354": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -354,6 +414,8 @@
         "340": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.33,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -364,6 +426,8 @@
         "373": 15
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 15,
       "due_days": 0,
       "due_days_samples": 14
     },
@@ -374,6 +438,8 @@
         "345": 2
       },
       "tracking_option": "Miscellaneous K",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -384,6 +450,8 @@
         "674": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -395,6 +463,8 @@
         "115": 6
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -406,6 +476,8 @@
         "117": 2
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 0.97,
+      "tracking_samples": 197,
       "due_days": 40,
       "due_days_samples": 106
     },
@@ -416,6 +488,8 @@
         "111": 45
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 42,
       "due_days": 7,
       "due_days_samples": 20
     },
@@ -426,6 +500,8 @@
         "2801": 44
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 40,
       "due_days": 1,
       "due_days_samples": 43
     },
@@ -440,6 +516,8 @@
         "373": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 9,
       "due_days": 0,
       "due_days_samples": 16
     },
@@ -452,6 +530,8 @@
         "696": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.95,
+      "tracking_samples": 20,
       "due_days": 0,
       "due_days_samples": 22
     },
@@ -462,6 +542,8 @@
         "115": 89
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 89,
       "due_days": 0,
       "due_days_samples": 56
     },
@@ -472,6 +554,8 @@
         "115": 45
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 45,
       "due_days": 0,
       "due_days_samples": 45
     },
@@ -482,6 +566,8 @@
         "392": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -493,6 +579,8 @@
         "350": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.89,
+      "tracking_samples": 9,
       "due_days": 0,
       "due_days_samples": 10
     },
@@ -506,6 +594,8 @@
         "113": 7
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.99,
+      "tracking_samples": 109,
       "due_days": 30,
       "due_days_samples": 47
     },
@@ -520,6 +610,8 @@
         "313": 4
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.53,
+      "tracking_samples": 17,
       "due_days": 0,
       "due_days_samples": 17
     },
@@ -530,6 +622,8 @@
         "330": 5
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.75,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -541,6 +635,8 @@
         "400": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 21,
       "due_days": 0,
       "due_days_samples": 20
     },
@@ -552,6 +648,8 @@
         "1190": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 1,
       "due_days_samples": 2
     },
@@ -562,6 +660,8 @@
         "115": 39
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 39,
       "due_days": 7,
       "due_days_samples": 37
     },
@@ -572,6 +672,8 @@
         "345": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -582,6 +684,8 @@
         "423": 5
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -592,6 +696,8 @@
         "115": 455
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.92,
+      "tracking_samples": 456,
       "due_days": 7,
       "due_days_samples": 262
     },
@@ -602,6 +708,8 @@
         "113": 9
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.88,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 9
     },
@@ -613,6 +721,8 @@
         "850": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 73,
       "due_days": 0,
       "due_days_samples": 43
     },
@@ -623,6 +733,8 @@
         "690": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -635,6 +747,8 @@
         "674": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -645,6 +759,8 @@
         "400": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -656,6 +772,8 @@
         "382": 8
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 9
     },
@@ -666,6 +784,8 @@
         "470": 46
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 44,
       "due_days": 15,
       "due_days_samples": 30
     },
@@ -676,6 +796,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -688,6 +810,8 @@
         "306": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.33,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -709,6 +833,8 @@
         "348": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.37,
+      "tracking_samples": 70,
       "due_days": 0,
       "due_days_samples": 91
     },
@@ -721,6 +847,8 @@
         "424": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 10
     },
@@ -732,6 +860,8 @@
         "306": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -742,6 +872,8 @@
         "400": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -752,6 +884,8 @@
         "400": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -762,6 +896,8 @@
         "392": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -772,6 +908,8 @@
         "113": 44
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 43,
       "due_days": 12,
       "due_days_samples": 44
     },
@@ -782,6 +920,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -792,6 +932,8 @@
         "115": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -802,6 +944,8 @@
         "113": 17
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 17,
       "due_days": 30,
       "due_days_samples": 17
     },
@@ -813,6 +957,8 @@
         "112": 8
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 10,
       "due_days": 0,
       "due_days_samples": 10
     },
@@ -823,6 +969,8 @@
         "4631": 10
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.86,
+      "tracking_samples": 7,
       "due_days": 30,
       "due_days_samples": 10
     },
@@ -833,6 +981,8 @@
         "1193": 35
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.77,
+      "tracking_samples": 30,
       "due_days": 0,
       "due_days_samples": 34
     },
@@ -844,6 +994,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.71,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 7
     },
@@ -854,6 +1006,8 @@
         "345": 4
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -864,6 +1018,8 @@
         "113": 13
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 13,
       "due_days": 31,
       "due_days_samples": 12
     },
@@ -874,6 +1030,8 @@
         "406": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 7,
       "due_days_samples": 2
     },
@@ -884,6 +1042,8 @@
         "113": 13
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 13,
       "due_days": 0,
       "due_days_samples": 13
     },
@@ -894,6 +1054,8 @@
         "392": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -904,6 +1066,8 @@
         "470": 13
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 13,
       "due_days": 0,
       "due_days_samples": 12
     },
@@ -914,6 +1078,8 @@
         "421": 12
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 12,
       "due_days": 0,
       "due_days_samples": 12
     },
@@ -924,6 +1090,8 @@
         "115": 5
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.75,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -934,6 +1102,8 @@
         "113": 19
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 19,
       "due_days": 0,
       "due_days_samples": 17
     },
@@ -944,6 +1114,8 @@
         "4636": 28
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 28,
       "due_days": 0,
       "due_days_samples": 12
     },
@@ -959,6 +1131,8 @@
         "1193": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 36,
       "due_days": 0,
       "due_days_samples": 13
     },
@@ -969,6 +1143,8 @@
         "28201": 12
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 12,
       "due_days": 17,
       "due_days_samples": 6
     },
@@ -979,6 +1155,8 @@
         "4631": 5
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -989,6 +1167,8 @@
         "113": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 30,
       "due_days_samples": 3
     },
@@ -999,6 +1179,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1009,6 +1191,8 @@
         "4633": 8
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -1020,6 +1204,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -1030,6 +1216,8 @@
         "115": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1040,6 +1228,8 @@
         "115": 5
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1050,6 +1240,8 @@
         "332": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1073,6 +1265,8 @@
         "696": 15
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.71,
+      "tracking_samples": 136,
       "due_days": 0,
       "due_days_samples": 39
     },
@@ -1083,6 +1277,8 @@
         "410": 5
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1094,6 +1290,8 @@
         "412": 4
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 9,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -1104,6 +1302,8 @@
         "465": 11
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 11,
       "due_days": 3,
       "due_days_samples": 11
     },
@@ -1114,6 +1314,8 @@
         "303": 5
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.6,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -1124,6 +1326,8 @@
         "345": 7
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.86,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -1134,6 +1338,8 @@
         "424": 4
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 14,
       "due_days_samples": 2
     },
@@ -1144,6 +1350,8 @@
         "113": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1160,6 +1368,8 @@
         "373": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.33,
+      "tracking_samples": 15,
       "due_days": 0,
       "due_days_samples": 21
     },
@@ -1171,6 +1381,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.88,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 7
     },
@@ -1181,6 +1393,8 @@
         "115": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1191,6 +1405,8 @@
         "345": 9
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.62,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 9
     },
@@ -1202,6 +1418,8 @@
         "350": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1212,6 +1430,8 @@
         "424": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 7,
       "due_days_samples": 1
     },
@@ -1225,6 +1445,8 @@
         "112": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 16,
       "due_days": 0,
       "due_days_samples": 11
     },
@@ -1235,6 +1457,8 @@
         "115": 3
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1250,6 +1474,8 @@
         "373": 12
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.52,
+      "tracking_samples": 46,
       "due_days": 43,
       "due_days_samples": 16
     },
@@ -1261,6 +1487,8 @@
         "111": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -1271,6 +1499,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1281,6 +1511,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 28,
       "due_days_samples": 1
     },
@@ -1291,6 +1523,8 @@
         "373": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1301,6 +1535,8 @@
         "345": 6
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -1312,6 +1548,8 @@
         "112": 6
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 12,
       "due_days": 0,
       "due_days_samples": 11
     },
@@ -1322,6 +1560,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1332,6 +1572,8 @@
         "115": 12
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 12,
       "due_days": 0,
       "due_days_samples": 7
     },
@@ -1342,6 +1584,8 @@
         "477": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1353,6 +1597,8 @@
         "330": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.33,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -1363,6 +1609,8 @@
         "91": 2
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 7,
       "due_days_samples": 2
     },
@@ -1373,6 +1621,8 @@
         "400": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1384,6 +1634,8 @@
         "113": 20
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.95,
+      "tracking_samples": 22,
       "due_days": 21,
       "due_days_samples": 22
     },
@@ -1395,6 +1647,8 @@
         "340": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.57,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -1405,6 +1659,8 @@
         "48811": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1415,6 +1671,8 @@
         "382": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1425,6 +1683,8 @@
         "313": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1435,6 +1695,8 @@
         "342": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1445,6 +1707,8 @@
         "113": 21
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 21,
       "due_days": 14,
       "due_days_samples": 20
     },
@@ -1455,6 +1719,8 @@
         "342": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1465,6 +1731,8 @@
         "373": 3
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1476,6 +1744,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -1486,6 +1756,8 @@
         "313": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1496,6 +1768,8 @@
         "115": 15
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.69,
+      "tracking_samples": 13,
       "due_days": 0,
       "due_days_samples": 10
     },
@@ -1506,6 +1780,8 @@
         "115": 5
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1516,6 +1792,8 @@
         "342": 2
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1526,6 +1804,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1536,6 +1816,8 @@
         "674": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1546,6 +1828,8 @@
         "424": 9
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.56,
+      "tracking_samples": 9,
       "due_days": 0,
       "due_days_samples": 9
     },
@@ -1556,6 +1840,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1566,6 +1852,8 @@
         "313": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1576,6 +1864,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1587,6 +1877,8 @@
         "340": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.57,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -1597,6 +1889,8 @@
         "430": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1609,6 +1903,8 @@
         "373": 8
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 12,
       "due_days": 20,
       "due_days_samples": 13
     },
@@ -1620,6 +1916,8 @@
         "940": 4
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 22,
       "due_days_samples": 12
     },
@@ -1631,6 +1929,8 @@
         "834-4": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 7,
       "due_days_samples": 12
     },
@@ -1642,6 +1942,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -1652,6 +1954,8 @@
         "313": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1662,6 +1966,8 @@
         "313": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1672,6 +1978,8 @@
         "115": 33
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 33,
       "due_days": 0,
       "due_days_samples": 33
     },
@@ -1682,6 +1990,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1692,6 +2002,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1702,6 +2014,8 @@
         "115": 123
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.87,
+      "tracking_samples": 123,
       "due_days": 0,
       "due_days_samples": 17
     },
@@ -1712,6 +2026,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1722,6 +2038,8 @@
         "313": 2
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1735,6 +2053,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 20,
       "due_days": 0,
       "due_days_samples": 19
     },
@@ -1745,6 +2065,8 @@
         "260": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1758,6 +2080,8 @@
         "348": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -1768,6 +2092,8 @@
         "380": 4
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -1778,6 +2104,8 @@
         "382": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1788,6 +2116,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1798,6 +2128,8 @@
         "115": 22
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 15,
       "due_days": 0,
       "due_days_samples": 19
     },
@@ -1809,6 +2141,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1820,6 +2154,8 @@
         "322": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1831,6 +2167,8 @@
         "373": 4
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -1841,6 +2179,8 @@
         "345": 10
       },
       "tracking_option": "Miscellaneous Z",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 10
     },
@@ -1851,6 +2191,8 @@
         "115": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1862,6 +2204,8 @@
         "112": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -1874,6 +2218,8 @@
         "303": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.75,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -1884,6 +2230,8 @@
         "115": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -1894,6 +2242,8 @@
         "392": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1904,6 +2254,8 @@
         "332": 2
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1914,6 +2266,8 @@
         "345": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1924,6 +2278,8 @@
         "474": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -1934,6 +2290,8 @@
         "115": 9
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 7
     },
@@ -1944,20 +2302,24 @@
         "330": 8
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.88,
+      "tracking_samples": 8,
       "due_days": 21,
       "due_days_samples": 8
     },
     "B&E Foods Pty Ltd": {
       "account_code": "115",
-      "account_confidence": 0.84,
+      "account_confidence": 0.86,
       "account_distribution": {
-        "115": 21,
+        "115": 24,
         "117": 2,
         "342": 2
       },
       "tracking_option": "Kitchen",
-      "due_days": 14,
-      "due_days_samples": 1
+      "tracking_confidence": 1.0,
+      "tracking_samples": 28,
+      "due_days": 10,
+      "due_days_samples": 2
     },
     "Sydney Audio Visual Specialists": {
       "account_code": "424",
@@ -1966,6 +2328,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 1,
       "due_days_samples": 1
     },
@@ -1976,6 +2340,8 @@
         "424": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 1,
       "due_days_samples": 1
     },
@@ -1986,6 +2352,8 @@
         "392": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -1996,6 +2364,8 @@
         "114": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2006,6 +2376,8 @@
         "345": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2018,6 +2390,8 @@
         "834-4": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2028,6 +2402,8 @@
         "2800": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 3,
       "due_days_samples": 2
     },
@@ -2038,6 +2414,8 @@
         "4638": 6
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2048,6 +2426,8 @@
         "345": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2061,6 +2441,8 @@
         "322": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 19,
       "due_days": 0,
       "due_days_samples": 18
     },
@@ -2071,6 +2453,8 @@
         "430": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2081,6 +2465,8 @@
         "430": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2092,6 +2478,8 @@
         "48815": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.4,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2102,6 +2490,8 @@
         "330": 15
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.87,
+      "tracking_samples": 15,
       "due_days": 16,
       "due_days_samples": 9
     },
@@ -2113,6 +2503,8 @@
         "690": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2123,6 +2515,8 @@
         "392": 5
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -2133,6 +2527,8 @@
         "424": 6
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 4,
       "due_days": 7,
       "due_days_samples": 5
     },
@@ -2143,6 +2539,8 @@
         "115": 5
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -2153,6 +2551,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2163,6 +2563,8 @@
         "340": 5
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2173,6 +2575,8 @@
         "48814": 6
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.71,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -2184,6 +2588,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -2196,6 +2602,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 14,
       "due_days_samples": 3
     },
@@ -2206,6 +2614,8 @@
         "4632": 8
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -2216,6 +2626,8 @@
         "113": 9
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 9,
       "due_days": 28,
       "due_days_samples": 6
     },
@@ -2228,6 +2640,8 @@
         "342": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 18,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -2238,6 +2652,8 @@
         "348": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2248,6 +2664,8 @@
         "113": 8
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 8,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -2258,6 +2676,8 @@
         "4631": 4
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -2268,6 +2688,8 @@
         "412": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 47,
       "due_days_samples": 3
     },
@@ -2278,6 +2700,8 @@
         "113": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2290,6 +2714,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 14,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -2300,6 +2726,8 @@
         "4638": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2310,6 +2738,8 @@
         "322": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2320,6 +2750,8 @@
         "345": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2330,6 +2762,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2342,6 +2776,8 @@
         "330": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.71,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2352,6 +2788,8 @@
         "348": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2363,6 +2801,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2373,6 +2813,8 @@
         "115": 3
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2383,6 +2825,8 @@
         "2804": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2393,6 +2837,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2403,6 +2849,8 @@
         "113": 28
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.96,
+      "tracking_samples": 28,
       "due_days": 14,
       "due_days_samples": 12
     },
@@ -2414,6 +2862,8 @@
         "113": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2424,6 +2874,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2434,6 +2886,8 @@
         "48814": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2445,6 +2899,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 7,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2455,6 +2911,8 @@
         "113": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2466,6 +2924,8 @@
         "373": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2476,6 +2936,8 @@
         "113": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2486,6 +2948,8 @@
         "115": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2496,6 +2960,8 @@
         "48815": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2506,6 +2972,8 @@
         "4633": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2516,6 +2984,8 @@
         "424": 6
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2526,6 +2996,8 @@
         "115": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2536,6 +3008,8 @@
         "113": 6
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 15,
       "due_days_samples": 6
     },
@@ -2546,6 +3020,8 @@
         "114": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2556,6 +3032,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2566,6 +3044,8 @@
         "282": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2576,6 +3056,8 @@
         "111": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2587,6 +3069,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -2597,6 +3081,8 @@
         "282": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2608,6 +3094,8 @@
         "4631": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2618,6 +3106,8 @@
         "113": 10
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 10,
       "due_days": 28,
       "due_days_samples": 10
     },
@@ -2628,6 +3118,8 @@
         "477": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2638,6 +3130,8 @@
         "477": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2648,6 +3142,8 @@
         "424": 4
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 4,
       "due_days": 7,
       "due_days_samples": 3
     },
@@ -2658,6 +3154,8 @@
         "117": 6
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.8,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -2668,6 +3166,8 @@
         "115": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2678,6 +3178,8 @@
         "115": 201
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.81,
+      "tracking_samples": 201,
       "due_days": 7,
       "due_days_samples": 201
     },
@@ -2688,6 +3190,8 @@
         "282": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2698,6 +3202,8 @@
         "322": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2708,6 +3214,8 @@
         "322": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2718,6 +3226,8 @@
         "120": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2728,6 +3238,8 @@
         "48814": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2738,6 +3250,8 @@
         "115": 6
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2750,6 +3264,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 28,
       "due_days": 7,
       "due_days_samples": 28
     },
@@ -2760,6 +3276,8 @@
         "400": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2770,6 +3288,8 @@
         "345": 4
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2780,6 +3300,8 @@
         "348": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2790,6 +3312,8 @@
         "113": 15
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 15,
       "due_days": 28,
       "due_days_samples": 13
     },
@@ -2801,6 +3325,8 @@
         "115": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -2811,6 +3337,8 @@
         "112": 5
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -2821,6 +3349,8 @@
         "4633": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2832,6 +3362,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2842,6 +3374,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2852,6 +3386,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2862,6 +3398,8 @@
         "117": 14
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 14,
       "due_days": 0,
       "due_days_samples": 7
     },
@@ -2872,6 +3410,8 @@
         "4638": 1
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2882,6 +3422,8 @@
         "382": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2892,6 +3434,8 @@
         "48812": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2902,6 +3446,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2912,6 +3458,8 @@
         "303": 13
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 11
     },
@@ -2922,6 +3470,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2932,6 +3482,8 @@
         "306": 14
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.93,
+      "tracking_samples": 14,
       "due_days": 0,
       "due_days_samples": 14
     },
@@ -2942,6 +3494,8 @@
         "4634": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -2952,6 +3506,8 @@
         "330": 15
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 15,
       "due_days": 22,
       "due_days_samples": 13
     },
@@ -2962,6 +3518,8 @@
         "392": 6
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -2972,6 +3530,8 @@
         "834-4": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2982,6 +3542,8 @@
         "373": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -2992,6 +3554,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3002,6 +3566,8 @@
         "112": 4
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 4,
       "due_days": 30,
       "due_days_samples": 4
     },
@@ -3012,6 +3578,8 @@
         "322": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3022,6 +3590,8 @@
         "332": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3034,6 +3604,8 @@
         "348": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 5
     },
@@ -3044,6 +3616,8 @@
         "114": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3054,6 +3628,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3064,6 +3640,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3074,6 +3652,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3084,6 +3664,8 @@
         "400": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 30,
       "due_days_samples": 1
     },
@@ -3094,6 +3676,8 @@
         "424": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3104,6 +3688,8 @@
         "113": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3114,6 +3700,8 @@
         "348": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3124,6 +3712,8 @@
         "115": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3134,6 +3724,8 @@
         "28201": 41
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.93,
+      "tracking_samples": 41,
       "due_days": 0,
       "due_days_samples": 22
     },
@@ -3144,6 +3736,8 @@
         "348": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3154,6 +3748,8 @@
         "115": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3164,6 +3760,8 @@
         "392": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3174,6 +3772,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 2,
       "due_days_samples": 1
     },
@@ -3184,6 +3784,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3194,6 +3796,8 @@
         "1192": 23
       },
       "tracking_option": "Marilyna's Pizza",
+      "tracking_confidence": 0.89,
+      "tracking_samples": 18,
       "due_days": 0,
       "due_days_samples": 23
     },
@@ -3204,6 +3808,8 @@
         "340": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3215,6 +3821,8 @@
         "470": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3225,6 +3833,8 @@
         "117": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3236,6 +3846,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -3246,6 +3858,8 @@
         "112": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3256,6 +3870,8 @@
         "350": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3267,6 +3883,8 @@
         "330": 3
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 0.8,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 8
     },
@@ -3277,6 +3895,8 @@
         "412": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3287,6 +3907,8 @@
         "4633": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3297,6 +3919,8 @@
         "115": 28
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 28,
       "due_days": 2,
       "due_days_samples": 14
     },
@@ -3307,6 +3931,8 @@
         "834-4": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3317,6 +3943,8 @@
         "48814": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3327,6 +3955,8 @@
         "322": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3337,6 +3967,8 @@
         "348": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3347,6 +3979,8 @@
         "340": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 0.67,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3357,6 +3991,8 @@
         "340": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3367,6 +4003,8 @@
         "113": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3378,6 +4016,8 @@
         "373": 1
       },
       "tracking_option": "Fitout Costs",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3388,6 +4028,8 @@
         "112": 3
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3398,6 +4040,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3408,6 +4052,8 @@
         "322": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3418,6 +4064,8 @@
         "112": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3429,6 +4077,8 @@
         "112": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3439,6 +4089,8 @@
         "48814": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3449,6 +4101,8 @@
         "117": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3459,6 +4113,8 @@
         "350": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3470,6 +4126,8 @@
         "115": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3480,6 +4138,8 @@
         "340": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3490,6 +4150,8 @@
         "1192": 18
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 16
     },
@@ -3501,6 +4163,8 @@
         "113": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -3512,6 +4176,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3522,6 +4188,8 @@
         "424": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3533,6 +4201,8 @@
         "115": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3543,6 +4213,8 @@
         "382": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 7,
       "due_days_samples": 1
     },
@@ -3553,6 +4225,8 @@
         "322": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3563,6 +4237,8 @@
         "373": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3573,6 +4249,8 @@
         "820": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 5,
       "due_days_samples": 1
     },
@@ -3583,6 +4261,8 @@
         "322": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 2,
       "due_days_samples": 1
     },
@@ -3593,6 +4273,8 @@
         "424": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3604,6 +4286,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3614,6 +4298,8 @@
         "430": 2
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3624,6 +4310,8 @@
         "303": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3634,6 +4322,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3644,6 +4334,8 @@
         "424": 4
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 0.75,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -3654,6 +4346,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous K",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3664,6 +4358,8 @@
         "373": 2
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3674,6 +4370,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3684,6 +4382,8 @@
         "834-4": 1
       },
       "tracking_option": "Miscellaneous K",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3694,6 +4394,8 @@
         "345": 1
       },
       "tracking_option": "Miscellaneous K",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3704,6 +4406,8 @@
         "115": 3
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3714,6 +4418,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3724,6 +4430,8 @@
         "424": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3734,6 +4442,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3745,6 +4455,8 @@
         "112": 1
       },
       "tracking_option": "Fitout Costs",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3755,6 +4467,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3767,6 +4481,8 @@
         "303": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 3,
       "due_days": 0,
       "due_days_samples": 6
     },
@@ -3777,6 +4493,8 @@
         "306": 15
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 14,
       "due_days": 0,
       "due_days_samples": 15
     },
@@ -3788,6 +4506,8 @@
         "696": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3798,6 +4518,8 @@
         "424": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3809,6 +4531,8 @@
         "112": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -3819,6 +4543,8 @@
         "373": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3829,6 +4555,8 @@
         "406": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 7,
       "due_days_samples": 1
     },
@@ -3839,6 +4567,8 @@
         "358": 2
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3849,6 +4579,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3859,6 +4591,8 @@
         "424": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3869,6 +4603,8 @@
         "415": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3879,6 +4615,8 @@
         "115": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3889,6 +4627,8 @@
         "113": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3899,6 +4639,8 @@
         "338": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3910,6 +4652,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3921,6 +4665,8 @@
         "696": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -3931,6 +4677,8 @@
         "112": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3941,6 +4689,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3951,6 +4701,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3961,6 +4713,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3971,6 +4725,8 @@
         "424": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3981,6 +4737,8 @@
         "345": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -3991,6 +4749,8 @@
         "112": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4001,6 +4761,8 @@
         "112": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4011,6 +4773,8 @@
         "696": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 2,
       "due_days": 15,
       "due_days_samples": 2
     },
@@ -4021,6 +4785,8 @@
         "406": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4031,6 +4797,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4041,6 +4809,8 @@
         "113": 6
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 5,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -4051,6 +4821,8 @@
         "696": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 5,
       "due_days_samples": 1
     },
@@ -4061,6 +4833,8 @@
         "113": 6
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 7,
       "due_days_samples": 2
     },
@@ -4071,6 +4845,8 @@
         "376": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4081,6 +4857,8 @@
         "340": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4091,6 +4869,8 @@
         "113": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4101,6 +4881,8 @@
         "113": 6
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 6,
       "due_days": 0,
       "due_days_samples": 4
     },
@@ -4113,6 +4895,8 @@
         "322": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 0.5,
+      "tracking_samples": 4,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -4123,6 +4907,8 @@
         "322": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4134,6 +4920,8 @@
         "690": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -4144,6 +4932,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4154,6 +4944,8 @@
         "340": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4164,6 +4956,8 @@
         "696": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4174,6 +4968,8 @@
         "332": 3
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 3
     },
@@ -4184,6 +4980,8 @@
         "696": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4194,6 +4992,8 @@
         "696": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4204,6 +5004,8 @@
         "345": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4214,6 +5016,8 @@
         "332": 2
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4224,6 +5028,8 @@
         "112": 2
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -4234,6 +5040,8 @@
         "2801": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 1,
       "due_days_samples": 1
     },
@@ -4245,6 +5053,8 @@
         "373": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -4255,6 +5065,8 @@
         "113": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4265,6 +5077,8 @@
         "674": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4275,6 +5089,8 @@
         "113": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4285,6 +5101,8 @@
         "112": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4295,6 +5113,8 @@
         "696": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -4305,6 +5125,8 @@
         "696": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4315,6 +5137,8 @@
         "48814": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4325,6 +5149,8 @@
         "322": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4335,6 +5161,8 @@
         "115": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4345,6 +5173,8 @@
         "112": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4355,6 +5185,8 @@
         "424": 1
       },
       "tracking_option": null,
+      "tracking_confidence": 0,
+      "tracking_samples": 0,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4366,6 +5198,8 @@
         "322": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 2
     },
@@ -4376,6 +5210,8 @@
         "313": 1
       },
       "tracking_option": "Kitchen",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4386,6 +5222,8 @@
         "696": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4396,6 +5234,8 @@
         "345": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4407,6 +5247,8 @@
         "382": 2
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 2,
       "due_days": 14,
       "due_days_samples": 3
     },
@@ -4417,6 +5259,8 @@
         "115": 1
       },
       "tracking_option": "Miscellaneous",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4427,6 +5271,8 @@
         "313": 1
       },
       "tracking_option": "Bar",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     },
@@ -4437,6 +5283,8 @@
         "48812": 1
       },
       "tracking_option": "Admin",
+      "tracking_confidence": 1.0,
+      "tracking_samples": 1,
       "due_days": 0,
       "due_days_samples": 1
     }

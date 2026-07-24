@@ -33,22 +33,36 @@ _COA = json.loads((HERE / "xero_accounts.json").read_text())
 ACCOUNT_NAME = {a["code"]: a["name"] for a in _COA["accounts"]}
 TRACKING = {c["name"]: c for c in _COA["tracking"]}
 
-# Empirical supplier -> account, learned from Xero history (learn_coding.py) if
-# present. Keyed by supplier name (lowercased). Preferred over rule guesses when
-# confident, because it reflects exactly how the books have actually been coded.
+# Empirical supplier -> account/venue/terms, learned from Xero history
+# (learn_coding.py). Preferred over rule guesses when confident. Keyed by a
+# NORMALISED name so "Foodlink Australia" (Xero contact) and "Foodlink Australia
+# Pty Ltd" (what a parser reads off the invoice) resolve to the same record.
 _LEARNED_FILE = HERE / "learned_coding.json"
+_SUFFIX = re.compile(r"\b(pty|ltd|limited|inc|co|corp|corporation|the|group)\b")
+
+
+def _norm(name: str) -> str:
+    n = re.sub(r"[^a-z0-9 ]", " ", (name or "").lower())
+    n = _SUFFIX.sub(" ", n)
+    return re.sub(r"\s+", " ", n).strip()
+
+
 LEARNED: dict[str, dict] = {}
 if _LEARNED_FILE.exists():
     try:
         _lj = json.loads(_LEARNED_FILE.read_text())
-        LEARNED = {k.lower(): v for k, v in _lj.get("suppliers", {}).items()}
+        LEARNED = {_norm(k): v for k, v in _lj.get("suppliers", {}).items()}
     except Exception:
         LEARNED = {}
 
 
+def _learned(name: str) -> Optional[dict]:
+    return LEARNED.get(_norm(name))
+
+
 def _learned_account(inv) -> Optional[str]:
     """A confident (>=60%) historical account for this supplier, if we have one."""
-    d = LEARNED.get((inv.supplier_name_raw or "").strip().lower())
+    d = _learned(inv.supplier_name_raw)
     if d and d.get("account_code") and d.get("account_confidence", 0) >= 0.6:
         return d["account_code"]
     return None
@@ -61,7 +75,7 @@ def due_days_for(supplier_name: str) -> int:
     """This supplier's payment terms in days, learned from Xero history (median
     gap between bill date and due date). Falls back to net-14 when we haven't
     seen enough of their bills. net-0 (card/direct-debit suppliers) is honoured."""
-    d = LEARNED.get((supplier_name or "").strip().lower())
+    d = _learned(supplier_name)
     if d and d.get("due_days") is not None and d.get("due_days_samples", 0) >= 3:
         return int(d["due_days"])
     return DEFAULT_DUE_DAYS
@@ -156,12 +170,35 @@ def _account_for_line(inv: Invoice, line) -> LineCoding:
     return LineCoding(desc, OTHER_COGS, ACCOUNT_NAME.get(OTHER_COGS), "fallback — no rule matched")  # 5.
 
 
+def _find_category(option: str) -> Optional[str]:
+    for name, c in TRACKING.items():
+        if option in (c.get("options") or []):
+            return name
+    return "Stowaway" if "Stowaway" in TRACKING else (list(TRACKING) or [None])[0]
+
+
+def _learned_venue(inv) -> Optional[str]:
+    """A supplier that has CONSISTENTLY (>=85%) been coded to one venue in Xero
+    is coded there again, regardless of the billed-to address on the invoice —
+    e.g. Gulli always -> Marilyna's Pizza even though it ships to Stowaway."""
+    d = _learned(inv.supplier_name_raw)
+    if d and d.get("tracking_option") and d.get("tracking_confidence", 0) >= 0.85 \
+            and d.get("tracking_samples", 0) >= 3:
+        return d["tracking_option"]
+    return None
+
+
 def _venue_tracking(inv: Invoice, primary_account: Optional[str]) -> tuple[Optional[str], Optional[str], str]:
     """
-    Map the extracted venue to a tracking option. The 'Stowaway' category holds
-    the venue/department options; HG and Marilyna's are options within it, while
-    a Stowaway-billed invoice picks a department (Kitchen for food, Bar for bev).
+    Which venue/department the bill is tracked to. Prefer how this supplier has
+    consistently been coded in Xero; otherwise map the invoice's billed-to venue
+    (HG / Marilyna's directly; a Stowaway-billed bill picks Kitchen for food, Bar
+    for beverage).
     """
+    learned = _learned_venue(inv)
+    if learned:
+        return _find_category(learned), learned, "high"
+
     cat = "Stowaway" if "Stowaway" in TRACKING else (list(TRACKING) or [None])[0]
     opts = {o.lower(): o for o in TRACKING.get(cat, {}).get("options", [])}
 
