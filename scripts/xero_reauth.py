@@ -24,10 +24,17 @@ SECRETS_DIR = Path("/Users/stowaway/Documents/STOW/Sales Reports/Daily Reporting
 APP_FILE = SECRETS_DIR / "xero_app.json"
 CACHE_FILE = SECRETS_DIR / "xero_token_cache.json"
 REDIRECT = "http://localhost:8400/callback"
-# offline_access = refresh tokens; transactions = read+write bills;
-# contacts = find/create suppliers; settings/reports = existing pulls.
-SCOPES = ("offline_access accounting.transactions accounting.contacts "
-          "accounting.settings.read accounting.reports.read")
+# This app is post-2-Mar-2026, so it only has Xero's NEW GRANULAR scopes (the
+# broad accounting.transactions / accounting.reports.read return invalid_scope).
+#   accounting.invoices        -> create/read bills (ACCPAY) — the write path
+#   accounting.contacts        -> find/create suppliers on a bill
+#   accounting.settings.read   -> chart of accounts + tracking categories
+#   accounting.reports.profitandloss.read + payroll.* -> keep existing pulls working
+SCOPES = ("offline_access "
+          "accounting.invoices accounting.contacts accounting.settings.read "
+          "accounting.reports.profitandloss.read "
+          "payroll.employees.read payroll.payruns.read payroll.payslip.read "
+          "payroll.timesheets.read payroll.settings.read")
 
 app = json.loads(APP_FILE.read_text())
 state = pysecrets.token_urlsafe(16)
@@ -52,7 +59,8 @@ class H(BaseHTTPRequestHandler):
         pass
 
 
-print("Opening Xero consent page (approve the extra permissions)…")
+Path("/tmp/xero_auth_url.txt").write_text(auth_url)   # so a helper can drive the browser here
+print("Opening Xero consent page (approve the extra permissions)…", flush=True)
 webbrowser.open(auth_url)
 print("If the browser didn't open, visit:\n" + auth_url)
 srv = HTTPServer(("localhost", 8400), H)
@@ -82,6 +90,6 @@ CACHE_FILE.write_text(json.dumps({
 }, indent=2))
 print(f"\nToken cache updated: {CACHE_FILE}")
 print(f"Tenant: {tenant.get('tenantName')}")
-print("Scope now includes accounting.transactions + accounting.contacts.")
+print("Scope now includes accounting.invoices + accounting.contacts (granular).")
 print("Next: python3 modules/invoices/learn_coding.py   (learn history)")
 print("Then: draft bills can be pushed with modules/invoices/xero_push.py")
