@@ -81,11 +81,18 @@ function renderDay(d) {
     const rows = active.filter(b => b.time === t)
       .sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
     const covers = rows.reduce((n, b) => n + b.adults + b.kids, 0);
+    // remaining[t][size] is true/false/null — null means the engine is still
+    // proving that size in the background (day view reads cache only). Never
+    // show FULL until every size is actually known to not fit.
     const sizes = d.remaining[t] || {};
-    const fitting = Object.entries(sizes).filter(([, ok]) => ok).map(([s]) => +s);
-    const fit = !fitting.length ? '<span class="no">FULL</span>'
-      : Object.values(sizes).every(Boolean) ? '<span class="yes">any party fits</span>'
-      : `<span class="yes">room up to ${Math.max(...fitting)}p</span>`;
+    const vals = Object.entries(sizes);
+    const fitting = vals.filter(([, ok]) => ok === true).map(([s]) => +s);
+    const unknown = vals.some(([, ok]) => ok === null || ok === undefined);
+    const fit = fitting.length && vals.every(([, ok]) => ok === true)
+        ? '<span class="yes">any party fits</span>'
+      : fitting.length ? `<span class="yes">room up to ${Math.max(...fitting)}p</span>`
+      : unknown ? '<span class="sit-meta">checking capacity…</span>'
+      : '<span class="no">FULL</span>';
     const block = document.createElement('div');
     block.className = 'sitting-block';
     block.innerHTML = `<div class="sitting-head">
