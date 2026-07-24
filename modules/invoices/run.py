@@ -124,6 +124,17 @@ def main() -> int:
     except Exception:
         pass
 
+    # canonical pack size ($/kg, $/L, $/each) so costs flow into the recipe builder
+    try:
+        from modules.invoices.models import CostBasis
+        from modules.invoices.pack_size import parse_pack
+        for ln in inv.lines:
+            if ln.pack_qty is None:
+                ln.pack_qty, ln.pack_unit = parse_pack(
+                    ln.description, ln.raw_uom, is_weight_priced=(ln.cost_basis == CostBasis.PER_KG))
+    except Exception:
+        pass
+
     # ---- validate — the gate. No model involved. ---------------------------
     result = Validator(yaml.safe_load(CONFIG.read_text())).validate(inv)
 

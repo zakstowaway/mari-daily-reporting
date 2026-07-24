@@ -94,6 +94,11 @@ class InvoiceLine:
     raw_qty: Optional[str] = None         # e.g. ILG "0/1" before normalisation
     raw_uom: Optional[str] = None         # e.g. B&E "KG" / "CTN"
 
+    # Canonical pack: how much of a base unit (kg | L | ea) is in one purchase
+    # unit, read off the description. Lets every cost reduce to $/kg / $/L / $/ea.
+    pack_qty: Optional[Decimal] = None
+    pack_unit: Optional[str] = None
+
     # Set by the resolver, not the extractor.
     lightspeed_product_id: Optional[str] = None
     lightspeed_product_name: Optional[str] = None

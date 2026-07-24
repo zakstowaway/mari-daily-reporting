@@ -163,7 +163,7 @@ function render() {
         ${inv.lines.map((l, j) => `
           <tr>
             <td class="desc">${esc(l.description)}
-              <span class="taxpill">· ${l.tax==='gst'?'GST':'GST-free'}</span></td>
+              <span class="taxpill">· ${l.tax==='gst'?'GST':'GST-free'}${l.unit_cost ? ' · '+esc(l.unit_cost) : ''}</span></td>
             <td class="qty">${fmtQty(l.qty)}</td>
             <td><select class="acct" data-i="${i}" data-j="${j}">${acctOpt(l.account_code)}</select></td>
             <td class="amt">$${esc(l.amount)}</td>

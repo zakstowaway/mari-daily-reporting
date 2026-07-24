@@ -35,8 +35,9 @@ INVOICES = ROOT / "data" / "invoices"          # PASS invoices from run.py
 COGS = ROOT / "data" / "cogs_list.csv"
 
 FIELDS = ["supplier", "supplier_code", "invoice_description", "lightspeed_product",
-          "cost_per_unit_incl_gst", "basis", "pack_size", "venue",
-          "source_invoice", "invoice_date", "in_bounds", "note"]
+          "cost_per_unit_incl_gst", "basis", "pack_size",
+          "pack_qty", "pack_unit", "cost_per_base_unit",   # canonical $/kg, $/L, $/each
+          "venue", "source_invoice", "invoice_date", "in_bounds", "note"]
 
 # supplier_key (suppliers.yaml) -> the short name cogs_list / the recipe
 # pipeline uses. Kitchen names here MUST match build_ingredients.KITCHEN_SUPPLIERS.
@@ -89,6 +90,14 @@ def _rows_from_invoice(payload: dict) -> list[dict]:
         if price is None:
             continue
         note = "; ".join(ln.get("notes", []) or []) or (ln.get("raw_uom") or "")
+        # canonical cost per base unit ($/kg, $/L, $/each) — comparable across suppliers
+        from decimal import Decimal, InvalidOperation
+        pq, pu = ln.get("pack_qty"), ln.get("pack_unit") or "ea"
+        try:
+            base = ((Decimal(str(price)) / Decimal(str(pq))).quantize(Decimal("0.0001"))
+                    if pq and Decimal(str(pq)) > 0 else Decimal(str(price)))
+        except (InvalidOperation, TypeError):
+            base = price
         out.append({
             "supplier": supplier,
             "supplier_code": code,
@@ -97,6 +106,9 @@ def _rows_from_invoice(payload: dict) -> list[dict]:
             "cost_per_unit_incl_gst": str(price),
             "basis": ln.get("cost_basis") or "per_unit",
             "pack_size": str(ln.get("pack_size") or 1),
+            "pack_qty": str(pq or 1),
+            "pack_unit": pu,
+            "cost_per_base_unit": str(base),
             "venue": venue,
             "source_invoice": ref,
             "invoice_date": d,

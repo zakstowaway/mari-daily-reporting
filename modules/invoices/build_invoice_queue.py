@@ -41,11 +41,24 @@ def _entry(payload: dict) -> dict:
     for line, lc in zip(inv.lines, coding.lines):
         if lc.account_code is None:      # pure-GST reconciliation line — tax, not a coded row
             continue
+        # canonical $/kg, $/L, $/each so the reviewer sees comparable unit costs
+        unit_cost = None
+        try:
+            from modules.invoices.models import CostBasis
+            from modules.invoices.pack_size import parse_pack
+            pq, pu = parse_pack(line.description, line.raw_uom,
+                                is_weight_priced=(line.cost_basis == CostBasis.PER_KG))
+            up = line.unit_price_incl or (line.line_total_incl / line.qty if line.qty else line.line_total_incl)
+            base = (Decimal(str(up)) / pq) if pq else Decimal(str(up))
+            unit_cost = f"${base:.2f}/{pu}"
+        except Exception:
+            pass
         lines.append({
             "description": line.description,
             "supplier_code": line.supplier_code,      # stable key for learning corrections
             "qty": str(line.qty),
             "amount": f"{Decimal(str(line.line_total_incl)):.2f}",
+            "unit_cost": unit_cost,                    # $/kg | $/L | $/each
             "tax": line.tax_treatment.value if hasattr(line.tax_treatment, "value") else str(line.tax_treatment),
             "account_code": lc.account_code,           # the SUGGESTED account
             "account_name": lc.account_name,
