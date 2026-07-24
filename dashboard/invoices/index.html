@@ -114,7 +114,7 @@ const trackingOptions = () => {
 const acctOpt = (sel) => ACCOUNTS.map(a =>
   `<option value="${a.code}" ${a.code===sel?'selected':''}>${a.code} · ${a.name}</option>`).join('');
 const venueOpt = (selCat, selOpt) => trackingOptions().map(t =>
-  `<option value="${t.cat}|${t.opt}" ${t.cat===selCat&&t.opt===selOpt?'selected':''}>${t.opt}</option>`).join('');
+  `<option value="${t.cat}|${t.opt}" ${t.cat===selCat&&t.opt===selOpt?'selected':''}>${t.cat} · ${t.opt}</option>`).join('');
 const esc = (s) => String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtQty = (q) => { const n = parseFloat(q); return Number.isFinite(n) ? String(+n.toFixed(3)) : esc(q); };
 

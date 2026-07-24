@@ -177,14 +177,14 @@ def _find_category(option: str) -> Optional[str]:
     return "Stowaway" if "Stowaway" in TRACKING else (list(TRACKING) or [None])[0]
 
 
-def _learned_venue(inv) -> Optional[str]:
-    """A supplier that has CONSISTENTLY (>=85%) been coded to one venue in Xero
-    is coded there again, regardless of the billed-to address on the invoice —
-    e.g. Gulli always -> Marilyna's Pizza even though it ships to Stowaway."""
+def _learned_venue(inv) -> Optional[tuple]:
+    """A supplier consistently (>=85%) coded to one (category, option) in Xero is
+    coded there again, regardless of the billed-to address — e.g. Gulli -> Stowaway/
+    Marilyna's Pizza, Jun Pacific -> Harry Gatos/Kitchen (NOT Stowaway/Kitchen)."""
     d = _learned(inv.supplier_name_raw)
     if d and d.get("tracking_option") and d.get("tracking_confidence", 0) >= 0.85 \
             and d.get("tracking_samples", 0) >= 3:
-        return d["tracking_option"]
+        return d.get("tracking_category"), d["tracking_option"]
     return None
 
 
@@ -197,25 +197,30 @@ def _venue_tracking(inv: Invoice, primary_account: Optional[str]) -> tuple[Optio
     """
     learned = _learned_venue(inv)
     if learned:
-        return _find_category(learned), learned, "high"
+        lcat, lopt = learned
+        return (lcat or _find_category(lopt)), lopt, "high"
 
-    cat = "Stowaway" if "Stowaway" in TRACKING else (list(TRACKING) or [None])[0]
-    opts = {o.lower(): o for o in TRACKING.get(cat, {}).get("options", [])}
+    # No confident history -> map the billed-to venue the way the books do:
+    #   Stowaway    -> Stowaway category,   dept option (Kitchen food / Bar bev)
+    #   Harry Gatos -> Harry Gatos category, dept option
+    #   Marilyna's  -> Stowaway category,   'Marilyna's Pizza'
+    dept = ("Bar" if primary_account in (BEVERAGE, BAR_SUPPLIES)
+            else "Kitchen" if primary_account == FOOD else None)
 
-    def opt(*cands):
+    def in_cat(cat, *cands):
+        have = {o.lower(): o for o in TRACKING.get(cat, {}).get("options", [])}
         for c in cands:
-            if c and c.lower() in opts:
-                return opts[c.lower()]
+            if c and c.lower() in have:
+                return have[c.lower()]
         return None
 
     if inv.venue == Venue.MARILYNAS:
-        return cat, opt("Marilyna's Pizza", "Marilynas Pizza"), "high"
+        return "Stowaway", in_cat("Stowaway", "Marilyna's Pizza", "Marilynas Pizza"), "high"
     if inv.venue == Venue.HARRY_GATOS:
-        return cat, opt("Harry Gatos"), "high"
+        return "Harry Gatos", in_cat("Harry Gatos", dept, "Kitchen"), "high" if dept else "medium"
     if inv.venue == Venue.STOWAWAY:
-        dept = "Bar" if primary_account in (BEVERAGE, BAR_SUPPLIES) else "Kitchen" if primary_account == FOOD else None
-        return cat, opt(dept) or opt("Bar", "Kitchen"), "medium" if dept else "low"
-    return cat, opt("To Be Reviewed"), "low"
+        return "Stowaway", in_cat("Stowaway", dept, "Kitchen"), "medium" if dept else "low"
+    return "Stowaway", in_cat("Stowaway", "To Be Reviewed"), "low"
 
 
 def suggest_coding(inv: Invoice) -> InvoiceCoding:

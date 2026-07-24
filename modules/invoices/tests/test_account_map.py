@@ -63,9 +63,13 @@ def test_gst_reconciliation_line_is_uncoded():
     assert suggest_coding(_inv("fresh_fruit_team", [_line("GST", LineClass.EXTRA)])).lines[0].account_code is None
 
 
-def test_venue_maps_to_tracking_option():
-    assert suggest_coding(_inv("select_fresh", [_line("X")], venue=Venue.HARRY_GATOS)).tracking_option == "Harry Gatos"
-    assert suggest_coding(_inv("gulli", [_line("X")], venue=Venue.MARILYNAS)).tracking_option == "Marilyna's Pizza"
-    # Stowaway food -> Kitchen, Stowaway beverage -> Bar
+def test_venue_maps_to_category_and_option():
+    # Harry Gatos food -> Harry Gatos category / Kitchen (not Stowaway/Harry Gatos)
+    hg = suggest_coding(_inv("select_fresh", [_line("X")], venue=Venue.HARRY_GATOS))
+    assert (hg.tracking_category, hg.tracking_option) == ("Harry Gatos", "Kitchen")
+    # Marilyna's -> Stowaway category / Marilyna's Pizza
+    ma = suggest_coding(_inv("gulli", [_line("X")], venue=Venue.MARILYNAS))
+    assert (ma.tracking_category, ma.tracking_option) == ("Stowaway", "Marilyna's Pizza")
+    # Stowaway food -> Stowaway/Kitchen, Stowaway beverage -> Stowaway/Bar
     assert suggest_coding(_inv("select_fresh", [_line("X")], venue=Venue.STOWAWAY)).tracking_option == "Kitchen"
     assert suggest_coding(_inv("ilg", [_line("X")], venue=Venue.STOWAWAY)).tracking_option == "Bar"

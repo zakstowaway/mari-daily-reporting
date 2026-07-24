@@ -58,7 +58,9 @@ def learn(months: int = 18) -> dict:
                             kw_by_acct[code][w] += 1
                 for t in li.get("Tracking", []):
                     if t.get("Option"):
-                        track_by_sup[sup][t["Option"]] += 1
+                        # keep the CATEGORY too — "Kitchen" exists under both
+                        # Stowaway and Harry Gatos, so the option alone is ambiguous
+                        track_by_sup[sup][(t.get("Name"), t["Option"])] += 1
             # payment terms: days between bill date and its due date
             d, due = iv.get("DateString", "")[:10], iv.get("DueDateString", "")[:10]
             if d and due:
@@ -78,15 +80,18 @@ def learn(months: int = 18) -> dict:
         gaps = due_by_sup.get(sup, [])
         tv = track_by_sup[sup]
         tv_total = sum(tv.values())
+        top_tv = tv.most_common(1)[0] if tv else None      # ((Category, Option), count)
         learned["suppliers"][sup] = {
             "account_code": top_acct,
             "account_confidence": round(n / total, 2),
             "account_distribution": dict(counter),
-            # how this supplier's bills are actually tracked (venue/dept), + how
-            # consistent that is — so a supplier that ALWAYS codes to one venue
-            # (e.g. Gulli -> Marilyna's) is trusted over the billed-to address.
-            "tracking_option": tracks[0][0] if tracks else None,
-            "tracking_confidence": round(tracks[0][1] / tv_total, 2) if tracks and tv_total else 0,
+            # how this supplier's bills are actually tracked (category + option),
+            # + how consistent that is — so a supplier that ALWAYS codes to one
+            # venue (Gulli -> Stowaway/Marilyna's, Jun Pacific -> Harry Gatos/
+            # Kitchen) is trusted over the billed-to address.
+            "tracking_category": top_tv[0][0] if top_tv else None,
+            "tracking_option": top_tv[0][1] if top_tv else None,
+            "tracking_confidence": round(top_tv[1] / tv_total, 2) if top_tv and tv_total else 0,
             "tracking_samples": tv_total,
             # each supplier's real terms = median gap between bill date and due date
             "due_days": int(statistics.median(gaps)) if gaps else None,
