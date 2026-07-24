@@ -121,6 +121,23 @@ function renderDay(d) {
     el.addEventListener('click', () => pickTable(el.dataset.pick, el)));
 }
 
+function showGuestLink() {
+  // The public widget is one URL for all events (it shows whatever's
+  // bookable) — surfaced here so staff can send it to a caller.
+  const url = API + '/';
+  const g = $('guestlink');
+  g.innerHTML = `Guest booking page:&nbsp;<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+  const b = document.createElement('button');
+  b.className = 'mini';
+  b.textContent = 'copy link';
+  b.onclick = async () => {
+    try { await navigator.clipboard.writeText(url); b.textContent = 'copied ✓'; }
+    catch { b.textContent = url; }
+    setTimeout(() => { b.textContent = 'copy link'; }, 1600);
+  };
+  g.appendChild(b);
+}
+
 async function pickTable(id, chip) {
   // Swap the chip for a dropdown of every table the engine PROVES this
   // booking could move to (each option = a full day re-solve). Picking one
@@ -165,6 +182,7 @@ async function loadDay() {
     DAY = await (await call('/api/admin/day/' + SEL.date)).json();
     $('status').textContent = DAY.event +
       (DAY.solvable ? ' · day solves ✓' : ' · ⚠ DAY DOES NOT SOLVE');
+    showGuestLink();
     renderDay(DAY);
   } catch (e) {
     if (String(e.message).includes('bad admin token')) {
